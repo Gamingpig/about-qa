@@ -168,11 +168,11 @@
                 <div class="flex items-center justify-between border-b border-white/10 pb-4">
                     <div>
                         <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-                            <span>📋</span> <span>Verbindliche 8-Punkte QA Checkliste (Release v24.220.0)</span>
+                            <span>📋</span> <span>Verbindliche 10-Punkte QA Checkliste (Release v24.220.0)</span>
                         </h3>
                         <p class="text-xs text-slate-400">Alle Punkte müssen vor dem Release-Merge angehakt sein.</p>
                     </div>
-                    <span id="qa-progress-pill" class="px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-xs font-mono font-bold">0 / 8 bestanden</span>
+                    <span id="qa-progress-pill" class="px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-xs font-mono font-bold">0 / 10 bestanden</span>
                 </div>
 
                 <div class="space-y-3" id="qa-tasks-list">
@@ -254,6 +254,26 @@
                             <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">`synth` tippen für Chiptune-Arpeggio mit Visualizer; `party` für Cyber-Disco; Doppelklick auf Album-Cover für DJ Vinyl-Scratch.</p>
                         </div>
                         <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-slate-300">Easter Eggs</span>
+                    </label>
+
+                    <!-- Task 9 -->
+                    <label class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/5 hover:border-cyan-500/40 transition-all cursor-pointer">
+                        <input type="checkbox" id="check-9" onchange="updateQAChecks()" class="w-5 h-5 rounded-lg border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500 mt-0.5">
+                        <div class="flex-1">
+                            <strong class="text-xs sm:text-sm text-white block font-bold">9. 🐍 Neon Cyber Snake & 🎛️ 9-Pad SFX Soundboard</strong>
+                            <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">`snake` tippen für Retro Tron Snake mit Touch-Steuerung; `soundboard` tippen für 9 synthetisierte SFX-Pads (Coin, Laser, Fanfare, V8, 808).</p>
+                        </div>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-slate-300">Minigame / Audio</span>
+                    </label>
+
+                    <!-- Task 10 -->
+                    <label class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/5 hover:border-cyan-500/40 transition-all cursor-pointer">
+                        <input type="checkbox" id="check-10" onchange="updateQAChecks()" class="w-5 h-5 rounded-lg border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500 mt-0.5">
+                        <div class="flex-1">
+                            <strong class="text-xs sm:text-sm text-white block font-bold">10. 💻 Hacker Terminal, Zero-G, CRT, Barrel Roll & Piggy Pet</strong>
+                            <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">`hack` für Mainframe Root-Terminal; `zerog` für Schwerelosigkeit; `crt` für TV-Scanlines; `roll` für 360° Spin; `star` für Godmode; `pet` für Desktop-Mascot.</p>
+                        </div>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-slate-300">Secret Modes</span>
                     </label>
                 </div>
 
@@ -389,14 +409,14 @@
         });
 
         function updateQAChecks() {
-            const checks = [1, 2, 3, 4, 5, 6, 7, 8].map(i => {
+            const checks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => {
                 const el = document.getElementById('check-' + i);
                 return el ? el.checked : false;
             });
             const passed = checks.filter(Boolean).length;
             const pill = document.getElementById('qa-progress-pill');
-            pill.textContent = `${passed} / 8 bestanden`;
-            if (passed === 8) {
+            pill.textContent = `${passed} / 10 bestanden`;
+            if (passed === 10) {
                 pill.className = 'px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-bold animate-pulse';
             } else {
                 pill.className = 'px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-xs font-mono font-bold';
@@ -405,13 +425,13 @@
 
         function copyQAReport() {
             const tester = document.getElementById('tester-name').value.trim() || 'Admin-Team';
-            const checks = [1, 2, 3, 4, 5, 6, 7, 8].map(i => {
+            const checks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => {
                 const el = document.getElementById('check-' + i);
                 return el ? el.checked : false;
             });
             const passed = checks.filter(Boolean).length;
 
-            const text = `🧪 [QA-BERICHT v24.220.0]\nTester: ${tester}\nErgebnis: ${passed}/8 Tests bestanden\n` +
+            const text = `🧪 [QA-BERICHT v24.220.0]\nTester: ${tester}\nErgebnis: ${passed}/10 Tests bestanden\n` +
                 `- [${checks[0] ? '✓' : ' '}] 1. Mobile & Desktop Render-Check\n` +
                 `- [${checks[1] ? '✓' : ' '}] 2. Neues Einstellungs-Zentrum & System-Update\n` +
                 `- [${checks[2] ? '✓' : ' '}] 3. PWA-Installation & Offline-Cache\n` +
@@ -419,8 +439,10 @@
                 `- [${checks[4] ? '✓' : ' '}] 5. Entwickleroptionen & Toast Lesezeit\n` +
                 `- [${checks[5] ? '✓' : ' '}] 6. Retro Piggy Cyber Dash Arcade Minigame\n` +
                 `- [${checks[6] ? '✓' : ' '}] 7. Cyber Live FPS & Performance HUD Monitor\n` +
-                `- [${checks[7] ? '✓' : ' '}] 8. 8-Bit Synth, Disco-Rave & DJ Scratch\n\n` +
-                (passed === 8 ? `✅ FREIGABE ERTEILT: Release v24.220.0 kann uneingeschränkt live geschaltet werden!` : `⚠️ Noch unvollständig: Bitte alle 8 Punkte verifizieren!`);
+                `- [${checks[7] ? '✓' : ' '}] 8. 8-Bit Synth, Disco-Rave & DJ Scratch\n` +
+                `- [${checks[8] ? '✓' : ' '}] 9. Neon Cyber Snake & 9-Pad SFX Soundboard\n` +
+                `- [${checks[9] ? '✓' : ' '}] 10. Hacker Terminal, Zero-G, CRT, Barrel Roll & Piggy Pet\n\n` +
+                (passed === 10 ? `✅ FREIGABE ERTEILT: Release v24.220.0 kann uneingeschränkt live geschaltet werden!` : `⚠️ Noch unvollständig: Bitte alle 10 Punkte verifizieren!`);
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text).then(() => {

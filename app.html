@@ -6896,6 +6896,72 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             touch-action: none;
         }
 
+        /* Barrel Roll Animation */
+        body.barrel-roll-active {
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            transform: rotate(360deg) !important;
+            overflow-x: hidden !important;
+        }
+
+        /* CRT Retro TV & VHS Glitch Mode */
+        body.crt-retro-mode::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+            z-index: 99998;
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+        }
+        body.crt-retro-mode {
+            text-shadow: 0.8px 0 1px rgba(0,30,255,0.5), -0.8px 0 1px rgba(255,0,80,0.4);
+            filter: contrast(1.1) brightness(1.05) saturate(1.2);
+        }
+
+        /* Zero Gravity Floating Effect */
+        body.zero-gravity-mode .glass-panel,
+        body.zero-gravity-mode #main-content > section,
+        body.zero-gravity-mode .card {
+            animation: zeroGFloat 4s ease-in-out infinite alternate !important;
+            transition: transform 0.5s ease-out !important;
+        }
+        @keyframes zeroGFloat {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-16px) rotate(1.5deg); }
+            100% { transform: translateY(-8px) rotate(-1.5deg); }
+        }
+
+        /* Star Power Rainbow Glow */
+        body.star-power-mode .glass-panel,
+        body.star-power-mode #main-music-card {
+            box-shadow: 0 0 35px #f43f5e, 0 0 55px #06b6d4, 0 0 75px #fbbf24 !important;
+            border-color: #fbbf24 !important;
+            animation: starPowerRainbow 0.6s linear infinite !important;
+        }
+        @keyframes starPowerRainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        /* Piggy Pet Mascot */
+        #piggy-pet-avatar {
+            position: fixed;
+            bottom: 16px;
+            left: 20px;
+            z-index: 9998;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        #piggy-pet-avatar:hover {
+            transform: scale(1.2) translateY(-4px);
+        }
+        #piggy-pet-avatar:active {
+            transform: scale(0.9) translateY(2px);
+        }
+
         /* Barrierefreiheit: reduzierte Bewegung respektieren (Systemeinstellung) */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -10743,6 +10809,161 @@ html.gp-android:not(.dark) #ui-controls {
     <button onclick="stopRetroSynth()" class="px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white text-xs font-bold transition-all border border-rose-500/30 cursor-pointer">
         Stopp ⏹️
     </button>
+</div>
+
+<!-- ========================================================= -->
+<!-- 🐍 NEON CYBER SNAKE - RETRO TRON MINIGAME (v24.220.0)      -->
+<!-- ========================================================= -->
+<div id="snake-game-modal" class="fixed inset-0 z-[10005] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 hidden select-none animate-fadeIn">
+    <div class="relative w-full max-w-sm sm:max-w-md bg-slate-950 border border-emerald-500/40 rounded-3xl shadow-[0_0_50px_rgba(16,185,129,0.25)] p-4 sm:p-6 text-white flex flex-col items-center">
+        <button onclick="closeSnakeGame()" class="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 hover:text-white transition cursor-pointer text-sm font-bold z-10" aria-label="Schließen">✕</button>
+
+        <div class="flex items-center gap-2 mb-3">
+            <span class="text-xl">🐍</span>
+            <h3 class="text-base sm:text-lg font-black tracking-wider text-emerald-400 font-mono">NEON CYBER SNAKE</h3>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono border border-emerald-500/30">TRON EDITION</span>
+        </div>
+
+        <div class="flex items-center justify-between w-full max-w-[300px] px-4 py-1.5 rounded-xl bg-slate-900/80 border border-white/10 font-mono text-xs mb-3">
+            <div>Score: <span id="snake-score" class="font-bold text-emerald-400">0</span></div>
+            <div>Highscore: <span id="snake-highscore" class="font-bold text-amber-400">0</span></div>
+        </div>
+
+        <div class="relative rounded-2xl overflow-hidden border-2 border-emerald-500/30 bg-slate-900 shadow-inner">
+            <canvas id="snakeCanvas" width="300" height="300" class="block w-[280px] h-[280px] sm:w-[300px] sm:h-[300px] bg-slate-950"></canvas>
+            <div id="snake-overlay" class="absolute inset-0 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center p-4 text-center">
+                <span id="snake-overlay-icon" class="text-3xl mb-1">🎮</span>
+                <h4 id="snake-overlay-title" class="text-base font-bold text-white font-mono">READY TO HUNT?</h4>
+                <p id="snake-overlay-desc" class="text-xs text-slate-300 mt-1">Steuere mit Pfeiltasten, WASD oder Touch-Buttons!</p>
+                <button onclick="startSnakeGame()" class="mt-3 px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 font-bold text-xs font-mono uppercase tracking-wider text-white shadow-lg shadow-emerald-500/30 active:scale-95 transition cursor-pointer">
+                    Starten ⚡
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-1.5 mt-3 w-40 text-center font-mono">
+            <div></div>
+            <button onclick="changeSnakeDirection('UP')" class="h-10 rounded-xl bg-white/10 hover:bg-emerald-500/30 active:scale-90 border border-white/10 flex items-center justify-center text-lg cursor-pointer">⬆️</button>
+            <div></div>
+            <button onclick="changeSnakeDirection('LEFT')" class="h-10 rounded-xl bg-white/10 hover:bg-emerald-500/30 active:scale-90 border border-white/10 flex items-center justify-center text-lg cursor-pointer">⬅️</button>
+            <button onclick="changeSnakeDirection('DOWN')" class="h-10 rounded-xl bg-white/10 hover:bg-emerald-500/30 active:scale-90 border border-white/10 flex items-center justify-center text-lg cursor-pointer">⬇️</button>
+            <button onclick="changeSnakeDirection('RIGHT')" class="h-10 rounded-xl bg-white/10 hover:bg-emerald-500/30 active:scale-90 border border-white/10 flex items-center justify-center text-lg cursor-pointer">➡️</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 🔊 CYBER SOUNDBOARD & MEME SFX BOX (v24.220.0)             -->
+<!-- ========================================================= -->
+<div id="soundboard-modal" class="fixed inset-0 z-[10005] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 hidden select-none animate-fadeIn">
+    <div class="relative w-full max-w-sm sm:max-w-md bg-slate-950 border border-purple-500/40 rounded-3xl shadow-[0_0_50px_rgba(168,85,247,0.25)] p-4 sm:p-6 text-white flex flex-col items-center">
+        <button onclick="closeSoundboard()" class="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 hover:text-white transition cursor-pointer text-sm font-bold z-10" aria-label="Schließen">✕</button>
+
+        <div class="flex items-center gap-2 mb-2">
+            <span class="text-xl">🎛️</span>
+            <h3 class="text-base sm:text-lg font-black tracking-wider text-purple-400 font-mono">CYBER SFX SOUNDBOARD</h3>
+        </div>
+        <p class="text-xs text-slate-400 mb-4 text-center">100% Echtzeit-Synthese über Web Audio API • Klicke die Pads!</p>
+
+        <div class="grid grid-cols-3 gap-2.5 w-full max-w-xs">
+            <button onclick="playSoundboardSfx('coin')" class="group p-3 rounded-2xl bg-slate-900 border border-amber-500/30 hover:border-amber-400 hover:bg-amber-500/10 active:scale-95 transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <span class="text-2xl group-hover:scale-110 transition">🪙</span>
+                <span class="text-[11px] font-bold text-amber-300 font-mono">8-Bit Coin</span>
+            </button>
+            <button onclick="playSoundboardSfx('laser')" class="group p-3 rounded-2xl bg-slate-900 border border-cyan-500/30 hover:border-cyan-400 hover:bg-cyan-500/10 active:scale-95 transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <span class="text-2xl group-hover:scale-110 transition">🔫</span>
+                <span class="text-[11px] font-bold text-cyan-300 font-mono">Blaster</span>
+            </button>
+            <button onclick="playSoundboardSfx('fanfare')" class="group p-3 rounded-2xl bg-slate-900 border border-emerald-500/30 hover:border-emerald-400 hover:bg-emerald-500/10 active:scale-95 transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <span class="text-2xl group-hover:scale-110 transition">🎺</span>
+                <span class="text-[11px] font-bold text-emerald-300 font-mono">Level Up</span>
+            </button>
+            <button onclick="playSoundboardSfx('explosion')" class="group p-3 rounded-2xl bg-slate-900 border border-rose-500/30 hover:border-rose-400 hover:bg-rose-500/10 active:scale-95 transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <span class="text-2xl group-hover:scale-110 transition">💥</span>
+                <span class="text-[11px] font-bold text-rose-300 font-mono">Explosion</span>
+            </button>
+            <button onclick="playSoundboardSfx('pig')" class="group p-3 rounded-2xl bg-slate-900 border border-pink-500/30 hover:border-pink-400 hover:bg-pink-500/10 active:scale-95 transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <span class="text-2xl group-hover:scale-110 transition">🐷</span>
+                <span class="text-[11px] font-bold text-pink-300 font-mono">Piggy Snort</span>
+            </button>
+            <button onclick="playSoundboardSfx('v8')" class="group p-3 rounded-2xl bg-slate-900 border border-orange-500/30 hover:border-orange-400 hover:bg-orange-500/10 active:scale-95 transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <span class="text-2xl group-hover:scale-110 transition">🏎️</span>
+                <span class="text-[11px] font-bold text-orange-300 font-mono">V8 Turbo</span>
+            </button>
+            <button onclick="playSoundboardSfx('warp')" class="group p-3 rounded-2xl bg-slate-900 border border-indigo-500/30 hover:border-indigo-400 hover:bg-indigo-500/10 active:scale-95 transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <span class="text-2xl group-hover:scale-110 transition">🌌</span>
+                <span class="text-[11px] font-bold text-indigo-300 font-mono">Warp Jump</span>
+            </button>
+            <button onclick="playSoundboardSfx('sad')" class="group p-3 rounded-2xl bg-slate-900 border border-slate-600 hover:border-slate-400 hover:bg-slate-800 active:scale-95 transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <span class="text-2xl group-hover:scale-110 transition">🥺</span>
+                <span class="text-[11px] font-bold text-slate-300 font-mono">Sad Trombone</span>
+            </button>
+            <button onclick="playSoundboardSfx('sub')" class="group p-3 rounded-2xl bg-slate-900 border border-purple-500/30 hover:border-purple-400 hover:bg-purple-500/10 active:scale-95 transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <span class="text-2xl group-hover:scale-110 transition">⚡</span>
+                <span class="text-[11px] font-bold text-purple-300 font-mono">808 Drop</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 💻 RETRO HACKER MATRIX CYBER TERMINAL (v24.220.0)         -->
+<!-- ========================================================= -->
+<div id="hacker-terminal-modal" class="fixed inset-0 z-[10005] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 hidden select-none animate-fadeIn">
+    <div class="relative w-full max-w-2xl bg-black border-2 border-emerald-500/60 rounded-2xl shadow-[0_0_60px_rgba(16,185,129,0.3)] p-4 sm:p-5 text-emerald-400 font-mono text-xs flex flex-col h-[480px] max-h-[85vh]">
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-emerald-500/30">
+            <div class="flex items-center gap-2">
+                <div class="flex gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-rose-500 inline-block cursor-pointer" onclick="closeHackerTerminal()"></span>
+                    <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                </div>
+                <span class="text-[11px] text-emerald-500/80 font-bold ml-2">root@gamingpig-mainframe:~#</span>
+            </div>
+            <button onclick="closeHackerTerminal()" class="text-emerald-400 hover:text-white px-2 py-0.5 text-xs font-bold cursor-pointer">✕</button>
+        </div>
+
+        <div id="terminal-output" class="flex-1 overflow-y-auto space-y-1.5 scrollbar-thin scrollbar-thumb-emerald-500/30 pr-1 select-text">
+            <div>GamingPig Mainframe Terminal [Version 24.220.0-PROD]</div>
+            <div>(c) 2026 GamingPig Entertainment. Alle Rechte vorbehalten.</div>
+            <div class="text-emerald-300">Tippe <span class="text-white font-bold bg-emerald-950 px-1 border border-emerald-500/30">help</span> oder <span class="text-white font-bold bg-emerald-950 px-1 border border-emerald-500/30">eastereggs</span> um Befehle zu sehen.</div>
+            <div class="text-slate-500">----------------------------------------------------</div>
+        </div>
+
+        <form id="terminal-form" onsubmit="submitTerminalCmd(event)" class="mt-2 pt-2 border-t border-emerald-500/30 flex items-center gap-2">
+            <span class="text-emerald-400 font-bold">root#</span>
+            <input type="text" id="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Befehl eingeben..." class="flex-1 bg-transparent text-emerald-300 font-mono text-xs focus:outline-none placeholder-emerald-800">
+            <button type="submit" class="px-2.5 py-1 bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 text-[11px] rounded border border-emerald-500/40 font-bold cursor-pointer">ENTER</button>
+        </form>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 🌌 ZERO GRAVITY STATUS BANNER (v24.220.0)                 -->
+<!-- ========================================================= -->
+<div id="zero-gravity-banner" class="fixed top-5 left-1/2 -translate-x-1/2 z-[10003] px-5 py-2.5 rounded-2xl bg-indigo-950/90 border border-indigo-400/50 shadow-[0_0_35px_rgba(99,102,241,0.4)] backdrop-blur-xl text-white flex items-center gap-4 hidden animate-bounce">
+    <div class="flex items-center gap-2">
+        <span class="text-xl">🌌</span>
+        <div>
+            <div class="text-xs font-bold text-indigo-200">ZERO GRAVITY AKTIV</div>
+            <div class="text-[10px] text-indigo-300/80">Schwerelosigkeit im gesamten Layout!</div>
+        </div>
+    </div>
+    <button onclick="resetGravity()" class="px-3 py-1.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 font-bold text-xs text-white shadow transition cursor-pointer">
+        Erdanziehung 🌍
+    </button>
+</div>
+
+<!-- ========================================================= -->
+<!-- 🐷 PIGGY PET DESKTOP MASCOT (v24.220.0)                   -->
+<!-- ========================================================= -->
+<div id="piggy-pet-avatar" onclick="interactWithPiggyPet()" class="hidden flex items-end gap-2 group">
+    <div class="w-12 h-12 rounded-2xl bg-pink-500/20 border-2 border-pink-400/60 shadow-[0_0_20px_rgba(244,114,182,0.3)] backdrop-blur-md flex items-center justify-center text-2xl transition hover:scale-110 active:scale-95">
+        🐷
+    </div>
+    <div id="piggy-pet-bubble" class="hidden px-3 py-1.5 rounded-xl bg-slate-900/95 border border-pink-500/40 text-pink-200 text-xs shadow-xl backdrop-blur-md max-w-xs animate-fadeIn font-mono">
+        Oink! 🎮
+    </div>
 </div>
 
 <!-- ========================================================= -->
@@ -17094,6 +17315,14 @@ let shareCardLoading;
                 { icon: '⚡', label: 'Live FPS & Performance Monitor', keywords: 'fps hud monitor diagnostics lag performance bildrate latency frame', action: () => toggleFpsHud() },
                 { icon: '🎹', label: '8-Bit Chiptune Synthesizer', keywords: 'synth chiptune beat music retro soundboard audio melodie arpeggio', action: () => playRetroSynthArp() },
                 { icon: '🪩', label: 'Cyber Disco Rave Mode', keywords: 'party disco rave neon rgb glow party mode blicklicht', action: () => launchPartyMode() },
+                { icon: '🐍', label: 'Neon Cyber Snake (Minispiel)', keywords: 'snake tron minigame minispiel schlange game retro play', action: () => openSnakeGame() },
+                { icon: '🎛️', label: 'Cyber SFX Soundboard', keywords: 'soundboard sfx audio effekte meme sounds synth pads blast laser', action: () => openSoundboard() },
+                { icon: '💻', label: 'Hacker Matrix Cyber Terminal', keywords: 'terminal console hack hacker matrix shell bash root Befehle cheats', action: () => openHackerTerminal() },
+                { icon: '🌌', label: 'Zero Gravity Schwerelosigkeit', keywords: 'gravity zerog space schwerelosigkeit float all weltraum', action: () => launchZeroGravity() },
+                { icon: '📺', label: 'CRT Retro VHS TV-Filter', keywords: 'crt vhs filter scanlines retro glitch phosphor fernseher', action: () => toggleCrtMode() },
+                { icon: '🔄', label: 'Barrel Roll 360° Spin', keywords: 'barrel roll spin drehen rotate 360 faßrolle trick', action: () => triggerBarrelRoll() },
+                { icon: '⭐', label: 'Super Star Power (Godmode)', keywords: 'star mario godmode regenbogen unbesiegbar rainbow invulnerable', action: () => launchStarPower() },
+                { icon: '🐷', label: 'Piggy Pet Desktop-Maskottchen', keywords: 'pet tamagotchi buddy maskottchen pig schwein companion', action: () => togglePiggyPet() },
                 { icon: '📋', label: t('cp_copy_link'), keywords: 'copy link teilen share url', action: () => { if (typeof copyPageLink === 'function') copyPageLink(); } },
                 { icon: '🔄', label: t('cp_reload'), keywords: 'reload refresh neu laden', action: () => window.location.reload() },
                 { icon: '🌐', label: t('cp_change_lang'), keywords: 'language sprache language change idioma langue idioma dil', keepOpen: true, action: () => openLanguagePicker(true) },
@@ -18397,22 +18626,26 @@ let shareCardLoading;
         const PUBLIC_CHANGELOG = [
     { version: "v24.220.0", date: "14. Oktober 2026", type: "feature", items: {
         de: [
-            "🕹️ Retro Piggy Cyber Dash: Vollwertiges integriertes 8-Bit Arcade Jump & Dodge Minispiel mit Web-Audio Soundeffekten, Sterne-Sammeln und lokalem Highscore",
-            "⚡ Cyberpunk Diagnostics & Live FPS HUD: Echtzeit-Bildwiederholungsrate (60/120 Hz VSync), Frame-Time Diagnostik, DOM-Node Tracker und Live-Latenzmessung",
-            "🎹 Web Audio 8-Bit Chiptune Synthesizer: Echter integrierter Chiptune-Soundchip mit Multi-Oszillator Arpeggios und animiertem Visualizer-HUD",
-            "🪩 Cyber Disco Rave Mode: Dynamischer Party-Modus mit RGB Rainbow-Glow, Emoji-Regen und Audio-Feedback ('party', 'disco', 'rave')",
-            "🎧 DJ Vinyl Scratch Effekt: Interaktiver Plattenteller-Scratch-Sound und Cover-Wobble bei Doppelklick auf das Album-Cover",
-            "⚙️ Neues Einstellungs-Zentrum: Aufgeräumte Kategorien-Übersicht mit animiertem Subpage-Drilldown, Live-Suche und nativer Zurück-Navigation",
-            "🛡️ Push Admin Center v2: Abonnenten- und Queue-Statistiken repariert mit GitHub Token-Vault Integration"
+            "🕹️ Retro Piggy Cyber Dash Arcade: 8-Bit Jump & Dodge Minigame mit Web-Audio Soundeffekten, Sternen & Highscore",
+            "🐍 Neon Cyber Snake: Tron-inspiriertes Schlangen-Minispiel mit Canvas-Rendering, Richtungs-Steuerung und Highscore",
+            "🎛️ Cyber SFX Soundboard: 9 interaktive Echtzeit-Synthesizer-Pads (Coin, Laser, Fanfare, Explosion, Piggy Snort, V8, Warp, 808 Drop)",
+            "💻 Hacker Matrix Terminal: Interaktive Root-Konsole ('help', 'stats', 'eastereggs', 'matrix', 'sudo', 'clear') mit CRT-Optik",
+            "⚡ Cyber Diagnostics & Live FPS HUD: 60/120 Hz VSync Bildwiederholungsrate, Frame-Time, DOM-Zähler & Live-Ping",
+            "🎹 Web Audio 8-Bit Chiptune Synthesizer: 16-Step Arpeggio mit animiertem Visualizer-Banner ('synth', 'chiptune')",
+            "🌌 Zero Gravity & CRT Mode: Physikalische Schwerelosigkeit für Karten ('zerog') und VHS Retro-Scanlines Filter ('crt')",
+            "🔄 Barrel Roll & Star Power: 360° Layout-Drehung ('roll') und 10s Super Star Power Regenbogen-Godmode ('star')",
+            "🐷 Piggy Pet Desktop-Buddy: Interaktives animiertes Begleiter-Maskottchen mit Klick-Sounds und Dialogblasen ('pet')"
         ],
         en: [
-            "🕹️ Retro Piggy Cyber Dash: Fully integrated 8-bit arcade jump & dodge minigame with Web Audio SFX, star collecting, and local high score",
-            "⚡ Cyberpunk Diagnostics & Live FPS HUD: Real-time refresh rate (60/120 Hz VSync), frame-time diagnostics, DOM node tracking, and live latency ping",
-            "🎹 Web Audio 8-Bit Chiptune Synthesizer: Genuine integrated chiptune soundchip with multi-oscillator arpeggios and animated visualizer HUD",
-            "🪩 Cyber Disco Rave Mode: Dynamic party mode featuring RGB rainbow cycling, emoji rain, and audio feedback ('party', 'disco', 'rave')",
-            "🎧 DJ Vinyl Scratch Effect: Interactive turntable scratch sound and vinyl wobble on album artwork double-click",
-            "⚙️ Modern Settings Center: Clean category overview with drilldown subpages, instant search, and smooth back navigation",
-            "🛡️ Push Admin Center v2: Fixed subscriber count and push queue metrics with integrated token vault"
+            "🕹️ Retro Piggy Cyber Dash Arcade: 8-bit jump & dodge minigame with Web Audio SFX, stars, and local high score",
+            "🐍 Neon Cyber Snake: Tron-inspired snake minigame with canvas rendering, D-Pad controls, and high score tracking",
+            "🎛️ Cyber SFX Soundboard: 9 interactive real-time synthesized audio pads (Coin, Blaster, Fanfare, Explosion, Pig, V8, Warp, 808)",
+            "💻 Hacker Matrix Terminal: Interactive root mainframe console ('help', 'stats', 'eastereggs', 'matrix', 'sudo', 'clear')",
+            "⚡ Cyber Diagnostics & Live FPS HUD: 60/120 Hz VSync refresh rate, frame-time, DOM node counter & live ping",
+            "🎹 Web Audio 8-Bit Chiptune Synthesizer: 16-step arpeggio with live bouncing wave visualizer banner ('synth')",
+            "🌌 Zero Gravity & CRT Mode: Layout zero-g levitation physics ('zerog') and retro CRT VHS scanline phosphor filter ('crt')",
+            "🔄 Barrel Roll & Star Power: 360° screen rotation trick ('roll') and 10s Super Star Power rainbow godmode ('star')",
+            "🐷 Piggy Pet Desktop Mascot: Cute animated desktop companion with audio feedback and speech bubbles ('pet')"
         ]
     }},
     { version: "v24.215.0", date: "12. Oktober 2026", type: "feature", items: {
@@ -21224,6 +21457,38 @@ let shareCardLoading;
                 triggerDjScratch();
                 return true;
             }
+            if (buffer.endsWith('snake') || buffer.endsWith('tron')) {
+                openSnakeGame();
+                return true;
+            }
+            if (buffer.endsWith('soundboard') || buffer.endsWith('sfx') || buffer.endsWith('meme')) {
+                openSoundboard();
+                return true;
+            }
+            if (buffer.endsWith('hack') || buffer.endsWith('terminal') || buffer.endsWith('console') || buffer.endsWith('root')) {
+                openHackerTerminal();
+                return true;
+            }
+            if (buffer.endsWith('gravity') || buffer.endsWith('space') || buffer.endsWith('zerog')) {
+                launchZeroGravity();
+                return true;
+            }
+            if (buffer.endsWith('crt') || buffer.endsWith('vhs') || buffer.endsWith('glitch')) {
+                toggleCrtMode();
+                return true;
+            }
+            if (buffer.endsWith('barrelroll') || buffer.endsWith('roll') || buffer.endsWith('spin')) {
+                triggerBarrelRoll();
+                return true;
+            }
+            if (buffer.endsWith('star') || buffer.endsWith('mario') || buffer.endsWith('godmode')) {
+                launchStarPower();
+                return true;
+            }
+            if (buffer.endsWith('pet') || buffer.endsWith('tamagotchi') || buffer.endsWith('buddy')) {
+                togglePiggyPet();
+                return true;
+            }
             return false;
         }
 
@@ -21847,6 +22112,543 @@ let shareCardLoading;
                 }, 120);
             }
             showToast('🎧 DJ PIGGY SCRATCH! 🎵', 'info');
+        };
+
+        // ========================================================= //
+        // 🐍 NEON CYBER SNAKE - RETRO TRON MINIGAME (v24.220.0)
+        // ========================================================= //
+        let snakeTileCount = 15;
+        let snakeTileSize = 20;
+        let snakeX = 7;
+        let snakeY = 7;
+        let snakeDx = 1;
+        let snakeDy = 0;
+        let snakeTrail = [];
+        let snakeTail = 4;
+        let snakeFoodX = 11;
+        let snakeFoodY = 7;
+        let snakeScoreVal = 0;
+        let snakeHighScoreVal = parseInt(AppStorage.getItem('gp_snake_highscore') || '0', 10);
+        let snakeGameTimer = null;
+        let snakeIsRunning = false;
+
+        window.openSnakeGame = function() {
+            haptic(20);
+            const modal = document.getElementById('snake-game-modal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            const hsEl = document.getElementById('snake-highscore');
+            if (hsEl) hsEl.innerText = snakeHighScoreVal;
+            const scoreEl = document.getElementById('snake-score');
+            if (scoreEl) scoreEl.innerText = '0';
+            const overlay = document.getElementById('snake-overlay');
+            if (overlay) overlay.classList.remove('hidden');
+            initSnakeCanvas();
+        };
+
+        window.closeSnakeGame = function() {
+            haptic(10);
+            if (snakeGameTimer) {
+                clearInterval(snakeGameTimer);
+                snakeGameTimer = null;
+            }
+            snakeIsRunning = false;
+            const modal = document.getElementById('snake-game-modal');
+            if (modal) modal.classList.add('hidden');
+        };
+
+        function initSnakeCanvas() {
+            const canvas = document.getElementById('snakeCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.08)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x <= canvas.width; x += snakeTileSize) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for (let y = 0; y <= canvas.height; y += snakeTileSize) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+        }
+
+        window.startSnakeGame = function() {
+            haptic(25);
+            const overlay = document.getElementById('snake-overlay');
+            if (overlay) overlay.classList.add('hidden');
+            snakeX = 7;
+            snakeY = 7;
+            snakeDx = 1;
+            snakeDy = 0;
+            snakeTrail = [{ x: 5, y: 7 }, { x: 6, y: 7 }, { x: 7, y: 7 }];
+            snakeTail = 3;
+            snakeScoreVal = 0;
+            spawnSnakeFood();
+            const scoreEl = document.getElementById('snake-score');
+            if (scoreEl) scoreEl.innerText = '0';
+            snakeIsRunning = true;
+            if (snakeGameTimer) clearInterval(snakeGameTimer);
+            snakeGameTimer = setInterval(updateSnakeGame, 115);
+        };
+
+        function spawnSnakeFood() {
+            snakeFoodX = Math.floor(Math.random() * snakeTileCount);
+            snakeFoodY = Math.floor(Math.random() * snakeTileCount);
+        }
+
+        window.changeSnakeDirection = function(dir) {
+            haptic(10);
+            if (!snakeIsRunning) return;
+            if (dir === 'UP' && snakeDy === 0) { snakeDx = 0; snakeDy = -1; }
+            else if (dir === 'DOWN' && snakeDy === 0) { snakeDx = 0; snakeDy = 1; }
+            else if (dir === 'LEFT' && snakeDx === 0) { snakeDx = -1; snakeDy = 0; }
+            else if (dir === 'RIGHT' && snakeDx === 0) { snakeDx = 1; snakeDy = 0; }
+        };
+
+        function playSnakeSound(type) {
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                if (type === 'eat') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(587, now);
+                    osc.frequency.exponentialRampToValueAtTime(1174, now + 0.08);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.1);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(now); osc.stop(now + 0.1);
+                } else if (type === 'die') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.exponentialRampToValueAtTime(60, now + 0.25);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.28);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(now); osc.stop(now + 0.28);
+                }
+            } catch (e) {}
+        }
+
+        function updateSnakeGame() {
+            const canvas = document.getElementById('snakeCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            snakeX += snakeDx;
+            snakeY += snakeDy;
+
+            if (snakeX < 0 || snakeX >= snakeTileCount || snakeY < 0 || snakeY >= snakeTileCount) {
+                gameOverSnake();
+                return;
+            }
+
+            for (let i = 0; i < snakeTrail.length; i++) {
+                if (snakeTrail[i].x === snakeX && snakeTrail[i].y === snakeY) {
+                    gameOverSnake();
+                    return;
+                }
+            }
+
+            snakeTrail.push({ x: snakeX, y: snakeY });
+            while (snakeTrail.length > snakeTail) {
+                snakeTrail.shift();
+            }
+
+            if (snakeX === snakeFoodX && snakeY === snakeFoodY) {
+                snakeTail++;
+                snakeScoreVal += 10;
+                playSnakeSound('eat');
+                haptic(15);
+                const scoreEl = document.getElementById('snake-score');
+                if (scoreEl) scoreEl.innerText = snakeScoreVal;
+                if (snakeScoreVal > snakeHighScoreVal) {
+                    snakeHighScoreVal = snakeScoreVal;
+                    AppStorage.setItem('gp_snake_highscore', snakeHighScoreVal.toString());
+                    const hsEl = document.getElementById('snake-highscore');
+                    if (hsEl) hsEl.innerText = snakeHighScoreVal;
+                }
+                spawnSnakeFood();
+            }
+
+            ctx.fillStyle = '#020617';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.08)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x <= canvas.width; x += snakeTileSize) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for (let y = 0; y <= canvas.height; y += snakeTileSize) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            ctx.shadowColor = '#10b981';
+            ctx.shadowBlur = 10;
+            ctx.fillStyle = '#34d399';
+            ctx.beginPath();
+            ctx.arc(snakeFoodX * snakeTileSize + snakeTileSize/2, snakeFoodY * snakeTileSize + snakeTileSize/2, snakeTileSize/2.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            for (let i = 0; i < snakeTrail.length; i++) {
+                const isHead = (i === snakeTrail.length - 1);
+                ctx.fillStyle = isHead ? '#10b981' : 'rgba(16, 185, 129, 0.7)';
+                ctx.shadowColor = '#10b981';
+                ctx.shadowBlur = isHead ? 12 : 4;
+                ctx.fillRect(snakeTrail[i].x * snakeTileSize + 1, snakeTrail[i].y * snakeTileSize + 1, snakeTileSize - 2, snakeTileSize - 2);
+            }
+            ctx.shadowBlur = 0;
+        }
+
+        function gameOverSnake() {
+            haptic(40);
+            playSnakeSound('die');
+            if (snakeGameTimer) {
+                clearInterval(snakeGameTimer);
+                snakeGameTimer = null;
+            }
+            snakeIsRunning = false;
+            const overlay = document.getElementById('snake-overlay');
+            if (overlay) {
+                overlay.classList.remove('hidden');
+                const title = document.getElementById('snake-overlay-title');
+                if (title) title.innerText = 'GAME OVER! 💥';
+                const desc = document.getElementById('snake-overlay-desc');
+                if (desc) desc.innerText = `Punkte: ${snakeScoreVal} | Highscore: ${snakeHighScoreVal}`;
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (!snakeIsRunning) return;
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') { e.preventDefault(); changeSnakeDirection('UP'); }
+            else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') { e.preventDefault(); changeSnakeDirection('DOWN'); }
+            else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') { e.preventDefault(); changeSnakeDirection('LEFT'); }
+            else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') { e.preventDefault(); changeSnakeDirection('RIGHT'); }
+        });
+
+        // ========================================================= //
+        // 🔊 CYBER SOUNDBOARD & MEME SFX BOX (v24.220.0)
+        // ========================================================= //
+        window.openSoundboard = function() {
+            haptic(20);
+            const modal = document.getElementById('soundboard-modal');
+            if (modal) modal.classList.remove('hidden');
+        };
+
+        window.closeSoundboard = function() {
+            haptic(10);
+            const modal = document.getElementById('soundboard-modal');
+            if (modal) modal.classList.add('hidden');
+        };
+
+        window.playSoundboardSfx = function(type) {
+            haptic(15);
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                if (type === 'coin') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(987.77, now);
+                    osc.frequency.setValueAtTime(1318.51, now + 0.08);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.linearRampToValueAtTime(0.12, now + 0.08);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.35);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(now); osc.stop(now + 0.35);
+                } else if (type === 'laser') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(1100, now);
+                    osc.frequency.exponentialRampToValueAtTime(120, now + 0.15);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.16);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(now); osc.stop(now + 0.16);
+                } else if (type === 'fanfare') {
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const o = ctx.createOscillator();
+                        const g = ctx.createGain();
+                        o.type = 'triangle';
+                        o.frequency.value = freq;
+                        const t = now + idx * 0.08;
+                        g.gain.setValueAtTime(0.14, t);
+                        g.gain.linearRampToValueAtTime(0.001, t + 0.22);
+                        o.connect(g); g.connect(ctx.destination);
+                        o.start(t); o.stop(t + 0.22);
+                    });
+                } else if (type === 'explosion') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(140, now);
+                    osc.frequency.exponentialRampToValueAtTime(25, now + 0.35);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.4);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(now); osc.stop(now + 0.4);
+                } else if (type === 'pig') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.linearRampToValueAtTime(180, now + 0.12);
+                    osc.frequency.linearRampToValueAtTime(260, now + 0.24);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.28);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(now); osc.stop(now + 0.28);
+                } else if (type === 'v8') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(65, now);
+                    osc.frequency.exponentialRampToValueAtTime(360, now + 0.4);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(now); osc.stop(now + 0.45);
+                } else if (type === 'warp') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(120, now);
+                    osc.frequency.exponentialRampToValueAtTime(2400, now + 0.3);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.32);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(now); osc.stop(now + 0.32);
+                } else if (type === 'sad') {
+                    [246.94, 233.08, 220.00, 196.00].forEach((freq, idx) => {
+                        const o = ctx.createOscillator();
+                        const g = ctx.createGain();
+                        o.type = 'sawtooth';
+                        o.frequency.value = freq;
+                        const t = now + idx * 0.16;
+                        g.gain.setValueAtTime(0.12, t);
+                        g.gain.linearRampToValueAtTime(0.001, t + 0.2);
+                        o.connect(g); g.connect(ctx.destination);
+                        o.start(t); o.stop(t + 0.2);
+                    });
+                } else if (type === 'sub') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(160, now);
+                    osc.frequency.exponentialRampToValueAtTime(32, now + 0.7);
+                    gain.gain.setValueAtTime(0.28, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.75);
+                    osc.connect(gain); gain.connect(ctx.destination);
+                    osc.start(now); osc.stop(now + 0.75);
+                }
+            } catch (e) {}
+        };
+
+        // ========================================================= //
+        // 💻 RETRO HACKER MATRIX CYBER TERMINAL (v24.220.0)
+        // ========================================================= //
+        window.openHackerTerminal = function() {
+            haptic(20);
+            const modal = document.getElementById('hacker-terminal-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    const input = document.getElementById('terminal-input');
+                    if (input) input.focus();
+                }, 100);
+            }
+        };
+
+        window.closeHackerTerminal = function() {
+            haptic(10);
+            const modal = document.getElementById('hacker-terminal-modal');
+            if (modal) modal.classList.add('hidden');
+        };
+
+        window.submitTerminalCmd = function(e) {
+            if (e) e.preventDefault();
+            const input = document.getElementById('terminal-input');
+            const output = document.getElementById('terminal-output');
+            if (!input || !output) return;
+            const cmd = input.value.trim();
+            input.value = '';
+            if (!cmd) return;
+
+            const userLine = document.createElement('div');
+            userLine.className = 'text-white font-bold';
+            userLine.innerText = `root# ${cmd}`;
+            output.appendChild(userLine);
+
+            const c = cmd.toLowerCase();
+            const resp = document.createElement('div');
+            resp.className = 'text-emerald-300';
+
+            if (c === 'help') {
+                resp.innerHTML = `Verfügbare Befehle:<br>
+• <b class="text-white">eastereggs</b> / <b class="text-white">secrets</b>: Zeigt geheime Wörter<br>
+• <b class="text-white">stats</b> / <b class="text-white">status</b>: Cyber Telemetriedaten<br>
+• <b class="text-white">matrix</b>: Startet Matrix Code-Regen<br>
+• <b class="text-white">arcade</b>: Öffnet Piggy Cyber Dash Arcade<br>
+• <b class="text-white">snake</b>: Öffnet Neon Cyber Snake<br>
+• <b class="text-white">soundboard</b>: Öffnet SFX Soundboard<br>
+• <b class="text-white">zerog</b>: Schaltet Schwerelosigkeit an/aus<br>
+• <b class="text-white">crt</b>: Schaltet CRT TV-Filter um<br>
+• <b class="text-white">star</b>: Aktiviert Super Star Power<br>
+• <b class="text-white">roll</b>: Führt einen 360° Barrel Roll aus<br>
+• <b class="text-white">pet</b>: Ruft das Piggy Desktop-Maskottchen<br>
+• <b class="text-white">clear</b>: Bildschirm leeren<br>
+• <b class="text-white">exit</b>: Terminal schließen`;
+            } else if (c === 'eastereggs' || c === 'secrets') {
+                resp.innerHTML = `🎮 GEHEIME CODES & TRIGGER:<br>
+Einfach im Spotlight-Suchfeld (⌘K) oder auf der Tastatur tippen:<br>
+• <span class="text-amber-300">arcade</span>, <span class="text-amber-300">snake</span>, <span class="text-amber-300">soundboard</span>, <span class="text-amber-300">hack</span><br>
+• <span class="text-amber-300">matrix</span>, <span class="text-amber-300">party</span>, <span class="text-amber-300">synth</span>, <span class="text-amber-300">fps</span><br>
+• <span class="text-amber-300">zerog</span>, <span class="text-amber-300">crt</span>, <span class="text-amber-300">star</span>, <span class="text-amber-300">roll</span><br>
+• <span class="text-amber-300">pet</span>, <span class="text-amber-300">forza</span>, <span class="text-amber-300">oink</span>, <span class="text-amber-300">fokus</span>`;
+            } else if (c === 'stats' || c === 'status') {
+                resp.innerHTML = `[SYS TELEMETRY]<br>
+Node: GP-MAINFRAME-V24<br>
+Kernel: 6.8.0-gp-cyberpunk #1 SMP<br>
+CPU Load: 4.2% [OK]<br>
+Memory: 412MB / 4096MB [OK]<br>
+Piggy Core Temp: 37.2°C (Optimal)<br>
+Firewall: ACTIVE • Stealth Mode ON<br>
+Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
+            } else if (c === 'clear') {
+                output.innerHTML = '';
+                return;
+            } else if (c === 'matrix') {
+                launchMatrixRain();
+                resp.innerText = '[OK] Matrix rain executed.';
+            } else if (c === 'arcade') {
+                openPiggyArcade();
+                resp.innerText = '[OK] Retro Piggy Arcade opened.';
+            } else if (c === 'snake') {
+                openSnakeGame();
+                resp.innerText = '[OK] Neon Cyber Snake opened.';
+            } else if (c === 'soundboard') {
+                openSoundboard();
+                resp.innerText = '[OK] Cyber Soundboard opened.';
+            } else if (c === 'zerog' || c === 'gravity') {
+                launchZeroGravity();
+                resp.innerText = '[OK] Zero Gravity toggled.';
+            } else if (c === 'crt') {
+                toggleCrtMode();
+                resp.innerText = '[OK] CRT mode toggled.';
+            } else if (c === 'star') {
+                launchStarPower();
+                resp.innerText = '[OK] Star Power activated!';
+            } else if (c === 'roll') {
+                triggerBarrelRoll();
+                resp.innerText = '[OK] Doing a barrel roll!';
+            } else if (c === 'pet') {
+                togglePiggyPet();
+                resp.innerText = '[OK] Piggy Pet mascot toggled.';
+            } else if (c === 'sudo') {
+                resp.innerHTML = '<span class="text-rose-400 font-bold">Nice try, Neo! User is not in the sudoers file. This incident will be reported to GamingPig. 🐽</span>';
+            } else if (c === 'exit') {
+                closeHackerTerminal();
+                return;
+            } else {
+                resp.innerHTML = `<span class="text-rose-400">Befehl '${cmd}' nicht erkannt. Tippe <b class="text-white">help</b> für Hilfe.</span>`;
+            }
+
+            output.appendChild(resp);
+            output.scrollTop = output.scrollHeight;
+        };
+
+        // ========================================================= //
+        // 🌌 ZERO GRAVITY MODE (v24.220.0)
+        // ========================================================= //
+        window.launchZeroGravity = function() {
+            haptic(25);
+            document.body.classList.add('zero-gravity-mode');
+            const banner = document.getElementById('zero-gravity-banner');
+            if (banner) banner.classList.remove('hidden');
+            playSoundboardSfx('warp');
+            showToast('🌌 ZERO GRAVITY AKTIVIERT: Schwerelosigkeit!', 'info');
+        };
+
+        window.resetGravity = function() {
+            haptic(15);
+            document.body.classList.remove('zero-gravity-mode');
+            const banner = document.getElementById('zero-gravity-banner');
+            if (banner) banner.classList.add('hidden');
+            playSoundboardSfx('sub');
+            showToast('🌍 Erdanziehungskraft normalisiert.', 'success');
+        };
+
+        // ========================================================= //
+        // 📺 CRT RETRO TV SCANLINES MODE (v24.220.0)
+        // ========================================================= //
+        window.toggleCrtMode = function() {
+            haptic(20);
+            const active = document.body.classList.toggle('crt-retro-mode');
+            playSoundboardSfx('laser');
+            showToast(active ? '📺 CRT Retro-Fernseher Scanlines: AN' : '📺 CRT Scanlines: AUS', 'info');
+        };
+
+        // ========================================================= //
+        // 🔄 BARREL ROLL 360° SPIN (v24.220.0)
+        // ========================================================= //
+        window.triggerBarrelRoll = function() {
+            haptic(30);
+            document.body.classList.add('barrel-roll-active');
+            playSoundboardSfx('v8');
+            showToast('🔄 DO A BARREL ROLL! 360° SPIN!', 'success');
+            setTimeout(() => {
+                document.body.classList.remove('barrel-roll-active');
+            }, 1250);
+        };
+
+        // ========================================================= //
+        // ⭐ SUPER STAR POWER / GODMODE (v24.220.0)
+        // ========================================================= //
+        window.launchStarPower = function() {
+            haptic(35);
+            document.body.classList.add('star-power-mode');
+            playSoundboardSfx('fanfare');
+            showToast('⭐ SUPER STAR POWER AKTIVIERT! UNBESIEGBAR! ⭐', 'success');
+            setTimeout(() => {
+                document.body.classList.remove('star-power-mode');
+                showToast('✨ Star Power abgeklungen.', 'info');
+            }, 10000);
+        };
+
+        // ========================================================= //
+        // 🐷 PIGGY PET DESKTOP MASCOT (v24.220.0)
+        // ========================================================= //
+        window.togglePiggyPet = function() {
+            haptic(20);
+            const pet = document.getElementById('piggy-pet-avatar');
+            if (!pet) return;
+            const isHidden = pet.classList.toggle('hidden');
+            if (!isHidden) {
+                interactWithPiggyPet();
+                showToast('🐷 Piggy Pet Desktop-Buddy ist da!', 'success');
+            } else {
+                showToast('🐷 Piggy Pet schläft jetzt.', 'info');
+            }
+        };
+
+        const piggyPetQuotes = [
+            'Oink! 🎮 Bereit für eine Runde Cyber Dash?',
+            'Tippe mal "snake" oder "matrix" ein! ✨',
+            'Hast du das geheime Soundboard gefunden? 🎛️',
+            'Schwerelosigkeit aktiviert man mit "zerog"! 🌌',
+            'Oink oink! Ich passe auf deinen Highscore auf! 🐷',
+            'Gamingpig approved! 🚀 Let\'s go!',
+            'Drücke ⌘K für die Cyber Spotlight-Suche!'
+        ];
+        let piggyBubbleTimer = null;
+
+        window.interactWithPiggyPet = function() {
+            haptic(15);
+            playSoundboardSfx('pig');
+            const bubble = document.getElementById('piggy-pet-bubble');
+            if (!bubble) return;
+            const quote = piggyPetQuotes[Math.floor(Math.random() * piggyPetQuotes.length)];
+            bubble.innerText = quote;
+            bubble.classList.remove('hidden');
+            clearTimeout(piggyBubbleTimer);
+            piggyBubbleTimer = setTimeout(() => {
+                bubble.classList.add('hidden');
+            }, 3500);
         };
 
         let typedBuffer = '';
@@ -22560,15 +23362,15 @@ let shareCardLoading;
                 highlights: {
                     de: [
                         '🕹️ Vollwertiges 8-Bit "Piggy Cyber Dash" Arcade-Minispiel mit Highscore & Web-Audio SFX',
-                        '⚡ Cyberpunk Live FPS & Performance HUD Monitor (60/120 Hz, Frame-Time & Ping)',
-                        '🎹 Web Audio 8-Bit Chiptune Synthesizer mit dynamischem Visualizer-Banner',
-                        '⚙️ Komplett überarbeitetes Einstellungs-Zentrum mit Subpage-Drilldown & Schnellsuche'
+                        '🐍 Neon Cyber Snake: Retro Tron Schlangen-Minispiel mit Touch D-Pad Steuerung',
+                        '🎛️ Cyber SFX Soundboard: 9-Pad Web Audio Synthesizer (Coin, Blaster, Fanfare, V8, 808 Drop)',
+                        '💻 Hacker Matrix Terminal: Interaktive CRT Root-Konsole mit Cheatcodes & Telemetrie'
                     ],
                     en: [
                         '🕹️ Full 8-bit "Piggy Cyber Dash" arcade minigame with high score & Web Audio SFX',
-                        '⚡ Cyberpunk Live FPS & Performance HUD Monitor (60/120 Hz, frame-time & ping)',
-                        '🎹 Web Audio 8-bit chiptune synthesizer with dynamic visualizer banner',
-                        '⚙️ Redesigned Settings Center with category drilldown & instant search'
+                        '🐍 Neon Cyber Snake: Retro Tron snake minigame with touch D-Pad controls',
+                        '🎛️ Cyber SFX Soundboard: 9-pad Web Audio synthesizer (Coin, Blaster, Fanfare, V8, 808 Drop)',
+                        '💻 Hacker Matrix Terminal: Interactive CRT root console with cheatcodes & telemetry'
                     ],
                     es: [
                         '🕹️ Minijuego arcade retro "Piggy Cyber Dash" con efectos de sonido y puntuación',
@@ -23971,6 +24773,8 @@ let shareCardLoading;
         };
 
         try {
+            const _urlQAParam = new URLSearchParams(window.location.search).get('qa_unlocked') === '1';
+            const _sessionQA = sessionStorage.getItem('gp_qa_auth') === 'true';
             window.SETTINGS_LOCKED_PENDING_ADMIN = false;
         } catch(e) {
             window.SETTINGS_LOCKED_PENDING_ADMIN = false;
