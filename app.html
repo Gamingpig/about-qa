@@ -8733,9 +8733,9 @@ html.glass-strat-fluid:not(.gp-android) :is(#global-settings-menu, #lyrics-setti
 body.low-end :is(
   .glass-card:not(#back-to-top), #header-section, #footer-bubble,
   #footer-expandable-menu, #main-music-card, #mini-player-toggle,
-  .modal-content, #global-settings-menu, #lyrics-settings-menu, #tutorial-box,
+  .modal-content, #global-settings-menu, #lyrics-settings-menu,
   #language-picker-box, #sharecard-picker-box, #command-palette, #dynamic-island,
-  #whats-new-epic-modal>div, #privacy-update-modal>div, #interactive-quest-hud>div,
+  #whats-new-epic-modal>div, #privacy-update-modal>div,
   #spotify-wrapped-modal>div, #cp-trigger
 ) {
   -webkit-backdrop-filter: none !important;
@@ -8746,9 +8746,9 @@ body.low-end :is(
 html:not(.dark) body.low-end :is(
   .glass-card:not(#back-to-top), #header-section, #footer-bubble,
   #footer-expandable-menu, #main-music-card, #mini-player-toggle,
-  .modal-content, #global-settings-menu, #lyrics-settings-menu, #tutorial-box,
+  .modal-content, #global-settings-menu, #lyrics-settings-menu,
   #language-picker-box, #sharecard-picker-box, #command-palette, #dynamic-island,
-  #whats-new-epic-modal>div, #privacy-update-modal>div, #interactive-quest-hud>div,
+  #whats-new-epic-modal>div, #privacy-update-modal>div,
   #spotify-wrapped-modal>div, #cp-trigger
 ) {
   background: rgba(255, 255, 255, 0.50) !important;
@@ -8762,13 +8762,55 @@ body.low-end #lyrics-settings-menu#lyrics-settings-menu {
   backdrop-filter: none !important;
 }
 
+/* --- 8b. Tutorial & Quest HUD Performance Mode: 100% Solid & Opaque Background --- */
+body.low-end #tutorial-box,
+body.low-end #interactive-quest-hud > div,
+html.gp-android-lowend #tutorial-box,
+html.gp-android-lowend #interactive-quest-hud > div {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background: #0f172a !important;
+  background-color: #0f172a !important;
+  border: 2px solid #3b82f6 !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
+  color: #f8fafc !important;
+}
+html:not(.dark) body.low-end #tutorial-box,
+html:not(.dark) body.low-end #interactive-quest-hud > div,
+html.gp-android-lowend:not(.dark) #tutorial-box,
+html.gp-android-lowend:not(.dark) #interactive-quest-hud > div {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border: 2px solid #3b82f6 !important;
+  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(15, 23, 42, 0.1) !important;
+  color: #0f172a !important;
+}
+body.low-end #tutorial-box #tutorial-title,
+html.gp-android-lowend #tutorial-box #tutorial-title {
+  color: #ffffff !important;
+}
+html:not(.dark) body.low-end #tutorial-box #tutorial-title,
+html.gp-android-lowend:not(.dark) #tutorial-box #tutorial-title {
+  color: #0f172a !important;
+}
+body.low-end #tutorial-box #tutorial-text,
+html.gp-android-lowend #tutorial-box #tutorial-text {
+  color: #e2e8f0 !important;
+}
+html:not(.dark) body.low-end #tutorial-box #tutorial-text,
+html.gp-android-lowend:not(.dark) #tutorial-box #tutorial-text {
+  color: #334155 !important;
+}
+
 /* --- 9. Android low-end: all glass off --- */
 html.gp-android-lowend :is(
   .glass-card, #header-section, #footer-bubble,
   #footer-expandable-menu, #main-music-card, #mini-player-toggle,
-  .modal-content, #global-settings-menu, #lyrics-settings-menu, #tutorial-box,
+  .modal-content, #global-settings-menu, #lyrics-settings-menu,
   #language-picker-box, #sharecard-picker-box, #command-palette, #dynamic-island,
-  #whats-new-epic-modal>div, #privacy-update-modal>div, #interactive-quest-hud>div,
+  #whats-new-epic-modal>div, #privacy-update-modal>div,
   #spotify-wrapped-modal>div, #cp-trigger
 ) {
   -webkit-backdrop-filter: none !important;
@@ -8780,9 +8822,9 @@ html.gp-android-lowend :is(
 html.gp-android-lowend:not(.dark) :is(
   .glass-card, #header-section, #footer-bubble,
   #footer-expandable-menu, #main-music-card, #mini-player-toggle,
-  .modal-content, #global-settings-menu, #lyrics-settings-menu, #tutorial-box,
+  .modal-content, #global-settings-menu, #lyrics-settings-menu,
   #language-picker-box, #sharecard-picker-box, #command-palette, #dynamic-island,
-  #whats-new-epic-modal>div, #privacy-update-modal>div, #interactive-quest-hud>div,
+  #whats-new-epic-modal>div, #privacy-update-modal>div,
   #spotify-wrapped-modal>div, #cp-trigger
 ) {
   background: rgba(255, 255, 255, 0.55) !important;
@@ -10983,7 +11025,7 @@ html.gp-android:not(.dark) #ui-controls {
                 <div class="min-w-0">
                     <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
                         <span id="quest-title-text" class="truncate" data-i18n="quest_title">Gamingpig Quest</span>
-                        <span id="quest-badge-count" class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-white/10 text-slate-200 border border-white/10 shrink-0">0/4</span>
+                        <span id="quest-badge-count" class="text-[9px] font-mono px-1.5 py-0.5 rounded-full bg-white/10 text-slate-200 border border-white/10 shrink-0">0/5</span>
                     </h3>
                     <p id="quest-xp-display" class="text-[10px] text-amber-300 font-semibold flex items-center gap-1">
                         <span>⚡ 0 XP</span> <span class="text-slate-400 font-medium">• Lvl 1 Entdecker</span>
@@ -11051,9 +11093,19 @@ html.gp-android:not(.dark) #ui-controls {
                 </div>
                 <span id="quest-status-music" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-800 text-slate-400 border border-white/5 shrink-0">Offen</span>
             </div>
+
+            <div id="quest-item-minigame" class="flex items-center justify-between p-2 rounded-xl bg-white/5 border border-white/10 transition-all cursor-pointer hover:bg-white/10" onclick="openPiggyArcade(); haptic(20);">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="text-sm shrink-0">🕹️</span>
+                    <div class="min-w-0">
+                        <div id="quest-text-minigame" data-i18n="quest_minigame_task" class="text-[11px] font-bold text-slate-200 truncate">5. Minispiel / Easter Egg testen</div>
+                        <div class="text-[9px] text-amber-300/80 font-mono">+250 XP</div>
+                    </div>
+                </div>
+                <span id="quest-status-minigame" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-800 text-slate-400 border border-white/5 shrink-0">Offen</span>
+            </div>
         </div>
     </div>
-</div>
 </div>
 
     <script>
@@ -11250,7 +11302,9 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step7_title: 'Installier mich als App!',
                 t_step7_text: 'Diese Seite erzeugt sich ihr eigenes App-Icon und lässt sich auf Android/Chrome per Klick als richtige App installieren (kein Store nötig) - auf dem iPhone geht das manuell über "Zum Home-Bildschirm" im Teilen-Menü. Fühlt sich danach an wie eine native App, ganz ohne Browserleiste.',
                 t_step8_title: 'Psst... 🤫 Ein Geheimnis',
-                t_step8_text: 'Diese Seite hat viele versteckte Easter Eggs. Tipp: Probier den klassischen Konami-Code (↑↑↓↓←→←→BA auf der Tastatur), oder tippe eins dieser Wörter einfach los: oink, forza, fokus, matrix, arcade, synth, party, fps. Doppelklick auf das Plattencover löst einen DJ-Scratch aus! Kein Keyboard zur Hand (z.B. am Handy)? Die Wörter funktionieren auch im Spotlight-Suchfeld (⌘K-Button). Ganz unten im Footer findest du übrigens auch den "Was ist neu?"-Link mit allen bisherigen Updates dieser Seite. Viel Spaß beim Suchen!',
+                t_step8_text: 'Diese Seite hat viele versteckte Easter Eggs. Tipp: Probier den klassischen Konami-Code (↑↑↓↓←→←→BA auf der Tastatur), oder tippe eins dieser Wörter einfach los: oink, forza, fokus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet. Doppelklick auf das Plattencover löst einen DJ-Scratch aus! Kein Keyboard zur Hand (z.B. am Handy)? Die Wörter funktionieren auch im Spotlight-Suchfeld (⌘K-Button). Ganz unten im Footer findest du übrigens auch den "Was ist neu?"-Link mit allen bisherigen Updates dieser Seite. Viel Spaß beim Suchen!',
+                t_step9_title: '🕹️ Retro Arcade & Minispiele',
+                t_step9_text: 'Neu in v24.220: Spiele "Piggy Cyber Dash" oder "Neon Cyber Snake", teste das 9-Pad SFX Soundboard oder das Hacker-Terminal! Alle Minispiele lassen sich direkt über Spotlight (⌘K) oder geheime Wörter starten.',
                 toast_install_ios: '📲 Tippe unten auf "Teilen" ⬆️ und dann auf "Zum Home-Bildschirm"',
                 toast_install_android_menu: '📲 Tippe oben rechts auf die drei Punkte ⋮ und wähle "App installieren" bzw. "Zum Startbildschirm hinzufügen"',
                 toast_install_desktop: '📲 Klicke oben rechts in der Adressleiste auf das Installieren-Symbol, oder öffne das Menü ⋮ → "Gamingpig installieren..."',
@@ -11477,7 +11531,9 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step7_title: 'Install me as an app!',
                 t_step7_text: 'This site generates its own app icon and can be installed as a real app on Android/Chrome with one click (no store needed) - on iPhone that\'s done manually via "Add to Home Screen" in the share menu. Afterwards it feels like a native app, with no browser bar at all.',
                 t_step8_title: "Psst... 🤫 a secret",
-                t_step8_text: "This site has many hidden easter eggs. Hint: try the classic Konami Code (↑↑↓↓←→←→BA on your keyboard), or type one of these words: oink, forza, focus, matrix, arcade, synth, party, fps. Double-clicking the album cover triggers a DJ scratch! No keyboard handy? The words also work in the Spotlight search box (⌘K button). Enjoy!",
+                t_step8_text: "This site has many hidden easter eggs. Hint: try the classic Konami Code (↑↑↓↓←→←→BA on your keyboard), or type one of these words: oink, forza, focus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet. Double-clicking the album cover triggers a DJ scratch! No keyboard handy? The words also work in the Spotlight search box (⌘K button). Enjoy!",
+                t_step9_title: "🕹️ Retro Arcade & Minigames",
+                t_step9_text: "New in v24.220: Play 'Piggy Cyber Dash' or 'Neon Cyber Snake', test the 9-pad SFX soundboard or the hacker matrix terminal! All games launch instantly via Spotlight search (⌘K) or secret words.",
                 toast_install_ios: '📲 Tap "Share" ⬆️ below, then "Add to Home Screen"',
                 toast_install_android_menu: '📲 Tap the three dots ⋮ top right and choose "Install app" / "Add to Home screen"',
                 toast_install_desktop: '📲 Click the install icon in the address bar, or open the ⋮ menu → "Install Gamingpig..."',
@@ -11732,7 +11788,9 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step7_title: '¡Instálame como app!',
                 t_step7_text: 'Esta página genera su propio icono de app y se puede instalar como una app de verdad en Android/Chrome con un clic (sin tienda necesaria) - en iPhone se hace manualmente con "Añadir a pantalla de inicio" en el menú compartir. Después se siente como una app nativa, sin barra de navegador.',
                 t_step8_title: 'Psst... 🤫 un secreto',
-                t_step8_text: 'Esta página tiene algunos easter eggs escondidos. Pista: prueba el clásico Código Konami (↑↑↓↓←→←→BA en el teclado), o simplemente escribe una de estas palabras: oink, forza, foco, matrix. Hacer clic 5 veces rápido en el título grande también vale la pena. ¿Sin teclado a mano (por ejemplo en el móvil)? Las palabras también funcionan si las escribes en el buscador Spotlight (botón ⌘K). Por cierto, abajo en el pie de página también encontrarás el enlace "¿Qué hay de nuevo?" con todas las actualizaciones anteriores de esta página. ¡Diviértete buscando!',
+                t_step8_text: 'Esta página tiene muchos easter eggs escondidos. Pista: prueba el clásico Código Konami (↑↑↓↓←→←→BA en el teclado), o escribe una de estas palabras: oink, forza, foco, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet. ¡Doble clic en la portada activa un scratch de DJ! ¿Sin teclado a mano? Las palabras también funcionan en el buscador Spotlight (botón ⌘K). ¡Diviértete buscando!',
+                t_step9_title: '🕹️ Retro Arcade y Minijuegos',
+                t_step9_text: 'Nuevo en v24.220: ¡Juega a "Piggy Cyber Dash" o "Neon Cyber Snake", prueba la mesa de sonido SFX de 9 pads o el terminal hacker! Todos los juegos se inician desde la búsqueda Spotlight (⌘K) o palabras secretas.',
                 toast_install_ios: '📲 Toca "Compartir" ⬆️ abajo y luego "Añadir a pantalla de inicio"',
                 toast_install_android_menu: '📲 Toca los tres puntos ⋮ arriba a la derecha y elige "Instalar app" o "Añadir a pantalla de inicio"',
                 toast_install_desktop: '📲 Haz clic en el icono de instalar en la barra de direcciones, o abre el menú ⋮ → "Instalar Gamingpig..."',
@@ -11971,7 +12029,9 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step7_title: 'Installe-moi comme appli !',
                 t_step7_text: "Ce site génère sa propre icône d'application et peut être installé comme une vraie appli sur Android/Chrome en un clic (pas besoin de store) - sur iPhone ça se fait manuellement via \"Sur l'écran d'accueil\" dans le menu de partage. Après ça, on dirait une vraie appli native, sans aucune barre de navigateur.",
                 t_step8_title: 'Psst... 🤫 un secret',
-                t_step8_text: "Ce site cache quelques easter eggs. Indice : essaie le classique Code Konami (↑↑↓↓←→←→BA au clavier), ou tape simplement un de ces mots : oink, forza, focus, matrix. Cliquer 5 fois rapidement sur le grand titre vaut aussi le coup. Pas de clavier sous la main (sur mobile par exemple) ? Les mots fonctionnent aussi si tu les tapes dans la recherche Spotlight (bouton ⌘K). Au fait, en bas du pied de page tu trouveras aussi le lien \"Quoi de neuf ?\" avec toutes les mises à jour passées de ce site. Amuse-toi bien à chercher !",
+                t_step8_text: "Ce site cache de nombreux easter eggs. Indice : essaie le classique Code Konami (↑↑↓↓←→←→BA au clavier), ou tape un de ces mots : oink, forza, focus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet. Double-cliquer sur la pochette déclenche un scratch DJ ! Pas de clavier sous la main ? Les mots fonctionnent aussi dans la recherche Spotlight (bouton ⌘K). Amuse-toi bien à chercher !",
+                t_step9_title: '🕹️ Arcade Rétro & Mini-jeux',
+                t_step9_text: 'Nouveau dans v24.220 : Joue à "Piggy Cyber Dash" ou "Neon Cyber Snake", teste la boîte à sons SFX à 9 pads ou le terminal hacker ! Tous les jeux se lancent directement via Spotlight (⌘K) ou des mots secrets.',
                 toast_install_ios: '📲 Appuie sur "Partager" ⬆️ en bas, puis "Sur l\'écran d\'accueil"',
                 toast_install_android_menu: '📲 Appuie sur les trois points ⋮ en haut à droite et choisis "Installer l\'appli" / "Ajouter à l\'écran d\'accueil"',
                 toast_install_desktop: '📲 Clique sur l\'icône d\'installation dans la barre d\'adresse, ou ouvre le menu ⋮ → "Installer Gamingpig..."',
@@ -12172,7 +12232,9 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step7_title: 'Instale como app!',
                 t_step7_text: 'Instale diretamente como PWA na tela inicial.',
                 t_step8_title: 'Psst... 🤫 um segredo',
-                t_step8_text: 'Descubra os easter eggs escondidos!',
+                t_step8_text: 'Esta página tem muitos easter eggs escondidos! Experimente o clássico Código Konami (↑↑↓↓←→←→BA) ou digite: oink, forza, foco, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet. Toque duplo na capa do álbum ativa um scratch DJ! Sem teclado? Use o campo de busca Spotlight (botão ⌘K). Divirta-se procurando!',
+                t_step9_title: '🕹️ Retro Arcade & Minijogos',
+                t_step9_text: 'Novo na v24.220: Jogue "Piggy Cyber Dash" ou "Neon Cyber Snake", teste a mesa de som SFX com 9 pads ou o terminal hacker! Todos os jogos abrem direto pela busca Spotlight (⌘K) ou palavras secretas.',
                 toast_install_ios: '📲 Toque em Compartilhar ⬆️ e depois em "Adicionar à Tela de Início"',
                 toast_install_android_menu: '📲 Toque nos três pontos ⋮ e escolha "Instalar aplicativo"',
                 toast_install_desktop: '📲 Instale o app pela barra de endereços',
@@ -12373,7 +12435,9 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step7_title: 'Beni uygulama olarak yükle!',
                 t_step7_text: 'Tek tıkla doğrudan ana ekranına PWA olarak yükle.',
                 t_step8_title: 'Şşşt... 🤫 bir sır',
-                t_step8_text: 'Gizli sürprizleri keşfet!',
+                t_step8_text: 'Bu sayfanın birçok gizli sürprizi var! Klasik Konami Kodunu (↑↑↓↓←→←→BA) dene veya şunları yaz: oink, forza, fokus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet. Albüm kapağına çift tıklamak DJ scratch başlatır! Klavyen yok mu? Spotlight arama kutusunu (⌘K butonu) kullanabilirsin. İyi eğlenceler!',
+                t_step9_title: '🕹️ Retro Arcade & Minioyunlar',
+                t_step9_text: 'v24.220 sürümünde yeni: "Piggy Cyber Dash" veya "Neon Cyber Snake" oyna, 9 pedli SFX ses panosunu veya hacker terminalini dene! Tüm oyunlar Spotlight araması (⌘K) veya gizli kelimelerle açılır.',
                 toast_install_ios: '📲 Aşağıdaki Paylaş ⬆️ butonuna ve ardından "Ana Ekrana Ekle"ye dokun',
                 toast_install_android_menu: '📲 Sağ üstteki üç noktaya ⋮ dokun ve "Uygulamayı yükle"yi seç',
                 toast_install_desktop: '📲 Adres çubuğundaki yükle simgesine tıkla',
@@ -12557,6 +12621,7 @@ html.gp-android:not(.dark) #ui-controls {
                 quest_settings_task: "2. Einstellungen öffnen",
                 quest_search_task: "3. Hyper-Suche (⌘K / Suchen)",
                 quest_music_task: "4. StandBy / Ambient starten",
+                quest_minigame_task: "5. Minispiel / Easter Egg testen",
                 quest_level_scout: "Entdecker 🚀",
                 quest_level_explorer: "Explorer 🌟",
                 quest_level_master: "Meister 👑",
@@ -12628,6 +12693,7 @@ html.gp-android:not(.dark) #ui-controls {
                 quest_settings_task: "2. Open settings",
                 quest_search_task: "3. Hyper-Search (⌘K / Search)",
                 quest_music_task: "4. Start StandBy / Ambient",
+                quest_minigame_task: "5. Try a minigame / easter egg",
                 quest_level_scout: "Scout 🚀",
                 quest_level_explorer: "Explorer 🌟",
                 quest_level_master: "Master 👑",
@@ -12699,6 +12765,7 @@ html.gp-android:not(.dark) #ui-controls {
                 quest_settings_task: "2. Abrir configuración",
                 quest_search_task: "3. Híper búsqueda (⌘K / Buscar)",
                 quest_music_task: "4. Iniciar StandBy / Ambiente",
+                quest_minigame_task: "5. Probar minijuego / Easter egg",
                 quest_level_scout: "Explorador 🚀",
                 quest_level_explorer: "Aventurero 🌟",
                 quest_level_master: "Maestro 👑",
@@ -12771,6 +12838,7 @@ html.gp-android:not(.dark) #ui-controls {
                 quest_settings_task: "2. Ouvrir les paramètres",
                 quest_search_task: "3. Hyper-recherche (⌘K / Rechercher)",
                 quest_music_task: "4. Démarrer StandBy / Ambiance",
+                quest_minigame_task: "5. Tester un mini-jeu / Easter egg",
                 quest_level_scout: "Éclaireur 🚀",
                 quest_level_explorer: "Explorateur 🌟",
                 quest_level_master: "Maître 👑",
@@ -12879,6 +12947,7 @@ html.gp-android:not(.dark) #ui-controls {
                 quest_settings_task: "2. Abrir configurações",
                 quest_search_task: "3. Hiperbusca (⌘K / Buscar)",
                 quest_music_task: "4. Iniciar StandBy / Ambiente",
+                quest_minigame_task: "5. Testar minijogo / Easter egg",
                 quest_level_scout: "Explorador 🚀",
                 quest_level_explorer: "Aventureiro 🌟",
                 quest_level_master: "Mestre 👑",
@@ -12987,6 +13056,7 @@ html.gp-android:not(.dark) #ui-controls {
                 quest_settings_task: "2. Ayarları aç",
                 quest_search_task: "3. Hiper Arama (⌘K / Ara)",
                 quest_music_task: "4. StandBy / Ambiyansı başlat",
+                quest_minigame_task: "5. Minioyun / Paskalya yumurtasını dene",
                 quest_level_scout: "Kâşif 🚀",
                 quest_level_explorer: "Gezgin 🌟",
                 quest_level_master: "Usta 👑",
@@ -13600,6 +13670,7 @@ html.gp-android:not(.dark) #ui-controls {
                 { targetId: 'support-section', title: t('t_step_support_title'), text: t('t_step_support_text') },
                 { targetId: 'cp-trigger', title: t('t_step6_title'), text: t('t_step6_text') },
                 { targetId: 'pwa-install-btn', title: t('t_step7_title'), text: t('t_step7_text') },
+                { targetId: 'cp-trigger', title: t('t_step9_title'), text: t('t_step9_text') },
                 { targetId: 'footer-section', title: t('t_step8_title'), text: t('t_step8_text') }
             ];
         }
@@ -18165,7 +18236,8 @@ let shareCardLoading;
             card_opened: false,
             settings_opened: false,
             search_tested: false,
-            standby_or_music: false
+            standby_or_music: false,
+            minigame_tested: false
         };
 
         function updateQuestHudUI() {
@@ -18193,7 +18265,7 @@ let shareCardLoading;
             const xpDisplay = document.getElementById('quest-xp-display');
             if (xpDisplay) {
                 const xp = completedCount * 250;
-                const level = completedCount >= 4 ? t('quest_level_master', 'Meister 👑') : (completedCount >= 2 ? t('quest_level_explorer', 'Explorer 🌟') : t('quest_level_scout', 'Entdecker 🚀'));
+                const level = completedCount >= 5 ? t('quest_level_master', 'Meister 👑') : (completedCount >= 3 ? t('quest_level_explorer', 'Explorer 🌟') : t('quest_level_scout', 'Entdecker 🚀'));
                 xpDisplay.innerHTML = '<span>⚡ ' + xp + ' XP</span> <span class="text-slate-400 font-medium">• Lvl ' + (completedCount + 1) + ' ' + level + '</span>';
             }
 
@@ -18213,7 +18285,8 @@ let shareCardLoading;
                 card_opened: { textId: 'quest-text-card', key: 'quest_card_task', def: '1. Real-Talk Karte antippen' },
                 settings_opened: { textId: 'quest-text-settings', key: 'quest_settings_task', def: '2. Einstellungen öffnen' },
                 search_tested: { textId: 'quest-text-search', key: 'quest_search_task', def: '3. Hyper-Suche (⌘K / Suchen)' },
-                standby_or_music: { textId: 'quest-text-music', key: 'quest_music_task', def: '4. StandBy / Ambient starten' }
+                standby_or_music: { textId: 'quest-text-music', key: 'quest_music_task', def: '4. StandBy / Ambient starten' },
+                minigame_tested: { textId: 'quest-text-minigame', key: 'quest_minigame_task', def: '5. Minispiel / Easter Egg testen' }
             };
 
             for (const key in textMapping) {
@@ -18226,7 +18299,8 @@ let shareCardLoading;
                 card_opened: { item: 'quest-item-card', status: 'quest-status-card' },
                 settings_opened: { item: 'quest-item-settings', status: 'quest-status-settings' },
                 search_tested: { item: 'quest-item-search', status: 'quest-status-search' },
-                standby_or_music: { item: 'quest-item-music', status: 'quest-status-music' }
+                standby_or_music: { item: 'quest-item-music', status: 'quest-status-music' },
+                minigame_tested: { item: 'quest-item-minigame', status: 'quest-status-minigame' }
             };
 
             for (const key in mapping) {
@@ -18307,12 +18381,13 @@ let shareCardLoading;
         window.updateQuestTargetGlows = function() {
             document.querySelectorAll('.quest-highlight-target').forEach(el => el.classList.remove('quest-highlight-target'));
             if (!interactiveTutorialActive) return;
-            const taskKeys = ['card_opened', 'settings_opened', 'search_tested', 'standby_or_music'];
+            const taskKeys = ['card_opened', 'settings_opened', 'search_tested', 'standby_or_music', 'minigame_tested'];
             const targets = {
                 card_opened: [document.getElementById('cards-section')],
                 settings_opened: [document.getElementById('settings-global-toggle')],
                 search_tested: [document.getElementById('cp-trigger')],
-                standby_or_music: [document.getElementById('standby-toggle'), document.getElementById('main-music-card')].filter(Boolean)
+                standby_or_music: [document.getElementById('standby-toggle'), document.getElementById('main-music-card')].filter(Boolean),
+                minigame_tested: [document.getElementById('cp-trigger')]
             };
             for (const key of taskKeys) {
                 if (!interactiveTutorialTasks[key]) {
@@ -18477,7 +18552,8 @@ let shareCardLoading;
                 card_opened: false,
                 settings_opened: false,
                 search_tested: false,
-                standby_or_music: false
+                standby_or_music: false,
+                minigame_tested: false
             };
             window.setTutorialCompleted(false);
             updateQuestHudUI();
@@ -21396,6 +21472,7 @@ let shareCardLoading;
                     konamiProgress = 0;
                     launchConfetti();
                     showToast(t('toast_konami'));
+                    if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
                 }
             } else {
                 konamiProgress = (key === KONAMI_SEQUENCE[0]) ? 1 : 0;
@@ -21408,9 +21485,13 @@ let shareCardLoading;
         // erreichbar - ohne die brauchen Handy-Nutzer ohne Dauer-Tastatur keine Chance,
         // diese Eggs auszulösen) gefüttert werden kann.
         function checkSecretWordBuffer(buffer) {
+            const onEggTriggered = () => {
+                if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
+            };
             if (buffer.endsWith('oink')) {
                 launchEmojiRain(['🐷', '🐽'], 45);
                 showToast(t('toast_oink'));
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('forza')) {
@@ -21422,6 +21503,7 @@ let shareCardLoading;
                     setTimeout(() => car.remove(), 1700);
                 }
                 showToast(t('toast_forza'));
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('fokus') || buffer.endsWith('hyperfokus')) {
@@ -21430,63 +21512,78 @@ let shareCardLoading;
                     setTimeout(() => document.body.classList.remove('hyperfokus-mode'), 3600);
                 }
                 showToast(t('toast_fokus'));
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('matrix')) {
                 launchMatrixRain();
                 showToast(t('toast_matrix'));
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('arcade') || buffer.endsWith('game') || buffer.endsWith('piggy') || buffer.endsWith('retro')) {
                 openPiggyArcade();
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('synth') || buffer.endsWith('beat') || buffer.endsWith('chiptune')) {
                 playRetroSynthArp();
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('party') || buffer.endsWith('disco') || buffer.endsWith('rave')) {
                 launchPartyMode();
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('fps') || buffer.endsWith('hud') || buffer.endsWith('diag')) {
                 toggleFpsHud();
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('scratch') || buffer.endsWith('dj')) {
                 triggerDjScratch();
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('snake') || buffer.endsWith('tron')) {
                 openSnakeGame();
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('soundboard') || buffer.endsWith('sfx') || buffer.endsWith('meme')) {
                 openSoundboard();
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('hack') || buffer.endsWith('terminal') || buffer.endsWith('console') || buffer.endsWith('root')) {
                 openHackerTerminal();
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('gravity') || buffer.endsWith('space') || buffer.endsWith('zerog')) {
                 launchZeroGravity();
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('crt') || buffer.endsWith('vhs') || buffer.endsWith('glitch')) {
                 toggleCrtMode();
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('barrelroll') || buffer.endsWith('roll') || buffer.endsWith('spin')) {
                 triggerBarrelRoll();
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('star') || buffer.endsWith('mario') || buffer.endsWith('godmode')) {
                 launchStarPower();
+                onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('pet') || buffer.endsWith('tamagotchi') || buffer.endsWith('buddy')) {
                 togglePiggyPet();
+                onEggTriggered();
                 return true;
             }
             return false;
@@ -21561,6 +21658,7 @@ let shareCardLoading;
             const modal = document.getElementById('piggy-arcade-modal');
             if (!modal) return;
             haptic(15);
+            if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
             pushOverlayHistory();
             modal.classList.remove('hidden');
             requestAnimationFrame(() => {
@@ -22134,6 +22232,7 @@ let shareCardLoading;
 
         window.openSnakeGame = function() {
             haptic(20);
+            if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
             const modal = document.getElementById('snake-game-modal');
             if (!modal) return;
             modal.classList.remove('hidden');
@@ -22334,6 +22433,7 @@ let shareCardLoading;
         // ========================================================= //
         window.openSoundboard = function() {
             haptic(20);
+            if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
             const modal = document.getElementById('soundboard-modal');
             if (modal) modal.classList.remove('hidden');
         };
@@ -22444,6 +22544,7 @@ let shareCardLoading;
         // ========================================================= //
         window.openHackerTerminal = function() {
             haptic(20);
+            if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
             const modal = document.getElementById('hacker-terminal-modal');
             if (modal) {
                 modal.classList.remove('hidden');
@@ -22655,7 +22756,10 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
         document.addEventListener('keydown', (e) => {
             if (e.key.length !== 1) return;
             typedBuffer = (typedBuffer + e.key.toLowerCase()).slice(-14);
-            if (checkSecretWordBuffer(typedBuffer)) typedBuffer = '';
+            if (checkSecretWordBuffer(typedBuffer)) {
+                if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
+                typedBuffer = '';
+            }
         });
 
         // NEW: Gleiche Wörter auch übers Spotlight-Suchfeld erkennbar (mobile-freundlich!)
@@ -22663,6 +22767,7 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
             cpInputEl.addEventListener('input', (e) => {
                 const val = e.target.value.toLowerCase();
                 if (checkSecretWordBuffer(val)) {
+                    if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
                     e.target.value = '';
                     renderCommandPalette('');
                     setTimeout(() => closeCommandPalette(), 900);
@@ -27115,6 +27220,7 @@ window.setLyricsStyle = function(style) {
                 konamiIndex++;
                 if (konamiIndex === konamiSequence.length) {
                     konamiIndex = 0;
+                    if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
                     showToast('🌌 SECRET UNLOCKED: 3D Spatial Audio Experience!', 3500);
                     setTimeout(() => { window.location.href = 'spatial-audio.html'; }, 1000);
                 }
