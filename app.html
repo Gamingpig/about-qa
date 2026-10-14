@@ -9040,9 +9040,9 @@ html.gp-android:not(.dark) #ui-controls {
 
     <!-- Footer Bubble (fixed, centered between #cp-trigger and #back-to-top) -->
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
-        <span id="footer-established" class="font-bold tracking-tight text-slate-300 whitespace-nowrap">© 2026 GAMINGPIG</span>
+        <span id="footer-established" onclick="handleFooterEasterTap()" title="© 2026 GAMINGPIG (Tippe für Party-Rave! 🪩)" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" class="font-mono font-bold text-pink-400 whitespace-nowrap">v24.215.0</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.215.0 (Tippe 5x für Developer Modus 🤖)" class="font-mono font-bold text-pink-400 whitespace-nowrap cursor-pointer hover:underline">v24.215.0</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9313,9 +9313,14 @@ html.gp-android:not(.dark) #ui-controls {
                 <span id="systems-integration-badge">Systems Integration</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
-            <h1 id="header-main-title" class="text-3xl sm:text-5xl md:text-6xl font-extrabold mb-3 sm:mb-4 py-1 tracking-tighter bg-gradient-to-br from-slate-900 via-slate-800 to-slate-600 dark:from-white dark:via-slate-200 dark:to-slate-400 bg-clip-text text-transparent leading-tight break-words drop-shadow-md">
-                Über Gamingpig
-            </h1>
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
+                <h1 id="header-main-title" class="text-3xl sm:text-5xl md:text-6xl font-extrabold py-1 tracking-tighter bg-gradient-to-br from-slate-900 via-slate-800 to-slate-600 dark:from-white dark:via-slate-200 dark:to-slate-400 bg-clip-text text-transparent leading-tight break-words drop-shadow-md">
+                    Über Gamingpig
+                </h1>
+                <button id="header-pig-avatar" onclick="handlePigAvatarEasterTap()" title="Gamingpig Maskottchen (Tippe mich 5x an! 🐷)" class="inline-flex items-center justify-center text-2xl sm:text-4xl hover:scale-125 active:scale-90 transition-transform cursor-pointer bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/25 rounded-2xl p-1.5 sm:p-2 shadow-sm select-none" aria-label="Gamingpig Maskottchen Easter Egg">
+                    <span>🐷</span>
+                </button>
+            </div>
             <p id="header-intro-p1" class="text-sm sm:text-base md:text-lg leading-relaxed text-slate-700 dark:text-slate-300 font-medium drop-shadow-sm">
                 Hallo! Ich bin Gamingpig, technikaffin und leidenschaftlicher Entwickler. Ich habe ADHS - das ist eine echte Entwicklungsstörung, keine Superkraft. Mein <span class="text-blue-600 dark:text-blue-400 font-bold italic">Hyperfokus</span> hilft mir zwar, komplexe Probleme zu lösen, wo andere schon längst aufgegeben hätten, aber wenn er zu stark wird, bekomme ich auch nichts mehr um mich herum mit.
             </p>
@@ -9815,7 +9820,7 @@ html.gp-android:not(.dark) #ui-controls {
                             Gamingpig is Offline
                         </div>
 
-                        <div id="media-container" onclick="toggleMusicPicker(true)" ondblclick="triggerDjScratch()" title="Doppelklick für DJ Scratch! 🎧" role="button" tabindex="0" class="relative z-10 w-[clamp(140px,36vw,240px)] aspect-square shrink-0 rounded-2xl mx-auto mb-3 sm:mb-5 overflow-hidden flex items-center justify-center bg-[#121212] shadow-[0_12px_32px_rgba(0,0,0,0.8)] cursor-pointer hover:ring-2 hover:ring-white/20 transition-all">
+                        <div id="media-container" onclick="toggleMusicPicker(true)" title="Streamingdienst wählen" role="button" tabindex="0" class="relative z-10 w-[clamp(140px,36vw,240px)] aspect-square shrink-0 rounded-2xl mx-auto mb-3 sm:mb-5 overflow-hidden flex items-center justify-center bg-[#121212] shadow-[0_12px_32px_rgba(0,0,0,0.8)] cursor-pointer hover:ring-2 hover:ring-white/20 transition-all">
                             <!-- FIX v24.85: decoding="async" ergänzt + fetchpriority="high" -->
                             <img id="artwork" src="" alt="" aria-label="Album Artwork" class="w-full h-full object-cover" decoding="async" fetchpriority="high">
                             <div id="offline-icon" class="absolute text-2xl xxs:text-4xl sm:text-6xl" aria-hidden="true">🌙</div>
@@ -9827,13 +9832,17 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
 
                         <!-- NEU v24.20: "Zuletzt gehört"-Verlauf - rein clientseitig, ausklappbar -->
-                        <div class="relative z-10 flex items-center gap-2 mb-2 xxs:mb-3 px-1 sm:px-2 shrink-0">
+                        <div class="relative z-10 flex items-center gap-2 mb-2 xxs:mb-3 px-1 sm:px-2 shrink-0 flex-wrap">
                             <button onclick="toggleRecentlyPlayed()" id="btn-recently-played" class="flex items-center gap-1 text-[9px] xxs:text-[10px] sm:text-xs text-white/50 hover:text-white/80 transition-colors" aria-expanded="false" aria-controls="recently-played-panel">
                                 <span>🕓</span><span id="recently-played-toggle-label">Zuletzt gehört</span>
                             </button>
                             <!-- NEU v24.123: Spotify Wrapped Year-in-Review Modal -->
                             <button onclick="openSpotifyWrapped()" id="btn-spotify-wrapped" class="flex items-center gap-1 text-[9px] xxs:text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 border border-green-500/30 hover:opacity-100 transition-all shadow-sm active:scale-95" title="Gamingpig Music Wrapped">
                                 <span>🎁</span><span class="font-bold">Wrapped</span>
+                            </button>
+                            <!-- NEU: DJ Turntable Scratch Easter Egg Button -->
+                            <button onclick="triggerDjScratch(); haptic(20);" id="btn-dj-scratch" class="flex items-center gap-1 text-[9px] xxs:text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 transition-all shadow-sm active:scale-95" title="DJ Turntable Scratch FX 🎧">
+                                <span>💽</span><span class="font-bold">Scratch</span>
                             </button>
                             <!-- NEU v24.47: Vorlesen für Titel + Künstler direkt im Dashboard,
                                  unabhängig von der Lyrics-Ansicht. -->
@@ -11302,7 +11311,7 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step7_title: 'Installier mich als App!',
                 t_step7_text: 'Diese Seite erzeugt sich ihr eigenes App-Icon und lässt sich auf Android/Chrome per Klick als richtige App installieren (kein Store nötig) - auf dem iPhone geht das manuell über "Zum Home-Bildschirm" im Teilen-Menü. Fühlt sich danach an wie eine native App, ganz ohne Browserleiste.',
                 t_step8_title: 'Psst... 🤫 Ein Geheimnis',
-                t_step8_text: 'Diese Seite hat viele versteckte Easter Eggs. Tipp: Probier den klassischen Konami-Code (↑↑↓↓←→←→BA auf der Tastatur), oder tippe eins dieser Wörter einfach los: oink, forza, fokus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet. Doppelklick auf das Plattencover löst einen DJ-Scratch aus! Kein Keyboard zur Hand (z.B. am Handy)? Die Wörter funktionieren auch im Spotlight-Suchfeld (⌘K-Button). Ganz unten im Footer findest du übrigens auch den "Was ist neu?"-Link mit allen bisherigen Updates dieser Seite. Viel Spaß beim Suchen!',
+                t_step8_text: 'Diese Seite hat viele versteckte Easter Eggs! Tipp: Probier den klassischen Konami-Code (↑↑↓↓←→←→BA auf der Tastatur), tippe 5x auf das Schweinchen-Logo 🐷 im Header oder auf die Versionsnummer im Footer für geheime Modi. In der Musikkarte findest du den neuen 💽 Scratch-Button, und per Tastatur oder Spotlight-Suche (⌘K-Button) lösen Wörter wie oink, forza, fokus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet tolle Überraschungen aus. Viel Spaß beim Entdecken!',
                 t_step9_title: '🕹️ Retro Arcade & Minispiele',
                 t_step9_text: 'Neu in v24.220: Spiele "Piggy Cyber Dash" oder "Neon Cyber Snake", teste das 9-Pad SFX Soundboard oder das Hacker-Terminal! Alle Minispiele lassen sich direkt über Spotlight (⌘K) oder geheime Wörter starten.',
                 toast_install_ios: '📲 Tippe unten auf "Teilen" ⬆️ und dann auf "Zum Home-Bildschirm"',
@@ -11531,7 +11540,7 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step7_title: 'Install me as an app!',
                 t_step7_text: 'This site generates its own app icon and can be installed as a real app on Android/Chrome with one click (no store needed) - on iPhone that\'s done manually via "Add to Home Screen" in the share menu. Afterwards it feels like a native app, with no browser bar at all.',
                 t_step8_title: "Psst... 🤫 a secret",
-                t_step8_text: "This site has many hidden easter eggs. Hint: try the classic Konami Code (↑↑↓↓←→←→BA on your keyboard), or type one of these words: oink, forza, focus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet. Double-clicking the album cover triggers a DJ scratch! No keyboard handy? The words also work in the Spotlight search box (⌘K button). Enjoy!",
+                t_step8_text: "This site has many hidden easter eggs! Hint: try the classic Konami Code (↑↑↓↓←→←→BA on your keyboard), tap the piggy mascot 🐷 in the header or the version number in the footer 5x for secret modes. In the music card you'll find the new 💽 Scratch button, and typing words like oink, forza, focus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet on keyboard or in Spotlight search (⌘K button) triggers awesome surprises. Enjoy!",
                 t_step9_title: "🕹️ Retro Arcade & Minigames",
                 t_step9_text: "New in v24.220: Play 'Piggy Cyber Dash' or 'Neon Cyber Snake', test the 9-pad SFX soundboard or the hacker matrix terminal! All games launch instantly via Spotlight search (⌘K) or secret words.",
                 toast_install_ios: '📲 Tap "Share" ⬆️ below, then "Add to Home Screen"',
@@ -11788,7 +11797,7 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step7_title: '¡Instálame como app!',
                 t_step7_text: 'Esta página genera su propio icono de app y se puede instalar como una app de verdad en Android/Chrome con un clic (sin tienda necesaria) - en iPhone se hace manualmente con "Añadir a pantalla de inicio" en el menú compartir. Después se siente como una app nativa, sin barra de navegador.',
                 t_step8_title: 'Psst... 🤫 un secreto',
-                t_step8_text: 'Esta página tiene muchos easter eggs escondidos. Pista: prueba el clásico Código Konami (↑↑↓↓←→←→BA en el teclado), o escribe una de estas palabras: oink, forza, foco, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet. ¡Doble clic en la portada activa un scratch de DJ! ¿Sin teclado a mano? Las palabras también funcionan en el buscador Spotlight (botón ⌘K). ¡Diviértete buscando!',
+                t_step8_text: '¡Esta página tiene muchos easter eggs escondidos! Pista: prueba el clásico Código Konami (↑↑↓↓←→←→BA), pulsa 5 veces la mascota 🐷 en la cabecera o el número de versión en el pie de página para modos secretos. En la tarjeta de música tienes el nuevo botón 💽 Scratch, y escribiendo palabras como oink, forza, foco, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet en el teclado o buscador Spotlight (botón ⌘K) activarás increíbles sorpresas.',
                 t_step9_title: '🕹️ Retro Arcade y Minijuegos',
                 t_step9_text: 'Nuevo en v24.220: ¡Juega a "Piggy Cyber Dash" o "Neon Cyber Snake", prueba la mesa de sonido SFX de 9 pads o el terminal hacker! Todos los juegos se inician desde la búsqueda Spotlight (⌘K) o palabras secretas.',
                 toast_install_ios: '📲 Toca "Compartir" ⬆️ abajo y luego "Añadir a pantalla de inicio"',
@@ -12029,7 +12038,7 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step7_title: 'Installe-moi comme appli !',
                 t_step7_text: "Ce site génère sa propre icône d'application et peut être installé comme une vraie appli sur Android/Chrome en un clic (pas besoin de store) - sur iPhone ça se fait manuellement via \"Sur l'écran d'accueil\" dans le menu de partage. Après ça, on dirait une vraie appli native, sans aucune barre de navigateur.",
                 t_step8_title: 'Psst... 🤫 un secret',
-                t_step8_text: "Ce site cache de nombreux easter eggs. Indice : essaie le classique Code Konami (↑↑↓↓←→←→BA au clavier), ou tape un de ces mots : oink, forza, focus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet. Double-cliquer sur la pochette déclenche un scratch DJ ! Pas de clavier sous la main ? Les mots fonctionnent aussi dans la recherche Spotlight (bouton ⌘K). Amuse-toi bien à chercher !",
+                t_step8_text: "Ce site cache de nombreux easter eggs ! Astuce : essaie le classique Code Konami (↑↑↓↓←→←→BA au clavier), tape 5 fois sur la mascotte 🐷 dans l'en-tête ou sur le numéro de version en bas de page pour des modes secrets. Dans la carte musicale, découvre le nouveau bouton 💽 Scratch, et tape des mots comme oink, forza, focus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet au clavier ou dans la recherche Spotlight (bouton ⌘K) pour déclencher de superbes surprises.",
                 t_step9_title: '🕹️ Arcade Rétro & Mini-jeux',
                 t_step9_text: 'Nouveau dans v24.220 : Joue à "Piggy Cyber Dash" ou "Neon Cyber Snake", teste la boîte à sons SFX à 9 pads ou le terminal hacker ! Tous les jeux se lancent directement via Spotlight (⌘K) ou des mots secrets.',
                 toast_install_ios: '📲 Appuie sur "Partager" ⬆️ en bas, puis "Sur l\'écran d\'accueil"',
@@ -12232,7 +12241,7 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step7_title: 'Instale como app!',
                 t_step7_text: 'Instale diretamente como PWA na tela inicial.',
                 t_step8_title: 'Psst... 🤫 um segredo',
-                t_step8_text: 'Esta página tem muitos easter eggs escondidos! Experimente o clássico Código Konami (↑↑↓↓←→←→BA) ou digite: oink, forza, foco, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet. Toque duplo na capa do álbum ativa um scratch DJ! Sem teclado? Use o campo de busca Spotlight (botão ⌘K). Divirta-se procurando!',
+                t_step8_text: 'Esta página tem muitos easter eggs escondidos! Dica: experimente o clássico Código Konami (↑↑↓↓←→←→BA), toque 5 vezes na mascote 🐷 no cabeçalho ou no número da versão no rodapé para modos secretos. No cartão de música há o novo botão 💽 Scratch, e digitando palavras como oink, forza, foco, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet no teclado ou na busca Spotlight (botão ⌘K) você ativará surpresas incríveis.',
                 t_step9_title: '🕹️ Retro Arcade & Minijogos',
                 t_step9_text: 'Novo na v24.220: Jogue "Piggy Cyber Dash" ou "Neon Cyber Snake", teste a mesa de som SFX com 9 pads ou o terminal hacker! Todos os jogos abrem direto pela busca Spotlight (⌘K) ou palavras secretas.',
                 toast_install_ios: '📲 Toque em Compartilhar ⬆️ e depois em "Adicionar à Tela de Início"',
@@ -12435,7 +12444,7 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step7_title: 'Beni uygulama olarak yükle!',
                 t_step7_text: 'Tek tıkla doğrudan ana ekranına PWA olarak yükle.',
                 t_step8_title: 'Şşşt... 🤫 bir sır',
-                t_step8_text: 'Bu sayfanın birçok gizli sürprizi var! Klasik Konami Kodunu (↑↑↓↓←→←→BA) dene veya şunları yaz: oink, forza, fokus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet. Albüm kapağına çift tıklamak DJ scratch başlatır! Klavyen yok mu? Spotlight arama kutusunu (⌘K butonu) kullanabilirsin. İyi eğlenceler!',
+                t_step8_text: 'Bu sitede birçok gizli sürpriz var! İpucu: Klavyede klasik Konami Kodunu (↑↑↓↓←→←→BA) deneyin, başlıktaki domuzcuk maskotuna 🐷 veya alt kısımdaki sürüm numarasına 5 kez dokunarak gizli modları açın. Müzik kartında yeni 💽 Scratch butonu sizi bekliyor; ayrıca klavyeden veya Spotlight aramasından (⌘K) oink, forza, fokus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet yazarak harika sürprizleri tetikleyebilirsiniz!',
                 t_step9_title: '🕹️ Retro Arcade & Minioyunlar',
                 t_step9_text: 'v24.220 sürümünde yeni: "Piggy Cyber Dash" veya "Neon Cyber Snake" oyna, 9 pedli SFX ses panosunu veya hacker terminalini dene! Tüm oyunlar Spotlight araması (⌘K) veya gizli kelimelerle açılır.',
                 toast_install_ios: '📲 Aşağıdaki Paylaş ⬆️ butonuna ve ardından "Ana Ekrana Ekle"ye dokun',
@@ -17394,6 +17403,8 @@ let shareCardLoading;
                 { icon: '🔄', label: 'Barrel Roll 360° Spin', keywords: 'barrel roll spin drehen rotate 360 faßrolle trick', action: () => triggerBarrelRoll() },
                 { icon: '⭐', label: 'Super Star Power (Godmode)', keywords: 'star mario godmode regenbogen unbesiegbar rainbow invulnerable', action: () => launchStarPower() },
                 { icon: '🐷', label: 'Piggy Pet Desktop-Maskottchen', keywords: 'pet tamagotchi buddy maskottchen pig schwein companion', action: () => togglePiggyPet() },
+                { icon: '🎧', label: 'DJ Turntable Scratch FX', keywords: 'scratch dj turntable vinyl musik beat sound audio plattenspieler effekte', action: () => triggerDjScratch() },
+                { icon: '⚖️', label: t('footer_impressum', 'Impressum / Legal Notice'), keywords: 'impressum legal notice rechtliches privacy datenschutz kontakt angaben ddg mstv', action: () => { window.location.href = 'impressum.html'; } },
                 { icon: '📋', label: t('cp_copy_link'), keywords: 'copy link teilen share url', action: () => { if (typeof copyPageLink === 'function') copyPageLink(); } },
                 { icon: '🔄', label: t('cp_reload'), keywords: 'reload refresh neu laden', action: () => window.location.reload() },
                 { icon: '🌐', label: t('cp_change_lang'), keywords: 'language sprache language change idioma langue idioma dil', keepOpen: true, action: () => openLanguagePicker(true) },
@@ -21590,6 +21601,98 @@ let shareCardLoading;
         }
 
         // ========================================================= //
+        // 🐷 EASTER EGG: PIGGY HEADER MASCOT (5x Tap)
+        // ========================================================= //
+        let pigAvatarTapCount = 0;
+        let pigAvatarTapTimer = null;
+        window.handlePigAvatarEasterTap = function(e) {
+            if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+            haptic(15);
+            pigAvatarTapCount++;
+            clearTimeout(pigAvatarTapTimer);
+
+            const avatarEl = document.getElementById('header-pig-avatar');
+            if (avatarEl) {
+                avatarEl.style.transform = `scale(${1 + pigAvatarTapCount * 0.08}) rotate(${pigAvatarTapCount % 2 === 0 ? 8 : -8}deg)`;
+                setTimeout(() => {
+                    if (avatarEl && pigAvatarTapCount < 5) avatarEl.style.transform = '';
+                }, 180);
+            }
+
+            if (pigAvatarTapCount >= 5) {
+                pigAvatarTapCount = 0;
+                if (avatarEl) avatarEl.style.transform = '';
+                haptic([30, 50, 30]);
+                launchEmojiRain(['🐷', '🐽', '👑', '✨', '🎮'], 45);
+                showToast('🐷 OINK! Goldener Maskottchen-Modus freigeschaltet!', 'success');
+                if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
+            } else {
+                pigAvatarTapTimer = setTimeout(() => {
+                    pigAvatarTapCount = 0;
+                    if (avatarEl) avatarEl.style.transform = '';
+                }, 2000);
+            }
+        };
+
+        // ========================================================= //
+        // 💻 EASTER EGG: FOOTER VERSION BADGE (5x Tap -> Hacker Terminal)
+        // ========================================================= //
+        let versionTapCount = 0;
+        let versionTapTimer = null;
+        window.handleVersionEasterTap = function(e) {
+            if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+            haptic(15);
+            versionTapCount++;
+            clearTimeout(versionTapTimer);
+
+            const verEl = document.getElementById('footer-version-label');
+            if (verEl) {
+                verEl.classList.add('text-neon-cyan');
+                setTimeout(() => {
+                    if (verEl && versionTapCount < 5) verEl.classList.remove('text-neon-cyan');
+                }, 150);
+            }
+
+            if (versionTapCount >= 5) {
+                versionTapCount = 0;
+                if (verEl) verEl.classList.remove('text-neon-cyan');
+                haptic([20, 40, 60]);
+                if (typeof openHackerTerminal === 'function') openHackerTerminal();
+                showToast('💻 DEV-TERMINAL AKTIVIERT! Root-Zugriff gewährt...', 'info');
+                if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
+            } else {
+                versionTapTimer = setTimeout(() => {
+                    versionTapCount = 0;
+                    if (verEl) verEl.classList.remove('text-neon-cyan');
+                }, 2000);
+            }
+        };
+
+        // ========================================================= //
+        // 🪩 EASTER EGG: FOOTER COPYRIGHT (3x Tap -> Disco Party Rave)
+        // ========================================================= //
+        let footerTapCount = 0;
+        let footerTapTimer = null;
+        window.handleFooterEasterTap = function(e) {
+            if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+            haptic(15);
+            footerTapCount++;
+            clearTimeout(footerTapTimer);
+
+            if (footerTapCount >= 3) {
+                footerTapCount = 0;
+                haptic([40, 40, 40]);
+                if (typeof launchPartyMode === 'function') launchPartyMode();
+                showToast('🪩 DISCO RAVE ENTDECKT! Die Nacht gehört dir!', 'success');
+                if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
+            } else {
+                footerTapTimer = setTimeout(() => {
+                    footerTapCount = 0;
+                }, 2000);
+            }
+        };
+
+        // ========================================================= //
         // 🕹️ RETRO PIGGY CYBER DASH - 8-BIT ARCADE MINI-GAME (v24.220.0)
         // ========================================================= //
         let arcadeGameRunning = false;
@@ -22178,6 +22281,7 @@ let shareCardLoading;
         // ========================================================= //
         window.triggerDjScratch = function() {
             haptic(20);
+            if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
             try {
                 const ctx = getAudioContext();
                 if (ctx) {
@@ -22972,7 +23076,14 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
 
         let pickerTimeout;
         window.toggleMusicPicker = function(show) {
-            if (mainMusicCard && !mainMusicCard.classList.contains('offline') && mPicker) {
+            if (mainMusicCard && mPicker) {
+                if (mainMusicCard.classList.contains('offline')) {
+                    if (show) {
+                        haptic(10);
+                        showToast('💤 Aktuell läuft keine Musik. Sobald ein Track spielt, kannst du hier deinen Player wählen! 🎵', 'info');
+                    }
+                    return;
+                }
                 clearTimeout(pickerTimeout);
                 haptic(show ? 10 : 8);
                 if(show) {
@@ -24880,9 +24991,9 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
         try {
             const _urlQAParam = new URLSearchParams(window.location.search).get('qa_unlocked') === '1';
             const _sessionQA = sessionStorage.getItem('gp_qa_auth') === 'true';
-            window.SETTINGS_LOCKED_PENDING_ADMIN = false;
+            window.SETTINGS_LOCKED_PENDING_ADMIN = !(_urlQAParam || _sessionQA);
         } catch(e) {
-            window.SETTINGS_LOCKED_PENDING_ADMIN = false;
+            window.SETTINGS_LOCKED_PENDING_ADMIN = true;
         }
 
         // Falls im QA-Modus, Banner visuell auf Freigabe umstellen
@@ -27176,6 +27287,7 @@ window.setLyricsStyle = function(style) {
         const triggerSpatialWarp = () => {
             if (isSpatialWarping) return;
             isSpatialWarping = true;
+            if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
             if (navigator && typeof navigator.vibrate === 'function') {
                 try { navigator.vibrate(60); } catch (_) {}
             }
@@ -27192,7 +27304,7 @@ window.setLyricsStyle = function(style) {
         function registerDynamicIslandEasterClick() {
             if (isSpatialWarping) return;
             const now = Date.now();
-            if (now - lastDiTapTime < 100) return; // Debounce threshold (<100ms) prevents double-trigger
+            if (now - lastDiTapTime < 180) return; // Debounce threshold (<180ms) prevents double-trigger
             lastDiTapTime = now;
             lastDiEasterTapTime = now;
             diClickCount++;
@@ -27209,7 +27321,7 @@ window.setLyricsStyle = function(style) {
         window.registerDynamicIslandEasterClick = registerDynamicIslandEasterClick;
 
         const diIsland = document.getElementById('dynamic-island');
-        if (diIsland) {
+        if (diIsland && !diIsland.hasAttribute('onclick')) {
             diIsland.addEventListener('click', registerDynamicIslandEasterClick);
         }
 
