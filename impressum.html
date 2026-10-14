@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <script>/* Android Liquid Glass compatibility */(function(){try{var ua=navigator.userAgent||"";if(/Android/i.test(ua)){document.documentElement.classList.add("gp-android");if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add("gp-android-lowend");}if(/Mobile|iP(hone|od|ad)|Android.*Mobile/i.test(ua))document.documentElement.classList.add("gp-mobile");}catch(e){}})();</script>
+    <script src="./js/core/storage.e856be99df567fd2.js"></script>
+<meta charset="UTF-8">
+<script src="js/read-aloud-service.1fc24873f319082e.js"></script>
+<script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impressum / Legal Notice – Gamingpig Portfolio</title>
+<link rel="icon" type="image/png" href="icon-192.png">
+<script>
+  try {
+    const savedAppLang = AppStorage.getItem('selectedLanguage');
+    if (savedAppLang) document.documentElement.setAttribute('lang', savedAppLang);
+  } catch(e) {}
+</script>
+<style data-gp-glass-engine="true">
+  :root{
+    --bg:#0d0d12;
+    --card:#16161d;
+    --text:#e8e8ee;
+    --muted:#9a9aa8;
+    --accent:#6c5ce7;
+    --border:#26262f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    padding:max(20px, env(safe-area-inset-top, 20px)) 20px 140px;
+  }
+  .wrap{max-width:720px;margin:0 auto;}
+  header{
+    padding:32px 0 20px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:28px;
+  }
+  header h1{
+    font-size:1.7rem;
+    margin:0 0 8px;
+  }
+  header p{
+    color:var(--muted);
+    margin:0;
+    font-size:0.95rem;
+  }
+  h2{
+    font-size:1.15rem;
+    margin:32px 0 10px;
+    color:var(--text);
+  }
+  p, li{
+    color:#d3d3dc;
+    font-size:0.97rem;
+  }
+  ul{padding-left:20px;}
+  .card{
+    position:relative;
+    background:rgba(22, 22, 29, 0.82) !important;
+    border:1px solid rgba(255, 255, 255, 0.12) !important;
+    border-top:1.5px solid rgba(255, 255, 255, 0.28) !important;
+    border-radius:16px;
+    padding:20px 22px;
+    margin:20px 0;
+    box-shadow:0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter:blur(16px) saturate(140%) !important;
+    -webkit-backdrop-filter:blur(16px) saturate(140%) !important;
+  }
+  .card p{
+    color:#e2e8f0 !important;
+    margin:0;
+    line-height:1.65;
+  }
+  a{color:var(--accent);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  footer{
+    margin-top:48px;
+    padding-top:20px;
+    border-top:1px solid var(--border);
+    color:var(--muted);
+    font-size:0.85rem;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  .lang-switcher{
+    display:flex; flex-wrap:wrap; gap:6px; padding:16px 0 0;
+  }
+  .lang-btn{
+    background:var(--card); border:1px solid var(--border); color:var(--muted);
+    padding:6px 12px; border-radius:20px; font-size:0.8rem; cursor:pointer;
+    font-family:inherit; transition:all 0.15s ease;
+  }
+  .lang-btn:hover{ color:var(--text); border-color:var(--accent); }
+  .lang-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .back-btn{
+    position:relative; z-index:70; cursor:pointer; touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--card); border:1px solid var(--border);
+    color:var(--text); padding:8px 14px; border-radius:12px;
+    font-size:0.85rem; font-weight:600; text-decoration:none;
+    margin-bottom:16px; transition:all 0.15s ease;
+  }
+  .back-btn:hover{ border-color:var(--accent); color:#fff; text-decoration:none; }
+  .tts-btn-group{
+    display:inline-flex; align-items:center; background:var(--card); border:1px solid var(--border);
+    border-radius:12px; overflow:hidden; font-family:inherit; transition:border-color 0.15s ease;
+  }
+  .tts-btn-group:hover{ border-color:var(--accent); }
+  .tts-play-btn{
+    background:transparent; border:none; color:var(--text); padding:8px 12px; font-size:0.85rem;
+    font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; font-family:inherit;
+    transition:all 0.15s ease;
+  }
+  .tts-play-btn:hover{ color:var(--accent); }
+  .tts-play-btn.speaking{ background:rgba(239, 68, 68, 0.2); color:#ef4444; }
+  .tts-speed-trigger{
+    background:transparent; border:none; border-left:1px solid var(--border); color:var(--accent);
+    padding:8px 10px; font-size:0.8rem; font-family:ui-monospace, monospace; font-weight:700;
+    cursor:pointer; transition:background 0.15s ease;
+  }
+  .tts-speed-trigger:hover{ background:rgba(255,255,255,0.05); }
+  .tts-menu{
+    position:absolute; top:calc(100% + 6px); right:0; z-index:100; background:var(--card);
+    border:1px solid var(--border); border-radius:12px; padding:8px; box-shadow:0 12px 30px rgba(0,0,0,0.5);
+    min-width:180px; backdrop-filter:blur(16px);
+  }
+  .tts-menu.hidden{ display:none; }
+  .tts-menu-header{
+    display:flex; justify-content:space-between; align-items:center; font-size:0.75rem;
+    font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:6px;
+  }
+  .tts-pill-grid{ display:grid; grid-template-columns:repeat(5, 1fr); gap:4px; }
+  .tts-pill{
+    background:rgba(255,255,255,0.05); border:1px solid transparent; color:var(--muted);
+    border-radius:6px; padding:4px 0; font-size:0.75rem; font-family:ui-monospace, monospace;
+    font-weight:700; cursor:pointer; text-align:center;
+  }
+  .tts-pill.active{ background:var(--accent); color:#fff; }
+</style>
+<link rel="stylesheet" href="assets/community-glass.20260910.css?v=v24.213.0" data-gp-glass-engine="true">
+</head>
+<body>
+<div class="wrap">
+  <div style="padding-top:12px; position:relative; z-index:60; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+    <a href="index.html" class="back-btn" style="margin-bottom:0;">← Hauptseite</a>
+    
+    <div style="position:relative; display:inline-block;">
+      <div class="tts-btn-group">
+        <button id="imp-tts-btn" onclick="toggleImpressumSpeech()" class="tts-play-btn">
+          <span>🔊</span> <span id="imp-tts-label">Vorlesen</span>
+        </button>
+        <button onclick="toggleImpressumTtsMenu()" class="tts-speed-trigger" title="Tempo anpassen">
+          <span id="imp-tts-speed-val">1.0x</span>
+        </button>
+      </div>
+
+      <div id="imp-tts-menu" class="tts-menu hidden">
+        <div class="tts-menu-header">
+          <span>Tempo</span>
+          <button onclick="stopImpressumSpeech()" style="background:none; border:none; color:#f87171; cursor:pointer; font-size:0.75rem; font-weight:700;">⏹ Stopp</button>
+        </div>
+        <div class="tts-pill-grid">
+          <button onclick="setImpressumTtsSpeed(0.8)" data-speed="0.8" class="tts-pill">0.8x</button>
+          <button onclick="setImpressumTtsSpeed(1.0)" data-speed="1.0" class="tts-pill active">1.0x</button>
+          <button onclick="setImpressumTtsSpeed(1.2)" data-speed="1.2" class="tts-pill">1.2x</button>
+          <button onclick="setImpressumTtsSpeed(1.5)" data-speed="1.5" class="tts-pill">1.5x</button>
+          <button onclick="setImpressumTtsSpeed(2.0)" data-speed="2.0" class="tts-pill">2.0x</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lang-switcher">
+      <button class="lang-btn" data-lang="de" onclick="setImpressumLang('de')">Deutsch</button>
+      <button class="lang-btn" data-lang="en" onclick="setImpressumLang('en')">English</button>
+      <button class="lang-btn" data-lang="es" onclick="setImpressumLang('es')">Español</button>
+      <button class="lang-btn" data-lang="fr" onclick="setImpressumLang('fr')">Français</button>
+      <button class="lang-btn" data-lang="pt" onclick="setImpressumLang('pt')">Português</button>
+      <button class="lang-btn" data-lang="tr" onclick="setImpressumLang('tr')">Türkçe</button>
+  </div>
+
+  <!-- DEUTSCH -->
+  <div class="lang-block" data-lang="de">
+    <header>
+      <h1>Impressum</h1>
+      <p>Angaben gemäß § 5 Digitale-Dienste-Gesetz (DDG) / § 18 Abs. 2 MStV</p>
+    </header>
+
+    <div class="card">
+      <p><strong>Betreiber und Verantwortlicher:</strong><br>
+      Gamingpig<br>
+      E-Mail: <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a><br>
+      Discord Support &amp; Community: <a href="https://discord.gg/E8BS9BDAst" target="_blank" rel="noopener noreferrer">discord.gg/E8BS9BDAst</a><br>
+      GitHub: <a href="https://github.com/Gamingpig" target="_blank" rel="noopener noreferrer">github.com/Gamingpig</a></p>
+    </div>
+
+    <h2>Zweck und Art des Webangebots</h2>
+    <p>
+      Dieses Projekt ist ein rein privates, nicht-kommerzielles Portfolio zur Präsentation von Softwareentwicklung, Web-Technologien, System-Telemetrie und Musik-Integrationen. Es werden keinerlei kostenpflichtige Dienstleistungen angeboten und keine kommerziellen Einnahmen erzielt.
+    </p>
+
+    <h2>Haftung für Inhalte</h2>
+    <p>
+      Als Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 DDG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.
+    </p>
+
+    <h2>Haftung für externe Links</h2>
+    <p>
+      Unser Angebot enthält Links zu externen Websites Dritter (z.&nbsp;B. GitHub, Spotify, Discord, TikTok, YouTube, LrcLib), auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.
+    </p>
+
+    <h2>Barrierefreiheit &amp; Vorlesefunktion (TTS)</h2>
+    <p>
+      Zur Förderung der Barrierefreiheit bietet dieses Portfolio eine integrierte Vorlesefunktion (Text-to-Speech) mit dynamischer Spracherkennung, konfigurierbarer Lesegeschwindigkeit und synchronisierter Textbegleitung. Die Verarbeitung erfolgt direkt clientseitig über die Web Speech API des Endgeräts.
+    </p>
+
+    <h2>Urheberrecht</h2>
+    <p>
+      Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der vorherigen schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.
+    </p>
+  </div>
+
+  <!-- ENGLISH -->
+  <div class="lang-block" data-lang="en" style="display:none;">
+    <header>
+      <h1>Legal Notice / Impressum</h1>
+      <p>Information pursuant to § 5 German Digital Services Act (DDG)</p>
+    </header>
+
+    <div class="card">
+      <p><strong>Publisher &amp; Operator:</strong><br>
+      Gamingpig<br>
+      Email: <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a><br>
+      Discord: <a href="https://discord.gg/E8BS9BDAst" target="_blank" rel="noopener noreferrer">discord.gg/E8BS9BDAst</a><br>
+      GitHub: <a href="https://github.com/Gamingpig" target="_blank" rel="noopener noreferrer">github.com/Gamingpig</a></p>
+    </div>
+
+    <h2>Nature of this Website</h2>
+    <p>
+      This website is a personal, strictly non-commercial developer portfolio demonstrating modern web technologies, music telemetry, and interactive applications. No commercial transactions are performed.
+    </p>
+
+    <h2>Liability for Content</h2>
+    <p>
+      As a service provider, we are responsible for our own content on these pages under general laws. We are not obliged to monitor transmitted or stored third-party information.
+    </p>
+
+    <h2>Liability for External Links</h2>
+    <p>
+      Our website contains links to external third-party sites (e.g., Spotify, GitHub, Discord, YouTube, TikTok). We have no influence on the contents of these sites and accept no liability for them.
+    </p>
+
+    <h2>Accessibility &amp; Read-Aloud Feature (TTS)</h2>
+    <p>
+      To improve accessibility, this portfolio provides built-in read-aloud features (Text-to-Speech) with dynamic language detection, real-time speed adjustment, and synchronized audio-visual tracking. Speech synthesis is executed client-side via the browser's Web Speech API.
+    </p>
+
+    <h2>Copyright</h2>
+    <p>
+      The content and code created by the site operator on these pages are subject to copyright law.
+    </p>
+  </div>
+
+  <!-- ESPAÑOL -->
+  <div class="lang-block" data-lang="es" style="display:none;">
+    <header>
+      <h1>Aviso Legal / Impressum</h1>
+      <p>Información según el § 5 de la Ley alemana de Servicios Digitales (DDG)</p>
+    </header>
+    <div class="card">
+      <p><strong>Responsable:</strong> Gamingpig<br>
+      Correo electrónico: <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a><br>
+      Discord: <a href="https://discord.gg/E8BS9BDAst" target="_blank">discord.gg/E8BS9BDAst</a></p>
+    </div>
+    <p>Este sitio web es un portafolio de desarrollo de software totalmente personal y sin fines comerciales.</p>
+  </div>
+
+  <!-- FRANÇAIS -->
+  <div class="lang-block" data-lang="fr" style="display:none;">
+    <header>
+      <h1>Mentions Légales / Impressum</h1>
+      <p>Informations conformément au § 5 de la loi allemande sur les services numériques (DDG)</p>
+    </header>
+    <div class="card">
+      <p><strong>Responsable :</strong> Gamingpig<br>
+      E-mail : <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a><br>
+      Discord : <a href="https://discord.gg/E8BS9BDAst" target="_blank">discord.gg/E8BS9BDAst</a></p>
+    </div>
+    <p>Ce site est un portfolio de développement strictement personnel et non-commercial.</p>
+  </div>
+
+  <!-- PORTUGUÊS -->
+  <div class="lang-block" data-lang="pt" style="display:none;">
+    <header>
+      <h1>Aviso Legal / Impressum</h1>
+      <p>Informações de acordo com o § 5 da Lei de Serviços Digitais (DDG)</p>
+    </header>
+    <div class="card">
+      <p><strong>Responsável:</strong> Gamingpig<br>
+      E-mail: <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a><br>
+      Discord: <a href="https://discord.gg/E8BS9BDAst" target="_blank">discord.gg/E8BS9BDAst</a></p>
+    </div>
+    <p>Este site é um portfólio de software estritamente pessoal e não comercial.</p>
+  </div>
+
+  <!-- TÜRKÇE -->
+  <div class="lang-block" data-lang="tr" style="display:none;">
+    <header>
+      <h1>Künye / Impressum</h1>
+      <p>Alman Dijital Hizmetler Yasası (DDG) § 5 uyarınca bilgiler</p>
+    </header>
+    <div class="card">
+      <p><strong>Sorumlu:</strong> Gamingpig<br>
+      E-posta: <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a><br>
+      Discord: <a href="https://discord.gg/E8BS9BDAst" target="_blank">discord.gg/E8BS9BDAst</a></p>
+    </div>
+    <p>Bu site kişisel ve tamamen ticari olmayan bir geliştirici portföyüdür.</p>
+  </div>
+
+  <footer>
+    <span>© 2026 Gamingpig</span>
+    <div style="display:flex; gap:16px;">
+      <a href="privacy.html">Datenschutz</a>
+      <a href="status.html">Live-Status</a>
+      <a href="release.html">Release Notes</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+let impTtsSpeed = 1.0;
+try {
+  const savedSpeed = AppStorage.getItem('gp_tts_speed');
+  if (savedSpeed) impTtsSpeed = parseFloat(savedSpeed) || 1.0;
+} catch(e) {}
+
+function updateImpressumTtsSpeedUI() {
+  const el = document.getElementById('imp-tts-speed-val');
+  if (el) el.innerText = impTtsSpeed.toFixed(1) + 'x';
+  document.querySelectorAll('.tts-pill').forEach(btn => {
+    btn.classList.toggle('active', Math.abs(parseFloat(btn.dataset.speed) - impTtsSpeed) < 0.05);
+  });
+}
+
+function setImpressumTtsSpeed(rate) {
+  impTtsSpeed = parseFloat(rate) || 1.0;
+  try { AppStorage.setItem('gp_tts_speed', impTtsSpeed.toString()); } catch(e) {}
+  if (window.ReadAloudService && typeof window.ReadAloudService.setSpeed === 'function') {
+    window.ReadAloudService.setSpeed(impTtsSpeed);
+  }
+  updateImpressumTtsSpeedUI();
+  if (window.ReadAloudService && window.ReadAloudService.isPlaying()) {
+    toggleImpressumSpeech(true);
+  }
+}
+
+function toggleImpressumTtsMenu() {
+  const menu = document.getElementById('imp-tts-menu');
+  if (menu) menu.classList.toggle('hidden');
+}
+
+function setImpressumLang(lang) {
+  const supported = ['de', 'en', 'es', 'fr', 'pt', 'tr'];
+  const safeLang = supported.includes(lang) ? lang : 'de';
+
+  document.querySelectorAll('.lang-block').forEach(b => {
+    b.style.display = (b.getAttribute('data-lang') === safeLang) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === safeLang);
+  });
+  document.documentElement.setAttribute('lang', safeLang);
+
+  if (window.I18nManager && typeof window.I18nManager.setLanguage === 'function') {
+    if (window.I18nManager.getLanguage() !== safeLang) {
+      window.I18nManager.setLanguage(safeLang);
+    }
+  } else {
+    try {
+      AppStorage.setItem('app_language', safeLang);
+      AppStorage.setItem('selectedLanguage', safeLang);
+    } catch(e) {}
+  }
+  
+  if (window.ReadAloudService && window.ReadAloudService.isPlaying()) {
+    toggleImpressumSpeech(true);
+  }
+}
+
+// Initial language setup
+(function init() {
+  let lang = 'de';
+  if (window.I18nManager && typeof window.I18nManager.getLanguage === 'function') {
+    lang = window.I18nManager.getLanguage();
+  } else {
+    try {
+      const saved = AppStorage.getItem('app_language') || AppStorage.getItem('selectedLanguage');
+      if (saved && ['de','en','es','fr','pt','tr'].includes(saved)) {
+        lang = saved;
+      } else if (navigator.language) {
+        const code = navigator.language.slice(0,2).toLowerCase();
+        if (['de','en','es','fr','pt','tr'].includes(code)) lang = code;
+      }
+    } catch(e) {}
+  }
+  setImpressumLang(lang);
+  updateImpressumTtsSpeedUI();
+})();
+
+// Listen for language changes
+window.addEventListener('app:languageChanged', (e) => {
+  if (e.detail && e.detail.lang) {
+    setImpressumLang(e.detail.lang);
+  }
+});
+
+window.addEventListener('storage', (e) => {
+  if ((e.key === 'app_language' || e.key === 'selectedLanguage') && e.newValue) {
+    setImpressumLang(e.newValue);
+  } else if (e.key === 'gp_tts_speed' && e.newValue) {
+    impTtsSpeed = parseFloat(e.newValue) || 1.0;
+    updateImpressumTtsSpeedUI();
+  }
+});
+
+// TTS Read-Aloud Integration
+function updateImpressumTtsUI(isSpeaking) {
+  const btn = document.getElementById('imp-tts-btn');
+  const label = document.getElementById('imp-tts-label');
+  if (btn) {
+    btn.classList.toggle('speaking', !!isSpeaking);
+    const iconSpan = btn.querySelector('span:first-child');
+    if (iconSpan) iconSpan.textContent = isSpeaking ? '⏹' : '🔊';
+  }
+  if (label) {
+    label.innerText = isSpeaking ? 'Stoppen' : 'Vorlesen';
+  }
+}
+
+function stopImpressumSpeech() {
+  if (window.ReadAloudService && typeof window.ReadAloudService.stop === 'function') {
+    window.ReadAloudService.stop();
+  } else if (typeof speechSynthesis !== 'undefined') {
+    speechSynthesis.cancel();
+  }
+  updateImpressumTtsUI(false);
+  const menu = document.getElementById('imp-tts-menu');
+  if (menu) menu.classList.add('hidden');
+}
+
+async function toggleImpressumSpeech(forceRestart) {
+  const isCurrentlySpeaking = window.ReadAloudService
+    ? window.ReadAloudService.isPlaying()
+    : (typeof speechSynthesis !== 'undefined' && (speechSynthesis.speaking || speechSynthesis.pending));
+
+  if (isCurrentlySpeaking && !forceRestart) {
+    stopImpressumSpeech();
+    return;
+  }
+
+  const allBlocks = Array.from(document.querySelectorAll('.lang-block'));
+  const activeBlock = allBlocks.find(b => b.style.display !== 'none');
+  if (!activeBlock) return;
+
+  const textToRead = activeBlock.innerText || '';
+  if (!textToRead.trim()) return;
+
+  const currentLangCode = activeBlock.getAttribute('data-lang') || 'de';
+
+  if (window.ReadAloudService && typeof window.ReadAloudService.speak === 'function') {
+    if (window.ReadAloudService.setSpeed) {
+      window.ReadAloudService.setSpeed(impTtsSpeed);
+    }
+    updateImpressumTtsUI(true);
+    await window.ReadAloudService.speak(textToRead, currentLangCode, {
+      onStart: () => updateImpressumTtsUI(true),
+      onEnd: () => updateImpressumTtsUI(false),
+      onError: () => updateImpressumTtsUI(false)
+    });
+  } else if (typeof speechSynthesis !== 'undefined') {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(textToRead);
+    u.lang = currentLangCode;
+    u.rate = impTtsSpeed;
+    u.onend = () => updateImpressumTtsUI(false);
+    u.onerror = () => updateImpressumTtsUI(false);
+    updateImpressumTtsUI(true);
+    speechSynthesis.speak(u);
+  }
+}
+
+window.addEventListener('tts:stateChange', (e) => {
+  if (e.detail) {
+    updateImpressumTtsUI(e.detail.state === 'speaking');
+  }
+});
+
+window.addEventListener('tts:speedChange', (e) => {
+  if (e.detail && e.detail.speed) {
+    impTtsSpeed = e.detail.speed;
+    updateImpressumTtsSpeedUI();
+  }
+});
+
+  // Service Worker Update-Registration mit Anti-Loop Guard
+  if ('serviceWorker' in navigator) {
+    let hadController = Boolean(navigator.serviceWorker.controller);
+    let isRefreshing = false;
+
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (isRefreshing) return;
+      if (!hadController) {
+        hadController = true;
+        return;
+      }
+      const now = Date.now();
+      const lastReload = parseInt(AppSession.getItem('sw_last_reload') || '0', 10);
+      if (now - lastReload < 10000) return;
+      isRefreshing = true;
+      AppSession.setItem('sw_last_reload', now.toString());
+      window.location.reload();
+    });
+
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
+        .then((reg) => { if (reg) reg.update().catch(() => {}); })
+        .catch(() => {});
+    });
+  }
+</script>
+<script src="js/community-glass.20260910.js?v=v24.213.0"></script>
+<script data-pplx-inline-edit>
+(function () {
+  if (window === window.top) return;
+
+  const allowedParentOrigins = ["https://www.perplexity.ai","https://perplexity.ai","https://testing.perplexity.ai","https://staging.perplexity.ai","https://*.preview.i.perplexity.ai","http://perplexity.localhost","http://localhost:1420","http://127.0.0.1:1420","http://localhost:3000","http://127.0.0.1:3000","http://localhost:5173","http://127.0.0.1:5173"];
+  const MAX_FONT_BYTES = 500 * 1024;
+  const MAX_TOTAL_FONT_BYTES = 2 * 1024 * 1024;
+  let scrollForwarding = false;
+  let scrollRaf = 0;
+  let trustedTopOrigin = null;
+
+  // Allow entries like "https://*.preview.i.perplexity.ai" — the wildcard
+  // matches a single DNS label (no dots), so "https://*.foo" cannot stretch
+  // across multiple labels.
+  function matchesAllowedOrigin(origin) {
+    if (!origin) return false;
+    for (const entry of allowedParentOrigins) {
+      if (!entry.includes("*")) {
+        if (entry === origin) return true;
+        continue;
+      }
+      const pattern = new RegExp(
+        "^" +
+          entry.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^.]+") +
+          "$",
+      );
+      if (pattern.test(origin)) return true;
+    }
+    return false;
+  }
+
+  // Trust decision: when the sender is same-origin-visible (event.origin is a
+  // real origin like https://www.perplexity.ai) we trust event.origin directly.
+  // When event.origin is "null" (opaque broker srcdoc), we fall back to the
+  // broker's stamped `parentOrigin` to identify the top window. The fallback
+  // is claim-only — we rely on the browser's native `targetOrigin` enforcement
+  // on the response path (see postToTrustedTop) to ensure replies can't be
+  // delivered to anyone but the actual top window of that claimed origin.
+  function getTrustedParentOrigin(event) {
+    const forwardedParentOrigin =
+      typeof event.data.parentOrigin === "string" ? event.data.parentOrigin : null;
+    const parentOrigin = event.origin === "null" ? forwardedParentOrigin : event.origin;
+    return matchesAllowedOrigin(parentOrigin) ? parentOrigin : null;
+  }
+
+  // All responses go to window.top with targetOrigin = the allowlisted origin.
+  // An attacker that iframes us inside their own null-origin broker can claim
+  // any parentOrigin they like, but the browser will drop the reply whenever
+  // the real top's origin doesn't match — so the screenshot never leaves.
+  function postToTrustedTop(message) {
+    if (!trustedTopOrigin) return;
+    try {
+      window.top.postMessage(message, trustedTopOrigin);
+    } catch (_error) {}
+  }
+
+  function inlineAll(original, clone) {
+    if (original.nodeType !== 1 || clone.nodeType !== 1) return;
+
+    try {
+      const computedStyle = getComputedStyle(original);
+      // cssText on a computed style is the serialized declaration in modern
+      // Chromium/Safari — a single read beats enumerating ~400 longhand
+      // properties. Firefox returns "" here, so we fall back on empty.
+      const serialized = computedStyle.cssText;
+      if (serialized) {
+        clone.style.cssText = serialized;
+      } else {
+        const parts = new Array(computedStyle.length);
+        for (let index = 0; index < computedStyle.length; index += 1) {
+          const property = computedStyle[index];
+          parts[index] = `${property}:${computedStyle.getPropertyValue(property)};`;
+        }
+        clone.style.cssText = parts.join("");
+      }
+    } catch (_error) {}
+
+    const originalChildren = original.children;
+    const clonedChildren = clone.children;
+    for (
+      let index = 0;
+      index < originalChildren.length && index < clonedChildren.length;
+      index += 1
+    ) {
+      inlineAll(originalChildren[index], clonedChildren[index]);
+    }
+  }
+
+  function extractFontUrl(srcValue) {
+    const matches = [
+      ...srcValue.matchAll(
+        /url\(["']?([^"')]+)["']?\)(?:\s*format\(["']?([^"')]+)["']?\))?/gi,
+      ),
+    ];
+    if (matches.length === 0) return null;
+    const woff2 = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff2"));
+    if (woff2) return woff2[1];
+    const woff = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff"));
+    if (woff) return woff[1];
+    return matches[0][1];
+  }
+
+  // Cache resolved font URL -> data URI across captures. Fonts on a page
+  // essentially never change, and a batch run emits multiple captures back to
+  // back — without this we'd refetch + re-base64 every time.
+  const fontDataUriCache = new Map();
+  const SRC_DECLARATION_RE = /src\s*:\s*[^;}]+/i;
+
+  async function fetchAsDataUri(url) {
+    if (fontDataUriCache.has(url)) return fontDataUriCache.get(url);
+    let dataUri = null;
+    try {
+      const response = await fetch(url, { mode: "cors", credentials: "omit" });
+      if (response.ok) {
+        const blob = await response.blob();
+        if (blob.size <= MAX_FONT_BYTES) {
+          dataUri = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () =>
+              resolve(typeof reader.result === "string" ? reader.result : null);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(blob);
+          });
+        }
+      }
+    } catch (_error) {
+      dataUri = null;
+    }
+    fontDataUriCache.set(url, dataUri);
+    return dataUri;
+  }
+
+  function collectFontFaceRuleTexts() {
+    const rules = [];
+    for (const sheet of document.styleSheets) {
+      let cssRules;
+      try {
+        cssRules = sheet.cssRules;
+      } catch (_error) {
+        continue;
+      }
+      if (!cssRules) continue;
+      for (const rule of cssRules) {
+        const cssText = rule.cssText || "";
+        if (cssText.startsWith("@font-face")) rules.push(cssText);
+      }
+    }
+    return rules;
+  }
+
+  async function buildInlinedFontCss() {
+    const ruleTexts = collectFontFaceRuleTexts();
+    if (ruleTexts.length === 0) return null;
+
+    const resolved = ruleTexts.map((cssText) => {
+      if (!SRC_DECLARATION_RE.test(cssText)) return null;
+      const srcMatch = cssText.match(/src\s*:\s*([^;}]+)[;}]/i);
+      if (!srcMatch) return null;
+      const url = extractFontUrl(srcMatch[1]);
+      if (!url) return null;
+      try {
+        return { cssText, url: new URL(url, document.baseURI).href };
+      } catch (_error) {
+        return null;
+      }
+    });
+
+    const dataUris = await Promise.all(
+      resolved.map((entry) => (entry ? fetchAsDataUri(entry.url) : Promise.resolve(null))),
+    );
+
+    const inlined = [];
+    let totalBytes = 0;
+    for (let index = 0; index < resolved.length; index += 1) {
+      const entry = resolved[index];
+      const dataUri = dataUris[index];
+      if (!entry || !dataUri) continue;
+      const approxBytes = dataUri.length * 0.75;
+      if (totalBytes + approxBytes > MAX_TOTAL_FONT_BYTES) break;
+      totalBytes += approxBytes;
+      inlined.push(entry.cssText.replace(SRC_DECLARATION_RE, `src: url("${dataUri}")`));
+    }
+    return inlined.length > 0 ? inlined.join("\n") : null;
+  }
+
+  function stripExternal(clone) {
+    const images = clone.querySelectorAll("img");
+    for (let index = 0; index < images.length; index += 1) {
+      const src = images[index].getAttribute("src");
+      if (src && !src.startsWith("data:")) images[index].removeAttribute("src");
+    }
+
+    const elements = clone.querySelectorAll("*");
+    for (let index = 0; index < elements.length; index += 1) {
+      const style = elements[index].style.cssText;
+      if (style && style.includes("url(")) {
+        elements[index].style.cssText = style.replace(
+          /url\(["']?(?!data:)[^)"']*["']?\)/gi,
+          "none",
+        );
+      }
+    }
+  }
+
+  function emitScroll() {
+    scrollRaf = 0;
+    if (!scrollForwarding) return;
+    postToTrustedTop({
+      type: "INLINE_EDIT_SCROLL",
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
+    });
+  }
+
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (!scrollForwarding || scrollRaf) return;
+      scrollRaf = requestAnimationFrame(emitScroll);
+    },
+    { passive: true, capture: true },
+  );
+
+  async function handleCaptureRequest(event) {
+    const requestId = event.data.requestId;
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    function postResult(dataUrl) {
+      postToTrustedTop({
+        type: "INLINE_EDIT_SCREENSHOT_RESULT",
+        requestId,
+        dataUrl,
+        scrollX,
+        scrollY,
+      });
+    }
+
+    try {
+      // Wait for any pending web fonts to resolve so both inline metrics and
+      // the @font-face inlining below see the same loaded faces.
+      if (document.fonts && document.fonts.ready) {
+        try {
+          await document.fonts.ready;
+        } catch (_error) {}
+      }
+
+      const clone = document.documentElement.cloneNode(true);
+      inlineAll(document.documentElement, clone);
+
+      const removedNodes = clone.querySelectorAll("script,link[rel=\"stylesheet\"],style");
+      for (let index = 0; index < removedNodes.length; index += 1) {
+        removedNodes[index].remove();
+      }
+
+      stripExternal(clone);
+
+      // Re-embed web fonts as data-URI @font-face rules so the SVG rasterizer
+      // can resolve them — external font URLs aren't fetched during
+      // foreignObject rendering, which would otherwise force a fallback face
+      // and change text metrics.
+      const inlinedFontCss = await buildInlinedFontCss();
+      if (inlinedFontCss) {
+        const styleEl = document.createElement("style");
+        styleEl.textContent = inlinedFontCss;
+        const head = clone.querySelector("head");
+        if (head) head.appendChild(styleEl);
+        else clone.insertBefore(styleEl, clone.firstChild);
+      }
+
+      const html = new XMLSerializer().serializeToString(clone);
+      const svg =
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
+        '<foreignObject width="100%" height="100%">' +
+        `<div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;overflow:hidden">` +
+        `<div style="position:relative;left:-${scrollX}px;top:-${scrollY}px">` +
+        html +
+        "</div></div></foreignObject></svg>";
+      const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      const image = new Image();
+      image.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(image, 0, 0);
+        postResult(canvas.toDataURL("image/png"));
+      };
+      image.onerror = function () {
+        postResult(null);
+      };
+      image.src = svgUrl;
+    } catch (_error) {
+      postResult(null);
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    if (!event.data) return;
+    // Only accept messages from the direct parent frame. Blocks sibling /
+    // unrelated-window postMessage senders that could otherwise reach us.
+    if (event.source !== window.parent) return;
+
+    const trustedParentOrigin = getTrustedParentOrigin(event);
+    if (!trustedParentOrigin) return;
+    trustedTopOrigin = trustedParentOrigin;
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_START") {
+      scrollForwarding = true;
+      emitScroll();
+      return;
+    }
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_STOP") {
+      scrollForwarding = false;
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
+      scrollRaf = 0;
+      return;
+    }
+
+    if (event.data.type !== "INLINE_EDIT_CAPTURE_REQUEST") return;
+
+    handleCaptureRequest(event);
+  });
+})();
+
+
+</script></body>
+<link rel="stylesheet" href="assets/liquid-glass-skin.0a54a0f62eb1d974.css?v=android-fix-20260914d" data-gp-glass-skin="true">
+</html>

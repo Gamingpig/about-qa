@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "updatedAt": "2026-09-09T15:17:22.926Z",
+  "votes": {
+    "1": 0,
+    "2": 1,
+    "3": 1,
+    "4": 1,
+    "5": 1,
+    "6": 0
+  },
+  "voters": {
+    "40303b97c12642af2d1903cd51c9a8d975f2c3e1a390e770dcc60fee9a6d7c73": {
+      "revision": 1788941916607,
+      "features": [],
+      "eventId": "b2cd27cf-6af7-4626-8c68-7e9ac0a31802"
+    },
+    "e7ad0cceeefc3c985b5c81dad0759a9c48494c0bb385e23afe431fca4efcdc92": {
+      "revision": 1788942056986,
+      "features": [],
+      "eventId": "42de7657-e406-4faa-9daf-872e3e894f56"
+    },
+    "0fc7191a39b151ea082fdc0a651da111428358706bc047d8e38cecc6c9478223": {
+      "revision": 1788947465491,
+      "features": [],
+      "eventId": "da5e4637-1386-4964-9556-de1f8d023820"
+    },
+    "9f7cce77d04f4d6084ecdaa60ddaeaa490eee792ac1d85af355de0b692e9ddc9": {
+      "revision": 1788965347748,
+      "features": [
+        2,
+        3,
+        4
+      ],
+      "eventId": "babdd27a-1569-49a3-a860-98c075e53d5c"
+    },
+    "7b48bb53e928b6792a4b5b504e4a37c0ba4613687720aa9574d751cf0b0a0f3f": {
+      "revision": 1788967014580,
+      "features": [
+        5
+      ],
+      "eventId": "61dfd605-ed71-4bb6-90c6-1ae761f9e387"
+    }
+  },
+  "wishes": [
+    {
+      "id": "e3027083-1ba3-4990-9d13-ec5a663486d2",
+      "voter": "9f7cce77d04f4d6084ecdaa60ddaeaa490eee792ac1d85af355de0b692e9ddc9",
+      "author": "Caden",
+      "category": "Design & UI",
+      "title": "Liquid glas",
+      "desc": "Unser Handy fühlt sich nicht mehr an wie ein Bildschirm. Sondern wie ein Stück Zukunft aus dem Labor.",
+      "date": "2026-09-09T14:50:57.000Z"
+    },
+    {
+      "id": "690958b7-bbe1-48a1-a675-9180e3fb866e",
+      "voter": "0fc7191a39b151ea082fdc0a651da111428358706bc047d8e38cecc6c9478223",
+      "author": "Gamingpig",
+      "category": "Performance & Code",
+      "title": "Test",
+      "desc": "Dies ist ein Test",
+      "date": "2026-09-09T08:56:44.000Z"
+    }
+  ],
+  "deletedWishIds": []
+}

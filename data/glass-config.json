@@ -1,0 +1,7 @@
+{
+  "enabled": true,
+  "blur": 7,
+  "saturation": 128,
+  "refraction": 6,
+  "edge": 0.28
+}

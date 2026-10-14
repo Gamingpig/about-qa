@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+  <script>/* Android Liquid Glass compatibility */(function(){try{var ua=navigator.userAgent||"";if(/Android/i.test(ua)){document.documentElement.classList.add("gp-android");if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add("gp-android-lowend");}if(/Mobile|iP(hone|od|ad)|Android.*Mobile/i.test(ua))document.documentElement.classList.add("gp-mobile");}catch(e){}})();</script>
+  <script src="./js/core/storage.e856be99df567fd2.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Release Notes v24.215.0 – Gamingpig</title>
+  <meta name="description" content="Offizielle Release Notes für Gamingpig v24.215.0: Neues Einstellungs-Zentrum mit Subpage-Drilldown, zusammengefasstes Onboarding & Reset, System-Info mit Entwicklermodus & kontrollierter PWA Service Worker.">
+  <meta name="theme-color" content="#090a0f">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script>
+    try {
+      var savedAppLang = (window.AppStorage ? AppStorage.getItem('selectedLanguage') || AppStorage.getItem('app_language') : null);
+      if (savedAppLang) document.documentElement.setAttribute('lang', savedAppLang);
+    } catch(e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    if (window.tailwind) tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          },
+          colors: {
+            brand: {
+              400: "#818cf8",
+              500: "#6366f1",
+              600: "#4f46e5"
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: rgba(18, 20, 29, 0.72);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover-border: rgba(99, 102, 241, 0.4);
+    }
+    body {
+      background-color: var(--bg);
+      color: #f3f4f6;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    .glass-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-panel:hover {
+      border-color: var(--card-hover-border);
+      box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
+    }
+    .badge-pill {
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      color: #a5b4fc;
+    }
+    .mesh-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+    }
+  </style>
+  <link rel="stylesheet" href="assets/community-glass.20260910.css?v=v24.213.0" data-gp-glass-engine="true">
+</head>
+<body class="selection:bg-indigo-500/30 selection:text-indigo-200">
+  <div class="mesh-bg"></div>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header style="padding-top: max(0px, env(safe-area-inset-top, 0px));" class="sticky top-0 z-50 glass-panel border-b border-white/5 !bg-black/40 !backdrop-blur-xl">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3 group text-gray-300 hover:text-white transition-colors relative z-50 cursor-pointer touch-manipulation">
+        <div class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-indigo-500/20 group-hover:border-indigo-500/40 transition-all">
+          <svg class="w-4 h-4 text-gray-300 group-hover:text-indigo-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+        </div>
+        <span class="font-semibold text-sm tracking-wide">Zurück zu Gamingpig</span>
+      </a>
+
+      <!-- Right controls: TTS Reader + Language Selector -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Audio TTS Briefing Button -->
+        <button id="tts-btn" onclick="toggleAudioBriefing()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 transition-all active:scale-95">
+          <svg id="tts-icon" class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+          </svg>
+          <span id="tts-label">30s Briefing vorlesen</span>
+        </button>
+
+        <!-- Language Dropdown -->
+        <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-white/5 border border-white/10 rounded-full px-3 py-1.5 text-xs font-medium text-gray-200 focus:outline-none focus:border-indigo-500 cursor-pointer">
+          <option value="de" selected class="bg-gray-900 text-white">🇩🇪 DE</option>
+          <option value="en" class="bg-gray-900 text-white">🇬🇧 EN</option>
+          <option value="fr" class="bg-gray-900 text-white">🇫🇷 FR</option>
+          <option value="es" class="bg-gray-900 text-white">🇪🇸 ES</option>
+          <option value="pt" class="bg-gray-900 text-white">🇧🇷 PT</option>
+          <option value="tr" class="bg-gray-900 text-white">🇹🇷 TR</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <!-- Hero Header -->
+    <div class="text-center space-y-4 mb-14">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold badge-pill">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="hero-tag">Offizielles Update • Jetzt Live</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
+        Gamingpig <span class="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">v24.215.0</span>
+      </h1>
+      <p id="hero-subtitle" class="text-gray-400 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
+        Neues Einstellungs-Zentrum mit Subpage-Drilldown, kombiniertes Onboarding &amp; Reset, System-Info &amp; 7-Tap Entwicklermodus.
+      </p>
+      <div class="flex items-center justify-center gap-4 text-xs text-gray-500 font-mono pt-2">
+        <span>12. Oktober 2026</span>
+        <span>•</span>
+        <span>Build 2026.10.12</span>
+        <span>•</span>
+        <span class="text-emerald-400 font-medium">100% Produktionsreif</span>
+      </div>
+    </div>
+
+    <!-- 4 High-Impact Metric Chips -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-12">
+      <div class="glass-panel rounded-2xl p-4 text-center">
+        <div class="text-2xl sm:text-3xl font-extrabold text-indigo-400 font-mono">6</div>
+        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_fade">Kategorien</div>
+      </div>
+      <div class="glass-panel rounded-2xl p-4 text-center">
+        <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">Subpages</div>
+        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_tts">Drilldown-Hub</div>
+      </div>
+      <div class="glass-panel rounded-2xl p-4 text-center">
+        <div class="text-2xl sm:text-3xl font-extrabold text-pink-400 font-mono">7-Tap</div>
+        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_freeze">Entwicklermodus</div>
+      </div>
+      <div class="glass-panel rounded-2xl p-4 text-center">
+        <div class="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono">100%</div>
+        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_reset">A11y Kontrast</div>
+      </div>
+    </div>
+
+    <!-- Core Highlights Cards -->
+    <div class="space-y-6">
+      <h2 id="section-title" class="text-xl font-bold text-white flex items-center gap-2">
+        <span>⚡</span> Was ist neu in v24.215.0
+      </h2>
+
+      <!-- Card 1: Neues Einstellungs-Zentrum & Drilldown -->
+      <article class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex-shrink-0 flex items-center justify-center text-xl">
+            ⚙️
+          </div>
+          <div class="flex-1 space-y-2">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h3 class="text-lg font-bold text-white" data-i18n="card1_title">Neues Einstellungs-Zentrum &amp; Subpage-Drilldown</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Systemweit</span>
+            </div>
+            <p class="text-sm text-gray-300 leading-relaxed" data-i18n="card1_desc">
+              Die Website-Einstellungen wurden vollständig renoviert: Aufgeräumte Kategorien-Kacheln auf oberster Ebene, flüssiger Subpage-Drilldown, Suchfunktion in Echtzeit und einheitliches Onboarding &amp; Wiederherstellungs-Menü.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: System-Info & Developer Mode -->
+      <article class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex-shrink-0 flex items-center justify-center text-xl">
+            ℹ️
+          </div>
+          <div class="flex-1 space-y-2">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h3 class="text-lg font-bold text-white" data-i18n="card2_title">System-Info &amp; 7-Tap Entwickleroptionen</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Experten-Tools</span>
+            </div>
+            <p class="text-sm text-gray-300 leading-relaxed" data-i18n="card2_desc">
+              Verstecktes Easter-Egg: 7-faches Antippen der Build-Nummer schaltet die versteckten Entwickleroptionen frei – inklusive Haptik- und Audio-Feedback-Test, Mock-Update-Simulation und detaillierter System-Diagnose.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3: Light Mode Contrast & Spotlight Search Swap -->
+      <article class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex-shrink-0 flex items-center justify-center text-xl">
+            🌓
+          </div>
+          <div class="flex-1 space-y-2">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h3 class="text-lg font-bold text-white" data-i18n="card3_title">Light-Mode Kontrastperfektion &amp; Spotlight-Suche</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-500/15 text-pink-300 border border-pink-500/30">Design &amp; A11y</span>
+            </div>
+            <p class="text-sm text-gray-300 leading-relaxed" data-i18n="card3_desc">
+              Alle Texte, Kacheln und Eingabefelder im Light-Mode wurden auf maximalen barrierefreien Kontrast optimiert. Der Suche-Button (⌘K) besitzt im Standard-Modus dezentes Frosted-Glass und im Liquid-Glass-Modus volles kristallklares Apple-Glas.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4: Resilient Music Playback & Roadmap Live Filter -->
+      <article class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex-shrink-0 flex items-center justify-center text-xl">
+            🎵
+          </div>
+          <div class="flex-1 space-y-2">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h3 class="text-lg font-bold text-white" data-i18n="card4_title">Spotify Live-Player Resilienz &amp; Roadmap-Filter</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">Streaming &amp; Community</span>
+            </div>
+            <p class="text-sm text-gray-300 leading-relaxed" data-i18n="card4_desc">
+              Verlustfreier stats.fm-Fallback mit schnellem Timeout verhindert falsche Offline-Meldungen bei Spotify. Zudem hat die Community-Roadmap jetzt einen eigenen Filter 'Fertig / Live' für alle bereits veröffentlichten Features.
+            </p>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Actions Footer -->
+    <div class="mt-14 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="text-xs text-gray-500 text-center sm:text-left">
+        Gamingpig Web App • Built with ❤️, Web Audio API & Tailwind CSS.
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="px-5 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95">
+          App jetzt öffnen
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const I18N = {
+      de: {
+        tag: "Offizielles Update • Jetzt Live",
+        subtitle: "Neues Einstellungs-Zentrum mit Subpage-Drilldown, kombiniertes Onboarding & Reset, System-Info & 7-Tap Entwicklermodus.",
+        metric_fade: "Kategorien",
+        metric_tts: "Drilldown-Hub",
+        metric_freeze: "Entwicklermodus",
+        metric_reset: "A11y Kontrast",
+        section: "⚡ Was ist neu in v24.215.0",
+        card1_title: "Neues Einstellungs-Zentrum & Subpage-Drilldown",
+        card1_desc: "Die Website-Einstellungen wurden vollständig renoviert: Aufgeräumte Kategorien-Kacheln auf oberster Ebene, flüssiger Subpage-Drilldown, Suchfunktion in Echtzeit und einheitliches Onboarding & Wiederherstellungs-Menü.",
+        card2_title: "System-Info & 7-Tap Entwickleroptionen",
+        card2_desc: "Verstecktes Easter-Egg: 7-faches Antippen der Build-Nummer schaltet die versteckten Entwickleroptionen frei – inklusive Haptik- und Audio-Feedback-Test, Mock-Update-Simulation und detaillierter System-Diagnose.",
+        card3_title: "Light-Mode Kontrastperfektion & Spotlight-Suche",
+        card3_desc: "Alle Texte, Kacheln und Eingabefelder im Light-Mode wurden auf maximalen barrierefreien Kontrast optimiert. Der Suche-Button (⌘K) besitzt im Standard-Modus dezentes Frosted-Glass und im Liquid-Glass-Modus volles kristallklares Apple-Glas.",
+        card4_title: "Spotify Live-Player Resilienz & Roadmap-Filter",
+        card4_desc: "Verlustfreier stats.fm-Fallback mit schnellem Timeout verhindert falsche Offline-Meldungen bei Spotify. Zudem hat die Community-Roadmap jetzt einen eigenen Filter 'Fertig / Live' für alle bereits veröffentlichten Features.",
+        tts_read: "30s Briefing vorlesen",
+        tts_stop: "Vorlesen stoppen",
+        speech_text: "Willkommen zum Gamingpig Update v24.215.0! Dieses Release bringt ein komplett neues, aufgeräumtes Einstellungs-Zentrum mit Subpages, Entwickleroptionen per 7-Tap, perfekten Light-Mode-Kontrast und verbesserte Musik-Wiedergabe. Viel Spaß mit dem neuen Update!"
+      },
+      en: {
+        tag: "Official Update • Live Now",
+        subtitle: "Modern Settings Center with subpage drilldown, combined onboarding & reset, system info & 7-tap developer mode.",
+        metric_fade: "Categories",
+        metric_tts: "Drilldown Hub",
+        metric_freeze: "Developer Mode",
+        metric_reset: "A11y Contrast",
+        section: "⚡ What is New in v24.215.0",
+        card1_title: "Modern Settings Center & Subpage Drilldown",
+        card1_desc: "The website settings have been completely revamped: Clean category tiles on top level, smooth subpage drilldown navigation, live search, and unified recovery & onboarding tools.",
+        card2_title: "System Info & 7-Tap Developer Mode",
+        card2_desc: "Hidden Easter Egg: Tapping the build number 7 times unlocks developer options – including haptic & audio tests, mock update simulation, and in-depth system diagnostics.",
+        card3_title: "Light Mode Contrast & Spotlight Search",
+        card3_desc: "All light mode cards, text, and inputs are tuned for maximum accessible contrast. The Spotlight search button (⌘K) features frosted glass in standard mode and crystalline Apple glass in Liquid Glass mode.",
+        card4_title: "Resilient Spotify Player & Roadmap Filter",
+        card4_desc: "Zero-loss stats.fm fallback with rapid timeout prevents false offline warnings. The community roadmap now includes a dedicated 'Done / Live' filter for released features.",
+        tts_read: "Read 30s Briefing",
+        tts_stop: "Stop Reading",
+        speech_text: "Welcome to Gamingpig update v24.215.0! This release introduces a modern Settings Center with subpage drilldown, a 7-tap developer mode Easter egg, perfected light mode contrast, and resilient Spotify playback. Enjoy the update!"
+      },
+      fr: {
+        tag: "Mise à jour officielle • En direct",
+        subtitle: "Nouveau centre de paramètres avec sous-pages, réinitialisation unifiée, infos système et mode développeur 7-tap.",
+        metric_fade: "Catégories",
+        metric_tts: "Navigation Sous-pages",
+        metric_freeze: "Mode Développeur",
+        metric_reset: "Contraste A11y",
+        section: "⚡ Nouveautés de la version 24.215.0",
+        card1_title: "Nouveau Centre de Paramètres & Sous-pages",
+        card1_desc: "Les paramètres du site ont été entièrement rénovés : catégories épurées, navigation fluide vers les sous-pages, recherche en direct et outils de restauration unifiés.",
+        card2_title: "Infos Système & Mode Développeur 7-Tap",
+        card2_desc: "Easter Egg secret : appuyer 7 fois sur le numéro de build débloque les options développeur – tests haptiques et audio, simulation de mise à jour et diagnostics système.",
+        card3_title: "Contraste Mode Clair & Recherche Spotlight",
+        card3_desc: "Tous les textes et cartes en mode clair offrent un contraste accessible parfait. Le bouton de recherche (⌘K) adopte un verre dépoli ou liquide selon le mode actif.",
+        card4_title: "Lecteur Spotify Résilient & Filtre Roadmap",
+        card4_desc: "Le fallback stats.fm avec timeout court élimine les fausses erreurs hors-ligne. La feuille de route dispose d'un nouveau filtre 'Terminé / En ligne'.",
+        tts_read: "Écouter le briefing (30s)",
+        tts_stop: "Arrêter l'audio",
+        speech_text: "Bienvenue dans la version 24.215.0 de Gamingpig. Découvrez le nouveau centre de paramètres structuré, le mode développeur secret en 7 taps et un contraste parfait !"
+      },
+      es: {
+        tag: "Actualización oficial • Ya disponible",
+        subtitle: "Nuevo Centro de Ajustes con subpáginas, recuperación unificada, info del sistema y modo desarrollador con 7 toques.",
+        metric_fade: "Categorías",
+        metric_tts: "Navegación Subpáginas",
+        metric_freeze: "Modo Desarrollador",
+        metric_reset: "Contraste A11y",
+        section: "⚡ Novedades en v24.215.0",
+        card1_title: "Nuevo Centro de Ajustes y Subpáginas",
+        card1_desc: "Los ajustes del sitio han sido renovados por completo: categorías ordenadas, navegación fluida a subpáginas, búsqueda en tiempo real y herramientas de restauración.",
+        card2_title: "Info del Sistema y Modo Desarrollador (7 Toques)",
+        card2_desc: "Huevo de pascua secreto: tocar 7 veces el número de compilación desbloquea las opciones de desarrollador con pruebas hápticas, de audio y diagnóstico del sistema.",
+        card3_title: "Contraste Modo Claro y Búsqueda Spotlight",
+        card3_desc: "Textos y paneles en modo claro optimizados para máxima accesibilidad y contraste. El botón de búsqueda (⌘K) luce cristal escarchado o cristal líquido según el modo.",
+        card4_title: "Reproductor Spotify Resiliente y Filtro Roadmap",
+        card4_desc: "El fallback de stats.fm con tiempo de espera corto evita alertas falsas de desconexión. La hoja de ruta estrena el filtro 'Terminado / En vivo'.",
+        tts_read: "Escuchar resumen (30s)",
+        tts_stop: "Detener audio",
+        speech_text: "¡Bienvenido a la actualización 24.215.0 de Gamingpig! Estrena el nuevo Centro de Ajustes con subpáginas, el modo desarrollador oculto con 7 toques y mejoras de contraste."
+      },
+      pt: {
+        tag: "Atualização Oficial • Disponível Agora",
+        subtitle: "Novo Centro de Configurações com subpáginas, recuperação unificada, info do sistema e modo de desenvolvedor em 7 toques.",
+        metric_fade: "Categorias",
+        metric_tts: "Navegação Subpáginas",
+        metric_freeze: "Modo Desenvolvedor",
+        metric_reset: "Contraste A11y",
+        section: "⚡ O que há de novo na v24.215.0",
+        card1_title: "Novo Centro de Configurações e Subpáginas",
+        card1_desc: "As configurações foram totalmente renovadas: categorias organizadas, transições suaves para subpáginas, busca em tempo real e restauração combinada.",
+        card2_title: "Info do Sistema e Modo Desenvolvedor (7 Toques)",
+        card2_desc: "Easter Egg secreto: tocar 7 vezes no número da versão desbloqueia as opções de desenvolvedor com testes hápticos, de áudio e diagnóstico de sistema.",
+        card3_title: "Contraste do Modo Claro e Busca Spotlight",
+        card3_desc: "Textos e caixas no modo claro ajustados para máxima legibilidade e contraste. O botão de busca (⌘K) usa vidro jateado ou vidro líquido conforme o modo.",
+        card4_title: "Player Spotify Resiliente e Filtro Roadmap",
+        card4_desc: "Fallback stats.fm com timeout rápido evita alertas falsos de offline no Spotify. O roadmap da comunidade agora possui o filtro 'Concluído / Ao Vivo'.",
+        tts_read: "Ouvir resumo (30s)",
+        tts_stop: "Parar leitura",
+        speech_text: "Bem-vindo à atualização v24.215.0 do Gamingpig! Conheça o novo Centro de Configurações com subpáginas, o modo de desenvolvedor secreto e contraste aperfeiçoado."
+      },
+      tr: {
+        tag: "Resmi Güncelleme • Şimdi Yayında",
+        subtitle: "Alt sayfa gezintili modern Ayarlar Merkezi, birleşik kurtarma, sistem bilgisi ve 7 dokunuşlu geliştirici modu.",
+        metric_fade: "Kategoriler",
+        metric_tts: "Alt Sayfalar",
+        metric_freeze: "Geliştirici Modu",
+        metric_reset: "A11y Kontrast",
+        section: "⚡ v24.215.0 ile Neler Yeni?",
+        card1_title: "Modern Ayarlar Merkezi ve Alt Sayfalar",
+        card1_desc: "Site ayarları baştan sona yenilendi: düzenli kategori kartları, akıcı alt sayfa geçişleri, canlı arama ve birleşik kurtarma menüsü.",
+        card2_title: "Sistem Bilgisi ve 7 Dokunuşlu Geliştirici Modu",
+        card2_desc: "Gizli sürpriz: Derleme numarasına 7 kez dokunarak haptik ve ses testleri, simüle edilmiş güncelleme ve ayrıntılı sistem tanılarını açın.",
+        card3_title: "Açık Mod Kontrastı ve Spotlight Araması",
+        card3_desc: "Açık moddaki tüm metin ve öğeler üstün erişilebilir kontrast için optimize edildi. Spotlight arama butonu (⌘K) kristal cam tasarımına kavuştu.",
+        card4_title: "Dayanıklı Spotify Çalar ve Yol Haritası Filtresi",
+        card4_desc: "Hızlı zaman aşımlı stats.fm yedekleme sistemi sahte çevrimdışı uyarılarını engeller. Topluluk yol haritasına 'Tamamlandı / Canlı' filtresi eklendi.",
+        tts_read: "30sn Özeti Seslendir",
+        tts_stop: "Seslendirmeyi Durdur",
+        speech_text: "Gamingpig v24.215.0 güncellemesine hoş geldiniz! Alt sayfa yapısına sahip modern Ayarlar Merkezi, 7 dokunuşlu gizli geliştirici modu ve kontrast iyileştirmeleri sizlerle."
+      }
+    };
+
+    let currentLang = "de";
+
+    function changeLanguage(lang) {
+      if (!I18N[lang]) return;
+      currentLang = lang;
+      try {
+        if (window.AppStorage) {
+          AppStorage.setItem('selectedLanguage', lang);
+          AppStorage.setItem('app_language', lang);
+        } else {
+          localStorage.setItem('selectedLanguage', lang);
+          localStorage.setItem('app_language', lang);
+        }
+      } catch(e) {}
+      document.documentElement.setAttribute('lang', lang);
+      const selectEl = document.getElementById('lang-select');
+      if (selectEl && selectEl.value !== lang) selectEl.value = lang;
+
+      const t = I18N[lang];
+
+      document.getElementById("hero-tag").textContent = t.tag;
+      document.getElementById("hero-subtitle").textContent = t.subtitle;
+      document.getElementById("section-title").innerHTML = t.section;
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (t[key]) el.textContent = t[key];
+      });
+
+      if (!isSpeaking) {
+        document.getElementById("tts-label").textContent = t.tts_read;
+      }
+    }
+
+    // Web Speech API Text-to-Speech Engine
+    let isSpeaking = false;
+
+    function toggleAudioBriefing() {
+      if (!("speechSynthesis" in window)) {
+        alert("Text-to-Speech wird von deinem Browser leider nicht unterstützt.");
+        return;
+      }
+
+      if (isSpeaking) {
+        window.speechSynthesis.cancel();
+        isSpeaking = false;
+        document.getElementById("tts-label").textContent = I18N[currentLang].tts_read;
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const text = I18N[currentLang].speech_text;
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      const langCodes = { de: "de-DE", en: "en-US", fr: "fr-FR", es: "es-ES", pt: "pt-BR", tr: "tr-TR" };
+      utterance.lang = langCodes[currentLang] || "de-DE";
+      utterance.rate = 1.05;
+      utterance.pitch = 1.0;
+
+      utterance.onstart = () => {
+        isSpeaking = true;
+        document.getElementById("tts-label").textContent = I18N[currentLang].tts_stop;
+      };
+
+      utterance.onend = utterance.onerror = () => {
+        isSpeaking = false;
+        document.getElementById("tts-label").textContent = I18N[currentLang].tts_read;
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      let initLang = 'de';
+      try {
+        initLang = (window.AppStorage ? AppStorage.getItem('selectedLanguage') || AppStorage.getItem('app_language') : null) || localStorage.getItem('selectedLanguage') || localStorage.getItem('app_language') || document.documentElement.lang || 'de';
+      } catch(e) {}
+      if (initLang && I18N[initLang]) {
+        changeLanguage(initLang);
+      }
+    });
+  </script>
+  <script src="js/community-glass.20260910.js?v=v24.213.0"></script>
+</body>
+</html>

@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <script>/* Android Liquid Glass compatibility */(function(){try{var ua=navigator.userAgent||"";if(/Android/i.test(ua)){document.documentElement.classList.add("gp-android");if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add("gp-android-lowend");}if(/Mobile|iP(hone|od|ad)|Android.*Mobile/i.test(ua))document.documentElement.classList.add("gp-mobile");}catch(e){}})();</script>
+    <script src="./js/core/push-config.c9a9d21e3077b97f.js"></script>
+    <script src="./js/services/admin-vault.a7f68f3eec327183.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Push & Roadmap Control Center – Gamingpig</title>
+    <link rel="icon" href="icon-192.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        if (window.tailwind) tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#6366f1',
+                    }
+                }
+            }
+        }
+    </script>
+    <style data-gp-glass-engine="true">
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #03050c;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 45%),
+                radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(244, 63, 94, 0.12) 0px, transparent 55%),
+                radial-gradient(at 50% 100%, rgba(245, 158, 11, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .glow-card {
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            transition: all 0.25s ease;
+        }
+
+        .glow-card:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.95), 0 0 25px rgba(99, 102, 241, 0.15);
+        }
+    </style>
+<link rel="stylesheet" href="assets/community-glass.20260910.css?v=v24.213.0" data-gp-glass-engine="true">
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col items-center justify-between p-3.5 sm:p-6 md:p-10 selection:bg-indigo-500/40" style="padding-top: max(16px, env(safe-area-inset-top, 16px));">
+
+    <!-- Header -->
+    <header class="max-w-4xl w-full flex items-center justify-between py-3.5 px-4 sm:px-6 rounded-2xl bg-slate-900/85 border border-slate-800 backdrop-blur-xl mb-6 shadow-2xl relative z-40">
+        <a href="status.html" class="flex items-center gap-2 text-white hover:text-indigo-400 font-extrabold text-xs sm:text-sm transition-colors group relative z-50 cursor-pointer touch-manipulation">
+            <span class="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 group-hover:-translate-x-1 transition-transform">←</span>
+            <span>Status-Seite</span>
+        </a>
+
+        <div class="flex items-center gap-3">
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                <span>CONTROL CENTER</span>
+            </span>
+            <button id="btn-logout" onclick="handleLogout()" class="hidden px-2.5 py-1 text-xs font-bold text-slate-400 hover:text-rose-400 transition-colors">
+                Abmelden
+            </button>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main class="max-w-4xl w-full my-auto pb-28 space-y-8">
+
+        <!-- Lockout Panel -->
+        <div id="banned-panel" class="hidden glow-card p-6 sm:p-8 rounded-3xl border-rose-500/60 text-center max-w-md mx-auto bg-rose-950/40 shadow-2xl">
+            <div class="w-16 h-16 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/40 flex items-center justify-center text-4xl mx-auto mb-4 shadow-xl animate-pulse">
+                🚫
+            </div>
+            <h1 class="text-2xl font-black text-rose-400 mb-1 tracking-tight">NO ACCESS</h1>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                Aufgrund von <strong>10 aufeinanderfolgenden Fehlversuchen</strong> wurde der Zugriff dauerhaft blockiert.
+            </p>
+        </div>
+
+        <!-- Login Screen -->
+        <div id="login-panel" class="glow-card p-6 sm:p-8 rounded-3xl border-indigo-500/30 text-center max-w-md mx-auto">
+            <div class="w-14 h-14 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg">
+                🔐
+            </div>
+            <h1 class="text-xl font-black text-white mb-1">Gamingpig Admin Center</h1>
+            <p class="text-xs text-slate-400 mb-4">Bitte das konfigurierte Admin-Passwort eingeben.</p>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div class="relative">
+                    <input type="password" id="input-password" placeholder="Admin-Passwort eingeben" required
+                        class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-sm font-mono focus:ring-2 focus:ring-indigo-500 transition-all">
+                </div>
+                <div id="login-error" class="text-xs font-bold text-rose-400 hidden">
+                    ❌ Falsches Passwort.
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                    <span>Entsperren</span> <span>→</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="admin-dashboard" class="hidden space-y-8">
+
+            <!-- Tabs -->
+            <div class="flex items-center justify-between border-b border-white/10 pb-4 flex-wrap gap-3">
+                <div class="inline-flex rounded-2xl bg-slate-900/90 border border-slate-800 p-1.5 gap-2">
+                    <button id="tab-btn-roadmap" onclick="switchDashboardTab('roadmap')" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-purple-600 text-white shadow-lg transition-all">
+                        🗺️ Roadmap Studio
+                    </button>
+                    <button id="tab-btn-wishes" onclick="switchDashboardTab('wishes')" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all">
+                        💌 Wünsche moderieren
+                    </button>
+                    <button id="tab-btn-push" onclick="switchDashboardTab('push')" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all">
+                        📡 Push & Alarm
+                    </button>
+                    <button id="tab-btn-glass" onclick="switchDashboardTab('glass')" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all">
+                        💎 Liquid Glass
+                    </button>
+                </div>
+
+                <div id="gh-status-badge" class="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-2">
+                    <span>🟡</span> <span>Token prüfen</span>
+                </div>
+            </div>
+
+            <!-- TAB 1: ROADMAP STUDIO -->
+            <section id="view-roadmap" class="space-y-6">
+                <div class="glow-card p-5 sm:p-6 rounded-3xl border-purple-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-black uppercase tracking-widest mb-1.5">
+                            <span>🚀 LIVE RELEASE VERSION</span>
+                        </div>
+                        <h2 class="text-lg font-black text-white">Roadmap Karten & Release anpassen</h2>
+                        <p class="text-xs text-slate-400">Verändere Texte, Versionen oder füge neue Karten hinzu.</p>
+                    </div>
+
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <div class="bg-slate-900 px-3 py-2 rounded-xl border border-slate-700 flex items-center gap-2">
+                            <span class="text-xs font-mono text-slate-400">Version:</span>
+                            <input type="text" id="gui-release-version" class="bg-transparent text-sm font-mono font-black text-purple-400 outline-none w-28" placeholder="v24.213.0">
+                        </div>
+                        <button onclick="loadRoadmapMeta()" title="Neu laden" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 active:scale-95 transition-all">
+                            🔄
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Aktuelle Roadmap-Karten</h3>
+                    <button onclick="addNewRoadmapCard()" class="px-3.5 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/40 text-purple-300 font-bold text-xs active:scale-95 transition-all flex items-center gap-1.5">
+                        <span>➕</span> <span>Neue Karte hinzufügen</span>
+                    </button>
+                </div>
+
+                <!-- Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="gui-roadmap-grid">
+                    <div class="p-8 text-center text-slate-400 font-mono text-xs col-span-2">Lade Karten...</div>
+                </div>
+
+                <div class="sticky bottom-6 z-30 p-4 rounded-2xl bg-slate-900/95 border border-purple-500/40 backdrop-blur-xl shadow-2xl flex items-center justify-between gap-4 flex-wrap">
+                    <div class="text-xs text-slate-400">
+                        Schreibt via GitHub API direkt in <code class="text-slate-200">data/roadmap_meta.json</code>[cite: 12].
+                    </div>
+                    <button id="btn-save-roadmap-meta" onclick="saveRoadmapMeta()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:opacity-95 text-white font-black text-xs uppercase tracking-wider shadow-xl active:scale-95 transition-all flex items-center gap-2">
+                        <span>💾</span> <span>Roadmap auf GitHub speichern</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- TAB 2: WISHES MODERATOR -->
+            <section id="view-wishes" class="hidden space-y-6">
+                <div class="glow-card p-5 sm:p-6 rounded-3xl border-rose-500/30 flex items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-black uppercase tracking-widest mb-1.5">
+                            <span>🛡️ MODERATIONS-ZENTRALE</span>
+                        </div>
+                        <h2 class="text-lg font-black text-white">Eingereichte Wünsche bereinigen</h2>
+                        <p class="text-xs text-slate-400">Entferne Spam oder unpassende Community-Einträge dauerhaft.</p>
+                    </div>
+                    <button onclick="loadCommunityWishes()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 active:scale-95 transition-all">
+                        🔄
+                    </button>
+                </div>
+
+                <div id="wishes-moderation-list" class="space-y-3">
+                    <div class="p-8 text-center text-slate-400 font-mono text-xs">Lade Wünsche...</div>
+                </div>
+            </section>
+
+            <!-- TAB 3: PUSH -->
+            <section id="view-push" class="hidden space-y-6">
+                <div class="glow-card p-5 sm:p-6 rounded-3xl border-indigo-500/30 flex items-center justify-between gap-4">
+                    <div>
+                        <h2 class="font-extrabold text-base sm:text-lg text-white">Push-Sender &amp; Störungs-Dispatcher</h2>
+                        <p class="text-xs text-slate-400">Verfasse Sofort-Meldungen oder wähle aus Vorlagen.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="px-3.5 py-1.5 rounded-xl bg-slate-900/80 border border-white/10 text-right">
+                            <span class="text-[10px] text-slate-400 block uppercase font-mono">Geräte</span>
+                            <strong class="text-emerald-400 font-mono text-sm" id="subscribers-count">Lade...</strong>
+                        </div>
+                        <div class="px-3.5 py-1.5 rounded-xl bg-slate-900/80 border border-white/10 text-right">
+                            <span class="text-[10px] text-slate-400 block uppercase font-mono">Queue</span>
+                            <strong class="text-amber-300 font-mono text-sm" id="push-queue-count">Lade...</strong>
+                        </div>
+                        <button onclick="syncQueueNow()" class="px-3 py-2 rounded-xl bg-indigo-600/30 text-indigo-300 text-xs font-bold border border-indigo-500/40 active:scale-95">
+                            🔄 Sync
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glow-card p-5 sm:p-7 rounded-3xl border-slate-800 space-y-4">
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-300 block mb-1">Titel der Push-Benachrichtigung</label>
+                            <input type="text" id="msg-title" placeholder="z. B. 🔴 Störung: Lyrics offline" oninput="updatePreview()" class="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-300 block mb-1">Nachrichtentext</label>
+                            <textarea id="msg-body" rows="3" placeholder="Beschreibung..." oninput="updatePreview()" class="w-full px-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-sm outline-none resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-300 block mb-1">Ziel-URL beim Antippen</label>
+                            <input type="text" id="msg-url" value="status.html" class="w-full px-4 py-2 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-xs font-mono outline-none">
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center gap-3">
+                        <button onclick="sendLocalTestPush()" class="w-full sm:w-1/2 px-4 py-3 rounded-xl bg-slate-800 text-slate-200 font-bold text-xs border border-slate-700 active:scale-95">
+                            📲 Lokal testen
+                        </button>
+                        <button id="btn-broadcast-push" onclick="sendBroadcastPush()" class="w-full sm:w-1/2 px-4 py-3 rounded-xl bg-indigo-600 text-white font-bold text-xs active:scale-95">
+                            🚀 Broadcast senden
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glow-card p-5 sm:p-6 rounded-3xl border-slate-800 space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">🔑 GitHub Token (AES-256)</h3>
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                        <input type="password" id="gh-token-input" placeholder="GitHub PAT (ghp_...)" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono outline-none">
+                        <button onclick="handleSaveGitHubToken()" class="px-4 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs active:scale-95 shrink-0">
+                            💾 Speichern
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-glass" class="hidden space-y-6"></section>
+
+        </div>
+    </main>
+
+    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-xl bg-slate-900/95 border border-purple-500/40 text-white text-xs font-bold shadow-2xl backdrop-blur-xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
+        <span id="toast-icon">✅</span>
+        <span id="toast-msg">Meldung</span>
+    </div>
+
+    <script>
+        let currentRoadmapSha = null;
+        let currentWishesSha = null;
+        let roadmapDataCache = { releaseVersion: 'v24.213.0', items: {} };
+        let fullRoadmapJson = null;
+
+        function switchDashboardTab(tab) {
+            document.getElementById('view-roadmap').classList.toggle('hidden', tab !== 'roadmap');
+            document.getElementById('view-wishes').classList.toggle('hidden', tab !== 'wishes');
+            document.getElementById('view-push').classList.toggle('hidden', tab !== 'push');
+            document.getElementById('view-glass').classList.toggle('hidden', tab !== 'glass');
+
+            document.getElementById('tab-btn-roadmap').className = tab === 'roadmap' ? "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-purple-600 text-white shadow-lg" : "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white";
+            document.getElementById('tab-btn-wishes').className = tab === 'wishes' ? "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-rose-600 text-white shadow-lg" : "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white";
+            document.getElementById('tab-btn-push').className = tab === 'push' ? "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-indigo-600 text-white shadow-lg" : "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white";
+            document.getElementById('tab-btn-glass').className = tab === 'glass' ? "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-cyan-600 text-white shadow-lg" : "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white";
+
+            if (tab === 'wishes') loadCommunityWishes();
+        }
+
+        // ========================================== //
+        // 🗺️ ROADMAP STUDIO: EDIT / ADD / DELETE    //
+        // ========================================== //
+        async function loadRoadmapMeta() {
+            const grid = document.getElementById('gui-roadmap-grid');
+            grid.innerHTML = '<div class="p-8 text-center text-slate-400 font-mono text-xs col-span-2">Lade Karten von GitHub...</div>';
+
+            try {
+                const res = await fetch('https://api.github.com/repos/Gamingpig/About-Gamingpig/contents/data/roadmap_meta.json', { cache: 'no-store' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const fileInfo = await res.json();
+                currentRoadmapSha = fileInfo.sha;
+                roadmapDataCache = JSON.parse(decodeURIComponent(escape(atob(fileInfo.content))));
+
+                document.getElementById('gui-release-version').value = roadmapDataCache.releaseVersion || 'v24.213.0';
+                renderRoadmapEditorGrid();
+                showToast('Roadmap-Daten synchronisiert!', '🗺️');
+            } catch (e) {
+                grid.innerHTML = `<div class="p-6 rounded-2xl bg-rose-950/40 border border-rose-500/40 text-center col-span-2">
+                    <p class="text-xs text-rose-300 font-bold mb-2">Fehler: ${e.message}</p>
+                    <button onclick="loadRoadmapMeta()" class="px-3 py-1.5 rounded-lg bg-rose-600 text-xs font-bold text-white">Erneut versuchen</button>
+                </div>`;
+            }
+        }
+
+        function renderRoadmapEditorGrid() {
+            const grid = document.getElementById('gui-roadmap-grid');
+            grid.innerHTML = '';
+
+            const items = roadmapDataCache.items || {};
+            const keys = Object.keys(items);
+
+            if (keys.length === 0) {
+                grid.innerHTML = '<div class="p-8 text-center text-slate-400 font-mono text-xs col-span-2">Keine Karten vorhanden. Klicke oben auf „Neue Karte hinzufügen“.</div>';
+                return;
+            }
+
+            keys.forEach(id => {
+                const item = items[id];
+                const card = document.createElement('div');
+                card.className = "glow-card p-5 rounded-2xl sm:rounded-3xl border border-white/10 space-y-3.5 relative group";
+                card.id = `gui-card-${id}`;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="rm-icon-${id}" value="${item.icon || '📌'}" class="w-8 text-center bg-slate-900 border border-slate-700 rounded-lg p-1 text-sm outline-none">
+                            <select id="rm-status-${id}" class="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg bg-slate-900 border border-slate-700 text-white outline-none cursor-pointer">
+                                <option value="in_progress" ${item.status === 'in_progress' ? 'selected' : ''}>🔨 In Arbeit</option>
+                                <option value="planned" ${item.status === 'planned' ? 'selected' : ''}>📋 Geplant</option>
+                                <option value="research" ${item.status === 'research' ? 'selected' : ''}>💡 Konzept</option>
+                                <option value="live" ${item.status === 'live' ? 'selected' : ''}>✅ Fertig / Live</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="rm-target-${id}" value="${item.target || ''}" placeholder="Ziel: v24.160" class="text-xs font-mono text-purple-300 bg-slate-900/90 border border-slate-700 px-2 py-1 rounded-lg outline-none w-28 text-right">
+                            <button onclick="deleteRoadmapCard('${id}')" title="Karte löschen" class="p-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 border border-rose-500/30 text-xs transition-colors">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Titel der Karte</label>
+                        <input type="text" id="rm-title-${id}" value="${item.title || ''}" class="w-full text-sm font-black text-white bg-slate-900/70 border border-slate-700 rounded-xl px-3 py-1.5 focus:border-purple-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold uppercase text-slate-500 block mb-1">Beschreibung</label>
+                        <textarea id="rm-desc-${id}" rows="2" class="w-full text-xs text-slate-300 bg-slate-900/70 border border-slate-700 rounded-xl px-3 py-1.5 focus:border-purple-500 outline-none resize-none leading-relaxed">${item.desc || ''}</textarea>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-white/5">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[10px] text-slate-500 font-mono">Kategorie:</span>
+                            <input type="text" id="rm-cat-${id}" value="${item.category || 'Feature'}" class="text-[10px] font-mono text-slate-300 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 w-28">
+                        </div>
+                        <span class="text-[10px] font-mono text-slate-600">ID: #${id}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function addNewRoadmapCard() {
+            syncFormInputsToCache();
+            const existingKeys = Object.keys(roadmapDataCache.items || {}).map(Number).filter(n => !isNaN(n));
+            const nextId = existingKeys.length > 0 ? Math.max(...existingKeys) + 1 : 1;
+
+            roadmapDataCache.items = roadmapDataCache.items || {};
+            roadmapDataCache.items[String(nextId)] = {
+                title: "Neues Community-Feature",
+                desc: "Beschreibung des neuen Meilensteins hier eintragen...",
+                target: "Ziel: v24.165",
+                category: "Allgemein",
+                status: "planned",
+                icon: "✨"
+            };
+
+            renderRoadmapEditorGrid();
+            showToast(`Karte #${nextId} hinzugefügt!`, '➕');
+        }
+
+        function deleteRoadmapCard(id) {
+            if (!confirm(`Soll Karte #${id} wirklich gelöscht werden?`)) return;
+            syncFormInputsToCache();
+            delete roadmapDataCache.items[String(id)];
+            renderRoadmapEditorGrid();
+            showToast(`Karte #${id} entfernt.`, '🗑️');
+        }
+
+        function syncFormInputsToCache() {
+            roadmapDataCache.releaseVersion = document.getElementById('gui-release-version').value.trim() || 'v24.213.0';
+            Object.keys(roadmapDataCache.items || {}).forEach(id => {
+                const titleEl = document.getElementById(`rm-title-${id}`);
+                if (!titleEl) return;
+                roadmapDataCache.items[id] = {
+                    title: titleEl.value.trim(),
+                    desc: document.getElementById(`rm-desc-${id}`).value.trim(),
+                    target: document.getElementById(`rm-target-${id}`).value.trim(),
+                    category: document.getElementById(`rm-cat-${id}`).value.trim(),
+                    status: document.getElementById(`rm-status-${id}`).value,
+                    icon: document.getElementById(`rm-icon-${id}`).value.trim()
+                };
+            });
+        }
+
+        async function saveRoadmapMeta() {
+            const token = await AdminVault.getToken();
+            if (!token) return showToast('GitHub-Token fehlt im Tresor!', '🔑');
+
+            syncFormInputsToCache();
+
+            const btn = document.getElementById('btn-save-roadmap-meta');
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            showToast('Speichere Roadmap auf GitHub...', '⏳');
+
+            const rawContent = JSON.stringify(roadmapDataCache, null, 2);
+            const encodedContent = btoa(unescape(encodeURIComponent(rawContent)));
+
+            const putBody = {
+                message: 'chore(roadmap): update visual roadmap items via admin studio [skip ci]',
+                content: encodedContent
+            };
+            if (currentRoadmapSha) putBody.sha = currentRoadmapSha;
+
+            try {
+                const res = await fetch('https://api.github.com/repos/Gamingpig/About-Gamingpig/contents/data/roadmap_meta.json', {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/vnd.github+json',
+                        'Authorization': `Bearer ${token}`,
+                        'X-GitHub-Api-Version': '2022-11-28'
+                    },
+                    body: JSON.stringify(putBody)
+                });
+
+                if (res.ok) {
+                    const result = await res.json();
+                    currentRoadmapSha = result.content.sha;
+                    showToast('Roadmap auf GitHub veröffentlicht! 🚀', '✅');
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    showToast(`Fehler: ${err.message || res.status}`, '❌');
+                }
+            } catch (e) {
+                showToast('Netzwerkfehler: ' + e.message, '⚠️');
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+            }
+        }
+
+        // ========================================== //
+        // 💌 WISHES MODERATOR (DELETE SPAM WISHES)   //
+        // ========================================== //
+        function escapeHtml(str) {
+            return String(str || '').replace(/[&<>"']/g, m => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[m]);
+        }
+
+        async function loadCommunityWishes() {
+            const listEl = document.getElementById('wishes-moderation-list');
+            listEl.innerHTML = '<div class="p-8 text-center text-slate-400 font-mono text-xs">Lade Wünsche aus data/roadmap.json...</div>';
+
+            try {
+                const res = await fetch('https://api.github.com/repos/Gamingpig/About-Gamingpig/contents/data/roadmap.json', { cache: 'no-store' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const fileInfo = await res.json();
+                currentWishesSha = fileInfo.sha;
+                fullRoadmapJson = JSON.parse(decodeURIComponent(escape(atob(fileInfo.content))));
+
+                const wishes = fullRoadmapJson.wishes || [];
+                if (wishes.length === 0) {
+                    listEl.innerHTML = '<div class="p-8 text-center text-slate-400 font-mono text-xs">Keine eingereichten Wünsche vorhanden.</div>';
+                    return;
+                }
+
+                listEl.innerHTML = '';
+                wishes.forEach(w => {
+                    const row = document.createElement('div');
+                    row.className = "glow-card p-4 rounded-2xl border border-white/10 flex items-start justify-between gap-4";
+                    const isThreaded = Boolean(w.parentWishTitle || w.parentWishId);
+                    const safeParent = escapeHtml(w.parentWishTitle || w.parentWishId || '');
+                    const safeTitle = escapeHtml(w.title || '');
+                    const safeDesc = escapeHtml(w.desc || '');
+                    const safeAuthor = escapeHtml(w.author || 'Gast');
+                    const safeCategory = escapeHtml(w.category || 'Idee');
+                    const safeId = escapeHtml(w.id || '');
+                    row.innerHTML = `
+                        <div class="min-w-0 flex-1">
+                            ${isThreaded ? `
+                            <div class="mb-1.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-mono font-bold">
+                                <span>↳ Ergänzung zu:</span>
+                                <span>${safeParent}</span>
+                            </div>
+                            ` : ''}
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono text-[10px]">${safeCategory}</span>
+                                <span class="text-xs font-bold text-slate-300">${safeAuthor}</span>
+                                <span class="text-[10px] text-slate-500 font-mono">${w.date ? new Date(w.date).toLocaleString('de-DE') : ''}</span>
+                            </div>
+                            <h4 class="text-sm font-black text-white">${safeTitle}</h4>
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">${safeDesc}</p>
+                            <span class="text-[9px] font-mono text-slate-600">ID: ${safeId}</span>
+                        </div>
+                        <button onclick="deleteWish('${safeId}')" class="px-3 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 text-rose-400 border border-rose-500/30 text-xs font-bold transition-all active:scale-95 shrink-0 flex items-center gap-1">
+                            <span>🗑️</span> <span>Löschen</span>
+                        </button>
+                    `;
+                    listEl.appendChild(row);
+                });
+            } catch (e) {
+                listEl.innerHTML = `<div class="p-6 text-center text-rose-400 text-xs font-bold">Fehler beim Laden: ${e.message}</div>`;
+            }
+        }
+
+        async function deleteWish(wishId) {
+            if (!confirm(`Möchtest du diesen Wunsch wirklich unwiderruflich löschen?`)) return;
+            const token = await AdminVault.getToken();
+            if (!token) return showToast('GitHub-Token fehlt!', '🔑');
+
+            showToast('Lösche Wunsch und blacklist ID...', '⏳');
+
+            fullRoadmapJson.wishes = (fullRoadmapJson.wishes || []).filter(w => w.id !== wishId);
+            fullRoadmapJson.deletedWishIds = fullRoadmapJson.deletedWishIds || [];
+            if (!fullRoadmapJson.deletedWishIds.includes(wishId)) {
+                fullRoadmapJson.deletedWishIds.push(wishId);
+            }
+            fullRoadmapJson.updatedAt = new Date().toISOString();
+
+            const raw = JSON.stringify(fullRoadmapJson, null, 2);
+            const encoded = btoa(unescape(encodeURIComponent(raw)));
+
+            try {
+                const res = await fetch('https://api.github.com/repos/Gamingpig/About-Gamingpig/contents/data/roadmap.json', {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/vnd.github+json',
+                        'Authorization': `Bearer ${token}`,
+                        'X-GitHub-Api-Version': '2022-11-28'
+                    },
+                    body: JSON.stringify({
+                        message: `admin(roadmap): moderate delete wish ${wishId} [skip ci]`,
+                        content: encoded,
+                        sha: currentWishesSha
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    currentWishesSha = data.content.sha;
+                    showToast('Wunsch erfolgreich gelöscht!', '✅');
+                    loadCommunityWishes();
+                } else {
+                    showToast('Fehler beim Speichern auf GitHub.', '❌');
+                }
+            } catch (e) {
+                showToast('Fehler: ' + e.message, '⚠️');
+            }
+        }
+
+        // ========================================== //
+        // 🔐 SECURITY / AUTH                         //
+        // ========================================== //
+        async function handleLogin(e) {
+            if (e) e.preventDefault();
+            const inputEl = document.getElementById('input-password');
+            const err = document.getElementById('login-error');
+
+            try {
+                await AdminVault.unlock(inputEl.value);
+                inputEl.value = '';
+                if (err) err.classList.add('hidden');
+                unlockDashboard();
+                showToast('Erfolgreich angemeldet!', '🔓');
+            } catch (error) {
+                inputEl.value = '';
+                if (err) err.classList.remove('hidden');
+                showToast('Zugriff verweigert!', '❌');
+            }
+        }
+
+        function handleLogout() {
+            AdminVault.lock();
+            const glassAdmin = document.getElementById('gp-glass-admin'); if (glassAdmin) glassAdmin.hidden = true;
+            document.getElementById('admin-dashboard').classList.add('hidden');
+            document.getElementById('login-panel').classList.remove('hidden');
+            document.getElementById('btn-logout').classList.add('hidden');
+            showToast('Abgemeldet.', '🔒');
+        }
+
+        async function updateGitHubBridgeUI() {
+            const token = await AdminVault.getToken();
+            const hasToken = !!token;
+            const badge = document.getElementById('gh-status-badge');
+            const tokenInput = document.getElementById('gh-token-input');
+
+            if (tokenInput) tokenInput.placeholder = hasToken ? '•••••••••••••••• (Aktiv im Tresor)' : 'GitHub PAT (ghp_...)';
+            if (badge) {
+                badge.className = hasToken 
+                    ? 'px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-2'
+                    : 'px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-2';
+                badge.innerHTML = hasToken ? '<span>🔒</span> <span>Tresor Aktiv</span>' : '<span>🟡</span> <span>Token fehlt</span>';
+            }
+        }
+
+        async function handleSaveGitHubToken() {
+            const token = document.getElementById('gh-token-input').value.trim();
+            if (!token) return showToast('Bitte Token eingeben.', '⚠️');
+            try {
+                await AdminVault.setToken(token);
+                document.getElementById('gh-token-input').value = '';
+                updateGitHubBridgeUI();
+                loadSubscribersCount();
+                showToast('Token verschlüsselt gespeichert!', '🔒');
+            } catch (e) { showToast(e.message, '⚠️'); }
+        }
+
+        function unlockDashboard() {
+            document.getElementById('login-panel').classList.add('hidden');
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+            document.getElementById('btn-logout').classList.remove('hidden');
+            const glassAdmin = document.getElementById('gp-glass-admin'); if (glassAdmin) glassAdmin.hidden = false;
+            updateGitHubBridgeUI();
+            loadRoadmapMeta();
+            loadSubscribersCount();
+        }
+
+        // ========================================== //
+        // 📡 PUSH SEND LOGIC                         //
+        // ========================================== //
+        async function loadSubscribersCount() {
+            const el = document.getElementById('subscribers-count');
+            const queueEl = document.getElementById('push-queue-count');
+            if (!el && !queueEl) return;
+
+            let subscribersCount = null;
+            let queueCount = 0;
+            let token = null;
+
+            try {
+                token = await AdminVault.getToken();
+            } catch (_) {}
+
+            // 1. Geräteanzahl laden (zuerst GitHub API mit Token falls vorhanden, dann raw/local)
+            try {
+                if (token) {
+                    const ghRes = await fetch('https://api.github.com/repos/Gamingpig/About-Gamingpig/contents/data/subscribers.json', {
+                        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
+                    });
+                    if (ghRes.ok) {
+                        const ghJson = await ghRes.json();
+                        const decodedStr = decodeURIComponent(escape(atob(ghJson.content.replace(/\s/g, ''))));
+                        const subs = JSON.parse(decodedStr);
+                        if (Array.isArray(subs)) {
+                            subscribersCount = subs.length;
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Subscribers fetch via GitHub API failed, using fallback:', err);
+            }
+
+            if (subscribersCount === null) {
+                try {
+                    const rawRes = await fetch('https://raw.githubusercontent.com/Gamingpig/About-Gamingpig/main/data/subscribers.json', { cache: 'no-store' });
+                    if (rawRes.ok) {
+                        const subs = await rawRes.json();
+                        if (Array.isArray(subs)) subscribersCount = subs.length;
+                    }
+                } catch (_) {}
+            }
+
+            if (subscribersCount === null) {
+                try {
+                    const localRes = await fetch('./data/subscribers.json', { cache: 'no-store' });
+                    if (localRes.ok) {
+                        const subs = await localRes.json();
+                        if (Array.isArray(subs)) subscribersCount = subs.length;
+                    }
+                } catch (_) {}
+            }
+
+            if (el) {
+                el.textContent = subscribersCount !== null ? `${subscribersCount} Geräte` : '0 Geräte';
+            }
+
+            // 2. Queue prüfen (pending_push.json + ntfy.sh)
+            let pendingPushActive = false;
+            try {
+                if (token) {
+                    const pendRes = await fetch('https://api.github.com/repos/Gamingpig/About-Gamingpig/contents/data/pending_push.json', {
+                        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }
+                    });
+                    if (pendRes.ok) {
+                        const pendJson = await pendRes.json();
+                        const decodedStr = decodeURIComponent(escape(atob(pendJson.content.replace(/\s/g, ''))));
+                        const pData = JSON.parse(decodedStr);
+                        if (pData && pData.pending) {
+                            pendingPushActive = true;
+                            queueCount += 1;
+                        }
+                    }
+                }
+            } catch (_) {}
+
+            if (!pendingPushActive) {
+                try {
+                    const rawPendRes = await fetch('https://raw.githubusercontent.com/Gamingpig/About-Gamingpig/main/data/pending_push.json', { cache: 'no-store' });
+                    if (rawPendRes.ok) {
+                        const pData = await rawPendRes.json();
+                        if (pData && pData.pending) queueCount += 1;
+                    }
+                } catch (_) {}
+            }
+
+            // ntfy queue (für neue Registrierungen)
+            try {
+                const queued = await fetch(`https://ntfy.sh/gamingpig_push_sub_vault_9f8a2b3c4d5e/json?poll=1`, { cache: 'no-store' });
+                if (queued.ok) {
+                    const text = await queued.text();
+                    const ntfyCount = text.split('\n').filter(Boolean).reduce((sum, line) => {
+                        try {
+                            const item = JSON.parse(line);
+                            return sum + (item.event === 'message' && item.message ? 1 : 0);
+                        } catch (_) { return sum; }
+                    }, 0);
+                    queueCount += ntfyCount;
+                }
+            } catch (_) {}
+
+            if (queueEl) {
+                queueEl.textContent = `${queueCount} wartend`;
+            }
+        }
+
+        async function syncQueueNow() {
+            try {
+                const token = await AdminVault.getToken();
+                if (!token) throw new Error('Token fehlt');
+                const response = await fetch('https://api.github.com/repos/Gamingpig/About-Gamingpig/dispatches', {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' },
+                    body: JSON.stringify({ event_type: 'monitor' })
+                });
+                if (response.ok) { showToast('GitHub-Sync gestartet.', '⏳'); setTimeout(loadSubscribersCount, 15000); setTimeout(loadSubscribersCount, 45000); }
+            } catch (e) { showToast(e.message, '⚠️'); }
+        }
+
+        function updatePreview() {
+            // Live preview optional
+        }
+
+        async function sendLocalTestPush() {
+            const title = document.getElementById('msg-title').value.trim() || '📲 Gamingpig Test';
+            const body = document.getElementById('msg-body').value.trim() || 'Lokale Testnachricht';
+            if ('serviceWorker' in navigator) {
+                const reg = await navigator.serviceWorker.ready;
+                if (reg?.showNotification) {
+                    reg.showNotification(title, { body, icon: 'icon-192.png' });
+                    return showToast('Lokal ausgelöst!', '📲');
+                }
+            }
+            new Notification(title, { body, icon: 'icon-192.png' });
+            showToast('Lokal ausgelöst!', '📲');
+        }
+
+        async function sendBroadcastPush() {
+            const token = await AdminVault.getToken();
+            if (!token) return showToast('Bitte erst GitHub-Token speichern!', '⚠️');
+            showToast('Sende Push-Auftrag...', '📡');
+
+            const payload = {
+                pending: true,
+                broadcastId: 'gp_bcast_' + Date.now(),
+                title: document.getElementById('msg-title').value.trim(),
+                body: document.getElementById('msg-body').value.trim(),
+                url: document.getElementById('msg-url').value.trim() || 'status.html',
+                requestedAt: Date.now()
+            };
+
+            try {
+                let sha = null;
+                const getRes = await fetch('https://api.github.com/repos/Gamingpig/About-Gamingpig/contents/data/pending_push.json', {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' }
+                });
+                if (getRes.ok) sha = (await getRes.json()).sha;
+
+                const putRes = await fetch('https://api.github.com/repos/Gamingpig/About-Gamingpig/contents/data/pending_push.json', {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' },
+                    body: JSON.stringify({
+                        message: 'admin(push): trigger manual broadcast [skip ci]',
+                        content: btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2)))),
+                        sha: sha || undefined
+                    })
+                });
+
+                if (putRes.ok) {
+                    await fetch('https://api.github.com/repos/Gamingpig/About-Gamingpig/dispatches', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' },
+                        body: JSON.stringify({ event_type: 'health-check' })
+                    });
+                    showToast('Broadcast erfolgreich eingereiht!', '✅');
+                }
+            } catch (e) { showToast('Fehler: ' + e.message, '❌'); }
+        }
+
+        function showToast(msg, icon = '✅') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            document.getElementById('toast-icon').innerText = icon;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 3500);
+        }
+    </script>
+<script src="js/community-glass.20260910.js?v=v24.213.0"></script>
+<script data-pplx-inline-edit>
+(function () {
+  if (window === window.top) return;
+
+  const allowedParentOrigins = ["https://www.perplexity.ai","https://perplexity.ai","https://testing.perplexity.ai","https://staging.perplexity.ai","https://*.preview.i.perplexity.ai","http://perplexity.localhost","http://localhost:1420","http://127.0.0.1:1420","http://localhost:3000","http://127.0.0.1:3000","http://localhost:5173","http://127.0.0.1:5173"];
+  const MAX_FONT_BYTES = 500 * 1024;
+  const MAX_TOTAL_FONT_BYTES = 2 * 1024 * 1024;
+  let scrollForwarding = false;
+  let scrollRaf = 0;
+  let trustedTopOrigin = null;
+
+  // Allow entries like "https://*.preview.i.perplexity.ai" — the wildcard
+  // matches a single DNS label (no dots), so "https://*.foo" cannot stretch
+  // across multiple labels.
+  function matchesAllowedOrigin(origin) {
+    if (!origin) return false;
+    for (const entry of allowedParentOrigins) {
+      if (!entry.includes("*")) {
+        if (entry === origin) return true;
+        continue;
+      }
+      const pattern = new RegExp(
+        "^" +
+          entry.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^.]+") +
+          "$",
+      );
+      if (pattern.test(origin)) return true;
+    }
+    return false;
+  }
+
+  // Trust decision: when the sender is same-origin-visible (event.origin is a
+  // real origin like https://www.perplexity.ai) we trust event.origin directly.
+  // When event.origin is "null" (opaque broker srcdoc), we fall back to the
+  // broker's stamped `parentOrigin` to identify the top window. The fallback
+  // is claim-only — we rely on the browser's native `targetOrigin` enforcement
+  // on the response path (see postToTrustedTop) to ensure replies can't be
+  // delivered to anyone but the actual top window of that claimed origin.
+  function getTrustedParentOrigin(event) {
+    const forwardedParentOrigin =
+      typeof event.data.parentOrigin === "string" ? event.data.parentOrigin : null;
+    const parentOrigin = event.origin === "null" ? forwardedParentOrigin : event.origin;
+    return matchesAllowedOrigin(parentOrigin) ? parentOrigin : null;
+  }
+
+  // All responses go to window.top with targetOrigin = the allowlisted origin.
+  // An attacker that iframes us inside their own null-origin broker can claim
+  // any parentOrigin they like, but the browser will drop the reply whenever
+  // the real top's origin doesn't match — so the screenshot never leaves.
+  function postToTrustedTop(message) {
+    if (!trustedTopOrigin) return;
+    try {
+      window.top.postMessage(message, trustedTopOrigin);
+    } catch (_error) {}
+  }
+
+  function inlineAll(original, clone) {
+    if (original.nodeType !== 1 || clone.nodeType !== 1) return;
+
+    try {
+      const computedStyle = getComputedStyle(original);
+      // cssText on a computed style is the serialized declaration in modern
+      // Chromium/Safari — a single read beats enumerating ~400 longhand
+      // properties. Firefox returns "" here, so we fall back on empty.
+      const serialized = computedStyle.cssText;
+      if (serialized) {
+        clone.style.cssText = serialized;
+      } else {
+        const parts = new Array(computedStyle.length);
+        for (let index = 0; index < computedStyle.length; index += 1) {
+          const property = computedStyle[index];
+          parts[index] = `${property}:${computedStyle.getPropertyValue(property)};`;
+        }
+        clone.style.cssText = parts.join("");
+      }
+    } catch (_error) {}
+
+    const originalChildren = original.children;
+    const clonedChildren = clone.children;
+    for (
+      let index = 0;
+      index < originalChildren.length && index < clonedChildren.length;
+      index += 1
+    ) {
+      inlineAll(originalChildren[index], clonedChildren[index]);
+    }
+  }
+
+  function extractFontUrl(srcValue) {
+    const matches = [
+      ...srcValue.matchAll(
+        /url\(["']?([^"')]+)["']?\)(?:\s*format\(["']?([^"')]+)["']?\))?/gi,
+      ),
+    ];
+    if (matches.length === 0) return null;
+    const woff2 = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff2"));
+    if (woff2) return woff2[1];
+    const woff = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff"));
+    if (woff) return woff[1];
+    return matches[0][1];
+  }
+
+  // Cache resolved font URL -> data URI across captures. Fonts on a page
+  // essentially never change, and a batch run emits multiple captures back to
+  // back — without this we'd refetch + re-base64 every time.
+  const fontDataUriCache = new Map();
+  const SRC_DECLARATION_RE = /src\s*:\s*[^;}]+/i;
+
+  async function fetchAsDataUri(url) {
+    if (fontDataUriCache.has(url)) return fontDataUriCache.get(url);
+    let dataUri = null;
+    try {
+      const response = await fetch(url, { mode: "cors", credentials: "omit" });
+      if (response.ok) {
+        const blob = await response.blob();
+        if (blob.size <= MAX_FONT_BYTES) {
+          dataUri = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () =>
+              resolve(typeof reader.result === "string" ? reader.result : null);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(blob);
+          });
+        }
+      }
+    } catch (_error) {
+      dataUri = null;
+    }
+    fontDataUriCache.set(url, dataUri);
+    return dataUri;
+  }
+
+  function collectFontFaceRuleTexts() {
+    const rules = [];
+    for (const sheet of document.styleSheets) {
+      let cssRules;
+      try {
+        cssRules = sheet.cssRules;
+      } catch (_error) {
+        continue;
+      }
+      if (!cssRules) continue;
+      for (const rule of cssRules) {
+        const cssText = rule.cssText || "";
+        if (cssText.startsWith("@font-face")) rules.push(cssText);
+      }
+    }
+    return rules;
+  }
+
+  async function buildInlinedFontCss() {
+    const ruleTexts = collectFontFaceRuleTexts();
+    if (ruleTexts.length === 0) return null;
+
+    const resolved = ruleTexts.map((cssText) => {
+      if (!SRC_DECLARATION_RE.test(cssText)) return null;
+      const srcMatch = cssText.match(/src\s*:\s*([^;}]+)[;}]/i);
+      if (!srcMatch) return null;
+      const url = extractFontUrl(srcMatch[1]);
+      if (!url) return null;
+      try {
+        return { cssText, url: new URL(url, document.baseURI).href };
+      } catch (_error) {
+        return null;
+      }
+    });
+
+    const dataUris = await Promise.all(
+      resolved.map((entry) => (entry ? fetchAsDataUri(entry.url) : Promise.resolve(null))),
+    );
+
+    const inlined = [];
+    let totalBytes = 0;
+    for (let index = 0; index < resolved.length; index += 1) {
+      const entry = resolved[index];
+      const dataUri = dataUris[index];
+      if (!entry || !dataUri) continue;
+      const approxBytes = dataUri.length * 0.75;
+      if (totalBytes + approxBytes > MAX_TOTAL_FONT_BYTES) break;
+      totalBytes += approxBytes;
+      inlined.push(entry.cssText.replace(SRC_DECLARATION_RE, `src: url("${dataUri}")`));
+    }
+    return inlined.length > 0 ? inlined.join("\n") : null;
+  }
+
+  function stripExternal(clone) {
+    const images = clone.querySelectorAll("img");
+    for (let index = 0; index < images.length; index += 1) {
+      const src = images[index].getAttribute("src");
+      if (src && !src.startsWith("data:")) images[index].removeAttribute("src");
+    }
+
+    const elements = clone.querySelectorAll("*");
+    for (let index = 0; index < elements.length; index += 1) {
+      const style = elements[index].style.cssText;
+      if (style && style.includes("url(")) {
+        elements[index].style.cssText = style.replace(
+          /url\(["']?(?!data:)[^)"']*["']?\)/gi,
+          "none",
+        );
+      }
+    }
+  }
+
+  function emitScroll() {
+    scrollRaf = 0;
+    if (!scrollForwarding) return;
+    postToTrustedTop({
+      type: "INLINE_EDIT_SCROLL",
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
+    });
+  }
+
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (!scrollForwarding || scrollRaf) return;
+      scrollRaf = requestAnimationFrame(emitScroll);
+    },
+    { passive: true, capture: true },
+  );
+
+  async function handleCaptureRequest(event) {
+    const requestId = event.data.requestId;
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    function postResult(dataUrl) {
+      postToTrustedTop({
+        type: "INLINE_EDIT_SCREENSHOT_RESULT",
+        requestId,
+        dataUrl,
+        scrollX,
+        scrollY,
+      });
+    }
+
+    try {
+      // Wait for any pending web fonts to resolve so both inline metrics and
+      // the @font-face inlining below see the same loaded faces.
+      if (document.fonts && document.fonts.ready) {
+        try {
+          await document.fonts.ready;
+        } catch (_error) {}
+      }
+
+      const clone = document.documentElement.cloneNode(true);
+      inlineAll(document.documentElement, clone);
+
+      const removedNodes = clone.querySelectorAll("script,link[rel=\"stylesheet\"],style");
+      for (let index = 0; index < removedNodes.length; index += 1) {
+        removedNodes[index].remove();
+      }
+
+      stripExternal(clone);
+
+      // Re-embed web fonts as data-URI @font-face rules so the SVG rasterizer
+      // can resolve them — external font URLs aren't fetched during
+      // foreignObject rendering, which would otherwise force a fallback face
+      // and change text metrics.
+      const inlinedFontCss = await buildInlinedFontCss();
+      if (inlinedFontCss) {
+        const styleEl = document.createElement("style");
+        styleEl.textContent = inlinedFontCss;
+        const head = clone.querySelector("head");
+        if (head) head.appendChild(styleEl);
+        else clone.insertBefore(styleEl, clone.firstChild);
+      }
+
+      const html = new XMLSerializer().serializeToString(clone);
+      const svg =
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
+        '<foreignObject width="100%" height="100%">' +
+        `<div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;overflow:hidden">` +
+        `<div style="position:relative;left:-${scrollX}px;top:-${scrollY}px">` +
+        html +
+        "</div></div></foreignObject></svg>";
+      const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      const image = new Image();
+      image.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(image, 0, 0);
+        postResult(canvas.toDataURL("image/png"));
+      };
+      image.onerror = function () {
+        postResult(null);
+      };
+      image.src = svgUrl;
+    } catch (_error) {
+      postResult(null);
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    if (!event.data) return;
+    // Only accept messages from the direct parent frame. Blocks sibling /
+    // unrelated-window postMessage senders that could otherwise reach us.
+    if (event.source !== window.parent) return;
+
+    const trustedParentOrigin = getTrustedParentOrigin(event);
+    if (!trustedParentOrigin) return;
+    trustedTopOrigin = trustedParentOrigin;
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_START") {
+      scrollForwarding = true;
+      emitScroll();
+      return;
+    }
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_STOP") {
+      scrollForwarding = false;
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
+      scrollRaf = 0;
+      return;
+    }
+
+    if (event.data.type !== "INLINE_EDIT_CAPTURE_REQUEST") return;
+
+    handleCaptureRequest(event);
+  });
+})();
+
+
+</script></body>
+</html>

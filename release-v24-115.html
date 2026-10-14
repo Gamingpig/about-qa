@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <script>/* Android Liquid Glass compatibility */(function(){try{var ua=navigator.userAgent||"";if(/Android/i.test(ua)){document.documentElement.classList.add("gp-android");if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add("gp-android-lowend");}if(/Mobile|iP(hone|od|ad)|Android.*Mobile/i.test(ua))document.documentElement.classList.add("gp-mobile");}catch(e){}})();</script>
+    <script src="./js/core/storage.e856be99df567fd2.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 RELEASE v24.132 – Gamingpig Mega-Update</title>
+    <link rel="icon" href="icon-192.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        if (window.tailwind) tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #03050c;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(236, 72, 153, 0.22) 0px, transparent 45%),
+                radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.25) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(168, 85, 247, 0.18) 0px, transparent 55%),
+                radial-gradient(at 50% 100%, rgba(245, 158, 11, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .hero-glow-badge {
+            background: linear-gradient(135deg, #ff007f, #7928ca, #00f2fe);
+            box-shadow: 0 0 40px rgba(255, 0, 127, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+        }
+
+        .glow-card {
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glow-card:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-4px) scale-[1.006];
+            box-shadow: 0 30px 70px -10px rgba(0, 0, 0, 0.95), 0 0 30px rgba(168, 85, 247, 0.2);
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(16px);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+        }
+
+        .tts-active {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6) !important;
+            color: #ffffff !important;
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
+            70% { box-shadow: 0 0 0 14px rgba(236, 72, 153, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
+        }
+    </style>
+<link rel="stylesheet" href="assets/community-glass.20260910.css?v=v24.213.0" data-gp-glass-engine="true">
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col items-center justify-between p-4 sm:p-8 md:p-12 selection:bg-pink-500/40">
+
+    <!-- Top Navigation Bar -->
+    <header class="max-w-4xl w-full flex items-center justify-between py-4 px-5 rounded-2xl bg-slate-900/85 border border-slate-800 backdrop-blur-xl mb-8 shadow-2xl">
+        <a href="index.html" class="flex items-center gap-2.5 text-white hover:text-blue-400 font-extrabold text-sm sm:text-base transition-colors group">
+            <span class="p-1.5 rounded-lg bg-blue-500/10 text-blue-400 group-hover:-translate-x-1 transition-transform">←</span>
+            <span id="nav-back">Hauptseite</span>
+        </a>
+
+        <!-- Controls: Read Aloud & Language Switcher -->
+        <div class="flex items-center gap-2 sm:gap-3">
+            <a href="status.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/20 text-xs sm:text-sm font-bold transition-all shadow-md active:scale-95">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Live-Status</span>
+            </a>
+            <!-- TTS Button -->
+            <button id="tts-toggle-btn" onclick="toggleReadAloud()" class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs sm:text-sm font-black transition-all shadow-md active:scale-95">
+                <span id="tts-icon">🔊</span>
+                <span id="tts-label">Vorlesen</span>
+            </button>
+
+            <!-- Language Dropdown -->
+            <div class="relative">
+                <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm py-1.5 px-3 sm:py-2 sm:px-4 rounded-xl border border-slate-700 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-md">
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="pt">🇧🇷 Português</option>
+                    <option value="tr">🇹🇷 Türkçe</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl w-full my-auto pb-12">
+        
+        <!-- Big Hero Banner -->
+        <div class="text-center mb-10 sm:mb-14">
+            <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full hero-glow-badge text-white text-xs sm:text-sm font-black uppercase tracking-widest mb-6">
+                <span>💥 DER GRÖSSTE CODE-UMBAU DER GESCHICHTE</span>
+                <span>•</span>
+                <span id="hero-badge-tag">RELEASE v24.132</span>
+            </div>
+
+            <h1 id="hero-title" class="text-4xl xs:text-5xl sm:text-6xl md:text-8xl font-black tracking-tight text-white mb-6 leading-none uppercase drop-shadow-2xl font-mono">
+                16.064 ZEILEN <br>
+                <span class="bg-gradient-to-r from-pink-500 via-purple-400 via-cyan-400 to-amber-300 bg-clip-text text-transparent drop-shadow">
+                    PURE SYSTEM-POWER! 🚀
+                </span>
+            </h1>
+
+            <p id="hero-subtitle" class="text-slate-200 text-base sm:text-xl md:text-2xl max-w-3xl mx-auto font-medium leading-relaxed drop-shadow">
+                Hier stecken inzwischen <strong>16.064 Zeilen gewachsener Code</strong>, unzählige Stunden Entwicklung, Debugging, Performance-Optimierung und jede Menge Hyperfokus drin. Aus einer reinen Portfolio-Seite ist Schritt für Schritt eine vollwertige, interaktive Web-App mit Live-Musik, StandBy-Modus, synchronisierten Lyrics, Statistiken und vielen maßgeschneiderten Systemen geworden.
+            </p>
+        </div>
+
+        <!-- 4 Real Stats Grid (Belegbar & Glaubwürdig) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-12">
+            <div class="stat-box p-4 sm:p-5 rounded-2xl text-center shadow-2xl hover:border-pink-500/50 transition-all">
+                <p class="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-400 font-mono">16.064</p>
+                <p id="stat-1-label" class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-300 mt-1">Zeilen Code</p>
+            </div>
+            <div class="stat-box p-4 sm:p-5 rounded-2xl text-center shadow-2xl hover:border-cyan-500/50 transition-all">
+                <p class="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 font-mono">4 Quellen</p>
+                <p id="stat-2-label" class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-300 mt-1">Cover-Resolver</p>
+            </div>
+            <div class="stat-box p-4 sm:p-5 rounded-2xl text-center shadow-2xl hover:border-emerald-500/50 transition-all">
+                <p class="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 font-mono">6</p>
+                <p id="stat-3-label" class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-300 mt-1">Sprachen</p>
+            </div>
+            <div class="stat-box p-4 sm:p-5 rounded-2xl text-center shadow-2xl hover:border-amber-500/50 transition-all">
+                <p class="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400 font-mono">30+</p>
+                <p id="stat-4-label" class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-300 mt-1">Lyrics-Animationen</p>
+            </div>
+        </div>
+
+        <!-- Release Cards Grid -->
+        <div class="space-y-4 sm:space-y-6">
+
+            <!-- Card 1: Stats.fm Wrapped Stories & Web Audio Engine -->
+            <div class="glow-card p-6 sm:p-8 rounded-3xl border-l-4 border-l-green-500 shadow-2xl">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-3xl">🎁</span>
+                    <h2 id="card-wrapped-title" class="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">1. Stats.fm Wrapped Stories &amp; Web Audio Engine</h2>
+                </div>
+                <p id="card-wrapped-text" class="text-slate-200 text-sm sm:text-base leading-relaxed mb-4">
+                    Musik ist mein täglicher Begleiter beim Arbeiten, im Homelab und beim Zocken. Mit dem neuen <strong>Wrapped-Story-Feature powered by stats.fm</strong> kannst du live und ungefiltert sehen, was bei mir in den letzten <strong>4 Wochen</strong>, <strong>6 Monaten</strong> oder <strong>All-Time</strong> lief. In 4 interaktiven Story-Slides werden Top-Songs, echte Stream-Zähler, meine Top 5 Lieblingskünstler, das #1 Artist-Spotlight und der meistgehörte Track präsentiert – begleitet von einem leichtgewichtigen <strong>Web Audio Klick-Synthesizer</strong> und Smartphone-Haptik.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm font-mono text-slate-200">
+                    <div class="bg-black/60 p-3 rounded-xl border border-white/10 flex items-center gap-2">
+                        <span class="text-green-400 font-bold text-base">✓</span> <span id="card-wrapped-sub1">Live-Musikstatistiken, Stream-Zähler &amp; Cover über stats.fm</span>
+                    </div>
+                    <div class="bg-black/60 p-3 rounded-xl border border-white/10 flex items-center gap-2">
+                        <span class="text-green-400 font-bold text-base">✓</span> <span id="card-wrapped-sub2">Nativer Web Audio Synthesizer: Direkte Klick-Sounds bei 0 KB Dateigröße</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Die Kernsanierung -->
+            <div class="glow-card p-6 sm:p-8 rounded-3xl border-l-4 border-l-pink-500 shadow-2xl">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-3xl">⚡</span>
+                    <h2 id="card1-title" class="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">2. Die Kernsanierung: Ein 400-Seiten-Code-Monster bezwungen</h2>
+                </div>
+                <p id="card1-text" class="text-slate-200 text-sm sm:text-base leading-relaxed mb-4">
+                    In den letzten Releases habe ich gezielt die Bereiche überarbeitet, die im Dauerbetrieb die meiste Last erzeugen: Animationen, DOM-Zugriffe, Cover-Dekodierung, Timer, Sensor-Events und Hintergrundeffekte. Viele Prozesse laufen jetzt seltener oder pausieren vollständig, wenn sie nicht im sichtbaren Bereich sind.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm font-mono text-slate-200">
+                    <div class="bg-black/60 p-3 rounded-xl border border-white/10 flex items-center gap-2">
+                        <span class="text-emerald-400 font-bold text-base">✓</span> <span id="card1-sub1">Weniger Dauerlast: Animationen und Updates laufen nur dort, wo sie gebraucht werden</span>
+                    </div>
+                    <div class="bg-black/60 p-3 rounded-xl border border-white/10 flex items-center gap-2">
+                        <span class="text-emerald-400 font-bold text-base">✓</span> <span id="card1-sub2">Saubereres Memory-Handling: Bildressourcen, Caches und wiederkehrende Timer optimiert</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Robuste Cover-Engine -->
+            <div class="glow-card p-6 sm:p-8 rounded-3xl border-l-4 border-l-cyan-500 shadow-2xl">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-3xl">🎵</span>
+                    <h2 id="card2-title" class="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">3. Robuste Cover-Engine: HD-Artwork über mehrere Quellen</h2>
+                </div>
+                <p id="card2-text" class="text-slate-200 text-sm sm:text-base leading-relaxed mb-4">
+                    Eine mehrstufige Cover-Pipeline kombiniert <strong>Apple Music ID</strong>, <strong>Spotify oEmbed</strong>, <strong>iTunes Search</strong> und <strong>Deezer</strong> und sucht automatisch nach Covern in hochauflösender Qualität, je nach verfügbarer Quelle bis zu 640×640 px. Bereits aufgelöste Cover werden im Memory- und Local-Cache hinterlegt, damit bekannte Titel bei späteren Aufrufen sofort verfügbar sind.
+                </p>
+                <div class="p-3.5 bg-slate-950/80 rounded-2xl text-xs sm:text-sm font-mono text-slate-200 border border-slate-800">
+                    🛡️ <strong class="text-cyan-300" id="card2-shield-title">Race-Condition-Schutz:</strong> <span id="card2-shield-text">Schnelle Trackwechsel? Verspätete Antworten vorheriger Tracks werden verworfen, bevor sie das Artwork des aktuellen Songs überschreiben können.</span>
+                </div>
+            </div>
+
+            <!-- Card 4: Live EQ-Visuals & Zen-Modus -->
+            <div class="glow-card p-6 sm:p-8 rounded-3xl border-l-4 border-l-emerald-500 shadow-2xl">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-3xl">🎛️</span>
+                    <h2 id="card3-title" class="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">4. Dynamische Musikvisuals &amp; Zen-Modus</h2>
+                </div>
+                <p id="card3-text" class="text-slate-200 text-sm sm:text-base leading-relaxed">
+                    Animierte Equalizer-Wellen begleiten den aktuellen Now-Playing-Status synchron zu Fortschritt und Streaming-Dienst. Pausiert die Musik, wechselt die Oberfläche ohne störende Fehlermeldungen automatisch in einen ruhigen, energiesparenden Zen-Modus.
+                </p>
+            </div>
+
+            <!-- Card 5: StandBy Next-Gen -->
+            <div class="glow-card p-6 sm:p-8 rounded-3xl border-l-4 border-l-amber-500 shadow-2xl">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-3xl">🌌</span>
+                    <h2 id="card-standby-title" class="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">5. StandBy Next-Gen: Dynamische responsive Skalierung</h2>
+                </div>
+                <p id="card-standby-text" class="text-slate-200 text-sm sm:text-base leading-relaxed mb-4">
+                    Das StandBy-Layout passt Größe und Position dynamisch an den verfügbaren Bildschirm an und unterstützt unterschiedliche Seitenverhältnisse und Safe Areas auf Smartphone, Tablet &amp; Desktop. Blur- und Hintergrundeffekte wurden gezielt auf geringere Dauerlast optimiert, und die Anzeigegröße lässt sich manuell feinjustieren.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm font-mono text-slate-200">
+                    <div class="bg-black/60 p-3 rounded-xl border border-white/10 flex items-center gap-2">
+                        <span class="text-amber-400 font-bold text-base">✓</span> <span id="card-standby-sub1">Responsive Skalierung für alle 25 StandBy-Designs</span>
+                    </div>
+                    <div class="bg-black/60 p-3 rounded-xl border border-white/10 flex items-center gap-2">
+                        <span class="text-amber-400 font-bold text-base">✓</span> <span id="card-standby-sub2">Effizienterer Dauerbetrieb mit reduzierter unnötiger Display-Aktivität und automatischer WakeLock-Freigabe bei pausierter Musik</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Community, Support & Discord -->
+            <div class="glow-card p-6 sm:p-8 rounded-3xl border-l-4 border-l-purple-500 shadow-2xl">
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-3xl">🤝</span>
+                    <h2 id="card4-title" class="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">6. Community, Support &amp; Discord Live-Widget</h2>
+                </div>
+                <p id="card4-text" class="text-slate-200 text-sm sm:text-base mb-4 leading-relaxed">
+                    Rund um Gamingpig ist eine lebendige Umgebung und Community gewachsen: Ein eigener Support-Bereich mit offiziellem Discord-Server (inklusive Live-Mitglieder- und Online-Zähler über eine robuste Multi-Proxy-Pipeline), direkter Kontakt per E-Mail, Social-Media-Kanäle auf TikTok &amp; YouTube sowie die Android-App (im geschlossenen Google-Play-Test).
+                </p>
+
+                <!-- Android Play Store Status Badge -->
+                <div class="mb-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-bold">
+                    <span>📱</span>
+                    <span id="card4-play-status">Android App • Closed Testing (TWA / Google Play)</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <a href="https://www.tiktok.com/@team_gamingpig_official?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" class="p-4 bg-slate-950/90 hover:bg-slate-800 rounded-2xl border border-slate-800 hover:border-blue-500/50 transition-all flex items-center justify-between group shadow-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl overflow-hidden border border-white/20 shadow shrink-0">
+                                <img src="icon-192.png" alt="Team Gamingpig Logo" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-400 rounded-full" id="card4-badge1">Offizieller Kanal</span>
+                                <p class="font-black text-white text-base mt-0.5">Team Gamingpig</p>
+                                <p class="text-[10px] text-slate-400 font-semibold">© 2026 • @team_gamingpig_official</p>
+                            </div>
+                        </div>
+                        <span class="text-blue-400 group-hover:translate-x-1.5 transition-transform text-lg shrink-0">➔</span>
+                    </a>
+                    <a href="https://www.tiktok.com/@nur_mtb_noel?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" class="p-4 bg-slate-950/90 hover:bg-slate-800 rounded-2xl border border-slate-800 hover:border-emerald-500/50 transition-all flex items-center justify-between group shadow-lg">
+                        <div>
+                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-400 rounded-full" id="card4-badge2">Partner &amp; Support</span>
+                            <p class="font-black text-white text-base mt-1">Noel (MTB Noel)</p>
+                            <p class="text-xs text-slate-400">@nur_mtb_noel</p>
+                        </div>
+                        <span class="text-emerald-400 group-hover:translate-x-1.5 transition-transform text-lg">➔</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Big Action CTA Button -->
+            <div class="text-center pt-6 sm:pt-10">
+                <a href="index.html" class="inline-flex items-center gap-3 px-8 py-4 sm:px-12 sm:py-5 bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 hover:from-pink-500 hover:to-blue-500 text-white font-black rounded-3xl shadow-2xl shadow-pink-500/40 hover:scale-105 active:scale-95 transition-all text-base sm:text-2xl uppercase tracking-wide">
+                    <span id="cta-launch-text">🚀 Jetzt Live-Dashboard Erleben</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-xs text-slate-400 border-t border-slate-800/80 w-full max-w-4xl">
+        <p>© 2026 Gamingpig • Alle Rechte vorbehalten • <a href="index.html" class="hover:text-white underline font-bold" id="footer-back-link">Zurück zur Hauptseite</a> • <a href="status.html" class="hover:text-emerald-400 font-bold text-emerald-400">Live System-Status</a></p>
+    </footer>
+
+    <!-- Translations & Read Aloud Script -->
+    <script>
+        const TRANSLATIONS = {
+            de: {
+                nav_back: "Hauptseite",
+                tts_read: "Vorlesen",
+                tts_stop: "Stopp",
+                hero_badge: "RELEASE v24.132",
+                hero_title_html: "16.064 ZEILEN <br><span class=\"bg-gradient-to-r from-pink-500 via-purple-400 via-cyan-400 to-amber-300 bg-clip-text text-transparent drop-shadow\">PURE SYSTEM-POWER! 🚀</span>",
+                hero_sub: "Hier stecken inzwischen 16.064 Zeilen gewachsener Code, unzählige Stunden Entwicklung, Debugging, Performance-Optimierung und jede Menge Hyperfokus drin. Aus einer reinen Portfolio-Seite ist Schritt für Schritt eine vollwertige, interaktive Web-App mit Live-Musik, StandBy-Modus, synchronisierten Lyrics, Statistiken und vielen maßgeschneiderten Systemen geworden.",
+                stat1: "Zeilen Code",
+                stat2: "Cover-Resolver",
+                stat3: "Sprachen",
+                stat4: "Lyrics-Animationen",
+                card_wrapped_title: "1. Stats.fm Wrapped Stories & Web Audio Engine",
+                card_wrapped_text: "Musik ist mein täglicher Begleiter beim Arbeiten, im Homelab und beim Zocken. Mit dem neuen Wrapped-Story-Feature powered by stats.fm kannst du live und ungefiltert sehen, was bei mir in den letzten 4 Wochen, 6 Monaten oder All-Time lief. In 4 interaktiven Story-Slides werden Top-Songs, echte Stream-Zähler, meine Top 5 Lieblingskünstler, das #1 Artist-Spotlight und der meistgehörte Track präsentiert – begleitet von einem leichtgewichtigen Web Audio Klick-Synthesizer und Smartphone-Haptik.",
+                card_wrapped_sub1: "Live-Musikstatistiken, Stream-Zähler & Cover über stats.fm",
+                card_wrapped_sub2: "Nativer Web Audio Synthesizer: Direkte Klick-Sounds bei 0 KB Dateigröße",
+                card1_title: "2. Die Kernsanierung: Ein 400-Seiten-Code-Monster bezwungen",
+                card1_text: "In den letzten Releases habe ich gezielt die Bereiche überarbeitet, die im Dauerbetrieb die meiste Last erzeugen: Animationen, DOM-Zugriffe, Cover-Dekodierung, Timer, Sensor-Events und Hintergrundeffekte. Viele Prozesse laufen jetzt seltener oder pausieren vollständig, wenn sie nicht im sichtbaren Bereich sind.",
+                card1_sub1: "Weniger Dauerlast: Animationen und Updates laufen nur dort, wo sie gebraucht werden",
+                card1_sub2: "Saubereres Memory-Handling: Bildressourcen, Caches und wiederkehrende Timer optimiert",
+                card2_title: "3. Robuste Cover-Engine: HD-Artwork über mehrere Quellen",
+                card2_text: "Eine mehrstufige Cover-Pipeline kombiniert Apple Music ID, Spotify oEmbed, iTunes Search und Deezer und sucht automatisch nach Covern in hochauflösender Qualität, je nach verfügbarer Quelle bis zu 640×640 px. Bereits aufgelöste Cover werden im Memory- und Local-Cache hinterlegt, damit bekannte Titel bei späteren Aufrufen sofort verfügbar sind.",
+                card2_shield_title: "Race-Condition-Schutz:",
+                card2_shield_text: "Schnelle Trackwechsel? Verspätete Antworten vorheriger Tracks werden verworfen, bevor sie das Artwork des aktuellen Songs überschreiben können.",
+                card3_title: "4. Dynamische Musikvisuals & Zen-Modus",
+                card3_text: "Animierte Equalizer-Wellen begleiten den aktuellen Now-Playing-Status synchron zu Fortschritt und Streaming-Dienst. Pausiert die Musik, wechselt die Oberfläche ohne störende Fehlermeldungen automatisch in einen ruhigen, energiesparenden Zen-Modus.",
+                card_standby_title: "5. StandBy Next-Gen: Dynamische responsive Skalierung",
+                card_standby_text: "Das StandBy-Layout passt Größe und Position dynamisch an den verfügbaren Bildschirm an und unterstützt unterschiedliche Seitenverhältnisse und Safe Areas auf Smartphone, Tablet & Desktop. Blur- und Hintergrundeffekte wurden gezielt auf geringere Dauerlast optimiert, und die Anzeigegröße lässt sich manuell feinjustieren.",
+                card_standby_sub1: "Responsive Skalierung für alle 25 StandBy-Designs",
+                card_standby_sub2: "Effizienterer Dauerbetrieb mit reduzierter unnötiger Display-Aktivität und automatischer WakeLock-Freigabe bei pausierter Musik",
+                card4_title: "6. Community, Support & Discord Live-Widget",
+                card4_text: "Rund um Gamingpig ist eine lebendige Umgebung und Community gewachsen: Ein eigener Support-Bereich mit offiziellem Discord-Server (inklusive Live-Mitglieder- und Online-Zähler über eine robuste Multi-Proxy-Pipeline), direkter Kontakt per E-Mail, Social-Media-Kanäle auf TikTok & YouTube sowie die Android-App (im geschlossenen Google-Play-Test).",
+                card4_badge1: "Offizieller Kanal",
+                card4_badge2: "Partner & Support",
+                card4_play_status: "📱 Android App • Closed Testing (TWA / Google Play)",
+                cta_launch: "🚀 Jetzt Live-Dashboard Erleben",
+                footer_back: "Zurück zur Hauptseite"
+            },
+            en: {
+                nav_back: "Main Page",
+                tts_read: "Read Aloud",
+                tts_stop: "Stop",
+                hero_badge: "RELEASE v24.132",
+                hero_title_html: "16,064 LINES <br><span class=\"bg-gradient-to-r from-pink-500 via-purple-400 via-cyan-400 to-amber-300 bg-clip-text text-transparent drop-shadow\">OF PURE SYSTEM POWER! 🚀</span>",
+                hero_sub: "Over 16,064 lines of handcrafted code, countless hours of development, debugging, performance tuning, and pure hyperfocus have shaped this project. What started as a personal portfolio has evolved step by step into a full-fledged interactive web app with live music, StandBy mode, synchronized lyrics, statistics, and bespoke software systems.",
+                stat1: "Lines of Code",
+                stat2: "Cover Resolvers",
+                stat3: "Languages",
+                stat4: "Lyrics Animations",
+                card_wrapped_title: "1. Stats.fm Wrapped Stories & Web Audio Engine",
+                card_wrapped_text: "Music is my everyday fuel while coding, in my homelab, and while gaming. With the new Wrapped Stories feature powered by stats.fm, you can explore live and unfiltered insights into what was on repeat over the past 4 weeks, 6 months, or all-time. Across 4 interactive story slides, enjoy top songs, verified stream counts, top 5 favorite artists, the #1 artist spotlight, and top tracks – paired with a native Web Audio click synthesizer and haptic feedback.",
+                card_wrapped_sub1: "Live music stats, stream counts & artwork powered by stats.fm",
+                card_wrapped_sub2: "Native Web Audio synthesizer: direct click sounds at 0 KB file size",
+                card1_title: "2. The Codebase Refactor: Conquering a 400-Page Code Giant",
+                card1_text: "In recent releases, I focused specifically on components that generate sustained workload: animations, DOM lookups, artwork decoding, timers, sensor events, and background shaders. Background loops now throttle or pause completely when out of viewport.",
+                card1_sub1: "Reduced baseline load: animations and updates run only when visible and needed",
+                card1_sub2: "Cleaner memory management: optimized image resources, caches, and recurring timers",
+                card2_title: "3. Robust Cover Engine: Multi-Source HD Artwork",
+                card2_text: "A multi-tier pipeline combines Apple Music ID, Spotify oEmbed, iTunes Search, and Deezer to find high-resolution artwork across multiple sources (up to 640×640 px depending on source). Resolved covers are preserved in memory and local caches for rapid repeat access.",
+                card2_shield_title: "Race Condition Protection:",
+                card2_shield_text: "Fast track skipping? Delayed asynchronous responses from previous tracks are discarded before they can overwrite current artwork.",
+                card3_title: "4. Dynamic Music Visuals & Pure Zen Mode",
+                card3_text: "Animated equalizer visuals accompany real-time now-playing telemetry. When music is paused, the UI transitions gracefully into a calm, energy-saving Zen state without intrusive error dialogues.",
+                card_standby_title: "5. Next-Gen StandBy: Dynamic Responsive Scaling",
+                card_standby_text: "The StandBy layout dynamically scales size and placement across various screen geometries and safe areas on phones, tablets, and desktops. Blur and background shaders have been tuned for lighter continuous load, with fine-grained manual scale controls.",
+                card_standby_sub1: "Responsive scaling across all 25 StandBy designs",
+                card_standby_sub2: "Efficient continuous operation with automatic WakeLock release on paused playback",
+                card4_title: "6. Community, Support & Discord Live Widget",
+                card4_text: "Gamingpig has grown into a vibrant environment: a dedicated support section with official Discord integration (live member and online telemetry via a robust multi-proxy pipeline), direct email contact, social links on TikTok and YouTube, plus the Android app (in closed Google Play testing).",
+                card4_badge1: "Official Channel",
+                card4_badge2: "Partner & Support",
+                card4_play_status: "📱 Android App • Closed Testing (TWA / Google Play)",
+                cta_launch: "🚀 Launch Live Dashboard Now",
+                footer_back: "Back to Main Page"
+            },
+            es: {
+                nav_back: "Página Principal",
+                tts_read: "Leer en voz alta",
+                tts_stop: "Detener",
+                hero_badge: "RELEASE v24.132",
+                hero_title_html: "16.064 LÍNEAS <br><span class=\"bg-gradient-to-r from-pink-500 via-purple-400 via-cyan-400 to-amber-300 bg-clip-text text-transparent drop-shadow\">¡DE PURA POTENCIA! 🚀</span>",
+                hero_sub: "Más de 16.064 líneas de código propio, incontables horas de desarrollo, optimización y mucho hiperfoco. De un portafolio personal nació paso a paso una aplicación interactiva completa con música en vivo, modo StandBy, letras sincronizadas y sistemas a medida.",
+                stat1: "Líneas de código",
+                stat2: "Fuentes de portada",
+                stat3: "Idiomas",
+                stat4: "Estilos de letra",
+                card_wrapped_title: "1. Stats.fm Wrapped Stories y Motor Web Audio",
+                card_wrapped_text: "Historias interactivas conectadas a stats.fm con canciones más escuchadas, conteo de reproducciones, top 5 artistas y sintetizador Web Audio nativo con vibración háptica.",
+                card_wrapped_sub1: "Estadísticas en vivo, contador de reproducciones y portadas vía stats.fm",
+                card_wrapped_sub2: "Sintetizador Web Audio nativo: clics instantáneos sin descargas extra",
+                card1_title: "2. La gran optimización del código base",
+                card1_text: "Optimización profunda de animaciones, accesos DOM, decodificación de portadas y temporizadores para reducir la carga continua del procesador.",
+                card1_sub1: "Carga reducida: las animaciones se ejecutan solo cuando son visibles",
+                card1_sub2: "Memoria más limpia: recursos gráficos, cachés y procesos optimizados",
+                card2_title: "3. Motor de Portadas Multinivel con Protección Anti-Fallos",
+                card2_text: "Búsqueda de portadas en alta resolución mediante Apple Music, Spotify oEmbed, iTunes y Deezer (hasta 640×640 px según fuente) con almacenamiento en caché.",
+                card2_shield_title: "Protección contra condiciones de carrera:",
+                card2_shield_text: "¿Cambios rápidos de pista? Las respuestas retrasadas de pistas anteriores se descartan antes de que puedan sobrescribir la portada actual.",
+                card3_title: "4. Visuales de Música y Modo Zen",
+                card3_text: "Ondas animadas de ecualizador sincronizadas con la reproducción y transición suave a reposo cuando la música se detiene.",
+                card_standby_title: "5. StandBy Next-Gen: Escalado Dinámico y Responsivo",
+                card_standby_text: "Ajuste dinámico para móvil, tablet y escritorio con áreas seguras, efectos optimizados y control manual de escala.",
+                card_standby_sub1: "Escalado responsivo para los 25 diseños de StandBy",
+                card_standby_sub2: "Operación eficiente mediante liberación automática de WakeLock al pausar música",
+                card4_title: "6. Comunidad, Soporte y Widget de Discord",
+                card4_text: "Soporte dedicado con Discord en vivo (pipeline multi-proxy), contacto por correo, canales de TikTok/YouTube y app de Android en pruebas cerradas de Google Play.",
+                card4_badge1: "Canal Oficial",
+                card4_badge2: "Socio y Soporte",
+                card4_play_status: "📱 Android App • Pruebas Cerradas (Google Play)",
+                cta_launch: "🚀 Abrir Dashboard en Vivo",
+                footer_back: "Volver a la página principal"
+            },
+            fr: {
+                nav_back: "Page Principale",
+                tts_read: "Lecture vocale",
+                tts_stop: "Arrêter",
+                hero_badge: "RELEASE v24.132",
+                hero_title_html: "16 064 LIGNES <br><span class=\"bg-gradient-to-r from-pink-500 via-purple-400 via-cyan-400 to-amber-300 bg-clip-text text-transparent drop-shadow\">DE PURE PUISSANCE ! 🚀</span>",
+                hero_sub: "Plus de 16 064 lignes de code développé avec passion et hyperfocus. D'un simple portfolio est née une véritable application interactive avec musique en direct, mode StandBy, paroles synchronisées et statistiques.",
+                stat1: "Lignes de code",
+                stat2: "Sources de pochettes",
+                stat3: "Langues",
+                stat4: "Styles de paroles",
+                card_wrapped_title: "1. Stats.fm Wrapped Stories & Moteur Web Audio",
+                card_wrapped_text: "Découvrez mes écoutes en direct via l'API stats.fm en 4 stories avec top titres, top 5 artistes, écoutes réelles et clics synthétisés en Web Audio natif.",
+                card_wrapped_sub1: "Statistiques en direct, nombre d'écoutes et pochettes via stats.fm",
+                card_wrapped_sub2: "Synthétiseur Web Audio natif : clics instantanés sans fichiers supplémentaires",
+                card1_title: "2. Refonte et Optimisation des Ressources",
+                card1_text: "Optimisation ciblée des animations, requêtes DOM, temporisateurs et effets pour soulager le processeur et préserver la batterie.",
+                card1_sub1: "Charge maîtrisée : animations actives uniquement lorsque nécessaire",
+                card1_sub2: "Gestion mémoire propre : libération des images et timers optimisés",
+                card2_title: "3. Moteur de Pochettes Multi-Sources Sécurisé",
+                card2_text: "Recherche de pochettes haute résolution combinant Apple Music, Spotify oEmbed, iTunes et Deezer (jusqu'à 640×640 px selon source) avec mise en cache.",
+                card2_shield_title: "Protection contre les conditions de concurrence :",
+                card2_shield_text: "Saut rapide de morceaux ? Les réponses réseau obsolètes sont rejetées avant de pouvoir écraser la pochette du titre en cours.",
+                card3_title: "4. Visuels Musicaux & Mode Zen",
+                card3_text: "Ondes visuelles synchronisées et mise en veille automatique sans message d'erreur lorsque la musique s'arrête.",
+                card_standby_title: "5. StandBy Next-Gen : Mise à l'Échelle Dynamique et Responsive",
+                card_standby_text: "Adaptation fluide aux différents ratios d'écran sur mobile, tablette et bureau avec réglage manuel d'échelle.",
+                card_standby_sub1: "Mise à l'échelle responsive pour les 25 designs StandBy",
+                card_standby_sub2: "Fonctionnement efficace avec libération automatique du WakeLock lors des pauses musicales",
+                card4_title: "6. Communauté, Support & Widget Discord",
+                card4_text: "Espace support officiel avec serveur Discord en direct (pipeline multi-proxy), contact email, liens TikTok/YouTube et application Android en test fermé sur Google Play.",
+                card4_badge1: "Chaîne Officielle",
+                card4_badge2: "Partenaire & Support",
+                card4_play_status: "📱 Android App • Test Fermé (Google Play)",
+                cta_launch: "🚀 Lancer le Dashboard en Direct",
+                footer_back: "Retour à l'accueil"
+            },
+            pt: {
+                nav_back: "Página Principal",
+                tts_read: "Ouvir",
+                tts_stop: "Parar",
+                hero_badge: "RELEASE v24.132",
+                hero_title_html: "16.064 LINHAS <br><span class=\"bg-gradient-to-r from-pink-500 via-purple-400 via-cyan-400 to-amber-300 bg-clip-text text-transparent drop-shadow\">DE PURA POTÊNCIA! 🚀</span>",
+                hero_sub: "Mais de 16.064 linhas de código artesanal, incontáveis horas de desenvolvimento, otimização e muito hiperfoco. De um portfólio nasceu uma aplicação web interativa completa com música ao vivo, StandBy, letras e estatísticas.",
+                stat1: "Linhas de código",
+                stat2: "Fontes de capas",
+                stat3: "Idiomas",
+                stat4: "Animações de letras",
+                card_wrapped_title: "1. Stats.fm Wrapped Stories & Motor Web Audio",
+                card_wrapped_text: "Stories interativos integrados à API do stats.fm com músicas mais ouvidas, contagem de reproduções, top 5 artistas e sintetizador Web Audio com retorno tátil.",
+                card_wrapped_sub1: "Estatísticas em tempo real, contadores e capas via stats.fm",
+                card_wrapped_sub2: "Sintetizador Web Audio nativo: cliques imediatos com 0 KB de download",
+                card1_title: "2. Reestruturação e Eficiência de Código",
+                card1_text: "Otimização profunda de animações, acessos DOM, decodificação de imagens e timers para reduzir a carga contínua de processamento.",
+                card1_sub1: "Menor carga contínua: animações e atualizações rodam apenas quando visíveis",
+                card1_sub2: "Gerenciamento de memória aprimorado: recursos de imagem e caches otimizados",
+                card2_title: "3. Motor de Capas em Cascata com Proteção Assíncrona",
+                card2_text: "Busca de capas em alta resolução via Apple Music, Spotify oEmbed, iTunes e Deezer (até 640×640 px conforme fonte) com cache local.",
+                card2_shield_title: "Proteção contra concorrência assíncrona:",
+                card2_shield_text: "Trocas rápidas de faixas? Respostas atrasadas de faixas anteriores são descartadas antes de sobrescrever a arte atual.",
+                card3_title: "4. Visuais de Música & Modo Zen",
+                card3_text: "Ondas visuais dinâmicas acompanhando a reprodução e transição suave para modo de descanso com economia de energia.",
+                card_standby_title: "5. StandBy Next-Gen: Dimensionamento Dinâmico e Responsivo",
+                card_standby_text: "Ajuste dinâmico para celulares, tablets e monitores, efeitos otimizados e controle manual de tamanho.",
+                card_standby_sub1: "Dimensionamento responsivo para todos os 25 designs StandBy",
+                card_standby_sub2: "Operação eficiente com liberação automática de WakeLock ao pausar música",
+                card4_title: "6. Comunidade, Suporte e Widget do Discord",
+                card4_text: "Suporte com Discord ao vivo (pipeline multi-proxy), contato direto por email, redes sociais no TikTok/YouTube e app Android em testes fechados na Google Play.",
+                card4_badge1: "Canal Oficial",
+                card4_badge2: "Parceiro & Suporte",
+                card4_play_status: "📱 Android App • Testes Fechados (Google Play)",
+                cta_launch: "🚀 Iniciar Dashboard ao Vivo",
+                footer_back: "Voltar para a página principal"
+            },
+            tr: {
+                nav_back: "Ana Sayfa",
+                tts_read: "Sesli Oku",
+                tts_stop: "Durdur",
+                hero_badge: "RELEASE v24.132",
+                hero_title_html: "16.064 SATIR <br><span class=\"bg-gradient-to-r from-pink-500 via-purple-400 via-cyan-400 to-amber-300 bg-clip-text text-transparent drop-shadow\">SAF SİSTEM GÜCÜ! 🚀</span>",
+                hero_sub: "16.064 satır el yazımı kod, sayısız geliştirme saati, optimizasyon ve güçlü bir hiperodaklanma. Kişisel bir portföyden canlı müzik, StandBy modu, senkronize şarkı sözleri ve istatistiklerle dolu tam teşekküllü bir web uygulaması doğdu.",
+                stat1: "Kod Satırı",
+                stat2: "Kapak Kaynağı",
+                stat3: "Dil",
+                stat4: "Şarkı Sözü Stili",
+                card_wrapped_title: "1. Stats.fm Wrapped Hikayeleri ve Web Audio Motoru",
+                card_wrapped_text: "Stats.fm canlı API'si ile en çok dinlenen parçalar, dinleme sayıları, ilk 5 sanatçı ve dahili Web Audio tıklama sentezleyicisi eşliğinde 4 slaytlı hikaye deneyimi.",
+                card_wrapped_sub1: "Canlı istatistikler, dinleme sayıları ve kapaklar stats.fm üzerinden",
+                card_wrapped_sub2: "Yerel Web Audio sentezleyici: 0 KB dosya boyutuyla anında tıklama sesleri",
+                card1_title: "2. Kod Tabanı İyileştirmesi ve Performans Mimarisi",
+                card1_text: "Animasyonlar, DOM aramaları, kapak işleme ve zamanlayıcılar optimize edilerek işlemci üzerindeki sürekli yük belirgin şekilde düşürüldü.",
+                card1_sub1: "Daha az sürekli yük: animasyonlar yalnızca görünür ve gerekliyken çalışır",
+                card1_sub2: "Daha temiz bellek yönetimi: görsel kaynaklar ve önbellekler iyileştirildi",
+                card2_title: "3. Kademeli HD Kapak Motoru ve Senkronizasyon Koruması",
+                card2_text: "Apple Music, Spotify oEmbed, iTunes ve Deezer ile yüksek çözünürlüklü kapak arama (kaynağa göre 640×640 px'e kadar) ve önbellek desteği.",
+                card2_shield_title: "Çakışma ve Yarış Durumu Koruması:",
+                card2_shield_text: "Hızlı parça değişimi yapıldığında önceki şarkının geciken yanıtları geçerli şarkının kapağını değiştirmeden elenir.",
+                card3_title: "4. Dinamik Müzik Görselleri ve Zen Modu",
+                card3_text: "Çalma durumuna eşlik eden hareketli dalgalar ve müzik durduğunda otomatik olarak devreye giren sessiz dinlenme modu.",
+                card_standby_title: "5. StandBy Next-Gen: Dinamik ve Duyarlı Ölçeklendirme",
+                card_standby_text: "Telefon, tablet ve masaüstü ekranlarına dinamik uyum sağlayan, optimize edilmiş efektler ve manuel boyut ayarı.",
+                card_standby_sub1: "25 StandBy tasarımının tümü için duyarlı ölçeklendirme",
+                card_standby_sub2: "Müzik duraklatıldığında WakeLock serbest bırakılarak verimli kullanım sağlanır",
+                card4_title: "6. Topluluk, Destek ve Canlı Discord Widget'ı",
+                card4_text: "Canlı Discord destek sunucusu (çoklu proxy hattı), doğrudan e-posta iletişimi, TikTok/YouTube kanalları ve Google Play kapalı testindeki Android uygulaması.",
+                card4_badge1: "Resmi Kanal",
+                card4_badge2: "Ortak & Destek",
+                card4_play_status: "📱 Android App • Kapalı Test (Google Play)",
+                cta_launch: "🚀 Canlı Paneli Başlat",
+                footer_back: "Ana Sayfaya Dön"
+            }
+        };
+
+        let currentLang = 'de';
+        try {
+            currentLang = (window.AppStorage ? AppStorage.getItem('selectedLanguage') || AppStorage.getItem('app_language') : null) || localStorage.getItem('selectedLanguage') || localStorage.getItem('app_language') || 'de';
+        } catch(e) {}
+
+        function applyTranslations(lang) {
+            const t = TRANSLATIONS[lang] || TRANSLATIONS.de;
+            document.getElementById('nav-back').innerText = t.nav_back;
+            document.getElementById('tts-label').innerText = window.isSpeaking ? t.tts_stop : t.tts_read;
+            document.getElementById('hero-badge-tag').innerText = t.hero_badge;
+            document.getElementById('hero-title').innerHTML = t.hero_title_html;
+            document.getElementById('hero-subtitle').innerText = t.hero_sub;
+
+            document.getElementById('stat-1-label').innerText = t.stat1;
+            document.getElementById('stat-2-label').innerText = t.stat2;
+            document.getElementById('stat-3-label').innerText = t.stat3;
+            document.getElementById('stat-4-label').innerText = t.stat4;
+
+            // Card Wrapped
+            document.getElementById('card-wrapped-title').innerText = t.card_wrapped_title;
+            document.getElementById('card-wrapped-text').innerText = t.card_wrapped_text;
+            document.getElementById('card-wrapped-sub1').innerText = t.card_wrapped_sub1;
+            document.getElementById('card-wrapped-sub2').innerText = t.card_wrapped_sub2;
+
+            // Card 1 (Kernsanierung)
+            document.getElementById('card1-title').innerText = t.card1_title;
+            document.getElementById('card1-text').innerText = t.card1_text;
+            document.getElementById('card1-sub1').innerText = t.card1_sub1;
+            document.getElementById('card1-sub2').innerText = t.card1_sub2;
+
+            // Card 2 (Cover Engine)
+            document.getElementById('card2-title').innerText = t.card2_title;
+            document.getElementById('card2-text').innerText = t.card2_text;
+            document.getElementById('card2-shield-title').innerText = t.card2_shield_title;
+            document.getElementById('card2-shield-text').innerText = t.card2_shield_text;
+
+            // Card 3 (Visuals & Zen)
+            document.getElementById('card3-title').innerText = t.card3_title;
+            document.getElementById('card3-text').innerText = t.card3_text;
+
+            // Card StandBy
+            if (document.getElementById('card-standby-title')) document.getElementById('card-standby-title').innerText = t.card_standby_title;
+            if (document.getElementById('card-standby-text')) document.getElementById('card-standby-text').innerText = t.card_standby_text;
+            if (document.getElementById('card-standby-sub1')) document.getElementById('card-standby-sub1').innerText = t.card_standby_sub1;
+            if (document.getElementById('card-standby-sub2')) document.getElementById('card-standby-sub2').innerText = t.card_standby_sub2;
+
+            // Card Community
+            document.getElementById('card4-title').innerText = t.card4_title;
+            document.getElementById('card4-text').innerText = t.card4_text;
+            document.getElementById('card4-badge1').innerText = t.card4_badge1;
+            document.getElementById('card4-badge2').innerText = t.card4_badge2;
+            if (document.getElementById('card4-play-status')) document.getElementById('card4-play-status').innerText = t.card4_play_status;
+
+            document.getElementById('cta-launch-text').innerText = t.cta_launch;
+            document.getElementById('footer-back-link').innerText = t.footer_back;
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            try {
+                if (window.AppStorage) {
+                    AppStorage.setItem('selectedLanguage', lang);
+                    AppStorage.setItem('app_language', lang);
+                } else {
+                    localStorage.setItem('selectedLanguage', lang);
+                    localStorage.setItem('app_language', lang);
+                }
+            } catch(e) {}
+            applyTranslations(lang);
+            if (window.isSpeaking) {
+                stopSpeech();
+                toggleReadAloud();
+            }
+        }
+
+        // --- Read Aloud (TTS) Engine ---
+        window.isSpeaking = false;
+        window._activeUtterance = null;
+        let ttsQueue = [];
+        let ttsCurrentIndex = 0;
+
+        const TTS_LANG_MAP = {
+            de: 'de-DE',
+            en: 'en-US',
+            es: 'es-ES',
+            fr: 'fr-FR',
+            pt: 'pt-BR',
+            tr: 'tr-TR'
+        };
+
+        function splitIntoSpeechChunks(text, maxLen = 140) {
+            if (!text) return [];
+            const cleanText = text.replace(/[*_#`~]/g, '').replace(/\s+/g, ' ').trim();
+            const sentences = cleanText.split(/(?<=[.!?])\s+/);
+            const chunks = [];
+            for (const sentence of sentences) {
+                if (sentence.length <= maxLen) {
+                    if (sentence.trim()) chunks.push(sentence.trim());
+                    continue;
+                }
+                let rest = sentence;
+                while (rest.length > maxLen) {
+                    let cut = rest.lastIndexOf(' ', maxLen);
+                    if (cut <= 0) cut = maxLen;
+                    chunks.push(rest.slice(0, cut).trim());
+                    rest = rest.slice(cut).trim();
+                }
+                if (rest && rest.trim()) chunks.push(rest.trim());
+            }
+            return chunks;
+        }
+
+        function stopSpeech() {
+            window.isSpeaking = false;
+            ttsQueue = [];
+            ttsCurrentIndex = 0;
+            if (window._activeUtterance) {
+                window._activeUtterance.onend = null;
+                window._activeUtterance.onerror = null;
+                window._activeUtterance = null;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            const btn = document.getElementById('tts-toggle-btn');
+            if (btn) btn.classList.remove('tts-active');
+            const t = TRANSLATIONS[currentLang] || TRANSLATIONS.de;
+            const label = document.getElementById('tts-label');
+            const icon = document.getElementById('tts-icon');
+            if (label) label.innerText = t.tts_read;
+            if (icon) icon.innerText = '🔊';
+        }
+
+        function playNextChunk() {
+            if (!window.isSpeaking) return;
+            if (ttsCurrentIndex >= ttsQueue.length) {
+                stopSpeech();
+                return;
+            }
+
+            const chunk = ttsQueue[ttsCurrentIndex];
+            ttsCurrentIndex++;
+
+            const langCode = TTS_LANG_MAP[currentLang || 'de'] || 'de-DE';
+            const spokenText = (langCode && langCode.startsWith('de'))
+                ? chunk.replace(/\bGamingpig\b/gi, 'Gaming Pigg')
+                : chunk;
+
+            const u = new SpeechSynthesisUtterance(spokenText);
+            u.lang = langCode;
+            u.rate = 1.0;
+            u.pitch = 1.0;
+            u.volume = 1.0;
+
+            window._activeUtterance = u;
+
+            u.onend = () => {
+                if (!window.isSpeaking) return;
+                if (window._activeUtterance === u) window._activeUtterance = null;
+                playNextChunk();
+            };
+
+            u.onerror = () => {
+                if (!window.isSpeaking) return;
+                if (window._activeUtterance === u) window._activeUtterance = null;
+                playNextChunk();
+            };
+
+            if (window.speechSynthesis.paused) {
+                window.speechSynthesis.resume();
+            }
+            window.speechSynthesis.speak(u);
+        }
+
+        function toggleReadAloud() {
+            if (!('speechSynthesis' in window)) {
+                alert("Speech Synthesis is not supported in this browser.");
+                return;
+            }
+
+            if (window.isSpeaking) {
+                stopSpeech();
+                return;
+            }
+
+            window.isSpeaking = false;
+            ttsQueue = [];
+            ttsCurrentIndex = 0;
+            if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+
+            const t = TRANSLATIONS[currentLang] || TRANSLATIONS.de;
+            const dynamicIntros = {
+                de: [
+                    "Willkommen zum offiziellen Release-Briefing! Hier sind die Highlights von Version 24 Punkt 132:",
+                    "Hier ist dein Audio-Überblick zum bisher größten Code-Umbau der Portfolio-Geschichte:",
+                    "Update-Radar aktiviert! Lass uns durch die wichtigsten Meilensteine und neuen Systeme fliegen:"
+                ],
+                en: [
+                    "Welcome to the official release briefing for version 24.132! Here are the core highlights:",
+                    "Audio briefing active: exploring the biggest code overhaul in portfolio history:"
+                ],
+                es: [
+                    "¡Bienvenido al informe oficial de la versión 24.132! Estas son las novedades principales:"
+                ],
+                fr: [
+                    "Bienvenue dans le rapport de mise à jour de la version 24.132 ! Voici les faits marquants :"
+                ],
+                pt: [
+                    "Bem-vindo ao relatório oficial de lançamento da versão 24.132! Aqui estão os principais destaques:"
+                ],
+                tr: [
+                    "Sürüm 24.132 resmi güncelleme brifingine hoş geldiniz! İşte öne çıkan önemli yenilikler:"
+                ]
+            };
+            const introList = dynamicIntros[currentLang] || dynamicIntros.de;
+            const intro = introList[Math.floor(Math.random() * introList.length)];
+
+            const parts = [
+                intro,
+                t.hero_badge,
+                t.hero_sub,
+                t.card_wrapped_title ? `${t.card_wrapped_title}. ${t.card_wrapped_text}` : '',
+                t.card1_title ? `${t.card1_title}. ${t.card1_text}` : '',
+                t.card2_title ? `${t.card2_title}. ${t.card2_text}` : '',
+                t.card3_title ? `${t.card3_title}. ${t.card3_text}` : '',
+                t.card_standby_title ? `${t.card_standby_title}. ${t.card_standby_text}` : '',
+                t.card4_title ? `${t.card4_title}. ${t.card4_text}` : ''
+            ].filter(Boolean);
+
+            const fullText = parts.join('. ');
+            const chunks = splitIntoSpeechChunks(fullText);
+            if (chunks.length === 0) return;
+
+            window.isSpeaking = true;
+            ttsQueue = chunks;
+            ttsCurrentIndex = 0;
+
+            const btn = document.getElementById('tts-toggle-btn');
+            if (btn) btn.classList.add('tts-active');
+            const label = document.getElementById('tts-label');
+            const icon = document.getElementById('tts-icon');
+            if (label) label.innerText = t.tts_stop;
+            if (icon) icon.innerText = '⏹️';
+
+            playNextChunk();
+        }
+
+        // Init language on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectEl = document.getElementById('lang-select');
+            if (selectEl) selectEl.value = currentLang;
+            applyTranslations(currentLang);
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.onvoiceschanged = () => {};
+            }
+        });
+
+        // Service Worker Update-Registration
+        if ('serviceWorker' in navigator) {
+            let isRefreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (isRefreshing) return;
+                isRefreshing = true;
+                window.location.reload();
+            });
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
+                    .then((reg) => { if (reg) reg.update().catch(() => {}); })
+                    .catch(() => {});
+            });
+        }
+    </script>
+
+<script src="js/community-glass.20260910.js?v=v24.213.0"></script>
+<script data-pplx-inline-edit>
+(function () {
+  if (window === window.top) return;
+
+  const allowedParentOrigins = ["https://www.perplexity.ai","https://perplexity.ai","https://testing.perplexity.ai","https://staging.perplexity.ai","https://*.preview.i.perplexity.ai","http://perplexity.localhost","http://localhost:1420","http://127.0.0.1:1420","http://localhost:3000","http://127.0.0.1:3000","http://localhost:5173","http://127.0.0.1:5173"];
+  const MAX_FONT_BYTES = 500 * 1024;
+  const MAX_TOTAL_FONT_BYTES = 2 * 1024 * 1024;
+  let scrollForwarding = false;
+  let scrollRaf = 0;
+  let trustedTopOrigin = null;
+
+  // Allow entries like "https://*.preview.i.perplexity.ai" — the wildcard
+  // matches a single DNS label (no dots), so "https://*.foo" cannot stretch
+  // across multiple labels.
+  function matchesAllowedOrigin(origin) {
+    if (!origin) return false;
+    for (const entry of allowedParentOrigins) {
+      if (!entry.includes("*")) {
+        if (entry === origin) return true;
+        continue;
+      }
+      const pattern = new RegExp(
+        "^" +
+          entry.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^.]+") +
+          "$",
+      );
+      if (pattern.test(origin)) return true;
+    }
+    return false;
+  }
+
+  // Trust decision: when the sender is same-origin-visible (event.origin is a
+  // real origin like https://www.perplexity.ai) we trust event.origin directly.
+  // When event.origin is "null" (opaque broker srcdoc), we fall back to the
+  // broker's stamped `parentOrigin` to identify the top window. The fallback
+  // is claim-only — we rely on the browser's native `targetOrigin` enforcement
+  // on the response path (see postToTrustedTop) to ensure replies can't be
+  // delivered to anyone but the actual top window of that claimed origin.
+  function getTrustedParentOrigin(event) {
+    const forwardedParentOrigin =
+      typeof event.data.parentOrigin === "string" ? event.data.parentOrigin : null;
+    const parentOrigin = event.origin === "null" ? forwardedParentOrigin : event.origin;
+    return matchesAllowedOrigin(parentOrigin) ? parentOrigin : null;
+  }
+
+  // All responses go to window.top with targetOrigin = the allowlisted origin.
+  // An attacker that iframes us inside their own null-origin broker can claim
+  // any parentOrigin they like, but the browser will drop the reply whenever
+  // the real top's origin doesn't match — so the screenshot never leaves.
+  function postToTrustedTop(message) {
+    if (!trustedTopOrigin) return;
+    try {
+      window.top.postMessage(message, trustedTopOrigin);
+    } catch (_error) {}
+  }
+
+  function inlineAll(original, clone) {
+    if (original.nodeType !== 1 || clone.nodeType !== 1) return;
+
+    try {
+      const computedStyle = getComputedStyle(original);
+      // cssText on a computed style is the serialized declaration in modern
+      // Chromium/Safari — a single read beats enumerating ~400 longhand
+      // properties. Firefox returns "" here, so we fall back on empty.
+      const serialized = computedStyle.cssText;
+      if (serialized) {
+        clone.style.cssText = serialized;
+      } else {
+        const parts = new Array(computedStyle.length);
+        for (let index = 0; index < computedStyle.length; index += 1) {
+          const property = computedStyle[index];
+          parts[index] = `${property}:${computedStyle.getPropertyValue(property)};`;
+        }
+        clone.style.cssText = parts.join("");
+      }
+    } catch (_error) {}
+
+    const originalChildren = original.children;
+    const clonedChildren = clone.children;
+    for (
+      let index = 0;
+      index < originalChildren.length && index < clonedChildren.length;
+      index += 1
+    ) {
+      inlineAll(originalChildren[index], clonedChildren[index]);
+    }
+  }
+
+  function extractFontUrl(srcValue) {
+    const matches = [
+      ...srcValue.matchAll(
+        /url\(["']?([^"')]+)["']?\)(?:\s*format\(["']?([^"')]+)["']?\))?/gi,
+      ),
+    ];
+    if (matches.length === 0) return null;
+    const woff2 = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff2"));
+    if (woff2) return woff2[1];
+    const woff = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff"));
+    if (woff) return woff[1];
+    return matches[0][1];
+  }
+
+  // Cache resolved font URL -> data URI across captures. Fonts on a page
+  // essentially never change, and a batch run emits multiple captures back to
+  // back — without this we'd refetch + re-base64 every time.
+  const fontDataUriCache = new Map();
+  const SRC_DECLARATION_RE = /src\s*:\s*[^;}]+/i;
+
+  async function fetchAsDataUri(url) {
+    if (fontDataUriCache.has(url)) return fontDataUriCache.get(url);
+    let dataUri = null;
+    try {
+      const response = await fetch(url, { mode: "cors", credentials: "omit" });
+      if (response.ok) {
+        const blob = await response.blob();
+        if (blob.size <= MAX_FONT_BYTES) {
+          dataUri = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () =>
+              resolve(typeof reader.result === "string" ? reader.result : null);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(blob);
+          });
+        }
+      }
+    } catch (_error) {
+      dataUri = null;
+    }
+    fontDataUriCache.set(url, dataUri);
+    return dataUri;
+  }
+
+  function collectFontFaceRuleTexts() {
+    const rules = [];
+    for (const sheet of document.styleSheets) {
+      let cssRules;
+      try {
+        cssRules = sheet.cssRules;
+      } catch (_error) {
+        continue;
+      }
+      if (!cssRules) continue;
+      for (const rule of cssRules) {
+        const cssText = rule.cssText || "";
+        if (cssText.startsWith("@font-face")) rules.push(cssText);
+      }
+    }
+    return rules;
+  }
+
+  async function buildInlinedFontCss() {
+    const ruleTexts = collectFontFaceRuleTexts();
+    if (ruleTexts.length === 0) return null;
+
+    const resolved = ruleTexts.map((cssText) => {
+      if (!SRC_DECLARATION_RE.test(cssText)) return null;
+      const srcMatch = cssText.match(/src\s*:\s*([^;}]+)[;}]/i);
+      if (!srcMatch) return null;
+      const url = extractFontUrl(srcMatch[1]);
+      if (!url) return null;
+      try {
+        return { cssText, url: new URL(url, document.baseURI).href };
+      } catch (_error) {
+        return null;
+      }
+    });
+
+    const dataUris = await Promise.all(
+      resolved.map((entry) => (entry ? fetchAsDataUri(entry.url) : Promise.resolve(null))),
+    );
+
+    const inlined = [];
+    let totalBytes = 0;
+    for (let index = 0; index < resolved.length; index += 1) {
+      const entry = resolved[index];
+      const dataUri = dataUris[index];
+      if (!entry || !dataUri) continue;
+      const approxBytes = dataUri.length * 0.75;
+      if (totalBytes + approxBytes > MAX_TOTAL_FONT_BYTES) break;
+      totalBytes += approxBytes;
+      inlined.push(entry.cssText.replace(SRC_DECLARATION_RE, `src: url("${dataUri}")`));
+    }
+    return inlined.length > 0 ? inlined.join("\n") : null;
+  }
+
+  function stripExternal(clone) {
+    const images = clone.querySelectorAll("img");
+    for (let index = 0; index < images.length; index += 1) {
+      const src = images[index].getAttribute("src");
+      if (src && !src.startsWith("data:")) images[index].removeAttribute("src");
+    }
+
+    const elements = clone.querySelectorAll("*");
+    for (let index = 0; index < elements.length; index += 1) {
+      const style = elements[index].style.cssText;
+      if (style && style.includes("url(")) {
+        elements[index].style.cssText = style.replace(
+          /url\(["']?(?!data:)[^)"']*["']?\)/gi,
+          "none",
+        );
+      }
+    }
+  }
+
+  function emitScroll() {
+    scrollRaf = 0;
+    if (!scrollForwarding) return;
+    postToTrustedTop({
+      type: "INLINE_EDIT_SCROLL",
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
+    });
+  }
+
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (!scrollForwarding || scrollRaf) return;
+      scrollRaf = requestAnimationFrame(emitScroll);
+    },
+    { passive: true, capture: true },
+  );
+
+  async function handleCaptureRequest(event) {
+    const requestId = event.data.requestId;
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    function postResult(dataUrl) {
+      postToTrustedTop({
+        type: "INLINE_EDIT_SCREENSHOT_RESULT",
+        requestId,
+        dataUrl,
+        scrollX,
+        scrollY,
+      });
+    }
+
+    try {
+      // Wait for any pending web fonts to resolve so both inline metrics and
+      // the @font-face inlining below see the same loaded faces.
+      if (document.fonts && document.fonts.ready) {
+        try {
+          await document.fonts.ready;
+        } catch (_error) {}
+      }
+
+      const clone = document.documentElement.cloneNode(true);
+      inlineAll(document.documentElement, clone);
+
+      const removedNodes = clone.querySelectorAll("script,link[rel=\"stylesheet\"],style");
+      for (let index = 0; index < removedNodes.length; index += 1) {
+        removedNodes[index].remove();
+      }
+
+      stripExternal(clone);
+
+      // Re-embed web fonts as data-URI @font-face rules so the SVG rasterizer
+      // can resolve them — external font URLs aren't fetched during
+      // foreignObject rendering, which would otherwise force a fallback face
+      // and change text metrics.
+      const inlinedFontCss = await buildInlinedFontCss();
+      if (inlinedFontCss) {
+        const styleEl = document.createElement("style");
+        styleEl.textContent = inlinedFontCss;
+        const head = clone.querySelector("head");
+        if (head) head.appendChild(styleEl);
+        else clone.insertBefore(styleEl, clone.firstChild);
+      }
+
+      const html = new XMLSerializer().serializeToString(clone);
+      const svg =
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
+        '<foreignObject width="100%" height="100%">' +
+        `<div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;overflow:hidden">` +
+        `<div style="position:relative;left:-${scrollX}px;top:-${scrollY}px">` +
+        html +
+        "</div></div></foreignObject></svg>";
+      const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      const image = new Image();
+      image.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(image, 0, 0);
+        postResult(canvas.toDataURL("image/png"));
+      };
+      image.onerror = function () {
+        postResult(null);
+      };
+      image.src = svgUrl;
+    } catch (_error) {
+      postResult(null);
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    if (!event.data) return;
+    // Only accept messages from the direct parent frame. Blocks sibling /
+    // unrelated-window postMessage senders that could otherwise reach us.
+    if (event.source !== window.parent) return;
+
+    const trustedParentOrigin = getTrustedParentOrigin(event);
+    if (!trustedParentOrigin) return;
+    trustedTopOrigin = trustedParentOrigin;
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_START") {
+      scrollForwarding = true;
+      emitScroll();
+      return;
+    }
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_STOP") {
+      scrollForwarding = false;
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
+      scrollRaf = 0;
+      return;
+    }
+
+    if (event.data.type !== "INLINE_EDIT_CAPTURE_REQUEST") return;
+
+    handleCaptureRequest(event);
+  });
+})();
+
+
+</script></body>
+<link rel="stylesheet" href="assets/liquid-glass-skin.0a54a0f62eb1d974.css?v=android-fix-20260914d" data-gp-glass-skin="true">
+</html>

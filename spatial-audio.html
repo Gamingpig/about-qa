@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GAMINGPIG // STUDIO &amp; SPATIAL</title>
+    <link rel="icon" href="icon-192.png" type="image/png">
+    <meta name="theme-color" content="#030712">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: #020617;
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Ambient Cover Glow Backdrop */
+        #ambient-cover-glow {
+            position: fixed;
+            inset: -40px;
+            z-index: 1;
+            background-size: cover;
+            background-position: center;
+            filter: blur(75px) saturate(1.8) brightness(0.4);
+            opacity: 0.55;
+            transition: opacity 1.2s ease, background-image 0.8s ease;
+            transform: scale(1.15) translateZ(0);
+            pointer-events: none;
+        }
+
+        /* Fluid Aurora Mesh Background */
+        .aurora-container {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            overflow: hidden;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            opacity: 0.7;
+        }
+
+        .aurora-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.5;
+            animation: floatOrb 22s infinite alternate ease-in-out;
+            transition: background-color 1.5s ease;
+        }
+
+        .orb-1 {
+            width: 550px;
+            height: 550px;
+            background: #3b82f6;
+            top: -120px;
+            left: -120px;
+            animation-duration: 20s;
+        }
+
+        .orb-2 {
+            width: 650px;
+            height: 650px;
+            background: #8b5cf6;
+            bottom: -220px;
+            right: -120px;
+            animation-duration: 26s;
+            animation-delay: -6s;
+        }
+
+        .orb-3 {
+            width: 480px;
+            height: 480px;
+            background: #ec4899;
+            top: 45%;
+            left: 35%;
+            animation-duration: 24s;
+            animation-delay: -12s;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(100px, 70px) scale(1.12); }
+            100% { transform: translate(-70px, 120px) scale(0.92); }
+        }
+
+        /* Minimalist Frosted Glass Stage */
+        .glass-stage {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 35px 80px -20px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-radius: 36px;
+            position: relative;
+            z-index: 10;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+        }
+
+        /* Cover Artwork Container */
+        .cover-art-box {
+            box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.6s ease;
+        }
+
+        .playing .cover-art-box {
+            animation: album-breathe 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes album-breathe {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.025); box-shadow: 0 30px 70px -10px rgba(0, 0, 0, 0.95); }
+        }
+
+        /* Animated Live EQ Bars */
+        .eq-bars {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 2.5px;
+            height: 12px;
+        }
+
+        .eq-bar {
+            width: 2.5px;
+            background: #10b981;
+            border-radius: 1px;
+            transform-origin: bottom;
+            animation: eqBounce 0.8s ease-in-out infinite alternate;
+        }
+
+        .eq-bar:nth-child(1) { height: 6px; animation-duration: 0.6s; }
+        .eq-bar:nth-child(2) { height: 12px; animation-duration: 0.9s; animation-delay: -0.2s; }
+        .eq-bar:nth-child(3) { height: 8px; animation-duration: 0.75s; animation-delay: -0.4s; }
+
+        @keyframes eqBounce {
+            0% { transform: scaleY(0.25); }
+            100% { transform: scaleY(1); }
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-feature-settings: "tnum" on, "zero" on;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <!-- Ambient Cover Glow -->
+    <div id="ambient-cover-glow"></div>
+
+    <!-- Atmospheric Liquid Aurora Background -->
+    <div class="aurora-container">
+        <div id="orb1" class="aurora-orb orb-1"></div>
+        <div id="orb2" class="aurora-orb orb-2"></div>
+        <div id="orb3" class="aurora-orb orb-3"></div>
+    </div>
+
+    <!-- Main Stage Center Piece -->
+    <main id="stage-card" class="w-full max-w-lg glass-stage p-6 sm:p-9 flex flex-col items-center text-center">
+        
+        <!-- Top Status Telemetry Bar -->
+        <div class="w-full flex items-center justify-between mb-7">
+            <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] mono font-bold uppercase tracking-wider text-emerald-400">
+                <div class="eq-bars">
+                    <span class="eq-bar"></span>
+                    <span class="eq-bar"></span>
+                    <span class="eq-bar"></span>
+                </div>
+                <span id="live-badge">LIVE // SPOTIFY</span>
+            </div>
+
+            <a href="index.html" class="inline-flex items-center gap-1.5 text-xs font-bold text-white/70 hover:text-white px-3 py-1.5 rounded-xl hover:bg-white/10 transition-all active:scale-95">
+                <span>←</span>
+                <span>Portfolio</span>
+                <span class="hidden sm:inline-block text-[10px] font-mono text-white/30 ml-1 px-1.5 py-0.5 rounded bg-white/5 border border-white/10">ESC</span>
+            </a>
+        </div>
+
+        <!-- Center Artwork with Clean Rounded Corners -->
+        <div class="relative w-52 h-52 sm:w-64 sm:h-64 rounded-3xl overflow-hidden mb-7 cover-art-box bg-slate-900/80 flex items-center justify-center shrink-0">
+            <img id="track-artwork" src="icon-192.png" alt="Album Cover" class="w-full h-full object-cover transition-opacity duration-500 opacity-100" />
+            <div id="artwork-placeholder" class="hidden absolute inset-0 flex items-center justify-center text-3xl text-white/20">
+                🎵
+            </div>
+        </div>
+
+        <!-- Track Metadata -->
+        <div class="w-full mb-6">
+            <h1 id="track-title" class="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight mb-1.5 truncate px-2">
+                Wird geladen...
+            </h1>
+            <p id="track-artist" class="text-white/75 text-sm sm:text-base font-semibold truncate px-2">
+                Gamingpig Studio
+            </p>
+            <p id="track-album" class="text-white/40 text-xs font-medium truncate mt-1 px-2">
+                Spatial Experience
+            </p>
+        </div>
+
+        <!-- Minimalist Progress Bar & Timers -->
+        <div class="w-full bg-slate-950/60 rounded-2xl p-4 border border-white/5 mb-6">
+            <div class="flex justify-between text-xs mono font-bold mb-2.5">
+                <span id="time-current" class="text-white">0:00</span>
+                <span id="time-total" class="text-white/40">0:00</span>
+            </div>
+            <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden relative">
+                <div id="progress-fill" class="h-full w-0 bg-white rounded-full transition-all duration-75"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Ambient Switcher & Controls -->
+        <div class="w-full flex items-center justify-between text-[11px] mono text-white/40 pt-2 border-t border-white/10">
+            <span class="truncate pr-2">STUDIO ENGINE // v24.213.0</span>
+            <div class="flex items-center gap-3 shrink-0">
+                <button onclick="cycleAurora()" class="text-white/75 hover:text-white font-bold transition-colors flex items-center gap-1 active:scale-95" title="Hintergrundfarben wechseln (Leertaste)">
+                    <span>🎨</span> <span class="hidden xs:inline">Aura</span>
+                </button>
+                <button onclick="toggleFullscreen()" class="text-white/75 hover:text-white font-bold transition-colors flex items-center gap-1 active:scale-95" title="Vollbild umschalten (F)">
+                    <span>⛶</span> <span class="hidden xs:inline">Vollbild</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const NPC_API_URL = 'https://npc-api.aikins.xyz/v1/users/gamingpig/now';
+        const STATSFM_API_URL = 'https://api.stats.fm/api/v1/users/gamingpig/streams/current';
+        const FALLBACK_ART = 'https://gamingpig.github.io/About-Gamingpig/og-v2.jpg';
+
+        const stageCard = document.getElementById('stage-card');
+        const titleEl = document.getElementById('track-title');
+        const artistEl = document.getElementById('track-artist');
+        const albumEl = document.getElementById('track-album');
+        const artworkEl = document.getElementById('track-artwork');
+        const fillEl = document.getElementById('progress-fill');
+        const timeCurEl = document.getElementById('time-current');
+        const timeTotEl = document.getElementById('time-total');
+        const liveBadge = document.getElementById('live-badge');
+        const ambientGlow = document.getElementById('ambient-cover-glow');
+
+        const orb1 = document.getElementById('orb1');
+        const orb2 = document.getElementById('orb2');
+        const orb3 = document.getElementById('orb3');
+
+        let lastTrackKey = '';
+        let serverBaseMs = 0;
+        let localStart = performance.now();
+        let totalDuration = 0;
+        let isPlaying = false;
+        let timeOffset = 0;
+        const coverCache = new Map();
+
+        // Zeit-Synchronisation via Date-Response-Header
+        function syncClockFromHeader(dateHeader) {
+            if (!dateHeader) return;
+            try {
+                const serverTime = new Date(dateHeader).getTime();
+                if (!isNaN(serverTime)) {
+                    timeOffset = serverTime - Date.now();
+                }
+            } catch (e) {}
+        }
+
+        function formatTime(ms) {
+            if (!ms || ms < 0 || isNaN(ms)) return '0:00';
+            const s = Math.floor(ms / 1000);
+            return `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+        }
+
+        // Zuverlässige Cover-Auflösung via iTunes Search API als Fallback
+        async function resolveCoverFallback(title, artist) {
+            const key = `${title}-${artist}`.toLowerCase();
+            if (coverCache.has(key)) return coverCache.get(key);
+
+            try {
+                const q = encodeURIComponent(`${artist} ${title}`);
+                const r = await fetch(`https://itunes.apple.com/search?term=${q}&media=music&entity=song&limit=1`, {
+                    signal: AbortSignal.timeout(4000)
+                });
+                if (r.ok) {
+                    const d = await r.json();
+                    let art = d?.results?.[0]?.artworkUrl100;
+                    if (art) {
+                        art = art.replace('100x100bb', '600x600bb');
+                        coverCache.set(key, art);
+                        return art;
+                    }
+                }
+            } catch (e) {}
+
+            return FALLBACK_ART;
+        }
+
+        function setCoverImage(src) {
+            if (!src) src = FALLBACK_ART;
+            const img = new Image();
+            img.onload = () => {
+                artworkEl.src = src;
+                artworkEl.style.opacity = '1';
+                if (ambientGlow) {
+                    ambientGlow.style.backgroundImage = `url("${src}")`;
+                }
+            };
+            img.onerror = () => {
+                artworkEl.src = FALLBACK_ART;
+                artworkEl.style.opacity = '1';
+                if (ambientGlow) {
+                    ambientGlow.style.backgroundImage = `url("${FALLBACK_ART}")`;
+                }
+            };
+            img.src = src;
+        }
+
+        // Normalisiert Stats.fm-Daten auf ein einheitliches Schema
+        function normalizeStatsFmPayload(payload) {
+            const item = payload && payload.item;
+            const track = item && item.track;
+            if (!item || !track || !item.isPlaying) return null;
+
+            const artists = Array.isArray(track.artists) ? track.artists.map(a => a && a.name).filter(Boolean) : [];
+            const album = Array.isArray(track.albums) ? track.albums[0] : null;
+            const artUrl = album && album.image ? album.image : '';
+
+            return {
+                status: 'playing',
+                source: 'STATS.FM',
+                title: track.name || '',
+                artist: artists.join(', ') || 'Unknown Artist',
+                album: album && album.name ? album.name : '',
+                duration_ms: Number(track.durationMs) || 0,
+                progress_ms: Number(item.progressMs) || 0,
+                artwork_url: artUrl,
+                timestamp: item.date || Date.now()
+            };
+        }
+
+        async function pollTelemetry() {
+            if (document.hidden) return; // Im Hintergrund pausieren
+
+            let normalizedData = null;
+
+            // 1. Primärquelle: NPC API (Raspberry Pi / Desktop Spotify Sync)
+            try {
+                const res = await fetch(NPC_API_URL, { 
+                    cache: 'no-store', 
+                    signal: AbortSignal.timeout(3500) 
+                });
+                syncClockFromHeader(res.headers.get('date'));
+                if (res.ok) {
+                    const d = await res.json();
+                    const tr = d.track || {};
+                    const title = tr.title || tr.name;
+                    if (d.status === 'playing' && title && title !== 'Aktuell ist es ruhig...') {
+                        normalizedData = {
+                            status: 'playing',
+                            source: 'SPOTIFY',
+                            title: title,
+                            artist: tr.artist || '',
+                            album: tr.album || '',
+                            duration_ms: tr.duration_ms || 0,
+                            progress_ms: tr.progress_ms || d.progress_ms || 0,
+                            artwork_url: tr.artwork_url || d.artwork_url || '',
+                            timestamp: d.timestamp || d.updated_at || (tr && tr.timestamp)
+                        };
+                    }
+                }
+            } catch (e) {}
+
+            // 2. Fallback-Quelle: Stats.fm Live Streams API
+            if (!normalizedData) {
+                try {
+                    const res = await fetch(STATSFM_API_URL, { 
+                        cache: 'no-store', 
+                        signal: AbortSignal.timeout(3500) 
+                    });
+                    syncClockFromHeader(res.headers.get('date'));
+                    if (res.ok && res.status !== 204) {
+                        const d = await res.json();
+                        normalizedData = normalizeStatsFmPayload(d);
+                    }
+                } catch (e) {}
+            }
+
+            // UI Aktualisierung
+            if (normalizedData && normalizedData.status === 'playing') {
+                isPlaying = true;
+                stageCard.classList.add('playing');
+                totalDuration = normalizedData.duration_ms;
+                timeTotEl.innerText = formatTime(normalizedData.duration_ms);
+                liveBadge.innerText = `LIVE // ${normalizedData.source}`;
+                liveBadge.className = 'text-[10px] mono font-bold uppercase tracking-wider text-emerald-400';
+
+                let prog = normalizedData.progress_ms;
+                if (normalizedData.timestamp) {
+                    let stTime = typeof normalizedData.timestamp === 'number'
+                        ? (normalizedData.timestamp < 20000000000 ? normalizedData.timestamp * 1000 : normalizedData.timestamp)
+                        : new Date(normalizedData.timestamp).getTime();
+                    let rawAge = (Date.now() + timeOffset) - stTime;
+                    if (rawAge >= 0 && rawAge <= (normalizedData.duration_ms || 600000)) {
+                        prog += rawAge;
+                    }
+                }
+
+                const key = `${normalizedData.title}-${normalizedData.artist}`;
+                if (key !== lastTrackKey) {
+                    lastTrackKey = key;
+                    titleEl.innerText = normalizedData.title;
+                    artistEl.innerText = normalizedData.artist;
+                    albumEl.innerText = normalizedData.album || 'Spatial Experience';
+
+                    serverBaseMs = prog;
+                    localStart = performance.now();
+
+                    // Cover-Auflösung
+                    if (normalizedData.artwork_url && !normalizedData.artwork_url.includes('placeholder')) {
+                        setCoverImage(normalizedData.artwork_url);
+                    } else {
+                        resolveCoverFallback(normalizedData.title, normalizedData.artist).then(src => {
+                            setCoverImage(src);
+                        });
+                    }
+                } else {
+                    const expected = serverBaseMs + (performance.now() - localStart);
+                    const drift = prog - expected;
+                    if (Math.abs(drift) > 2500) {
+                        serverBaseMs = prog;
+                        localStart = performance.now();
+                    } else if (Math.abs(drift) > 150) {
+                        serverBaseMs = expected + drift * 0.35;
+                        localStart = performance.now();
+                    }
+                }
+            } else {
+                isPlaying = false;
+                stageCard.classList.remove('playing');
+                liveBadge.innerText = 'STANDBY';
+                liveBadge.className = 'text-[10px] mono font-bold uppercase tracking-wider text-slate-400';
+                titleEl.innerText = 'Aktuell ist es ruhig...';
+                artistEl.innerText = 'Gamingpig genießt die Stille';
+                albumEl.innerText = 'Keine Wiedergabe aktiv';
+                setCoverImage(FALLBACK_ART);
+                fillEl.style.width = '0%';
+                timeCurEl.innerText = '0:00';
+                timeTotEl.innerText = '0:00';
+                lastTrackKey = '';
+            }
+        }
+
+        // Flüssiger 60 FPS rAF Fortschritts-Loop
+        let lastFrameTime = 0;
+        function renderProgress(now) {
+            if (!document.hidden && isPlaying && totalDuration > 0) {
+                if (now - lastFrameTime >= 15.5) {
+                    lastFrameTime = now;
+                    const currentMs = Math.min(totalDuration, serverBaseMs + (performance.now() - localStart));
+                    timeCurEl.innerText = formatTime(currentMs);
+                    const pct = Math.max(0, Math.min(100, (currentMs / totalDuration) * 100));
+                    fillEl.style.width = `${pct}%`;
+                }
+            }
+            requestAnimationFrame(renderProgress);
+        }
+
+        // Aurora Theme Switcher
+        const auroraThemes = [
+            ['#3b82f6', '#8b5cf6', '#ec4899'],
+            ['#06b6d4', '#3b82f6', '#10b981'],
+            ['#f43f5e', '#a855f7', '#fb923c'],
+            ['#8b5cf6', '#d946ef', '#6366f1']
+        ];
+        let auroraIdx = 0;
+
+        window.cycleAurora = function() {
+            auroraIdx = (auroraIdx + 1) % auroraThemes.length;
+            const theme = auroraThemes[auroraIdx];
+            orb1.style.backgroundColor = theme[0];
+            orb2.style.backgroundColor = theme[1];
+            orb3.style.backgroundColor = theme[2];
+        };
+
+        window.toggleFullscreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        };
+
+        // Tastaturkürzel: ESC für Zurück, Leertaste für Aura, F für Vollbild
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                window.location.href = 'index.html';
+            } else if (e.key === ' ' || e.code === 'Space') {
+                e.preventDefault();
+                cycleAurora();
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
+        });
+
+        // Polling Timer (4s aktiv, 12s standby)
+        let pollTimer = null;
+        function scheduleNextPoll() {
+            if (pollTimer) clearTimeout(pollTimer);
+            const delay = isPlaying ? 4000 : 12000;
+            pollTimer = setTimeout(async () => {
+                await pollTelemetry();
+                scheduleNextPoll();
+            }, delay);
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                pollTelemetry().then(() => scheduleNextPoll());
+            }
+        });
+
+        // Initialer Start
+        pollTelemetry().then(() => {
+            scheduleNextPoll();
+            requestAnimationFrame(renderProgress);
+        });
+    </script>
+</body>
+</html>

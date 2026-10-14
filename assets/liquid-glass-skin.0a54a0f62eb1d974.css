@@ -1,0 +1,95 @@
+/* Visual-only Liquid Glass skin. Loaded last so legacy inline paint cannot win. */
+html.gp-glass {
+  --gp-skin: rgb(5 7 12 / .12);
+  --gp-skin-light: rgb(255 255 255 / .10);
+}
+html.gp-glass.gp-glass.gp-glass:not(.gp-glass-admin-disabled) body:not(.standby-mode):not([data-glass-overlay]) :is(
+  .glass-card,.glow-card,.glass-stage,.card,#main-music-card,#mini-player-toggle,
+  #ui-controls,#footer-bubble,#footer-expandable-menu,#global-settings-menu,
+  #lyrics-settings-menu,#tutorial-box,#language-picker-box,#sharecard-picker-box,
+  #command-palette,#dynamic-island,#lg-first-visit-tip,.modal-content,
+  #whats-new-epic-modal>div,#privacy-update-modal>div,#interactive-quest-hud>div,
+  #spotify-wrapped-modal>div
+) {
+  background-color:rgba(5,7,12,.12)!important;
+  background-image:none!important;
+  border-color:rgb(255 255 255 / var(--gp-edge-alpha,.08))!important;
+  border-top-color:rgb(255 255 255 / calc(var(--gp-edge-alpha,.08) + .24))!important;
+  border-left-color:rgb(255 255 255 / calc(var(--gp-edge-alpha,.08) + .10))!important;
+  box-shadow:
+    0 20px 48px -32px rgb(0 0 0 / .72),
+    inset 0 1px 0 rgb(255 255 255 / .42),
+    inset 1px 0 0 rgb(255 255 255 / .13),
+    inset 0 -1px 0 rgb(80 150 255 / .10)!important;
+}
+html:not(.dark).gp-glass.gp-glass.gp-glass:not(.gp-glass-admin-disabled) body:not(.standby-mode):not([data-glass-overlay]) :is(
+  .glass-card,.glow-card,.glass-stage,.card,#main-music-card,#mini-player-toggle,
+  #ui-controls,#footer-bubble,#footer-expandable-menu,#global-settings-menu,
+  #lyrics-settings-menu,#tutorial-box,#language-picker-box,#sharecard-picker-box,
+  #command-palette,#dynamic-island,#lg-first-visit-tip,.modal-content
+) { background-color:rgba(255,255,255,.10)!important; }
+html.gp-glass body:not(.standby-mode) :is(
+  #ui-controls button,#footer-bubble button,#footer-expandable-menu button
+) { background:transparent!important;background-image:none!important; }
+html.gp-glass body:not(.standby-mode) #main-content :is(h1,h2,h3,p) {
+  text-shadow:0 1px 2px rgb(0 0 0/.48),0 0 18px rgb(0 0 0/.18);
+}
+@media (prefers-reduced-motion:no-preference) {
+  html.gp-glass.gp-glass-motion body:not(.standby-mode):not(.low-end) :is(
+    .glass-card,.glow-card,.glass-stage,.card,button,a
+  ) {
+    transition:transform .34s cubic-bezier(.2,.8,.2,1),border-color .28s ease,
+      box-shadow .34s ease,background-color .28s ease!important;
+  }
+}
+@media (prefers-reduced-transparency:reduce) {
+  html.gp-glass { --gp-skin:rgb(12 15 22/.92);--gp-skin-light:rgb(245 247 250/.94); }
+}
+
+/* Two-ID/class authority beats the legacy late transparent shorthands. */
+html.gp-glass body:not(.standby-mode):not([data-glass-overlay]) :is(
+  #main-music-card#main-music-card,#mini-player-toggle#mini-player-toggle,
+  #ui-controls#ui-controls,#footer-bubble#footer-bubble,
+  #footer-expandable-menu#footer-expandable-menu,#global-settings-menu#global-settings-menu,
+  #lyrics-settings-menu#lyrics-settings-menu,#tutorial-box#tutorial-box,
+  #language-picker-box#language-picker-box,#sharecard-picker-box#sharecard-picker-box,
+  #command-palette#command-palette,#dynamic-island#dynamic-island,
+  #lg-first-visit-tip#lg-first-visit-tip,
+  .glass-card.glass-card.glass-card,.glow-card.glow-card.glow-card,
+  .glass-stage.glass-stage.glass-stage,.card.card.card,.modal-content.modal-content.modal-content
+) { background:rgba(5,7,12,.12)!important;background-image:none!important; }
+html:not(.dark).gp-glass body:not(.standby-mode):not([data-glass-overlay]) :is(
+  #main-music-card#main-music-card,#mini-player-toggle#mini-player-toggle,
+  #ui-controls#ui-controls,#footer-bubble#footer-bubble,
+  #footer-expandable-menu#footer-expandable-menu,#global-settings-menu#global-settings-menu,
+  #lyrics-settings-menu#lyrics-settings-menu,#tutorial-box#tutorial-box,
+  #language-picker-box#language-picker-box,#sharecard-picker-box#sharecard-picker-box,
+  #command-palette#command-palette,#dynamic-island#dynamic-island,
+  #lg-first-visit-tip#lg-first-visit-tip,
+  .glass-card.glass-card.glass-card,.glow-card.glow-card.glow-card,
+  .glass-stage.glass-stage.glass-stage,.card.card.card,.modal-content.modal-content.modal-content
+) { background:rgba(255,255,255,.10)!important;background-image:none!important; }
+
+/* Android: transparent glass — small blur, low alpha */
+html.gp-android.gp-glass body:not(.standby-mode):not([data-glass-overlay]) :is(
+  #main-music-card#main-music-card,#mini-player-toggle#mini-player-toggle,
+  #ui-controls#ui-controls,#footer-bubble#footer-bubble,
+  #footer-expandable-menu#footer-expandable-menu,#global-settings-menu#global-settings-menu,
+  #lyrics-settings-menu#lyrics-settings-menu,#tutorial-box#tutorial-box,
+  #language-picker-box#language-picker-box,#sharecard-picker-box#sharecard-picker-box,
+  #command-palette#command-palette,#dynamic-island#dynamic-island,
+  #lg-first-visit-tip#lg-first-visit-tip,
+  .glass-card.glass-card.glass-card,.glow-card.glow-card.glow-card,
+  .glass-stage.glass-stage.glass-stage,.card.card.card,.modal-content.modal-content.modal-content
+) { background:transparent!important;background-image:none!important; }
+html.gp-android:not(.dark).gp-glass body:not(.standby-mode):not([data-glass-overlay]) :is(
+  #main-music-card#main-music-card,#mini-player-toggle#mini-player-toggle,
+  #ui-controls#ui-controls,#footer-bubble#footer-bubble,
+  #footer-expandable-menu#footer-expandable-menu,#global-settings-menu#global-settings-menu,
+  #lyrics-settings-menu#lyrics-settings-menu,#tutorial-box#tutorial-box,
+  #language-picker-box#language-picker-box,#sharecard-picker-box#sharecard-picker-box,
+  #command-palette#command-palette,#dynamic-island#dynamic-island,
+  #lg-first-visit-tip#lg-first-visit-tip,
+  .glass-card.glass-card.glass-card,.glow-card.glow-card.glow-card,
+  .glass-stage.glass-stage.glass-stage,.card.card.card,.modal-content.modal-content.modal-content
+) { background:transparent!important;background-image:none!important; }

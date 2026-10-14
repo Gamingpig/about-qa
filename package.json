@@ -1,0 +1,23 @@
+{
+  "name": "about-gamingpig",
+  "version": "24.213.0",
+  "description": "",
+  "main": "ios_scriptable_widget.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gamingpig/About-Gamingpig.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gamingpig/About-Gamingpig/issues"
+  },
+  "homepage": "https://github.com/Gamingpig/About-Gamingpig#readme",
+  "dependencies": {
+    "web-push": "^3.6.7"
+  }
+}
