@@ -9038,6 +9038,9 @@ html.gp-android:not(.dark) #ui-controls {
             <button onclick="openArcadeVault(); toggleFooterMenu(false)" id="footer-arcade-link" class="p-2.5 rounded-xl bg-pink-950/40 hover:bg-pink-900/60 border border-pink-500/30 text-pink-300 font-bold flex items-center gap-1.5 transition-all active:scale-95 shadow-sm text-left cursor-pointer" title="Cyber Arcade &amp; Easter Egg Vault">
                 <span>🕹️</span> <span class="truncate">Arcade &amp; Secrets</span>
             </button>
+            <a href="checklist.html" id="footer-checklist-link" class="p-2.5 rounded-xl bg-teal-950/40 hover:bg-teal-900/60 border border-teal-500/30 text-teal-300 font-bold flex items-center gap-1.5 transition-all active:scale-95 shadow-sm" title="Tester QA Checkliste">
+                <span>📋</span> <span id="footer-checklist-label" class="truncate">QA Checkliste</span>
+            </a>
         </div>
     </div>
 
@@ -11055,7 +11058,12 @@ html.gp-android:not(.dark) #ui-controls {
             <!-- Vault Footer Hint -->
             <div class="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-400 gap-2">
                 <span>💡 Tipp: Du kannst Spiele auch über die Tastatur oder Suchleiste (⌘K) starten.</span>
-                <span class="text-pink-400 font-mono">Gamingpig v24.220.0 • Alle Minispiele freigeschaltet</span>
+                <div class="flex items-center gap-3">
+                    <a href="checklist.html" target="_blank" class="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500 text-teal-300 hover:text-slate-950 font-bold text-[11px] transition-all border border-teal-500/30 inline-flex items-center gap-1">
+                        <span>📋</span> <span>QA Checkliste</span>
+                    </a>
+                    <span class="text-pink-400 font-mono">v24.220.0</span>
+                </div>
             </div>
         </div>
     </div>
