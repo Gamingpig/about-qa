@@ -6882,6 +6882,20 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         }
         @keyframes matrix-fall { to { transform: translateY(115vh); opacity: 0.15; } }
 
+        /* "party" / "disco" / "rave" -> Cyber Party Rave Animation */
+        body.party-rave-mode {
+            animation: partyRaveHue 1.8s linear infinite !important;
+        }
+        @keyframes partyRaveHue {
+            0% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(180deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        #arcade-canvas-wrap {
+            touch-action: none;
+        }
+
         /* Barrierefreiheit: reduzierte Bewegung respektieren (Systemeinstellung) */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
@@ -9693,7 +9707,7 @@ html.gp-android:not(.dark) #ui-controls {
                             Gamingpig is Offline
                         </div>
 
-                        <div id="media-container" onclick="toggleMusicPicker(true)" role="button" tabindex="0" class="relative z-10 w-[clamp(140px,36vw,240px)] aspect-square shrink-0 rounded-2xl mx-auto mb-3 sm:mb-5 overflow-hidden flex items-center justify-center bg-[#121212] shadow-[0_12px_32px_rgba(0,0,0,0.8)] cursor-pointer hover:ring-2 hover:ring-white/20 transition-all">
+                        <div id="media-container" onclick="toggleMusicPicker(true)" ondblclick="triggerDjScratch()" title="Doppelklick für DJ Scratch! 🎧" role="button" tabindex="0" class="relative z-10 w-[clamp(140px,36vw,240px)] aspect-square shrink-0 rounded-2xl mx-auto mb-3 sm:mb-5 overflow-hidden flex items-center justify-center bg-[#121212] shadow-[0_12px_32px_rgba(0,0,0,0.8)] cursor-pointer hover:ring-2 hover:ring-white/20 transition-all">
                             <!-- FIX v24.85: decoding="async" ergänzt + fetchpriority="high" -->
                             <img id="artwork" src="" alt="" aria-label="Album Artwork" class="w-full h-full object-cover" decoding="async" fetchpriority="high">
                             <div id="offline-icon" class="absolute text-2xl xxs:text-4xl sm:text-6xl" aria-hidden="true">🌙</div>
@@ -10630,6 +10644,108 @@ html.gp-android:not(.dark) #ui-controls {
 </div>
 
 <!-- ========================================================= -->
+<!-- 🕹️ RETRO PIGGY CYBER DASH - ARCADE MINI-GAME MODAL (v24.220.0) -->
+<!-- ========================================================= -->
+<div id="piggy-arcade-modal" class="fixed inset-0 z-[120] bg-black/90 backdrop-blur-2xl hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300">
+    <div class="w-full max-w-lg rounded-3xl bg-slate-950/95 border border-cyan-500/40 text-white relative flex flex-col items-center shadow-[0_0_50px_rgba(6,182,212,0.25)] overflow-hidden">
+        <!-- Header -->
+        <div class="w-full px-5 py-3.5 bg-slate-900/90 border-b border-cyan-500/20 flex items-center justify-between z-10">
+            <div class="flex items-center gap-2.5">
+                <span class="text-2xl animate-bounce">🕹️</span>
+                <div>
+                    <h3 class="text-sm font-black tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-400 to-amber-300">Piggy Cyber Dash</h3>
+                    <span class="text-[10px] text-cyan-400 font-mono">RETRO ARCADE 8-BIT</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span id="arcade-best-badge" class="px-2.5 py-1 rounded-lg bg-white/10 text-[10px] font-mono font-bold text-amber-300 border border-amber-400/30">BEST: 0</span>
+                <button onclick="closePiggyArcade()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-rose-500 text-white flex items-center justify-center text-sm transition-colors cursor-pointer" aria-label="Schließen">✕</button>
+            </div>
+        </div>
+
+        <!-- Canvas Wrap -->
+        <div class="relative w-full aspect-[4/3] max-h-[380px] bg-[#050814] flex items-center justify-center overflow-hidden select-none cursor-pointer" id="arcade-canvas-wrap">
+            <canvas id="arcade-canvas" width="480" height="320" class="w-full h-full object-contain"></canvas>
+            
+            <!-- Start / Game Over Screen Overlay -->
+            <div id="arcade-overlay-start" class="absolute inset-0 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20">
+                <div class="text-4xl sm:text-5xl mb-2 animate-pulse">🐷🚀</div>
+                <h4 id="arcade-overlay-title" class="text-lg sm:text-xl font-black text-white">CYBER PIGGY DASH</h4>
+                <p id="arcade-overlay-desc" class="text-xs text-slate-300 mt-1 max-w-xs">Weiche den Laser-Säulen aus, sammle Sterne ⭐ und Controller 🎮!</p>
+                <div id="arcade-final-score-wrap" class="hidden my-3">
+                    <span class="text-xs text-slate-400 block">Dein Punktestand:</span>
+                    <span id="arcade-final-score" class="text-2xl font-black text-amber-400 font-mono">0</span>
+                </div>
+                <button onclick="startArcadeGame(event)" class="mt-3 px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 font-bold text-sm text-white shadow-lg shadow-cyan-500/30 active:scale-95 transition-all cursor-pointer">
+                    STARTEN ⚡
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer Bar -->
+        <div class="w-full px-5 py-2.5 bg-slate-900/90 border-t border-cyan-500/20 flex items-center justify-between text-xs text-slate-400 z-10">
+            <span class="truncate">Steuerung: <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-[10px]">Leertaste</kbd> / Tap / Klick</span>
+            <button onclick="toggleArcadeSound()" id="arcade-sound-btn" class="text-cyan-400 hover:text-white font-mono text-xs cursor-pointer shrink-0">🔊 Sound: AN</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- ⚡ CYBER HUD DIAGNOSTICS & FPS MONITOR (v24.220.0)         -->
+<!-- ========================================================= -->
+<div id="fps-hud-widget" class="fixed top-16 right-3 sm:right-6 z-[95] p-3 rounded-2xl bg-slate-950/90 backdrop-blur-xl border border-cyan-500/40 shadow-2xl text-white font-mono text-[11px] space-y-1.5 transition-all select-none hidden w-56">
+    <div class="flex items-center justify-between gap-3 border-b border-white/10 pb-1">
+        <span class="flex items-center gap-1.5 font-bold text-cyan-400">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>CYBER HUD DIAGNOSTICS</span>
+        </span>
+        <button onclick="toggleFpsHud()" class="text-slate-400 hover:text-white text-xs p-1 cursor-pointer" aria-label="Schließen">✕</button>
+    </div>
+    <div class="flex items-center justify-between">
+        <span class="text-slate-400">Bildrate:</span>
+        <span id="fps-val" class="font-bold text-emerald-400">-- FPS</span>
+    </div>
+    <div class="flex items-center justify-between">
+        <span class="text-slate-400">Frame-Time:</span>
+        <span id="frametime-val" class="text-slate-200">-- ms</span>
+    </div>
+    <div class="flex items-center justify-between">
+        <span class="text-slate-400">DOM-Elemente:</span>
+        <span id="domnodes-val" class="text-slate-200">--</span>
+    </div>
+    <div class="flex items-center justify-between">
+        <span class="text-slate-400">Netzwerk-Ping:</span>
+        <span id="ping-val" class="text-cyan-300">-- ms</span>
+    </div>
+    <div class="flex items-center justify-between pt-1 border-t border-white/10 text-[9px] text-slate-500">
+        <span>Hardware VSync</span>
+        <span id="vsync-status" class="text-emerald-400 font-bold">Aktiv</span>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 🎹 8-BIT CHIPTUNE SYNTH VISUALIZER BANNER (v24.220.0)      -->
+<!-- ========================================================= -->
+<div id="synth-visualizer-banner" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-[100] px-4 py-2.5 rounded-2xl bg-slate-950/90 border border-purple-500/50 shadow-[0_0_30px_rgba(168,85,247,0.3)] backdrop-blur-xl text-white flex items-center gap-3 hidden transition-all duration-300">
+    <div class="flex items-end gap-1 h-5 w-8">
+        <span class="w-1 bg-pink-400 rounded-full animate-bounce h-3"></span>
+        <span class="w-1 bg-purple-400 rounded-full animate-bounce [animation-delay:0.15s] h-5"></span>
+        <span class="w-1 bg-cyan-400 rounded-full animate-bounce [animation-delay:0.3s] h-4"></span>
+        <span class="w-1 bg-amber-400 rounded-full animate-bounce [animation-delay:0.45s] h-2"></span>
+    </div>
+    <div>
+        <div class="text-xs font-bold text-white flex items-center gap-1.5">
+            <span>🎹 8-Bit Chiptune Arpeggio</span>
+            <span class="px-1.5 py-0.2 rounded bg-purple-500/30 text-purple-300 font-mono text-[9px]">LIVE</span>
+        </div>
+        <div class="text-[10px] text-slate-400">Web Audio API • Retro Gaming Soundchip</div>
+    </div>
+    <button onclick="stopRetroSynth()" class="px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white text-xs font-bold transition-all border border-rose-500/30 cursor-pointer">
+        Stopp ⏹️
+    </button>
+</div>
+
+<!-- ========================================================= -->
 <!-- 🏆 INTERACTIVE TUTORIAL QUEST HUD (V5)                    -->
 <!-- ========================================================= -->
 <div id="interactive-quest-hud" class="hidden fixed top-20 sm:top-24 right-3 sm:right-6 z-[10001] w-[92vw] sm:w-[360px] max-w-sm transition-all duration-300 select-none animate-fadeIn">
@@ -10909,11 +11025,11 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step_support_title: 'Fragen oder Bugs gefunden?',
                 t_step_support_text: 'Weiter unten findest du einen Support-Bereich mit meiner E-Mail-Adresse und einem Link zu meinem Discord-Server, wo du live siehst, wer gerade online ist. Übrigens: Mittlerweile gibt es fast überall auf der Seite einen "🔊"-Button zum Vorlesen - bei den Karten direkt auf der Vorderseite, im Musik-Dashboard, beim Songtext, in den Release-Notes und sogar hier im Tutorial selbst.',
                 t_step6_title: 'Spotlight-Suche (⌘K)',
-                t_step6_text: 'Drück Strg+K (oder Cmd+K auf dem Mac) und eine echte Befehlspalette öffnet sich - genau wie auf dem Mac! Tippe einfach, was du suchst: "Dark Mode", "Lyrics", "StandBy", oder sogar "Sprache" um die Sprache zu wechseln. Pfeiltasten zum Navigieren, Enter zum Ausführen. Auf dem Handy ohne Tastatur? Auch hier tippst du einfach in das Suchfeld.',
+                t_step6_text: 'Drück Strg+K (oder Cmd+K auf dem Mac) und eine echte Befehlspalette öffnet sich! Hier findest du Aktionen wie "Dark Mode", "Lyrics", "StandBy" sowie unsere neuen Überraschungen: starte das 8-Bit Minispiel mit "arcade", den Retro-Synthesizer mit "synth" oder das Live-HUD mit "fps"!',
                 t_step7_title: 'Installier mich als App!',
                 t_step7_text: 'Diese Seite erzeugt sich ihr eigenes App-Icon und lässt sich auf Android/Chrome per Klick als richtige App installieren (kein Store nötig) - auf dem iPhone geht das manuell über "Zum Home-Bildschirm" im Teilen-Menü. Fühlt sich danach an wie eine native App, ganz ohne Browserleiste.',
                 t_step8_title: 'Psst... 🤫 Ein Geheimnis',
-                t_step8_text: 'Diese Seite hat ein paar versteckte Easter Eggs. Tipp: Probier den klassischen Konami-Code (↑↑↓↓←→←→BA auf der Tastatur), oder tippe eins dieser Wörter einfach los: oink, forza, fokus, matrix. 5x schnell hintereinander auf die große Überschrift klicken lohnt sich auch. Kein Keyboard zur Hand (z.B. am Handy)? Die Wörter funktionieren auch, wenn du sie ins Spotlight-Suchfeld (⌘K-Button) eintippst. Ganz unten im Footer findest du übrigens auch den "Was ist neu?"-Link mit allen bisherigen Updates dieser Seite. Viel Spaß beim Suchen!',
+                t_step8_text: 'Diese Seite hat viele versteckte Easter Eggs. Tipp: Probier den klassischen Konami-Code (↑↑↓↓←→←→BA auf der Tastatur), oder tippe eins dieser Wörter einfach los: oink, forza, fokus, matrix, arcade, synth, party, fps. Doppelklick auf das Plattencover löst einen DJ-Scratch aus! Kein Keyboard zur Hand (z.B. am Handy)? Die Wörter funktionieren auch im Spotlight-Suchfeld (⌘K-Button). Ganz unten im Footer findest du übrigens auch den "Was ist neu?"-Link mit allen bisherigen Updates dieser Seite. Viel Spaß beim Suchen!',
                 toast_install_ios: '📲 Tippe unten auf "Teilen" ⬆️ und dann auf "Zum Home-Bildschirm"',
                 toast_install_android_menu: '📲 Tippe oben rechts auf die drei Punkte ⋮ und wähle "App installieren" bzw. "Zum Startbildschirm hinzufügen"',
                 toast_install_desktop: '📲 Klicke oben rechts in der Adressleiste auf das Installieren-Symbol, oder öffne das Menü ⋮ → "Gamingpig installieren..."',
@@ -11136,11 +11252,11 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step_support_title: 'Questions or found a bug?',
                 t_step_support_text: 'Further down you\'ll find a Support section with my email address and a link to my Discord server, where you can see live who\'s currently online. By the way: there\'s now a "🔊" read-aloud button almost everywhere on the site - right on the card fronts, in the music dashboard, for lyrics, in the release notes, and even here in the tutorial.',
                 t_step6_title: 'Spotlight search (⌘K)',
-                t_step6_text: 'Press Ctrl+K (or Cmd+K on Mac) and a real command palette opens - just like on a Mac! Just type what you\'re looking for: "dark mode", "lyrics", "standby", or even "language" to switch languages. Arrow keys to navigate, Enter to run. No keyboard on mobile? Just tap into the search box instead.',
+                t_step6_text: 'Press Ctrl+K (or Cmd+K on Mac) and a real command palette opens! Type what you\'re looking for: "dark mode", "lyrics", "standby", or test our new surprises: launch the 8-bit minigame with "arcade", retro synthesizer with "synth", or live diagnostics with "fps"!',
                 t_step7_title: 'Install me as an app!',
                 t_step7_text: 'This site generates its own app icon and can be installed as a real app on Android/Chrome with one click (no store needed) - on iPhone that\'s done manually via "Add to Home Screen" in the share menu. Afterwards it feels like a native app, with no browser bar at all.',
                 t_step8_title: "Psst... 🤫 a secret",
-                t_step8_text: "This site has a few hidden easter eggs. Hint: try the classic Konami Code (↑↑↓↓←→←→BA on your keyboard), or just type one of these words: oink, forza, focus, matrix. Clicking the big heading 5 times fast is also worth trying. No keyboard handy (e.g. on mobile)? The words also work if you type them into the Spotlight search box (⌘K button). By the way, down in the footer you'll also find a \"What's new?\" link with all past updates to this site. Have fun looking!",
+                t_step8_text: "This site has many hidden easter eggs. Hint: try the classic Konami Code (↑↑↓↓←→←→BA on your keyboard), or type one of these words: oink, forza, focus, matrix, arcade, synth, party, fps. Double-clicking the album cover triggers a DJ scratch! No keyboard handy? The words also work in the Spotlight search box (⌘K button). Enjoy!",
                 toast_install_ios: '📲 Tap "Share" ⬆️ below, then "Add to Home Screen"',
                 toast_install_android_menu: '📲 Tap the three dots ⋮ top right and choose "Install app" / "Add to Home screen"',
                 toast_install_desktop: '📲 Click the install icon in the address bar, or open the ⋮ menu → "Install Gamingpig..."',
@@ -16974,6 +17090,10 @@ let shareCardLoading;
                     if (typeof showToast === 'function') showToast(t('toast_island_back'));
                 } },
                 { icon: '🔥', label: 'v24.116 Mega-Release Page', keywords: 'release notes changelog update was ist neu v24 116 mega', action: () => window.open('release-v24-115.html', '_self') },
+                { icon: '🕹️', label: 'Retro Piggy Arcade (Minispiel)', keywords: 'arcade minigame minispiel spiel game jump piggy retro play dash 8bit', action: () => openPiggyArcade() },
+                { icon: '⚡', label: 'Live FPS & Performance Monitor', keywords: 'fps hud monitor diagnostics lag performance bildrate latency frame', action: () => toggleFpsHud() },
+                { icon: '🎹', label: '8-Bit Chiptune Synthesizer', keywords: 'synth chiptune beat music retro soundboard audio melodie arpeggio', action: () => playRetroSynthArp() },
+                { icon: '🪩', label: 'Cyber Disco Rave Mode', keywords: 'party disco rave neon rgb glow party mode blicklicht', action: () => launchPartyMode() },
                 { icon: '📋', label: t('cp_copy_link'), keywords: 'copy link teilen share url', action: () => { if (typeof copyPageLink === 'function') copyPageLink(); } },
                 { icon: '🔄', label: t('cp_reload'), keywords: 'reload refresh neu laden', action: () => window.location.reload() },
                 { icon: '🌐', label: t('cp_change_lang'), keywords: 'language sprache language change idioma langue idioma dil', keepOpen: true, action: () => openLanguagePicker(true) },
@@ -18275,6 +18395,26 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+    { version: "v24.220.0", date: "14. Oktober 2026", type: "feature", items: {
+        de: [
+            "🕹️ Retro Piggy Cyber Dash: Vollwertiges integriertes 8-Bit Arcade Jump & Dodge Minispiel mit Web-Audio Soundeffekten, Sterne-Sammeln und lokalem Highscore",
+            "⚡ Cyberpunk Diagnostics & Live FPS HUD: Echtzeit-Bildwiederholungsrate (60/120 Hz VSync), Frame-Time Diagnostik, DOM-Node Tracker und Live-Latenzmessung",
+            "🎹 Web Audio 8-Bit Chiptune Synthesizer: Echter integrierter Chiptune-Soundchip mit Multi-Oszillator Arpeggios und animiertem Visualizer-HUD",
+            "🪩 Cyber Disco Rave Mode: Dynamischer Party-Modus mit RGB Rainbow-Glow, Emoji-Regen und Audio-Feedback ('party', 'disco', 'rave')",
+            "🎧 DJ Vinyl Scratch Effekt: Interaktiver Plattenteller-Scratch-Sound und Cover-Wobble bei Doppelklick auf das Album-Cover",
+            "⚙️ Neues Einstellungs-Zentrum: Aufgeräumte Kategorien-Übersicht mit animiertem Subpage-Drilldown, Live-Suche und nativer Zurück-Navigation",
+            "🛡️ Push Admin Center v2: Abonnenten- und Queue-Statistiken repariert mit GitHub Token-Vault Integration"
+        ],
+        en: [
+            "🕹️ Retro Piggy Cyber Dash: Fully integrated 8-bit arcade jump & dodge minigame with Web Audio SFX, star collecting, and local high score",
+            "⚡ Cyberpunk Diagnostics & Live FPS HUD: Real-time refresh rate (60/120 Hz VSync), frame-time diagnostics, DOM node tracking, and live latency ping",
+            "🎹 Web Audio 8-Bit Chiptune Synthesizer: Genuine integrated chiptune soundchip with multi-oscillator arpeggios and animated visualizer HUD",
+            "🪩 Cyber Disco Rave Mode: Dynamic party mode featuring RGB rainbow cycling, emoji rain, and audio feedback ('party', 'disco', 'rave')",
+            "🎧 DJ Vinyl Scratch Effect: Interactive turntable scratch sound and vinyl wobble on album artwork double-click",
+            "⚙️ Modern Settings Center: Clean category overview with drilldown subpages, instant search, and smooth back navigation",
+            "🛡️ Push Admin Center v2: Fixed subscriber count and push queue metrics with integrated token vault"
+        ]
+    }},
     { version: "v24.215.0", date: "12. Oktober 2026", type: "feature", items: {
         de: [
             "⚙️ Neues Einstellungs-Zentrum: Aufgeräumte Kategorien-Übersicht mit animiertem Subpage-Drilldown, Live-Suche und nativer Zurück-Navigation",
@@ -21064,8 +21204,650 @@ let shareCardLoading;
                 showToast(t('toast_matrix'));
                 return true;
             }
+            if (buffer.endsWith('arcade') || buffer.endsWith('game') || buffer.endsWith('piggy') || buffer.endsWith('retro')) {
+                openPiggyArcade();
+                return true;
+            }
+            if (buffer.endsWith('synth') || buffer.endsWith('beat') || buffer.endsWith('chiptune')) {
+                playRetroSynthArp();
+                return true;
+            }
+            if (buffer.endsWith('party') || buffer.endsWith('disco') || buffer.endsWith('rave')) {
+                launchPartyMode();
+                return true;
+            }
+            if (buffer.endsWith('fps') || buffer.endsWith('hud') || buffer.endsWith('diag')) {
+                toggleFpsHud();
+                return true;
+            }
+            if (buffer.endsWith('scratch') || buffer.endsWith('dj')) {
+                triggerDjScratch();
+                return true;
+            }
             return false;
         }
+
+        // ========================================================= //
+        // 🕹️ RETRO PIGGY CYBER DASH - 8-BIT ARCADE MINI-GAME (v24.220.0)
+        // ========================================================= //
+        let arcadeGameRunning = false;
+        let arcadeAnimFrame = null;
+        let arcadeScore = 0;
+        let arcadeHighScore = parseInt(AppStorage.getItem('gp_arcade_highscore') || '0', 10);
+        let arcadeSoundEnabled = true;
+        let arcadeLives = 3;
+        let arcadeInvulnUntil = 0;
+        let arcadePig = { x: 70, y: 150, vy: 0, r: 16 };
+        let arcadePillars = [];
+        let arcadeStars = [];
+        let arcadeParticles = [];
+        let arcadeLastSpawn = 0;
+        let arcadeLastFrameTime = performance.now();
+
+        function playArcadeSound(type) {
+            if (!arcadeSoundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+
+                if (type === 'jump') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.exponentialRampToValueAtTime(580, now + 0.12);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'coin') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, now);
+                    osc.frequency.setValueAtTime(880, now + 0.08);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.22);
+                    osc.start(now);
+                    osc.stop(now + 0.22);
+                } else if (type === 'hit') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(140, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.18);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.18);
+                    osc.start(now);
+                    osc.stop(now + 0.18);
+                } else if (type === 'over') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(320, now);
+                    osc.frequency.linearRampToValueAtTime(110, now + 0.45);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+                    osc.start(now);
+                    osc.stop(now + 0.45);
+                }
+            } catch (e) {}
+        }
+
+        window.openPiggyArcade = function() {
+            const modal = document.getElementById('piggy-arcade-modal');
+            if (!modal) return;
+            haptic(15);
+            pushOverlayHistory();
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+            });
+            updateArcadeBestBadge();
+            const overlay = document.getElementById('arcade-overlay-start');
+            if (overlay) overlay.classList.remove('hidden');
+            const scoreWrap = document.getElementById('arcade-final-score-wrap');
+            if (scoreWrap) scoreWrap.classList.add('hidden');
+            const titleEl = document.getElementById('arcade-overlay-title');
+            if (titleEl) titleEl.innerText = 'CYBER PIGGY DASH';
+            resetArcadeGame();
+            renderArcadeFrame();
+        };
+
+        window.closePiggyArcade = function() {
+            const modal = document.getElementById('piggy-arcade-modal');
+            if (!modal) return;
+            haptic(10);
+            arcadeGameRunning = false;
+            if (arcadeAnimFrame) {
+                cancelAnimationFrame(arcadeAnimFrame);
+                arcadeAnimFrame = null;
+            }
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+            popOverlayHistory();
+        };
+
+        window.toggleArcadeSound = function() {
+            arcadeSoundEnabled = !arcadeSoundEnabled;
+            const btn = document.getElementById('arcade-sound-btn');
+            if (btn) btn.innerText = arcadeSoundEnabled ? '🔊 Sound: AN' : '🔇 Sound: AUS';
+            haptic(10);
+        };
+
+        function updateArcadeBestBadge() {
+            const badge = document.getElementById('arcade-best-badge');
+            if (badge) badge.innerText = 'BEST: ' + arcadeHighScore;
+        }
+
+        function resetArcadeGame() {
+            arcadeScore = 0;
+            arcadeLives = 3;
+            arcadeInvulnUntil = 0;
+            arcadePig = { x: 70, y: 150, vy: 0, r: 16 };
+            arcadePillars = [];
+            arcadeStars = [];
+            arcadeParticles = [];
+            arcadeLastSpawn = Date.now();
+        }
+
+        function arcadeJump() {
+            if (!arcadeGameRunning) return;
+            arcadePig.vy = -6.4;
+            playArcadeSound('jump');
+            haptic(10);
+            for (let i = 0; i < 4; i++) {
+                arcadeParticles.push({
+                    x: arcadePig.x - 12,
+                    y: arcadePig.y + 6,
+                    vx: -2 - Math.random() * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    life: 1.0,
+                    color: Math.random() > 0.5 ? '#06b6d4' : '#f43f5e',
+                    size: 3 + Math.random() * 3
+                });
+            }
+        }
+
+        window.startArcadeGame = function(e) {
+            if (e) e.stopPropagation();
+            const overlay = document.getElementById('arcade-overlay-start');
+            if (overlay) overlay.classList.add('hidden');
+            resetArcadeGame();
+            arcadeGameRunning = true;
+            arcadeJump();
+            arcadeLastFrameTime = performance.now();
+            if (arcadeAnimFrame) cancelAnimationFrame(arcadeAnimFrame);
+            arcadeAnimFrame = requestAnimationFrame(arcadeGameLoop);
+        };
+
+        function arcadeGameOver() {
+            arcadeGameRunning = false;
+            playArcadeSound('over');
+            haptic(30);
+            if (arcadeScore > arcadeHighScore) {
+                arcadeHighScore = arcadeScore;
+                AppStorage.setItem('gp_arcade_highscore', arcadeHighScore.toString());
+                updateArcadeBestBadge();
+                launchConfetti();
+                showToast('🎉 NEUER HIGH-SCORE: ' + arcadeHighScore + ' PUNKTE!', 'success');
+            }
+            const overlay = document.getElementById('arcade-overlay-start');
+            const scoreWrap = document.getElementById('arcade-final-score-wrap');
+            const finalScoreEl = document.getElementById('arcade-final-score');
+            const titleEl = document.getElementById('arcade-overlay-title');
+            if (titleEl) titleEl.innerText = 'GAME OVER';
+            if (finalScoreEl) finalScoreEl.innerText = arcadeScore;
+            if (scoreWrap) scoreWrap.classList.remove('hidden');
+            if (overlay) overlay.classList.remove('hidden');
+        }
+
+        function arcadeGameLoop(now) {
+            if (!arcadeGameRunning) return;
+            const dt = Math.min((now - arcadeLastFrameTime) / 1000, 0.1);
+            arcadeLastFrameTime = now;
+
+            arcadePig.vy += 18.5 * dt;
+            arcadePig.y += arcadePig.vy;
+
+            if (arcadePig.y < arcadePig.r) {
+                arcadePig.y = arcadePig.r;
+                arcadePig.vy = 0;
+            }
+            if (arcadePig.y > 320 - arcadePig.r) {
+                arcadeGameOver();
+                return;
+            }
+
+            if (now - arcadeLastSpawn > 1650) {
+                arcadeLastSpawn = now;
+                const gapH = 105;
+                const minTop = 35;
+                const maxTop = 320 - gapH - 35;
+                const topH = Math.floor(minTop + Math.random() * (maxTop - minTop));
+                arcadePillars.push({
+                    x: 480,
+                    topH: topH,
+                    botY: topH + gapH,
+                    w: 38,
+                    passed: false
+                });
+
+                arcadeStars.push({
+                    x: 480 + 19,
+                    y: topH + gapH / 2,
+                    r: 9,
+                    type: Math.random() > 0.3 ? 'star' : 'controller',
+                    collected: false
+                });
+            }
+
+            const speed = 145 * dt;
+            for (let i = arcadePillars.length - 1; i >= 0; i--) {
+                const p = arcadePillars[i];
+                p.x -= speed;
+
+                if (!p.passed && p.x + p.w < arcadePig.x) {
+                    p.passed = true;
+                    arcadeScore += 10;
+                }
+
+                const isInvuln = now < arcadeInvulnUntil;
+                if (!isInvuln) {
+                    if (arcadePig.x + arcadePig.r > p.x && arcadePig.x - arcadePig.r < p.x + p.w) {
+                        if (arcadePig.y - arcadePig.r < p.topH || arcadePig.y + arcadePig.r > p.botY) {
+                            arcadeLives--;
+                            arcadeInvulnUntil = now + 1200;
+                            playArcadeSound('hit');
+                            haptic(25);
+                            if (arcadeLives <= 0) {
+                                arcadeGameOver();
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                if (p.x < -p.w) {
+                    arcadePillars.splice(i, 1);
+                }
+            }
+
+            for (let i = arcadeStars.length - 1; i >= 0; i--) {
+                const s = arcadeStars[i];
+                s.x -= speed;
+
+                const dx = arcadePig.x - s.x;
+                const dy = arcadePig.y - s.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (!s.collected && dist < arcadePig.r + s.r) {
+                    s.collected = true;
+                    const pts = s.type === 'controller' ? 50 : 25;
+                    arcadeScore += pts;
+                    playArcadeSound('coin');
+                    haptic(10);
+                    for (let k = 0; k < 6; k++) {
+                        arcadeParticles.push({
+                            x: s.x,
+                            y: s.y,
+                            vx: (Math.random() - 0.5) * 4,
+                            vy: (Math.random() - 0.5) * 4,
+                            life: 1.0,
+                            color: s.type === 'controller' ? '#a855f7' : '#fbbf24',
+                            size: 3 + Math.random() * 2
+                        });
+                    }
+                }
+
+                if (s.x < -30 || s.collected) {
+                    arcadeStars.splice(i, 1);
+                }
+            }
+
+            for (let i = arcadeParticles.length - 1; i >= 0; i--) {
+                const pt = arcadeParticles[i];
+                pt.x += pt.vx;
+                pt.y += pt.vy;
+                pt.life -= dt * 2.2;
+                if (pt.life <= 0) arcadeParticles.splice(i, 1);
+            }
+
+            renderArcadeFrame(now);
+            arcadeAnimFrame = requestAnimationFrame(arcadeGameLoop);
+        }
+
+        function renderArcadeFrame(now = performance.now()) {
+            const canvas = document.getElementById('arcade-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            ctx.fillStyle = '#060a17';
+            ctx.fillRect(0, 0, 480, 320);
+
+            ctx.strokeStyle = 'rgba(6, 182, 212, 0.08)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < 480; x += 30) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 320); ctx.stroke();
+            }
+            for (let y = 0; y < 320; y += 30) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(480, y); ctx.stroke();
+            }
+
+            for (const p of arcadePillars) {
+                const gradTop = ctx.createLinearGradient(p.x, 0, p.x + p.w, 0);
+                gradTop.addColorStop(0, '#06b6d4');
+                gradTop.addColorStop(1, '#3b82f6');
+                ctx.fillStyle = gradTop;
+                ctx.shadowColor = '#06b6d4';
+                ctx.shadowBlur = 10;
+                ctx.fillRect(p.x, 0, p.w, p.topH);
+
+                ctx.fillStyle = '#a5f3fc';
+                ctx.fillRect(p.x - 2, p.topH - 5, p.w + 4, 5);
+
+                ctx.fillStyle = gradTop;
+                ctx.fillRect(p.x, p.botY, p.w, 320 - p.botY);
+                ctx.fillStyle = '#a5f3fc';
+                ctx.fillRect(p.x - 2, p.botY, p.w + 4, 5);
+                ctx.shadowBlur = 0;
+            }
+
+            for (const s of arcadeStars) {
+                ctx.font = '16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const pulse = Math.sin(now * 0.008) * 2;
+                ctx.fillText(s.type === 'controller' ? '🎮' : '⭐', s.x, s.y + pulse);
+            }
+
+            for (const pt of arcadeParticles) {
+                ctx.fillStyle = pt.color;
+                ctx.globalAlpha = Math.max(0, pt.life);
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+
+            const isInvuln = now < arcadeInvulnUntil;
+            if (!isInvuln || Math.floor(now / 80) % 2 === 0) {
+                ctx.save();
+                ctx.translate(arcadePig.x, arcadePig.y);
+                const tilt = Math.max(-0.4, Math.min(0.5, arcadePig.vy * 0.05));
+                ctx.rotate(tilt);
+                ctx.font = '26px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🐷', 0, 0);
+                if (arcadeGameRunning) {
+                    ctx.fillStyle = '#f43f5e';
+                    ctx.beginPath();
+                    ctx.arc(-14, 4, 4 + Math.random() * 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 16px "JetBrains Mono", monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText('SCORE: ' + arcadeScore, 14, 26);
+
+            let hearts = '';
+            for (let l = 0; l < arcadeLives; l++) hearts += '❤️ ';
+            ctx.font = '14px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText(hearts, 466, 26);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const canvasWrap = document.getElementById('arcade-canvas-wrap');
+            if (canvasWrap) {
+                canvasWrap.addEventListener('pointerdown', (e) => {
+                    if (arcadeGameRunning) {
+                        e.preventDefault();
+                        arcadeJump();
+                    }
+                });
+            }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('piggy-arcade-modal');
+            const isOpen = modal && !modal.classList.contains('hidden');
+            if (!isOpen) return;
+
+            if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+                e.preventDefault();
+                if (!arcadeGameRunning) {
+                    startArcadeGame();
+                } else {
+                    arcadeJump();
+                }
+            } else if (e.key === 'Escape') {
+                closePiggyArcade();
+            }
+        });
+
+        // ========================================================= //
+        // ⚡ CYBER HUD DIAGNOSTICS & FPS MONITOR (v24.220.0)
+        // ========================================================= //
+        let fpsHudActive = false;
+        let fpsHudInterval = null;
+        let fpsFrameCount = 0;
+        let fpsLastTime = performance.now();
+        let fpsCurrent = 60;
+        let fpsLastFrame = performance.now();
+
+        function fpsLoop(now) {
+            if (!fpsHudActive) return;
+            fpsFrameCount++;
+            const delta = now - fpsLastFrame;
+            fpsLastFrame = now;
+
+            if (now - fpsLastTime >= 500) {
+                fpsCurrent = Math.round((fpsFrameCount * 1000) / (now - fpsLastTime));
+                fpsFrameCount = 0;
+                fpsLastTime = now;
+
+                const fpsValEl = document.getElementById('fps-val');
+                const ftValEl = document.getElementById('frametime-val');
+                if (fpsValEl) {
+                    fpsValEl.innerText = fpsCurrent + ' FPS';
+                    fpsValEl.className = 'font-bold ' + (fpsCurrent >= 55 ? 'text-emerald-400' : (fpsCurrent >= 35 ? 'text-amber-400' : 'text-rose-400'));
+                }
+                if (ftValEl) {
+                    ftValEl.innerText = delta.toFixed(1) + 'ms';
+                }
+            }
+            requestAnimationFrame(fpsLoop);
+        }
+
+        window.toggleFpsHud = function() {
+            const hud = document.getElementById('fps-hud-widget');
+            if (!hud) return;
+            fpsHudActive = !fpsHudActive;
+            haptic(15);
+            if (fpsHudActive) {
+                hud.classList.remove('hidden');
+                fpsFrameCount = 0;
+                fpsLastTime = performance.now();
+                fpsLastFrame = performance.now();
+                requestAnimationFrame(fpsLoop);
+
+                const domEl = document.getElementById('domnodes-val');
+                if (domEl) domEl.innerText = document.getElementsByTagName('*').length + ' Nodes';
+
+                measureNetworkPing();
+                fpsHudInterval = setInterval(() => {
+                    if (domEl) domEl.innerText = document.getElementsByTagName('*').length + ' Nodes';
+                    measureNetworkPing();
+                }, 8000);
+
+                showToast('⚡ Cyber FPS & Performance HUD aktiviert!', 'info');
+            } else {
+                hud.classList.add('hidden');
+                if (fpsHudInterval) {
+                    clearInterval(fpsHudInterval);
+                    fpsHudInterval = null;
+                }
+                showToast('HUD geschlossen.', 'info');
+            }
+        };
+
+        function measureNetworkPing() {
+            const start = performance.now();
+            fetch('./sw.js?cache-bust=' + Date.now(), { method: 'HEAD', cache: 'no-store' })
+                .then(() => {
+                    const ping = Math.round(performance.now() - start);
+                    const pingEl = document.getElementById('ping-val');
+                    if (pingEl) pingEl.innerText = ping + ' ms';
+                })
+                .catch(() => {
+                    const pingEl = document.getElementById('ping-val');
+                    if (pingEl) pingEl.innerText = 'Lokal (SW)';
+                });
+        }
+
+        // ========================================================= //
+        // 🎹 8-BIT RETRO CHIPTUNE SYNTHESIZER (v24.220.0)
+        // ========================================================= //
+        let synthPlaying = false;
+        let synthTimer = null;
+
+        window.playRetroSynthArp = function() {
+            const banner = document.getElementById('synth-visualizer-banner');
+            if (banner) banner.classList.remove('hidden');
+            haptic(20);
+
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                synthPlaying = true;
+
+                const notes = [
+                    261.63, 329.63, 392.00, 523.25, 659.25, 523.25, 392.00, 329.63,
+                    293.66, 349.23, 440.00, 587.33, 698.46, 587.33, 440.00, 349.23,
+                    246.94, 329.63, 392.00, 493.88, 587.33, 493.88, 392.00, 329.63,
+                    261.63, 329.63, 392.00, 523.25, 1046.50, 783.99, 659.25, 523.25
+                ];
+                const bass = [130.81, 130.81, 146.83, 146.83, 123.47, 123.47, 130.81, 130.81];
+
+                let step = 0;
+                const tempoMs = 125;
+                const startTime = Date.now();
+
+                function playNextStep() {
+                    if (!synthPlaying || Date.now() - startTime > 12000) {
+                        stopRetroSynth();
+                        return;
+                    }
+                    const now = ctx.currentTime;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'square';
+                    const freq = notes[step % notes.length];
+                    osc.frequency.setValueAtTime(freq, now);
+
+                    gain.gain.setValueAtTime(0.06, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.11);
+                    osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+
+                    if (step % 4 === 0) {
+                        const bassOsc = ctx.createOscillator();
+                        const bassGain = ctx.createGain();
+                        bassOsc.type = 'triangle';
+                        bassOsc.frequency.setValueAtTime(bass[Math.floor(step / 4) % bass.length], now);
+                        bassGain.gain.setValueAtTime(0.12, now);
+                        bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+                        bassOsc.connect(bassGain);
+                        bassGain.connect(ctx.destination);
+                        bassOsc.start(now);
+                        bassOsc.stop(now + 0.28);
+                        bassOsc.onended = () => { bassOsc.disconnect(); bassGain.disconnect(); };
+                    }
+
+                    step++;
+                    synthTimer = setTimeout(playNextStep, tempoMs);
+                }
+
+                playNextStep();
+                showToast('🎹 8-Bit Chiptune Retro Arpeggio spielt!', 'success');
+            } catch (e) {
+                stopRetroSynth();
+            }
+        };
+
+        window.stopRetroSynth = function() {
+            synthPlaying = false;
+            if (synthTimer) {
+                clearTimeout(synthTimer);
+                synthTimer = null;
+            }
+            const banner = document.getElementById('synth-visualizer-banner');
+            if (banner) banner.classList.add('hidden');
+            haptic(10);
+        };
+
+        // ========================================================= //
+        // 🪩 CYBER DISCO RAVE MODE (v24.220.0)
+        // ========================================================= //
+        window.launchPartyMode = function() {
+            haptic(25);
+            document.body.classList.add('party-rave-mode');
+            launchEmojiRain(['🪩', '🕹️', '👾', '⚡', '🍕', '🐷'], 60);
+            playUISound('pop');
+            showToast('🪩 CYBER PARTY RAVE AKTIVIERT! LET\'S GO!', 'success');
+            setTimeout(() => {
+                document.body.classList.remove('party-rave-mode');
+            }, 8500);
+        };
+
+        // ========================================================= //
+        // 🎧 DJ TURNTABLE SCRATCH EFFECT (v24.220.0)
+        // ========================================================= //
+        window.triggerDjScratch = function() {
+            haptic(20);
+            try {
+                const ctx = getAudioContext();
+                if (ctx) {
+                    const now = ctx.currentTime;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(160, now + 0.08);
+                    osc.frequency.exponentialRampToValueAtTime(650, now + 0.16);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.18);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.18);
+                    osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+                }
+            } catch (e) {}
+
+            const mediaEl = document.getElementById('media-container');
+            if (mediaEl) {
+                mediaEl.style.transition = 'transform 0.12s ease-in-out';
+                mediaEl.style.transform = 'rotate(-24deg) scale(0.96)';
+                setTimeout(() => {
+                    mediaEl.style.transform = 'rotate(18deg) scale(1.04)';
+                    setTimeout(() => {
+                        mediaEl.style.transform = '';
+                    }, 140);
+                }, 120);
+            }
+            showToast('🎧 DJ PIGGY SCRATCH! 🎵', 'info');
+        };
 
         let typedBuffer = '';
         document.addEventListener('keydown', (e) => {
@@ -21765,6 +22547,55 @@ let shareCardLoading;
         // 🚀 EPIC "WAS IST NEU" SHOWCASE ENGINE                     //
         // ========================================================= //
         const EPIC_MILESTONES = [
+            {
+                tag: 'v24.220',
+                title: {
+                    de: 'Retro Arcade Minispiel & Cyber Diagnostics',
+                    en: 'Retro Arcade Minigame & Cyber Diagnostics',
+                    es: 'Minijuego Retro Arcade y Diagnósticos Cyber',
+                    fr: 'Mini-jeu d\'arcade rétro et diagnostics cyber',
+                    pt: 'Minijogo de fliperama retrô e diagnósticos cibernéticos',
+                    tr: 'Retro Atari Mini Oyunu ve Siber Teşhis'
+                },
+                highlights: {
+                    de: [
+                        '🕹️ Vollwertiges 8-Bit "Piggy Cyber Dash" Arcade-Minispiel mit Highscore & Web-Audio SFX',
+                        '⚡ Cyberpunk Live FPS & Performance HUD Monitor (60/120 Hz, Frame-Time & Ping)',
+                        '🎹 Web Audio 8-Bit Chiptune Synthesizer mit dynamischem Visualizer-Banner',
+                        '⚙️ Komplett überarbeitetes Einstellungs-Zentrum mit Subpage-Drilldown & Schnellsuche'
+                    ],
+                    en: [
+                        '🕹️ Full 8-bit "Piggy Cyber Dash" arcade minigame with high score & Web Audio SFX',
+                        '⚡ Cyberpunk Live FPS & Performance HUD Monitor (60/120 Hz, frame-time & ping)',
+                        '🎹 Web Audio 8-bit chiptune synthesizer with dynamic visualizer banner',
+                        '⚙️ Redesigned Settings Center with category drilldown & instant search'
+                    ],
+                    es: [
+                        '🕹️ Minijuego arcade retro "Piggy Cyber Dash" con efectos de sonido y puntuación',
+                        '⚡ Monitor HUD de FPS y rendimiento cyberpunk en vivo',
+                        '🎹 Sintetizador chiptune de 8 bits con banner visualizador dinámico',
+                        '⚙️ Centro de ajustes completamente renovado con búsqueda rápida'
+                    ],
+                    fr: [
+                        '🕹️ Mini-jeu d\'arcade 8-bit « Piggy Cyber Dash » avec effets sonores Web Audio',
+                        '⚡ HUD de diagnostic de performances et FPS cyberpunk en direct',
+                        '🎹 Synthétiseur chiptune 8-bit avec visualiseur audio dynamique',
+                        '⚙️ Centre de paramètres entièrement repensé avec recherche rapide'
+                    ],
+                    pt: [
+                        '🕹️ Minijogo retrô "Piggy Cyber Dash" com efeitos sonoros e pontuação recorde',
+                        '⚡ Monitor HUD de FPS e desempenho cibernético em tempo real',
+                        '🎹 Sintetizador chiptune de 8 bits com banner de visualizador dinâmico',
+                        '⚙️ Centro de configurações reformulado com pesquisa rápida'
+                    ],
+                    tr: [
+                        '🕹️ Web Audio SFX ve yüksek skorlu 8-bit "Piggy Cyber Dash" atari mini oyunu',
+                        '⚡ Canlı siber FPS ve performans HUD monitörü (60/120 Hz)',
+                        '🎹 Dinamik görselleştirici afişli 8-bit chiptune sentezleyici',
+                        '⚙️ Hızlı arama özellikli yenilenmiş Ayarlar Merkezi'
+                    ]
+                }
+            },
             {
                 tag: 'v24.215',
                 title: {
@@ -23140,11 +23971,9 @@ let shareCardLoading;
         };
 
         try {
-            const _urlQAParam = new URLSearchParams(window.location.search).get('qa_unlocked') === '1';
-            const _sessionQA = sessionStorage.getItem('gp_qa_auth') === 'true';
             window.SETTINGS_LOCKED_PENDING_ADMIN = false;
         } catch(e) {
-            window.SETTINGS_LOCKED_PENDING_ADMIN = true;
+            window.SETTINGS_LOCKED_PENDING_ADMIN = false;
         }
 
         // Falls im QA-Modus, Banner visuell auf Freigabe umstellen

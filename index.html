@@ -168,11 +168,11 @@
                 <div class="flex items-center justify-between border-b border-white/10 pb-4">
                     <div>
                         <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
-                            <span>📋</span> <span>Verbindliche 5-Punkte QA Checkliste</span>
+                            <span>📋</span> <span>Verbindliche 8-Punkte QA Checkliste (Release v24.220.0)</span>
                         </h3>
                         <p class="text-xs text-slate-400">Alle Punkte müssen vor dem Release-Merge angehakt sein.</p>
                     </div>
-                    <span id="qa-progress-pill" class="px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-xs font-mono font-bold">0 / 5 bestanden</span>
+                    <span id="qa-progress-pill" class="px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-xs font-mono font-bold">0 / 8 bestanden</span>
                 </div>
 
                 <div class="space-y-3" id="qa-tasks-list">
@@ -221,9 +221,39 @@
                         <input type="checkbox" id="check-5" onchange="updateQAChecks()" class="w-5 h-5 rounded-lg border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500 mt-0.5">
                         <div class="flex-1">
                             <strong class="text-xs sm:text-sm text-white block font-bold">5. Entwickleroptionen 7-Tap Easter Egg & Toast Lesezeit</strong>
-                            <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">7x auf Build-Nummer (`GP-2026.10.12-215`) tippen schaltet Dev-Tools frei; Toast-Benachrichtigung bleibt 4-5s lesbar stehen.</p>
+                            <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">7x auf Build-Nummer (`GP-2026.10.14-220`) tippen schaltet Dev-Tools frei; Toast-Benachrichtigung bleibt 4-5s lesbar stehen.</p>
                         </div>
                         <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-slate-300">Dev Options</span>
+                    </label>
+
+                    <!-- Task 6 -->
+                    <label class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/5 hover:border-cyan-500/40 transition-all cursor-pointer">
+                        <input type="checkbox" id="check-6" onchange="updateQAChecks()" class="w-5 h-5 rounded-lg border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500 mt-0.5">
+                        <div class="flex-1">
+                            <strong class="text-xs sm:text-sm text-white block font-bold">6. 🕹️ Retro Piggy Cyber Dash Arcade Minigame</strong>
+                            <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Start über `arcade` tippen oder Spotlight (⌘K) oder `arcade.html`; Leertaste/Tap-Sprung, Sterne sammeln & 8-Bit Web-Audio Soundeffekte.</p>
+                        </div>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-slate-300">Arcade Minigame</span>
+                    </label>
+
+                    <!-- Task 7 -->
+                    <label class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/5 hover:border-cyan-500/40 transition-all cursor-pointer">
+                        <input type="checkbox" id="check-7" onchange="updateQAChecks()" class="w-5 h-5 rounded-lg border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500 mt-0.5">
+                        <div class="flex-1">
+                            <strong class="text-xs sm:text-sm text-white block font-bold">7. ⚡ Live FPS & Performance HUD Monitor</strong>
+                            <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Start über `fps` tippen oder Spotlight (⌘K); Cyberpunk-HUD zeigt Echtzeit 60/120 Hz Bildrate, Frame-Time, DOM-Nodes und Netzwerk-Ping.</p>
+                        </div>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-slate-300">Cyber HUD</span>
+                    </label>
+
+                    <!-- Task 8 -->
+                    <label class="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/5 hover:border-cyan-500/40 transition-all cursor-pointer">
+                        <input type="checkbox" id="check-8" onchange="updateQAChecks()" class="w-5 h-5 rounded-lg border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500 mt-0.5">
+                        <div class="flex-1">
+                            <strong class="text-xs sm:text-sm text-white block font-bold">8. 🎹 8-Bit Synth, Disco-Rave & DJ Scratch</strong>
+                            <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">`synth` tippen für Chiptune-Arpeggio mit Visualizer; `party` für Cyber-Disco; Doppelklick auf Album-Cover für DJ Vinyl-Scratch.</p>
+                        </div>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-slate-300">Easter Eggs</span>
                     </label>
                 </div>
 
@@ -359,11 +389,14 @@
         });
 
         function updateQAChecks() {
-            const checks = [1, 2, 3, 4, 5].map(i => document.getElementById('check-' + i).checked);
+            const checks = [1, 2, 3, 4, 5, 6, 7, 8].map(i => {
+                const el = document.getElementById('check-' + i);
+                return el ? el.checked : false;
+            });
             const passed = checks.filter(Boolean).length;
             const pill = document.getElementById('qa-progress-pill');
-            pill.textContent = `${passed} / 5 bestanden`;
-            if (passed === 5) {
+            pill.textContent = `${passed} / 8 bestanden`;
+            if (passed === 8) {
                 pill.className = 'px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-bold animate-pulse';
             } else {
                 pill.className = 'px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-xs font-mono font-bold';
@@ -372,16 +405,22 @@
 
         function copyQAReport() {
             const tester = document.getElementById('tester-name').value.trim() || 'Admin-Team';
-            const checks = [1, 2, 3, 4, 5].map(i => document.getElementById('check-' + i).checked);
+            const checks = [1, 2, 3, 4, 5, 6, 7, 8].map(i => {
+                const el = document.getElementById('check-' + i);
+                return el ? el.checked : false;
+            });
             const passed = checks.filter(Boolean).length;
 
-            const text = `🧪 [QA-BERICHT v24.216.0]\nTester: ${tester}\nErgebnis: ${passed}/5 Tests bestanden\n` +
+            const text = `🧪 [QA-BERICHT v24.220.0]\nTester: ${tester}\nErgebnis: ${passed}/8 Tests bestanden\n` +
                 `- [${checks[0] ? '✓' : ' '}] 1. Mobile & Desktop Render-Check\n` +
                 `- [${checks[1] ? '✓' : ' '}] 2. Neues Einstellungs-Zentrum & System-Update\n` +
                 `- [${checks[2] ? '✓' : ' '}] 3. PWA-Installation & Offline-Cache\n` +
                 `- [${checks[3] ? '✓' : ' '}] 4. Web-Push & Störungs-Alarm Hub\n` +
-                `- [${checks[4] ? '✓' : ' '}] 5. Entwickleroptionen & Toast Lesezeit\n\n` +
-                (passed === 5 ? `✅ FREIGABE ERTEILT: Release v24.216.0 kann uneingeschränkt live geschaltet werden!` : `⚠️ Noch unvollständig: Bitte alle 5 Punkte verifizieren!`);
+                `- [${checks[4] ? '✓' : ' '}] 5. Entwickleroptionen & Toast Lesezeit\n` +
+                `- [${checks[5] ? '✓' : ' '}] 6. Retro Piggy Cyber Dash Arcade Minigame\n` +
+                `- [${checks[6] ? '✓' : ' '}] 7. Cyber Live FPS & Performance HUD Monitor\n` +
+                `- [${checks[7] ? '✓' : ' '}] 8. 8-Bit Synth, Disco-Rave & DJ Scratch\n\n` +
+                (passed === 8 ? `✅ FREIGABE ERTEILT: Release v24.220.0 kann uneingeschränkt live geschaltet werden!` : `⚠️ Noch unvollständig: Bitte alle 8 Punkte verifizieren!`);
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text).then(() => {

@@ -2,971 +2,361 @@
 <html lang="de" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Retro Neon Arcade — Gamingpig</title>
-    <link rel="icon" href="icon-192.png" type="image/png">
-    <meta name="theme-color" content="#020617">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Piggy Cyber Dash 🕹️ - Retro Arcade 8-Bit</title>
+    <meta name="theme-color" content="#030712">
+    <link rel="icon" href="https://gamingpig.github.io/About-Gamingpig/og-v2.jpg" type="image/jpeg">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
-
-        :root {
-            --bg-oled: #020617;
-            --neon-blue: #38bdf8;
-            --neon-pink: #f43f5e;
-            --neon-purple: #a855f7;
-            --neon-emerald: #10b981;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        body {
+            background-color: #030712;
+            touch-action: none;
             user-select: none;
             -webkit-user-select: none;
-        }
-
-        body {
-            background-color: #020617;
-            color: #f8fafc;
-            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             overflow: hidden;
-            width: 100vw;
-            height: 100vh;
-            touch-action: none;
+            font-family: system-ui, -apple-system, sans-serif;
         }
-
-        .glass-stage {
-            position: relative;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-        }
-
-        .glass-btn {
-            position: relative;
-            cursor: pointer;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-            background: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .glass-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(56, 189, 248, 0.4);
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
-        }
-
-        .glass-btn:active {
-            transform: scale(0.96);
-        }
-
-        #arcade-canvas {
-            touch-action: none;
-            display: block;
-            margin: 0 auto;
-            max-width: 100%;
-            height: auto;
-            box-shadow: 0 0 50px rgba(56, 189, 248, 0.15), 0 25px 60px -15px rgba(0, 0, 0, 0.9);
-        }
-
-        /* Ambient Cyber Glow Background */
-        .cyber-grid {
-            position: fixed;
-            inset: 0;
-            background-image: 
-                linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
-            background-size: 40px 40px;
+        .scanlines {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
             pointer-events: none;
-            z-index: 1;
-        }
-
-        .ambient-glow-1 {
-            position: fixed;
-            top: -100px;
-            left: 20%;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
-            filter: blur(60px);
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .ambient-glow-2 {
-            position: fixed;
-            bottom: -100px;
-            right: 20%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%);
-            filter: blur(80px);
-            pointer-events: none;
-            z-index: 1;
         }
     </style>
 </head>
-<body class="bg-[#020617] text-white flex flex-col items-center justify-between p-3 sm:p-4 select-none min-h-screen" style="padding-top: max(12px, env(safe-area-inset-top, 12px));">
-    <!-- Ambient Backdrop Effects -->
-    <div class="cyber-grid"></div>
-    <div class="ambient-glow-1"></div>
-    <div class="ambient-glow-2"></div>
+<body class="h-screen w-screen flex flex-col items-center justify-between text-white p-3 sm:p-6">
 
-    <!-- LIQUID GLASS HUD -->
-    <header id="arcade-hud" class="glass-stage w-full max-w-4xl p-3 sm:p-4 flex items-center justify-between z-30 relative">
-        <div class="flex items-center gap-3">
-            <span class="text-2xl sm:text-3xl animate-pulse">👾</span>
-            <div>
-                <h1 class="text-xs sm:text-sm font-black tracking-wider uppercase text-white drop-shadow-[0_0_12px_rgba(56,189,248,0.5)]">Retro Neon Arcade</h1>
-                <p class="text-[10px] text-cyan-400 font-mono tracking-widest">NEON PIG-RUNNER // 60 FPS</p>
-            </div>
+    <!-- Top Navigation Bar -->
+    <header class="w-full max-w-2xl flex items-center justify-between py-2 sm:py-3 px-4 rounded-2xl bg-slate-900/80 border border-cyan-500/30 backdrop-blur-xl z-20 shadow-lg">
+        <a href="index.html" class="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-300 hover:text-cyan-400 transition-colors">
+            <span>←</span> <span>Zurück zum Portfolio</span>
+        </a>
+        <div class="flex items-center gap-2">
+            <span class="text-xl">🕹️</span>
+            <span class="text-xs sm:text-sm font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400 uppercase">Piggy Cyber Dash</span>
         </div>
-        
-        <div class="flex items-center gap-4 sm:gap-8 font-mono text-xs sm:text-sm">
-            <div class="text-right">
-                <span class="text-[10px] text-slate-400 block uppercase tracking-wider">Score</span>
-                <span id="score-display" class="font-bold text-white text-base sm:text-lg tabular-nums">0</span>
-            </div>
-            <div class="text-right">
-                <span class="text-[10px] text-slate-400 block uppercase tracking-wider">Highscore</span>
-                <span id="highscore-display" class="font-bold text-emerald-400 text-base sm:text-lg tabular-nums drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]">0</span>
-            </div>
-        </div>
-
-        <div>
-            <a id="btn-return" href="index.html" class="glass-btn inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-bold transition-all text-slate-200 hover:text-white relative z-50 cursor-pointer touch-manipulation">
-                <span>←</span>
-                <span>Portfolio</span>
-                <span class="hidden sm:inline-block text-[10px] font-mono text-cyan-300 ml-1 px-1.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30">ESC</span>
-            </a>
+        <div class="flex items-center gap-2">
+            <button id="sound-toggle-btn" onclick="toggleSound()" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-mono font-bold text-cyan-300 transition-colors">
+                🔊 Sound: AN
+            </button>
         </div>
     </header>
 
-    <!-- GAME CANVAS STAGE -->
-    <main id="game-container" class="relative w-full max-w-4xl flex-1 flex items-center justify-center my-2 z-10" style="touch-action: none;">
-        <canvas id="arcade-canvas" width="800" height="450" style="touch-action: none;" class="rounded-2xl border border-white/10"></canvas>
+    <!-- Arcade Screen Container -->
+    <main class="w-full max-w-2xl flex-1 flex flex-col items-center justify-center relative my-auto p-2">
+        <div class="relative w-full aspect-[4/3] max-h-[520px] rounded-3xl overflow-hidden border-2 border-cyan-500/40 shadow-[0_0_60px_rgba(6,182,212,0.3)] bg-[#050814]" id="canvas-wrapper">
+            <canvas id="game-canvas" width="480" height="360" class="w-full h-full object-contain"></canvas>
+            <div class="absolute inset-0 scanlines"></div>
+
+            <!-- Start / Game Over Screen Overlay -->
+            <div id="game-overlay" class="absolute inset-0 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-30">
+                <div class="text-5xl sm:text-6xl mb-3 animate-bounce">🐷🚀</div>
+                <h1 id="overlay-title" class="text-2xl sm:text-3xl font-black text-white tracking-wide">PIGGY CYBER DASH</h1>
+                <p id="overlay-subtitle" class="text-xs sm:text-sm text-slate-300 mt-2 max-w-sm">
+                    Tippe oder drücke die Leertaste zum Springen. Weiche Laser-Säulen aus und sammle Sterne ⭐ und Controller 🎮!
+                </p>
+
+                <div id="overlay-score-wrap" class="hidden my-4 p-3 rounded-2xl bg-white/10 border border-white/10 w-full max-w-xs">
+                    <div class="text-xs text-slate-400 uppercase font-mono">Ergebnis</div>
+                    <div id="overlay-score-val" class="text-3xl font-black text-amber-400 font-mono">0</div>
+                    <div id="overlay-best-val" class="text-[11px] text-cyan-400 font-mono mt-0.5">Highscore: 0</div>
+                </div>
+
+                <button onclick="startGame(event)" class="mt-4 px-8 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-cyan-500/30 active:scale-95 transition-all">
+                    JETZT SPIELEN ⚡
+                </button>
+            </div>
+        </div>
     </main>
 
-    <!-- TOUCH CONTROLS (MOBILE) -->
-    <footer id="arcade-touch-controls" class="w-full max-w-4xl flex items-center justify-between gap-4 py-2 z-20" style="touch-action: none;">
-        <button id="btn-touch-jump" type="button" style="touch-action: none;" class="glass-stage flex-1 py-3.5 sm:py-4 rounded-2xl text-center font-black text-cyan-300 text-sm sm:text-base border border-cyan-500/30 shadow-[0_0_20px_rgba(56,189,248,0.15)] active:scale-95 transition-all cursor-pointer">
-            🚀 SPRUNG
-        </button>
-        <button id="btn-touch-duck" type="button" style="touch-action: none;" class="glass-stage flex-1 py-3.5 sm:py-4 rounded-2xl text-center font-black text-purple-300 text-sm sm:text-base border border-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.15)] active:scale-95 transition-all cursor-pointer">
-            🛡️ DUCK
-        </button>
+    <!-- Bottom Controls & Hints -->
+    <footer class="w-full max-w-2xl py-2 px-4 rounded-2xl bg-slate-900/60 border border-white/10 text-center text-xs text-slate-400 z-20 flex items-center justify-between">
+        <span>Desktop: <kbd class="px-2 py-0.5 rounded bg-white/10 text-white font-mono text-[10px]">Leertaste</kbd> / Pfeil Oben</span>
+        <span id="best-score-footer" class="font-mono text-amber-300 font-bold">BEST: 0</span>
+        <span>Mobile: Display antippen</span>
     </footer>
 
-    <!-- RETRO ARCADE MINI-GAME SCRIPT -->
     <script>
-        (function() {
-            'use strict';
+        let isRunning = false;
+        let animFrame = null;
+        let score = 0;
+        let highScore = parseInt(localStorage.getItem('gp_arcade_highscore') || '0', 10);
+        let soundOn = true;
+        let lives = 3;
+        let invulnUntil = 0;
+        let pig = { x: 70, y: 180, vy: 0, r: 16 };
+        let pillars = [];
+        let stars = [];
+        let particles = [];
+        let lastSpawn = 0;
+        let lastTime = performance.now();
+        let audioCtx = null;
 
-            // ----------------------------------------------------------------
-            // 1. PROCEDURAL WEB AUDIO SYNTHESIZER (ZERO EXTERNAL MP3s)
-            // ----------------------------------------------------------------
-            class ProceduralArcadeAudio {
-                constructor(audioCtx) {
-                    this.ctx = audioCtx || null;
+        function getAudio() {
+            if (!audioCtx) {
+                const Cls = window.AudioContext || window.webkitAudioContext;
+                if (Cls) audioCtx = new Cls();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+            return audioCtx;
+        }
+
+        ['touchstart', 'click', 'keydown'].forEach(e => window.addEventListener(e, () => getAudio(), { once: true }));
+
+        function playSound(type) {
+            if (!soundOn) return;
+            try {
+                const ctx = getAudio();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+
+                if (type === 'jump') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.exponentialRampToValueAtTime(580, now + 0.12);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'coin') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, now);
+                    osc.frequency.setValueAtTime(880, now + 0.08);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                } else if (type === 'hit') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(140, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.18);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.18);
+                    osc.start(now);
+                    osc.stop(now + 0.18);
+                } else if (type === 'over') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(320, now);
+                    osc.frequency.linearRampToValueAtTime(100, now + 0.45);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+                    osc.start(now);
+                    osc.stop(now + 0.45);
                 }
+            } catch (e) {}
+        }
 
-                initContext() {
-                    if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
-                        const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
-                        this.ctx = new AudioCtxClass();
-                    }
-                }
+        function toggleSound() {
+            soundOn = !soundOn;
+            document.getElementById('sound-toggle-btn').innerText = soundOn ? '🔊 Sound: AN' : '🔇 Sound: AUS';
+        }
 
-                ensureUnlocked() {
-                    this.initContext();
-                    if (this.ctx && this.ctx.state === 'suspended') {
-                        return this.ctx.resume().catch(() => {});
-                    }
-                    return Promise.resolve();
-                }
+        function updateBestDisplay() {
+            document.getElementById('best-score-footer').innerText = 'BEST: ' + highScore;
+        }
+        updateBestDisplay();
 
-                playJump() {
-                    try {
-                        this.ensureUnlocked();
-                        if (!this.ctx) return null;
-                        const now = this.ctx.currentTime;
-                        const osc = this.ctx.createOscillator();
-                        const gain = this.ctx.createGain();
+        function jump() {
+            if (!isRunning) return;
+            pig.vy = -6.6;
+            playSound('jump');
+            if (navigator.vibrate) navigator.vibrate(10);
+            for (let i = 0; i < 4; i++) {
+                particles.push({
+                    x: pig.x - 12,
+                    y: pig.y + 6,
+                    vx: -2 - Math.random() * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    life: 1.0,
+                    color: Math.random() > 0.5 ? '#06b6d4' : '#f43f5e',
+                    size: 3 + Math.random() * 3
+                });
+            }
+        }
 
-                        // 8-bit retro square wave ascending sweep (220Hz -> 660Hz)
-                        osc.type = 'square';
-                        osc.frequency.setValueAtTime(220, now);
-                        osc.frequency.exponentialRampToValueAtTime(660, now + 0.15);
+        function startGame(e) {
+            if (e) e.stopPropagation();
+            document.getElementById('game-overlay').classList.add('hidden');
+            score = 0;
+            lives = 3;
+            invulnUntil = 0;
+            pig = { x: 70, y: 180, vy: 0, r: 16 };
+            pillars = [];
+            stars = [];
+            particles = [];
+            lastSpawn = performance.now();
+            lastTime = performance.now();
+            isRunning = true;
+            jump();
+            if (animFrame) cancelAnimationFrame(animFrame);
+            animFrame = requestAnimationFrame(gameLoop);
+        }
 
-                        // Exponential volume decay
-                        gain.gain.setValueAtTime(0.25, now);
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        function gameOver() {
+            isRunning = false;
+            playSound('over');
+            if (navigator.vibrate) navigator.vibrate(30);
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('gp_arcade_highscore', highScore.toString());
+                updateBestDisplay();
+            }
+            const overlay = document.getElementById('game-overlay');
+            document.getElementById('overlay-title').innerText = 'GAME OVER';
+            document.getElementById('overlay-subtitle').innerText = 'Gute Runde! Versuch deinen Highscore zu knacken.';
+            document.getElementById('overlay-score-val').innerText = score;
+            document.getElementById('overlay-best-val').innerText = 'Bester Score: ' + highScore;
+            document.getElementById('overlay-score-wrap').classList.remove('hidden');
+            overlay.classList.remove('hidden');
+        }
 
-                        osc.connect(gain);
-                        gain.connect(this.ctx.destination);
-                        osc.start(now);
-                        osc.stop(now + 0.15);
-                        return { osc, gain };
-                    } catch (e) {
-                        return null;
-                    }
-                }
+        function gameLoop(now) {
+            if (!isRunning) return;
+            const dt = Math.min((now - lastTime) / 1000, 0.1);
+            lastTime = now;
 
-                playScore() {
-                    try {
-                        this.ensureUnlocked();
-                        if (!this.ctx) return null;
-                        const now = this.ctx.currentTime;
-                        const osc = this.ctx.createOscillator();
-                        const gain = this.ctx.createGain();
+            pig.vy += 18.5 * dt;
+            pig.y += pig.vy;
 
-                        // Triangle wave harmonic chime (587.33Hz D5 -> 880Hz A5)
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(587.33, now);
-                        osc.frequency.setValueAtTime(880.00, now + 0.08);
+            if (pig.y < pig.r) { pig.y = pig.r; pig.vy = 0; }
+            if (pig.y > 360 - pig.r) { gameOver(); return; }
 
-                        // Gain envelope
-                        gain.gain.setValueAtTime(0.3, now);
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-
-                        osc.connect(gain);
-                        gain.connect(this.ctx.destination);
-                        osc.start(now);
-                        osc.stop(now + 0.2);
-                        return { osc, gain };
-                    } catch (e) {
-                        return null;
-                    }
-                }
-
-                playGameOver() {
-                    try {
-                        this.ensureUnlocked();
-                        if (!this.ctx) return null;
-                        const now = this.ctx.currentTime;
-                        const osc = this.ctx.createOscillator();
-                        const gain = this.ctx.createGain();
-
-                        // Sawtooth wave descending sweep (320Hz -> 45Hz)
-                        osc.type = 'sawtooth';
-                        osc.frequency.setValueAtTime(320, now);
-                        osc.frequency.exponentialRampToValueAtTime(45, now + 0.4);
-
-                        // Gain decay envelope
-                        gain.gain.setValueAtTime(0.4, now);
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-
-                        osc.connect(gain);
-                        gain.connect(this.ctx.destination);
-                        osc.start(now);
-                        osc.stop(now + 0.4);
-                        return { osc, gain };
-                    } catch (e) {
-                        return null;
-                    }
-                }
+            if (now - lastSpawn > 1650) {
+                lastSpawn = now;
+                const gapH = 110;
+                const topH = Math.floor(35 + Math.random() * (360 - gapH - 70));
+                pillars.push({ x: 480, topH, botY: topH + gapH, w: 38, passed: false });
+                stars.push({ x: 480 + 19, y: topH + gapH / 2, r: 9, type: Math.random() > 0.3 ? 'star' : 'controller', collected: false });
             }
 
-            // ----------------------------------------------------------------
-            // 2. DEFENSIVE ENVIRONMENT HELPERS & HAPTICS
-            // ----------------------------------------------------------------
-            function getLocalStorageSafe() {
-                try {
-                    if (typeof window !== 'undefined' && 'localStorage' in window && window.localStorage) {
-                        return window.localStorage;
-                    }
-                } catch (e) {
-                    // Guard against SecurityError in sandboxed iframes or opaque origins
-                }
-                return null;
-            }
+            const speed = 145 * dt;
+            for (let i = pillars.length - 1; i >= 0; i--) {
+                const p = pillars[i];
+                p.x -= speed;
 
-            function getNavigatorSafe() {
-                try {
-                    if (typeof window !== 'undefined' && window.navigator) {
-                        return window.navigator;
-                    }
-                } catch (e) {}
-                return null;
-            }
-
-            function safeVibrate(pattern) {
-                try {
-                    const nav = getNavigatorSafe();
-                    if (nav && typeof nav.vibrate === 'function') {
-                        nav.vibrate(pattern);
-                    }
-                } catch (e) {
-                    // Safe guard against sandboxed or unpermitted iframe calls
-                }
-            }
-
-            // ----------------------------------------------------------------
-            // 3. STORAGE MANAGER (LOCALSTORAGE HIGHSCORE)
-            // ----------------------------------------------------------------
-            const STORAGE_KEY = 'gp_arcade_highscore';
-
-            function loadHighScoreSafe(storage) {
-                try {
-                    const st = storage || getLocalStorageSafe();
-                    if (!st) return 0;
-                    const val = st.getItem(STORAGE_KEY);
-                    const parsed = parseInt(val, 10);
-                    return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
-                } catch (e) {
-                    return 0;
-                }
-            }
-
-            function saveHighScoreSafe(score, currentHigh, storage) {
-                if (score > currentHigh) {
-                    try {
-                        const st = storage || getLocalStorageSafe();
-                        if (st) st.setItem(STORAGE_KEY, String(score));
-                    } catch (e) {
-                        // Safe catch for QuotaExceededError or SecurityError
-                    }
-                    return score;
-                }
-                return currentHigh;
-            }
-
-            // ----------------------------------------------------------------
-            // 4. GAME ENGINE: NEON PIG-RUNNER
-            // ----------------------------------------------------------------
-            class NeonPigRunner {
-                constructor({ canvas, audio, nav, storage } = {}) {
-                    this.canvas = canvas || null;
-                    try {
-                        this.ctx = (canvas && typeof canvas.getContext === 'function') ? canvas.getContext('2d') : null;
-                    } catch (e) {
-                        this.ctx = null;
-                    }
-                    this.audio = audio || new ProceduralArcadeAudio();
-                    this.nav = nav || getNavigatorSafe();
-                    this.storage = storage || getLocalStorageSafe();
-
-                    this.score = 0;
-                    this.highscore = loadHighScoreSafe(this.storage);
-                    this.state = 'start'; // 'start' | 'playing' | 'gameover'
-
-                    this.groundY = 300;
-                    this.gravity = 980;
-                    this.player = {
-                        x: 80,
-                        y: 300,
-                        vy: 0,
-                        isGrounded: true,
-                        isDucking: false,
-                        width: 36,
-                        height: 36,
-                        baseWidth: 36,
-                        baseHeight: 36
-                    };
-
-                    this.obstacles = [];
-                    this.particles = [];
-                    this.stars = [];
-                    this.spawnTimer = 0;
-                    this.spawnInterval = 1.6;
-                    this.gameSpeed = 320;
-                    this.runDistance = 0;
-                    this.lastTime = 0;
-                    this.blinkTimer = 0;
-
-                    this.initStars();
-                    this.updateDomDisplays();
+                if (!p.passed && p.x + p.w < pig.x) {
+                    p.passed = true;
+                    score += 10;
                 }
 
-                initStars() {
-                    this.stars = [];
-                    for (let i = 0; i < 35; i++) {
-                        this.stars.push({
-                            x: Math.random() * 800,
-                            y: Math.random() * 260,
-                            speed: 20 + Math.random() * 60,
-                            size: 1 + Math.random() * 2,
-                            brightness: 0.3 + Math.random() * 0.7
+                if (now >= invulnUntil) {
+                    if (pig.x + pig.r > p.x && pig.x - pig.r < p.x + p.w) {
+                        if (pig.y - pig.r < p.topH || pig.y + pig.r > p.botY) {
+                            lives--;
+                            invulnUntil = now + 1200;
+                            playSound('hit');
+                            if (navigator.vibrate) navigator.vibrate(20);
+                            if (lives <= 0) { gameOver(); return; }
+                        }
+                    }
+                }
+
+                if (p.x < -p.w) pillars.splice(i, 1);
+            }
+
+            for (let i = stars.length - 1; i >= 0; i--) {
+                const s = stars[i];
+                s.x -= speed;
+                const dx = pig.x - s.x;
+                const dy = pig.y - s.y;
+                if (!s.collected && Math.sqrt(dx * dx + dy * dy) < pig.r + s.r) {
+                    s.collected = true;
+                    score += s.type === 'controller' ? 50 : 25;
+                    playSound('coin');
+                    for (let k = 0; k < 6; k++) {
+                        particles.push({
+                            x: s.x, y: s.y,
+                            vx: (Math.random() - 0.5) * 4, vy: (Math.random() - 0.5) * 4,
+                            life: 1.0, color: s.type === 'controller' ? '#a855f7' : '#fbbf24', size: 3 + Math.random() * 2
                         });
                     }
                 }
-
-                updateDomDisplays() {
-                    const scoreEl = document.getElementById('score-display');
-                    const highEl = document.getElementById('highscore-display');
-                    if (scoreEl) scoreEl.textContent = String(this.score);
-                    if (highEl) highEl.textContent = String(this.highscore);
-                }
-
-                start() {
-                    this.score = 0;
-                    this.state = 'playing';
-                    this.player.y = this.groundY;
-                    this.player.vy = 0;
-                    this.player.isGrounded = true;
-                    this.player.isDucking = false;
-                    this.player.height = this.player.baseHeight;
-                    this.obstacles = [];
-                    this.particles = [];
-                    this.spawnTimer = 0.8;
-                    this.gameSpeed = 320;
-                    this.updateDomDisplays();
-                    this.createParticles(this.player.x + 18, this.player.y + 18, '#38bdf8', 12);
-                }
-
-                jump() {
-                    if (this.state === 'start' || this.state === 'gameover') {
-                        this.start();
-                        return true;
-                    }
-
-                    if (this.state === 'playing' && this.player.isGrounded) {
-                        this.player.vy = -520;
-                        this.player.isGrounded = false;
-                        if (this.audio) this.audio.playJump();
-                        safeVibrate(20);
-                        this.createParticles(this.player.x + 18, this.player.y + 36, '#38bdf8', 8);
-                        return true;
-                    }
-                    return false;
-                }
-
-                duck(isDucking) {
-                    if (this.state !== 'playing') return;
-                    this.player.isDucking = isDucking;
-                    if (isDucking) {
-                        this.player.height = 20;
-                        if (this.player.isGrounded) {
-                            this.player.y = this.groundY + 16;
-                            this.createParticles(this.player.x + 10, this.groundY + 36, '#a855f7', 2);
-                        }
-                    } else {
-                        this.player.height = this.player.baseHeight;
-                        if (this.player.isGrounded) {
-                            this.player.y = this.groundY;
-                        }
-                    }
-                }
-
-                createParticles(x, y, color, count = 5) {
-                    for (let i = 0; i < count; i++) {
-                        this.particles.push({
-                            x,
-                            y,
-                            vx: (Math.random() - 0.5) * 140,
-                            vy: (Math.random() - 0.7) * 120,
-                            life: 0.15 + (i / count) * 0.85,
-                            maxLife: 1.0,
-                            color,
-                            size: 2 + Math.random() * 3
-                        });
-                    }
-                }
-
-                spawnObstacle() {
-                    const isHigh = Math.random() > 0.65 && this.score >= 200;
-                    if (isHigh) {
-                        // Flying Drone / Laser Bar (requires ducking!)
-                        this.obstacles.push({
-                            type: 'flying',
-                            x: 820,
-                            y: this.groundY - 14,
-                            width: 32,
-                            height: 22,
-                            passed: false,
-                            color: '#f43f5e'
-                        });
-                    } else {
-                        // Ground Neon Barrier / Spikes (requires jump!)
-                        const variety = Math.random();
-                        const width = variety > 0.5 ? 24 : 32;
-                        const height = variety > 0.5 ? 36 : 28;
-                        this.obstacles.push({
-                            type: 'ground',
-                            x: 820,
-                            y: this.groundY + (36 - height),
-                            width,
-                            height,
-                            passed: false,
-                            color: '#38bdf8'
-                        });
-                    }
-                }
-
-                checkCollision(a, b) {
-                    return (
-                        a.x < b.x + b.width &&
-                        a.x + a.width > b.x &&
-                        a.y < b.y + b.height &&
-                        a.y + a.height > b.y
-                    );
-                }
-
-                update(dt) {
-                    const clampedDt = Math.min(dt, 0.05);
-                    this.blinkTimer += clampedDt;
-
-                    // Update background cyber stars
-                    for (const s of this.stars) {
-                        s.x -= s.speed * clampedDt;
-                        if (s.x < 0) s.x = 800;
-                    }
-
-                    if (this.state !== 'playing') {
-                        // Particle decay during pause/gameover
-                        for (let i = this.particles.length - 1; i >= 0; i--) {
-                            const p = this.particles[i];
-                            p.x += p.vx * clampedDt;
-                            p.y += p.vy * clampedDt;
-                            p.life -= clampedDt * 2.5;
-                            if (p.life <= 0) this.particles.splice(i, 1);
-                        }
-                        return;
-                    }
-
-                    // Physics update
-                    this.runDistance += this.gameSpeed * clampedDt;
-                    this.player.y += this.player.vy * clampedDt;
-                    this.player.vy += this.gravity * clampedDt;
-
-                    const effectiveGround = this.player.isDucking ? (this.groundY + 16) : this.groundY;
-                    if (this.player.y >= effectiveGround) {
-                        this.player.y = effectiveGround;
-                        this.player.vy = 0;
-                        this.player.isGrounded = true;
-                    }
-
-                    // Passive trail while running
-                    if (this.player.isGrounded && Math.random() < 0.25) {
-                        this.createParticles(this.player.x + 4, this.groundY + 34, '#38bdf8', 1);
-                    }
-
-                    // Particle update
-                    for (let i = this.particles.length - 1; i >= 0; i--) {
-                        const p = this.particles[i];
-                        p.x += p.vx * clampedDt;
-                        p.y += p.vy * clampedDt;
-                        p.life -= clampedDt * 2.5;
-                        if (p.life <= 0) this.particles.splice(i, 1);
-                    }
-
-                    // Obstacle spawner
-                    this.spawnTimer -= clampedDt;
-                    if (this.spawnTimer <= 0) {
-                        this.spawnObstacle();
-                        this.spawnInterval = Math.max(0.9, 1.8 - (this.score / 2500));
-                        this.spawnTimer = this.spawnInterval * (0.8 + Math.random() * 0.4);
-                    }
-
-                    // Obstacle update & collision detection
-                    const playerHitbox = {
-                        x: this.player.x + 4,
-                        y: this.player.y + 4,
-                        width: this.player.width - 8,
-                        height: this.player.height - 4
-                    };
-
-                    for (let i = this.obstacles.length - 1; i >= 0; i--) {
-                        const obs = this.obstacles[i];
-                        obs.x -= this.gameSpeed * clampedDt;
-
-                        // AABB Collision check
-                        if (this.checkCollision(playerHitbox, obs)) {
-                            this.state = 'gameover';
-                            if (this.audio) this.audio.playGameOver();
-                            safeVibrate([50, 50, 100]);
-                            this.createParticles(this.player.x + 18, this.player.y + 18, '#f43f5e', 24);
-                            this.highscore = saveHighScoreSafe(this.score, this.highscore, this.storage);
-                            this.updateDomDisplays();
-                            return;
-                        }
-
-                        // Score progression when successfully evaded
-                        if (!obs.passed && obs.x < this.player.x) {
-                            obs.passed = true;
-                            this.score += 100;
-                            this.gameSpeed = Math.min(520, 320 + this.score * 0.15);
-                            if (this.audio) this.audio.playScore();
-                            safeVibrate(30);
-                            this.highscore = saveHighScoreSafe(this.score, this.highscore, this.storage);
-                            this.updateDomDisplays();
-                            this.createParticles(obs.x + obs.width, obs.y, '#10b981', 6);
-                        }
-
-                        if (obs.x < -80) {
-                            this.obstacles.splice(i, 1);
-                        }
-                    }
-                }
-
-                draw() {
-                    if (!this.ctx) return;
-                    const ctx = this.ctx;
-                    const w = this.canvas.width;
-                    const h = this.canvas.height;
-
-                    // 1. OLED Dark Background
-                    ctx.fillStyle = '#020617';
-                    ctx.fillRect(0, 0, w, h);
-
-                    // 2. Distant Cyber Grid & Stars
-                    ctx.save();
-                    for (const s of this.stars) {
-                        ctx.fillStyle = `rgba(56, 189, 248, ${s.brightness})`;
-                        ctx.fillRect(s.x, s.y, s.size, s.size);
-                    }
-
-                    // Perspective Grid Lines
-                    ctx.strokeStyle = 'rgba(56, 189, 248, 0.12)';
-                    ctx.lineWidth = 1;
-                    const gridOffset = (this.runDistance % 40);
-                    for (let x = -gridOffset; x < w; x += 40) {
-                        ctx.beginPath();
-                        ctx.moveTo(x, 336);
-                        ctx.lineTo(x - 60, h);
-                        ctx.stroke();
-                    }
-                    ctx.restore();
-
-                    // 3. Neon Ground Line
-                    ctx.save();
-                    ctx.shadowColor = '#38bdf8';
-                    ctx.shadowBlur = 12;
-                    ctx.strokeStyle = '#38bdf8';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(0, 336);
-                    ctx.lineTo(w, 336);
-                    ctx.stroke();
-                    ctx.restore();
-
-                    // Ground Sub-Glow
-                    const groundGrad = ctx.createLinearGradient(0, 336, 0, h);
-                    groundGrad.addColorStop(0, 'rgba(56, 189, 248, 0.15)');
-                    groundGrad.addColorStop(1, 'rgba(15, 23, 42, 0.8)');
-                    ctx.fillStyle = groundGrad;
-                    ctx.fillRect(0, 336, w, h - 336);
-
-                    // 4. Particles
-                    ctx.save();
-                    for (const p of this.particles) {
-                        ctx.globalAlpha = Math.max(0, Math.min(1, p.life));
-                        ctx.fillStyle = p.color;
-                        ctx.shadowColor = p.color;
-                        ctx.shadowBlur = 8;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.size || 2.5, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    ctx.restore();
-
-                    // 5. Obstacles
-                    for (const obs of this.obstacles) {
-                        ctx.save();
-                        ctx.shadowColor = obs.color;
-                        ctx.shadowBlur = 14;
-                        ctx.fillStyle = obs.color;
-
-                        if (obs.type === 'flying') {
-                            // Flying Cyber Drone / Laser Bar
-                            ctx.fillStyle = '#f43f5e';
-                            ctx.fillRect(obs.x, obs.y + 4, obs.width, obs.height - 8);
-                            // Glow core
-                            ctx.fillStyle = '#ffffff';
-                            ctx.fillRect(obs.x + 6, obs.y + 8, obs.width - 12, obs.height - 16);
-                            // Wing accents
-                            ctx.fillStyle = '#a855f7';
-                            ctx.fillRect(obs.x + obs.width / 2 - 3, obs.y, 6, obs.height);
-                        } else {
-                            // Neon Ground Spikes / Monolith
-                            ctx.beginPath();
-                            ctx.moveTo(obs.x, obs.y + obs.height);
-                            ctx.lineTo(obs.x + obs.width / 2, obs.y);
-                            ctx.lineTo(obs.x + obs.width, obs.y + obs.height);
-                            ctx.closePath();
-                            ctx.fill();
-                            // Inner core
-                            ctx.fillStyle = '#ffffff';
-                            ctx.beginPath();
-                            ctx.moveTo(obs.x + 4, obs.y + obs.height);
-                            ctx.lineTo(obs.x + obs.width / 2, obs.y + 6);
-                            ctx.lineTo(obs.x + obs.width - 4, obs.y + obs.height);
-                            ctx.closePath();
-                            ctx.fill();
-                        }
-                        ctx.restore();
-                    }
-
-                    // 6. Player Character (Procedural Neon Pig Avatar)
-                    if (this.state !== 'gameover' || Math.floor(this.blinkTimer * 10) % 2 === 0) {
-                        this.drawPlayer(ctx);
-                    }
-
-                    // 7. HUD & Screen Overlays
-                    if (this.state === 'start') {
-                        this.drawStartOverlay(ctx, w, h);
-                    } else if (this.state === 'gameover') {
-                        this.drawGameOverOverlay(ctx, w, h);
-                    }
-                }
-
-                drawPlayer(ctx) {
-                    const p = this.player;
-                    const px = p.x;
-                    const py = p.y;
-                    const pw = p.width;
-                    const ph = p.height;
-
-                    ctx.save();
-                    // Glow shadow
-                    ctx.shadowColor = p.isDucking ? '#a855f7' : '#38bdf8';
-                    ctx.shadowBlur = 16;
-
-                    // Pig Body (Rounded neon capsule)
-                    ctx.fillStyle = '#f43f5e'; // Neon Pig Pink
-                    ctx.beginPath();
-                    ctx.roundRect(px, py, pw, ph, p.isDucking ? 8 : 12);
-                    ctx.fill();
-
-                    // Cyber Visor / Eyes (Cyan Glow)
-                    ctx.fillStyle = '#38bdf8';
-                    ctx.shadowColor = '#38bdf8';
-                    ctx.shadowBlur = 10;
-                    ctx.fillRect(px + pw - 14, py + (p.isDucking ? 4 : 8), 10, p.isDucking ? 6 : 8);
-
-                    // Pig Snout
-                    ctx.fillStyle = '#fb7185';
-                    ctx.beginPath();
-                    ctx.arc(px + pw - 2, py + (p.isDucking ? 10 : 20), p.isDucking ? 3 : 5, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Pig Ear
-                    if (!p.isDucking) {
-                        ctx.fillStyle = '#e11d48';
-                        ctx.beginPath();
-                        ctx.moveTo(px + 8, py);
-                        ctx.lineTo(px + 14, py - 6);
-                        ctx.lineTo(px + 18, py);
-                        ctx.closePath();
-                        ctx.fill();
-                    }
-
-                    // Cyber Piggy Tail (Curly glow wire at rear)
-                    ctx.strokeStyle = '#f43f5e';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(px, py + ph - 8);
-                    ctx.lineTo(px - 5, py + ph - 12);
-                    ctx.lineTo(px - 3, py + ph - 16);
-                    ctx.stroke();
-
-                    // Running Leg Animation
-                    if (p.isGrounded && this.state === 'playing') {
-                        const step = Math.sin(this.runDistance * 0.08) * 4;
-                        ctx.fillStyle = '#38bdf8';
-                        // Front foot
-                        ctx.fillRect(px + pw - 10, py + ph, 4, 4 + step);
-                        // Rear foot
-                        ctx.fillRect(px + 6, py + ph, 4, 4 - step);
-                    }
-                    ctx.restore();
-                }
-
-                drawStartOverlay(ctx, w, h) {
-                    ctx.save();
-                    ctx.fillStyle = 'rgba(2, 6, 23, 0.75)';
-                    ctx.fillRect(0, 0, w, h);
-
-                    ctx.textAlign = 'center';
-                    ctx.shadowColor = '#38bdf8';
-                    ctx.shadowBlur = 20;
-
-                    ctx.fillStyle = '#38bdf8';
-                    ctx.font = '900 28px "Plus Jakarta Sans", sans-serif';
-                    ctx.fillText('NEON PIG-RUNNER', w / 2, h / 2 - 40);
-
-                    ctx.font = '700 13px "JetBrains Mono", monospace';
-                    ctx.fillStyle = '#a855f7';
-                    ctx.shadowColor = '#a855f7';
-                    ctx.fillText('MISSION: DODGE OBSTACLES // SET THE RECORD', w / 2, h / 2 - 10);
-
-                    const blink = Math.sin(Date.now() * 0.006) > 0;
-                    if (blink) {
-                        ctx.fillStyle = '#ffffff';
-                        ctx.shadowColor = '#ffffff';
-                        ctx.shadowBlur = 10;
-                        ctx.font = '800 16px "Plus Jakarta Sans", sans-serif';
-                        ctx.fillText('PRESS SPACE / TAP TO RUN', w / 2, h / 2 + 45);
-                    }
-
-                    ctx.fillStyle = '#94a3b8';
-                    ctx.shadowBlur = 0;
-                    ctx.font = '500 11px "JetBrains Mono", monospace';
-                    ctx.fillText('CONTROLS: SPACE / ↑ = JUMP   |   ↓ / S = DUCK   |   ESC = RETURN', w / 2, h / 2 + 80);
-                    ctx.restore();
-                }
-
-                drawGameOverOverlay(ctx, w, h) {
-                    ctx.save();
-                    ctx.fillStyle = 'rgba(2, 6, 23, 0.85)';
-                    ctx.fillRect(0, 0, w, h);
-
-                    ctx.textAlign = 'center';
-                    ctx.shadowColor = '#f43f5e';
-                    ctx.shadowBlur = 25;
-
-                    ctx.fillStyle = '#f43f5e';
-                    ctx.font = '900 32px "Plus Jakarta Sans", sans-serif';
-                    ctx.fillText('GAME OVER', w / 2, h / 2 - 45);
-
-                    ctx.font = '700 16px "JetBrains Mono", monospace';
-                    ctx.fillStyle = '#ffffff';
-                    ctx.shadowBlur = 8;
-                    ctx.fillText(`SCORE: ${this.score}  |  HIGHSCORE: ${this.highscore}`, w / 2, h / 2);
-
-                    const blink = Math.sin(Date.now() * 0.006) > 0;
-                    if (blink) {
-                        ctx.fillStyle = '#38bdf8';
-                        ctx.shadowColor = '#38bdf8';
-                        ctx.shadowBlur = 12;
-                        ctx.font = '800 15px "Plus Jakarta Sans", sans-serif';
-                        ctx.fillText('PRESS SPACE / TAP TO RETRY', w / 2, h / 2 + 50);
-                    }
-                    ctx.restore();
-                }
+                if (s.x < -30 || s.collected) stars.splice(i, 1);
             }
 
-            // Expose classes on window for test harness and modular access
-            window.ProceduralArcadeAudio = ProceduralArcadeAudio;
-            window.NeonPigRunner = NeonPigRunner;
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const pt = particles[i];
+                pt.x += pt.vx; pt.y += pt.vy; pt.life -= dt * 2.2;
+                if (pt.life <= 0) particles.splice(i, 1);
+            }
 
-            // ----------------------------------------------------------------
-            // 5. BOOTSTRAP RUNTIME & EVENT LISTENERS
-            // ----------------------------------------------------------------
-            document.addEventListener('DOMContentLoaded', () => {
-                const canvas = document.getElementById('arcade-canvas');
-                if (!canvas) return;
+            render(now);
+            animFrame = requestAnimationFrame(gameLoop);
+        }
 
-                const audio = new ProceduralArcadeAudio();
-                const engine = new NeonPigRunner({
-                    canvas,
-                    audio,
-                    nav: getNavigatorSafe(),
-                    storage: getLocalStorageSafe()
-                });
-                window.arcadeEngine = engine;
+        function render(now) {
+            const canvas = document.getElementById('game-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#060a17';
+            ctx.fillRect(0, 0, 480, 360);
 
-                // Unlock audio on first user gesture
-                const unlockEvents = ['pointerdown', 'keydown', 'touchstart'];
-                const unlockAudio = () => {
-                    audio.ensureUnlocked();
-                    unlockEvents.forEach(evt => window.removeEventListener(evt, unlockAudio));
-                };
-                unlockEvents.forEach(evt => window.addEventListener(evt, unlockAudio, { passive: true }));
+            ctx.strokeStyle = 'rgba(6, 182, 212, 0.08)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < 480; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 360); ctx.stroke(); }
+            for (let y = 0; y < 360; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(480, y); ctx.stroke(); }
 
-                // --- KEYBOARD CONTROLS ---
-                window.addEventListener('keydown', (e) => {
-                    if (e.code === 'Escape' || e.key === 'Escape') {
-                        window.location.href = 'index.html';
-                        return;
-                    }
+            for (const p of pillars) {
+                const grad = ctx.createLinearGradient(p.x, 0, p.x + p.w, 0);
+                grad.addColorStop(0, '#06b6d4'); grad.addColorStop(1, '#3b82f6');
+                ctx.fillStyle = grad;
+                ctx.shadowColor = '#06b6d4'; ctx.shadowBlur = 10;
+                ctx.fillRect(p.x, 0, p.w, p.topH);
+                ctx.fillStyle = '#a5f3fc';
+                ctx.fillRect(p.x - 2, p.topH - 5, p.w + 4, 5);
+                ctx.fillStyle = grad;
+                ctx.fillRect(p.x, p.botY, p.w, 360 - p.botY);
+                ctx.fillStyle = '#a5f3fc';
+                ctx.fillRect(p.x - 2, p.botY, p.w + 4, 5);
+                ctx.shadowBlur = 0;
+            }
 
-                    if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
-                        e.preventDefault();
-                        engine.jump();
-                    } else if (e.code === 'ArrowDown' || e.code === 'KeyS') {
-                        e.preventDefault();
-                        engine.duck(true);
-                    } else if (e.code === 'KeyA') {
-                        engine.player.x = Math.max(40, engine.player.x - 15);
-                    } else if (e.code === 'KeyD') {
-                        engine.player.x = Math.min(180, engine.player.x + 15);
-                    }
-                });
+            for (const s of stars) {
+                ctx.font = '16px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(s.type === 'controller' ? '🎮' : '⭐', s.x, s.y + Math.sin(now * 0.008) * 2);
+            }
 
-                window.addEventListener('keyup', (e) => {
-                    if (e.code === 'ArrowDown' || e.code === 'KeyS') {
-                        engine.duck(false);
-                    }
-                });
+            for (const pt of particles) {
+                ctx.fillStyle = pt.color; ctx.globalAlpha = Math.max(0, pt.life);
+                ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2); ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
 
-                // --- TOUCH CONTROLS ---
-                const btnJump = document.getElementById('btn-touch-jump');
-                const btnDuck = document.getElementById('btn-touch-duck');
-
-                if (btnJump) {
-                    btnJump.addEventListener('pointerdown', (e) => {
-                        e.preventDefault();
-                        audio.ensureUnlocked();
-                        engine.jump();
-                    });
+            if (now >= invulnUntil || Math.floor(now / 80) % 2 === 0) {
+                ctx.save();
+                ctx.translate(pig.x, pig.y);
+                ctx.rotate(Math.max(-0.4, Math.min(0.5, pig.vy * 0.05)));
+                ctx.font = '26px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText('🐷', 0, 0);
+                if (isRunning) {
+                    ctx.fillStyle = '#f43f5e'; ctx.beginPath();
+                    ctx.arc(-14, 4, 4 + Math.random() * 2, 0, Math.PI * 2); ctx.fill();
                 }
+                ctx.restore();
+            }
 
-                if (btnDuck) {
-                    btnDuck.addEventListener('pointerdown', (e) => {
-                        e.preventDefault();
-                        audio.ensureUnlocked();
-                        engine.duck(true);
-                    });
-                    btnDuck.addEventListener('pointerup', () => engine.duck(false));
-                    btnDuck.addEventListener('pointercancel', () => engine.duck(false));
-                }
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 16px monospace'; ctx.textAlign = 'left';
+            ctx.fillText('SCORE: ' + score, 14, 26);
+            let h = ''; for (let l = 0; l < lives; l++) h += '❤️ ';
+            ctx.font = '14px sans-serif'; ctx.textAlign = 'right';
+            ctx.fillText(h, 466, 26);
+        }
 
-                // Canvas direct tap / swipe gesture support
-                let touchStartY = 0;
-                canvas.addEventListener('touchstart', (e) => {
-                    audio.ensureUnlocked();
-                    if (e.touches.length > 0) {
-                        touchStartY = e.touches[0].clientY;
-                    }
-                }, { passive: true });
+        const wrapper = document.getElementById('canvas-wrapper');
+        wrapper.addEventListener('pointerdown', (e) => {
+            if (isRunning) { e.preventDefault(); jump(); }
+        });
 
-                canvas.addEventListener('touchend', (e) => {
-                    if (e.changedTouches.length > 0) {
-                        const deltaY = e.changedTouches[0].clientY - touchStartY;
-                        if (deltaY > 30) {
-                            // Swipe down -> duck briefly
-                            engine.duck(true);
-                            setTimeout(() => engine.duck(false), 350);
-                        } else {
-                            // Tap -> jump
-                            engine.jump();
-                        }
-                    }
-                }, { passive: true });
-
-                canvas.addEventListener('pointerdown', (e) => {
-                    if (e.pointerType !== 'touch') {
-                        audio.ensureUnlocked();
-                        engine.jump();
-                    }
-                });
-
-                // --- 60 FPS ANIMATION LOOP ---
-                if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
-                    let lastTimestamp = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
-                    function gameLoop(timestamp) {
-                        const dt = (timestamp - lastTimestamp) / 1000;
-                        lastTimestamp = timestamp;
-
-                        engine.update(dt);
-                        engine.draw();
-
-                        window.requestAnimationFrame(gameLoop);
-                    }
-                    window.requestAnimationFrame(gameLoop);
-                }
-            });
-        })();
+        window.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'ArrowUp' || e.key.toLowerCase() === 'w') {
+                e.preventDefault();
+                if (!isRunning) startGame(); else jump();
+            }
+        });
     </script>
 </body>
 </html>
