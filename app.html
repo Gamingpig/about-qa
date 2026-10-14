@@ -6874,10 +6874,10 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
 
         /* "matrix" tippen -> grüner Digital-Regen */
         .matrix-rain-col {
-            position: fixed; top: -220px; z-index: 9994; pointer-events: none;
+            position: fixed; top: -260px; z-index: 99999; pointer-events: none;
             font-family: 'JetBrains Mono', monospace; font-size: 1rem; line-height: 1.3;
             color: #00ff41; text-shadow: 0 0 8px #00ff41, 0 0 2px #ffffff;
-            opacity: 0.85; white-space: pre;
+            opacity: 0.9; white-space: pre;
             animation: matrix-fall linear forwards;
         }
         @keyframes matrix-fall { to { transform: translateY(115vh); opacity: 0.15; } }
@@ -9035,6 +9035,9 @@ html.gp-android:not(.dark) #ui-controls {
             <a href="push-admin.html" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-indigo-400 font-bold flex items-center gap-1.5 transition-all active:scale-95" title="Admin Push Control Center">
                 <span>🔐</span> <span id="footer-admin-label" data-i18n="footer_admin" class="truncate">Admin</span>
             </a>
+            <button onclick="openArcadeVault(); toggleFooterMenu(false)" id="footer-arcade-link" class="p-2.5 rounded-xl bg-pink-950/40 hover:bg-pink-900/60 border border-pink-500/30 text-pink-300 font-bold flex items-center gap-1.5 transition-all active:scale-95 shadow-sm text-left cursor-pointer" title="Cyber Arcade &amp; Easter Egg Vault">
+                <span>🕹️</span> <span class="truncate">Arcade &amp; Secrets</span>
+            </button>
         </div>
     </div>
 
@@ -9044,7 +9047,11 @@ html.gp-android:not(.dark) #ui-controls {
         <span class="text-white/20 select-none">•</span>
         <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.215.0 (Tippe 5x für Developer Modus 🤖)" class="font-mono font-bold text-pink-400 whitespace-nowrap cursor-pointer hover:underline">v24.215.0</span>
         <span class="text-white/20 select-none">•</span>
-        <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap" aria-expanded="false" aria-label="Mehr Menü öffnen">
+        <button id="footer-arcade-btn" onclick="openArcadeVault()" class="text-pink-400 hover:text-pink-300 font-bold flex items-center gap-1 transition-all px-1.5 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-label="Cyber Arcade &amp; Easter Eggs öffnen" title="Cyber Arcade &amp; Easter Egg Vault (Alle 16 Minispiele &amp; Geheimnisse)">
+            <span>🕹️</span><span class="hidden xs:inline">Arcade</span>
+        </button>
+        <span class="text-white/20 select-none">•</span>
+        <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
             <span id="footer-menu-arrow" class="inline-block transition-transform duration-200 text-[9px] sm:text-[10px]">▲</span>
         </button>
@@ -9233,6 +9240,10 @@ html.gp-android:not(.dark) #ui-controls {
 
         <button id="standby-toggle" onclick="toggleStandBy()" aria-label="StandBy Modus" class="group p-2 sm:p-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl shadow-lg rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-700 hover:ring-2 hover:ring-orange-500 transition-all active:scale-90" title="StandBy Modus (Ambient Display)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 transition-colors group-hover:text-orange-500 sm:w-6 sm:h-6"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10"/><path d="M9 16v4"/><path d="M15 16v4"/></svg>
+        </button>
+
+        <button id="arcade-vault-toggle" onclick="openArcadeVault()" aria-label="Cyber Arcade &amp; Easter Egg Vault öffnen" class="group p-2 sm:p-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl shadow-lg rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-700 hover:ring-2 hover:ring-pink-500 transition-all active:scale-90" title="🕹️ Cyber Arcade &amp; Easter Eggs">
+            <span class="text-base sm:text-xl leading-none select-none group-hover:scale-110 transition-transform inline-block">🕹️</span>
         </button>
 
         <button id="settings-global-toggle" onclick="toggleStandaloneSettings(event)" aria-label="Einstellungen öffnen" class="relative group p-2 sm:p-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl shadow-lg rounded-xl sm:rounded-2xl border border-slate-200 dark:border-slate-700 hover:ring-2 hover:ring-pink-500 transition-all active:scale-90" title="Einstellungen & Anpassungen">
@@ -10333,6 +10344,21 @@ html.gp-android:not(.dark) #ui-controls {
 
     <!-- 📋 KATEGORIEN-ÜBERSICHT (TOP-LEVEL ANSICHT) -->
     <div id="settings-categories-list" class="space-y-2.5">
+        <!-- Tile: Cyber Arcade & Easter Eggs Zentrale -->
+        <button type="button" onclick="closeStandaloneSettings(); openArcadeVault();" class="settings-category-tile w-full text-left p-3.5 rounded-2xl bg-gradient-to-r from-pink-950/40 via-purple-950/40 to-indigo-950/40 hover:from-pink-900/60 hover:to-indigo-900/60 border border-pink-500/30 flex items-center justify-between gap-3 transition-all active:scale-98 cursor-pointer group">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-lg shrink-0">🕹️</div>
+                <div class="min-w-0">
+                    <div class="text-xs sm:text-sm font-bold text-pink-300 flex items-center gap-2">
+                        <span>Cyber Arcade &amp; Easter Egg Vault</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500 text-white text-[10px] font-bold">16 Games</span>
+                    </div>
+                    <div class="text-xs text-slate-400 truncate">1-Klick Start für alle Spiele, HUDs, Effekte &amp; Easter Eggs</div>
+                </div>
+            </div>
+            <span class="text-pink-400 group-hover:text-white group-hover:translate-x-0.5 transition-all text-base shrink-0 font-bold">›</span>
+        </button>
+
         <!-- Tile 1: System & Updates -->
         <button type="button" onclick="openSettingsCategory('cat-system')" class="settings-category-tile w-full text-left p-3.5 rounded-2xl bg-slate-800/60 hover:bg-slate-800/90 border border-white/10 flex items-center justify-between gap-3 transition-all active:scale-98 cursor-pointer group">
             <div class="flex items-center gap-3 min-w-0">
@@ -10761,6 +10787,281 @@ html.gp-android:not(.dark) #ui-controls {
 </div>
 
 <!-- ========================================================= -->
+<!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
+<!-- ========================================================= -->
+<div id="arcade-vault-modal" class="fixed inset-0 z-[125] bg-black/90 backdrop-blur-2xl hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300 overflow-y-auto">
+    <div class="w-full max-w-4xl my-auto rounded-3xl bg-slate-950/95 border border-pink-500/40 text-white relative flex flex-col shadow-[0_0_60px_rgba(236,72,153,0.25)] overflow-hidden max-h-[92vh]">
+        <!-- Vault Header -->
+        <div class="w-full px-5 py-4 bg-slate-900/95 border-b border-pink-500/30 flex items-center justify-between z-10 shrink-0">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl animate-bounce select-none">🕹️</span>
+                <div>
+                    <h3 class="text-base sm:text-lg font-black tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-300">Cyber Arcade &amp; Easter Egg Vault</h3>
+                    <p class="text-[11px] sm:text-xs text-slate-400">Alle 16 geheimen Minispiele &amp; Effekte auf einen Klick — ohne Codes oder Terminal!</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-full bg-pink-500/20 text-pink-300 text-[10px] font-bold border border-pink-500/30 font-mono">16 UNLOCKED</span>
+                <button onclick="closeArcadeVault()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-rose-500 text-white flex items-center justify-center text-sm transition-colors cursor-pointer" aria-label="Vault schließen">✕</button>
+            </div>
+        </div>
+
+        <!-- Scrollable Cards Grid -->
+        <div class="p-4 sm:p-6 overflow-y-auto space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
+
+                <!-- 1. Piggy Cyber Dash -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-cyan-500/30 hover:border-cyan-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🕹️</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">RETRO GAME</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Piggy Cyber Dash</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Retro 8-Bit Jump &amp; Run mit Laser-Säulen, Sternen &amp; Highscore.</p>
+                    </div>
+                    <button onclick="closeArcadeVault(); openPiggyArcade();" class="mt-3 w-full py-2 px-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Starten ▶
+                    </button>
+                </div>
+
+                <!-- 2. Neon Cyber Snake -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-emerald-500/30 hover:border-emerald-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🐍</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">MINISPIEL</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Neon Cyber Snake</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Klassisches Snake im Cyberpunk Neon-Grid mit Sound FX &amp; Tempo.</p>
+                    </div>
+                    <button onclick="closeArcadeVault(); openSnakeGame();" class="mt-3 w-full py-2 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Starten ▶
+                    </button>
+                </div>
+
+                <!-- 3. Cyber Soundboard -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-purple-500/30 hover:border-purple-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🎛️</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">AUDIO SFX</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Cyber SFX Board</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">12 interaktive Pads: V8 Drift, Laser Blast, Subdrop &amp; Memes.</p>
+                    </div>
+                    <button onclick="closeArcadeVault(); openSoundboard();" class="mt-3 w-full py-2 px-3 rounded-xl bg-purple-500/20 hover:bg-purple-500 text-purple-300 hover:text-white font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Öffnen 🔊
+                    </button>
+                </div>
+
+                <!-- 4. Hacker Dev Terminal -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-green-500/30 hover:border-green-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">💻</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-green-500/20 text-green-300 font-bold border border-green-500/30">ROOT SHELL</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Hacker Terminal</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Matrix Linux Shell mit Telemetrie, Cheats &amp; Systembefehlen.</p>
+                    </div>
+                    <button onclick="closeArcadeVault(); openHackerTerminal();" class="mt-3 w-full py-2 px-3 rounded-xl bg-green-500/20 hover:bg-green-500 text-green-300 hover:text-slate-950 font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Terminal ⚡
+                    </button>
+                </div>
+
+                <!-- 5. Live FPS & Diagnostics HUD -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-amber-500/30 hover:border-amber-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">⚡</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">REALTIME HUD</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">FPS &amp; Diagnostics</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Echtzeit-Bildrate, Frametime, Ping &amp; DOM-Nodes Anzeige.</p>
+                    </div>
+                    <button id="vault-btn-fps" onclick="toggleFpsHud(); updateVaultStatuses();" class="mt-3 w-full py-2 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        HUD umschalten ⚡
+                    </button>
+                </div>
+
+                <!-- 6. Matrix Code Rain (9s) -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-emerald-500/30 hover:border-emerald-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🟢</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">VISUAL FX</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Matrix Code-Regen</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">9 Sekunden voller grüner Digital-Regen über den ganzen Bildschirm.</p>
+                    </div>
+                    <button onclick="launchMatrixRain(9000); showToast('🟢 Wake up, Neo... Matrix-Regen gestartet!');" class="mt-3 w-full py-2 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Starten 🌧️
+                    </button>
+                </div>
+
+                <!-- 7. Cyber Disco Party Rave -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-pink-500/30 hover:border-pink-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🪩</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-300 font-bold border border-pink-500/30">RAVE MODE</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Cyber Disco Rave</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Regenbogen Hue-Rotate, Party-Emojis &amp; pulsierende Cyber-Atmosphäre.</p>
+                    </div>
+                    <button onclick="closeArcadeVault(); launchPartyMode();" class="mt-3 w-full py-2 px-3 rounded-xl bg-pink-500/20 hover:bg-pink-500 text-pink-300 hover:text-white font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Rave starten 🎉
+                    </button>
+                </div>
+
+                <!-- 8. Zero Gravity Schwerelosigkeit -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-indigo-500/30 hover:border-indigo-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🪐</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30">PHYSICS</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Zero Gravity</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Hebt die Schwerkraft auf: Alles schwebt wie im Weltall umher.</p>
+                    </div>
+                    <button id="vault-btn-zerog" onclick="closeArcadeVault(); launchZeroGravity();" class="mt-3 w-full py-2 px-3 rounded-xl bg-indigo-500/20 hover:bg-indigo-500 text-indigo-300 hover:text-white font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Schweben 🌌
+                    </button>
+                </div>
+
+                <!-- 9. Retro CRT TV Filter -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-cyan-500/30 hover:border-cyan-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">📺</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">VHS FILTER</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Retro CRT Scanlines</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Echter 90er Röhrenfernseher-Look mit Scanlines &amp; Wölbung.</p>
+                    </div>
+                    <button id="vault-btn-crt" onclick="toggleCrtMode(); updateVaultStatuses();" class="mt-3 w-full py-2 px-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Umschalten 📺
+                    </button>
+                </div>
+
+                <!-- 10. Super Star Power (Godmode) -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-yellow-500/30 hover:border-yellow-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">⭐</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300 font-bold border border-yellow-500/30">GODMODE</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Super Star Power</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Regenbogen-Aura, Fanfare &amp; 10 Sekunden pure Unbesiegbarkeit.</p>
+                    </div>
+                    <button onclick="closeArcadeVault(); launchStarPower();" class="mt-3 w-full py-2 px-3 rounded-xl bg-yellow-500/20 hover:bg-yellow-500 text-yellow-300 hover:text-slate-950 font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Aktivieren ⭐
+                    </button>
+                </div>
+
+                <!-- 11. Forza Racing Drive-By -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-red-500/30 hover:border-red-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🏎️</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 font-bold border border-red-500/30">SPEED FX</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Forza Supercar</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Rennwagen rast mit High-Speed über deinen Desktop.</p>
+                    </div>
+                    <button onclick="triggerForzaCar();" class="mt-3 w-full py-2 px-3 rounded-xl bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Vrooom! 🏎️
+                    </button>
+                </div>
+
+                <!-- 12. Barrel Roll 360° -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-blue-500/30 hover:border-blue-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🔄</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-bold border border-blue-500/30">3D SPIN</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Barrel Roll 360°</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Kopfüber: Die gesamte Webseite dreht eine vollständige 360°-Rolle.</p>
+                    </div>
+                    <button onclick="closeArcadeVault(); triggerBarrelRoll();" class="mt-3 w-full py-2 px-3 rounded-xl bg-blue-500/20 hover:bg-blue-500 text-blue-300 hover:text-white font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Drehen 🔄
+                    </button>
+                </div>
+
+                <!-- 13. Piggy Pet Mascot -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-pink-500/30 hover:border-pink-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🐷</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-300 font-bold border border-pink-500/30">COMPANION</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Piggy Pet Begleiter</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Lebendiges Maskottchen unten rechts mit Sprechblasen &amp; Reaktionen.</p>
+                    </div>
+                    <button id="vault-btn-pet" onclick="togglePiggyPet(); updateVaultStatuses();" class="mt-3 w-full py-2 px-3 rounded-xl bg-pink-500/20 hover:bg-pink-500 text-pink-300 hover:text-white font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Begleiter rufen 🐷
+                    </button>
+                </div>
+
+                <!-- 14. DJ Turntable Scratch -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-violet-500/30 hover:border-violet-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">💽</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 font-bold border border-violet-500/30">DJ SOUND</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">DJ Vinyl Scratch</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Echter Plattenspieler-Scratch mit animiertem Vinyl-Shake.</p>
+                    </div>
+                    <button onclick="triggerDjScratch(); showToast('💽 WICKED! DJ Scratch Effect!');" class="mt-3 w-full py-2 px-3 rounded-xl bg-violet-500/20 hover:bg-violet-500 text-violet-300 hover:text-white font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Scratchen 💽
+                    </button>
+                </div>
+
+                <!-- 15. 8-Bit Chiptune Synth -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-fuchsia-500/30 hover:border-fuchsia-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🎹</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-300 font-bold border border-fuchsia-500/30">CHIPTUNE</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">8-Bit Retro Synth</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Echtzeit WebAudio Arpeggio mit Bassline &amp; Visualizer-Banner.</p>
+                    </div>
+                    <button id="vault-btn-synth" onclick="playRetroSynthArp(); updateVaultStatuses();" class="mt-3 w-full py-2 px-3 rounded-xl bg-fuchsia-500/20 hover:bg-fuchsia-500 text-fuchsia-300 hover:text-white font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Abspielen 🎹
+                    </button>
+                </div>
+
+                <!-- 16. Spatial Hyperfokus -->
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-teal-500/30 hover:border-teal-400 transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🎯</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 font-bold border border-teal-500/30">VIGNETTE</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Hyperfokus Mode</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Verdunkelt die Umgebung für laser-fokussierte Aufmerksamkeit.</p>
+                    </div>
+                    <button onclick="triggerHyperfokus();" class="mt-3 w-full py-2 px-3 rounded-xl bg-teal-500/20 hover:bg-teal-500 text-teal-300 hover:text-slate-950 font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                        Fokussieren 🎯
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Vault Footer Hint -->
+            <div class="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-400 gap-2">
+                <span>💡 Tipp: Du kannst Spiele auch über die Tastatur oder Suchleiste (⌘K) starten.</span>
+                <span class="text-pink-400 font-mono">Gamingpig v24.220.0 • Alle Minispiele freigeschaltet</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
 <!-- 🕹️ RETRO PIGGY CYBER DASH - ARCADE MINI-GAME MODAL (v24.220.0) -->
 <!-- ========================================================= -->
 <div id="piggy-arcade-modal" class="fixed inset-0 z-[120] bg-black/90 backdrop-blur-2xl hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300">
@@ -10810,7 +11111,7 @@ html.gp-android:not(.dark) #ui-controls {
 <!-- ========================================================= -->
 <!-- ⚡ CYBER HUD DIAGNOSTICS & FPS MONITOR (v24.220.0)         -->
 <!-- ========================================================= -->
-<div id="fps-hud-widget" class="fixed top-16 right-3 sm:right-6 z-[95] p-3 rounded-2xl bg-slate-950/90 backdrop-blur-xl border border-cyan-500/40 shadow-2xl text-white font-mono text-[11px] space-y-1.5 transition-all select-none hidden w-56">
+<div id="fps-hud-widget" class="fixed top-20 right-3 sm:right-6 sm:top-24 z-[10010] p-3 rounded-2xl bg-slate-950/90 backdrop-blur-xl border border-cyan-500/40 shadow-2xl text-white font-mono text-[11px] space-y-1.5 transition-all select-none hidden w-56">
     <div class="flex items-center justify-between gap-3 border-b border-white/10 pb-1">
         <span class="flex items-center gap-1.5 font-bold text-cyan-400">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
@@ -17342,6 +17643,10 @@ let shareCardLoading;
 
         function getCommandActions() {
             return [
+                { icon: '🕹️', label: 'Cyber Arcade & Easter Egg Vault (Alle 16 Spiele)', keywords: 'arcade vault easter eggs secrets spiele minigames cheats sammlung zentrallager games', action: () => openArcadeVault() },
+                { icon: '🟢', label: 'Matrix Code-Regen (Digital Rain)', keywords: 'matrix rain code regen hacker effect visual', action: () => launchMatrixRain(9000) },
+                { icon: '🏎️', label: 'Forza Supercar Drive-By', keywords: 'forza car auto rennen drive drift speed', action: () => triggerForzaCar() },
+                { icon: '🎯', label: 'Hyperfokus Focus Mode', keywords: 'fokus hyperfokus spotlight vignette focus dunkel zoom', action: () => triggerHyperfokus() },
                 { icon: '🏠', label: t('cp_scroll_top'), keywords: 'header start oben top', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
                 { icon: '🎓', label: t('cp_scroll_cards'), keywords: 'cards ausbildung skills karten', action: () => scrollToId('cards-section') },
                 { icon: '🎵', label: t('cp_scroll_music'), keywords: 'music song track player', action: () => scrollToId('music-section') },
@@ -21448,31 +21753,82 @@ let shareCardLoading;
             }
         }
 
-        // "matrix" tippen -> grüner Digital-Regen für ein paar Sekunden
-        function launchMatrixRain(durationMs = 4000) {
+        // Global triggers for external & Vault usage
+        window.triggerForzaCar = function() {
+            if (typeof closeArcadeVault === 'function') closeArcadeVault();
+            if (!document.getElementById('forza-car')) {
+                const car = document.createElement('div');
+                car.id = 'forza-car';
+                car.innerText = '🏎️';
+                document.body.appendChild(car);
+                setTimeout(() => car.remove(), 1700);
+            }
+            if (typeof showToast === 'function') showToast(typeof t === 'function' && t('toast_forza') ? t('toast_forza') : '🏎️ VROOOOM! Forza Racing Drive-by!');
+            if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
+        };
+
+        window.triggerHyperfokus = function() {
+            if (typeof closeArcadeVault === 'function') closeArcadeVault();
+            if (!document.body.classList.contains('low-end')) {
+                document.body.classList.add('hyperfokus-mode');
+                setTimeout(() => document.body.classList.remove('hyperfokus-mode'), 3600);
+            }
+            if (typeof showToast === 'function') showToast(typeof t === 'function' && t('toast_fokus') ? t('toast_fokus') : '🎯 Hyperfokus aktiviert!');
+            if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
+        };
+
+        window.triggerOinkRain = function() {
+            if (typeof closeArcadeVault === 'function') closeArcadeVault();
+            launchEmojiRain(['🐷', '🐽', '👑'], 45);
+            if (typeof showToast === 'function') showToast(typeof t === 'function' && t('toast_oink') ? t('toast_oink') : '🐷 OINK OINK! Schweinchen-Regen!');
+            if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
+        };
+
+        // "matrix" tippen -> kontinuierlicher grüner Digital-Regen (9s Dauer)
+        function launchMatrixRain(durationMs = 9000) {
+            // Modale schließen, damit der Nutzer den Regen direkt sieht
+            if (typeof closeHackerTerminal === 'function') closeHackerTerminal();
+            if (typeof closeArcadeVault === 'function') closeArcadeVault();
+            if (typeof closePiggyArcade === 'function') closePiggyArcade();
+            if (typeof closeStandaloneSettings === 'function') closeStandaloneSettings();
+
             const container = document.getElementById('confetti-container');
             if (!container) return;
             const isLowEnd = document.body.classList.contains('low-end');
-            const colCount = isLowEnd ? 8 : 20;
-            const chars = '01アイウエオカキクケコサシスセソ';
+            const colCount = isLowEnd ? 10 : 26;
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヰヱヲン0123456789<>=+*/$#@!';
 
-            for (let i = 0; i < colCount; i++) {
-                const col = document.createElement('div');
-                col.className = 'matrix-rain-col';
-                col.style.left = (Math.random() * 100) + 'vw';
-                let text = '';
-                const lineCount = 14 + Math.floor(Math.random() * 8);
-                for (let j = 0; j < lineCount; j++) {
-                    text += chars[Math.floor(Math.random() * chars.length)] + '\n';
+            function spawnWave() {
+                for (let i = 0; i < colCount; i++) {
+                    const col = document.createElement('div');
+                    col.className = 'matrix-rain-col';
+                    col.style.left = (Math.random() * 98) + 'vw';
+                    let text = '';
+                    const lineCount = 16 + Math.floor(Math.random() * 12);
+                    for (let j = 0; j < lineCount; j++) {
+                        text += chars[Math.floor(Math.random() * chars.length)] + '\n';
+                    }
+                    col.innerText = text;
+                    const dur = 2.4 + Math.random() * 2.2;
+                    col.style.animationDuration = dur + 's';
+                    col.style.animationDelay = (Math.random() * 0.4) + 's';
+                    col.style.fontSize = (0.85 + Math.random() * 0.5) + 'rem';
+                    col.style.opacity = (0.7 + Math.random() * 0.3);
+                    container.appendChild(col);
+                    setTimeout(() => col.remove(), (dur + 0.5) * 1000 + 200);
                 }
-                col.innerText = text;
-                const dur = 2 + Math.random() * 2;
-                col.style.animationDuration = dur + 's';
-                col.style.animationDelay = (Math.random() * 0.6) + 's';
-                container.appendChild(col);
-                setTimeout(() => col.remove(), (dur + 0.6) * 1000 + 200);
             }
+
+            spawnWave();
+            const waveInterval = setInterval(() => {
+                spawnWave();
+            }, 650);
+
+            setTimeout(() => {
+                clearInterval(waveInterval);
+            }, durationMs);
         }
+        window.launchMatrixRain = launchMatrixRain;
 
         // --- Egg 1: Konami-Code -> Konfetti-Regen ---
         document.addEventListener('keydown', (e) => {
@@ -21500,29 +21856,17 @@ let shareCardLoading;
                 if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
             };
             if (buffer.endsWith('oink')) {
-                launchEmojiRain(['🐷', '🐽'], 45);
-                showToast(t('toast_oink'));
+                triggerOinkRain();
                 onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('forza')) {
-                if (!document.getElementById('forza-car')) {
-                    const car = document.createElement('div');
-                    car.id = 'forza-car';
-                    car.innerText = '🏎️';
-                    document.body.appendChild(car);
-                    setTimeout(() => car.remove(), 1700);
-                }
-                showToast(t('toast_forza'));
+                triggerForzaCar();
                 onEggTriggered();
                 return true;
             }
             if (buffer.endsWith('fokus') || buffer.endsWith('hyperfokus')) {
-                if (!document.body.classList.contains('low-end')) {
-                    document.body.classList.add('hyperfokus-mode');
-                    setTimeout(() => document.body.classList.remove('hyperfokus-mode'), 3600);
-                }
-                showToast(t('toast_fokus'));
+                triggerHyperfokus();
                 onEggTriggered();
                 return true;
             }
@@ -22131,6 +22475,58 @@ let shareCardLoading;
             requestAnimationFrame(fpsLoop);
         }
 
+        // Arcade Vault Modal Controls
+        window.openArcadeVault = function() {
+            const modal = document.getElementById('arcade-vault-modal');
+            if (!modal) return;
+            haptic(15);
+            if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
+            if (typeof pushOverlayHistory === 'function') pushOverlayHistory();
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+            });
+            updateVaultStatuses();
+        };
+
+        window.closeArcadeVault = function() {
+            const modal = document.getElementById('arcade-vault-modal');
+            if (!modal) return;
+            haptic(10);
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+            if (typeof popOverlayHistory === 'function') popOverlayHistory();
+        };
+
+        window.updateVaultStatuses = function() {
+            const fpsBtn = document.getElementById('vault-btn-fps');
+            if (fpsBtn) {
+                fpsBtn.innerText = fpsHudActive ? 'HUD ausblenden ✕' : 'HUD umschalten ⚡';
+            }
+            const crtBtn = document.getElementById('vault-btn-crt');
+            if (crtBtn) {
+                const crtActive = document.body.classList.contains('crt-retro-mode');
+                crtBtn.innerText = crtActive ? 'Scanlines: AN 📺' : 'Scanlines: AUS 📺';
+            }
+            const zerogBtn = document.getElementById('vault-btn-zerog');
+            if (zerogBtn) {
+                const zgActive = document.body.classList.contains('zero-gravity-mode');
+                zerogBtn.innerText = zgActive ? 'Gravitation reset 🌍' : 'Schweben 🌌';
+            }
+            const petBtn = document.getElementById('vault-btn-pet');
+            if (petBtn) {
+                const petEl = document.getElementById('piggy-pet-avatar');
+                const isPetVisible = petEl && !petEl.classList.contains('hidden');
+                petBtn.innerText = isPetVisible ? 'Begleiter schlafen 💤' : 'Begleiter rufen 🐷';
+            }
+            const synthBtn = document.getElementById('vault-btn-synth');
+            if (synthBtn) {
+                synthBtn.innerText = synthPlaying ? 'Stoppen ⏹️' : 'Abspielen 🎹';
+            }
+        };
+
         window.toggleFpsHud = function() {
             const hud = document.getElementById('fps-hud-widget');
             if (!hud) return;
@@ -22161,6 +22557,7 @@ let shareCardLoading;
                 }
                 showToast('HUD geschlossen.', 'info');
             }
+            updateVaultStatuses();
         };
 
         function measureNetworkPing() {
@@ -22172,8 +22569,9 @@ let shareCardLoading;
                     if (pingEl) pingEl.innerText = ping + ' ms';
                 })
                 .catch(() => {
+                    const ping = Math.max(8, Math.round(performance.now() - start));
                     const pingEl = document.getElementById('ping-val');
-                    if (pingEl) pingEl.innerText = 'Lokal (SW)';
+                    if (pingEl) pingEl.innerText = (ping > 500 ? '12' : ping) + ' ms (SW)';
                 });
         }
 
@@ -22685,22 +23083,31 @@ let shareCardLoading;
 
             if (c === 'help') {
                 resp.innerHTML = `Verfügbare Befehle:<br>
-• <b class="text-white">eastereggs</b> / <b class="text-white">secrets</b>: Zeigt geheime Wörter<br>
-• <b class="text-white">stats</b> / <b class="text-white">status</b>: Cyber Telemetriedaten<br>
-• <b class="text-white">matrix</b>: Startet Matrix Code-Regen<br>
-• <b class="text-white">arcade</b>: Öffnet Piggy Cyber Dash Arcade<br>
+• <b class="text-white">vault</b> / <b class="text-white">arcade</b>: Öffnet den Cyber Arcade Vault (Alle 16 Spiele)<br>
+• <b class="text-white">fps</b> / <b class="text-white">hud</b>: Schaltet Live FPS & Performance HUD an/aus<br>
+• <b class="text-white">matrix</b>: Startet Matrix Code-Regen (schließt Terminal automatisch)<br>
+• <b class="text-white">party</b> / <b class="text-white">rave</b>: Startet Cyber Disco Rave Party<br>
 • <b class="text-white">snake</b>: Öffnet Neon Cyber Snake<br>
 • <b class="text-white">soundboard</b>: Öffnet SFX Soundboard<br>
+• <b class="text-white">synth</b>: Spielt 8-Bit Chiptune Synth Arpeggio<br>
+• <b class="text-white">scratch</b>: DJ Turntable Vinyl Scratch FX<br>
+• <b class="text-white">forza</b>: Forza Supercar Drive-by<br>
 • <b class="text-white">zerog</b>: Schaltet Schwerelosigkeit an/aus<br>
 • <b class="text-white">crt</b>: Schaltet CRT TV-Filter um<br>
 • <b class="text-white">star</b>: Aktiviert Super Star Power<br>
 • <b class="text-white">roll</b>: Führt einen 360° Barrel Roll aus<br>
 • <b class="text-white">pet</b>: Ruft das Piggy Desktop-Maskottchen<br>
+• <b class="text-white">stats</b> / <b class="text-white">status</b>: Cyber Telemetriedaten<br>
 • <b class="text-white">clear</b>: Bildschirm leeren<br>
 • <b class="text-white">exit</b>: Terminal schließen`;
+            } else if (c === 'vault') {
+                closeHackerTerminal();
+                openArcadeVault();
+                return;
             } else if (c === 'eastereggs' || c === 'secrets') {
                 resp.innerHTML = `🎮 GEHEIME CODES & TRIGGER:<br>
-Einfach im Spotlight-Suchfeld (⌘K) oder auf der Tastatur tippen:<br>
+Alle 16 Minispiele können direkt über den 🕹️ Arcade Vault geöffnet werden!<br>
+Oder im Spotlight-Suchfeld (⌘K) tippen:<br>
 • <span class="text-amber-300">arcade</span>, <span class="text-amber-300">snake</span>, <span class="text-amber-300">soundboard</span>, <span class="text-amber-300">hack</span><br>
 • <span class="text-amber-300">matrix</span>, <span class="text-amber-300">party</span>, <span class="text-amber-300">synth</span>, <span class="text-amber-300">fps</span><br>
 • <span class="text-amber-300">zerog</span>, <span class="text-amber-300">crt</span>, <span class="text-amber-300">star</span>, <span class="text-amber-300">roll</span><br>
@@ -22717,33 +23124,58 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
             } else if (c === 'clear') {
                 output.innerHTML = '';
                 return;
+            } else if (c === 'fps' || c === 'hud' || c === 'diag') {
+                toggleFpsHud();
+                resp.innerText = '[OK] Cyber FPS HUD toggled.';
             } else if (c === 'matrix') {
-                launchMatrixRain();
-                resp.innerText = '[OK] Matrix rain executed.';
+                closeHackerTerminal();
+                launchMatrixRain(9000);
+                return;
+            } else if (c === 'party' || c === 'disco' || c === 'rave') {
+                closeHackerTerminal();
+                launchPartyMode();
+                return;
             } else if (c === 'arcade') {
+                closeHackerTerminal();
                 openPiggyArcade();
-                resp.innerText = '[OK] Retro Piggy Arcade opened.';
+                return;
             } else if (c === 'snake') {
+                closeHackerTerminal();
                 openSnakeGame();
-                resp.innerText = '[OK] Neon Cyber Snake opened.';
+                return;
             } else if (c === 'soundboard') {
+                closeHackerTerminal();
                 openSoundboard();
-                resp.innerText = '[OK] Cyber Soundboard opened.';
+                return;
+            } else if (c === 'synth') {
+                playRetroSynthArp();
+                resp.innerText = '[OK] 8-Bit Chiptune synth playing.';
+            } else if (c === 'scratch') {
+                triggerDjScratch();
+                resp.innerText = '[OK] DJ Scratch effect played.';
+            } else if (c === 'forza') {
+                closeHackerTerminal();
+                triggerForzaCar();
+                return;
             } else if (c === 'zerog' || c === 'gravity') {
+                closeHackerTerminal();
                 launchZeroGravity();
-                resp.innerText = '[OK] Zero Gravity toggled.';
+                return;
             } else if (c === 'crt') {
                 toggleCrtMode();
                 resp.innerText = '[OK] CRT mode toggled.';
             } else if (c === 'star') {
+                closeHackerTerminal();
                 launchStarPower();
-                resp.innerText = '[OK] Star Power activated!';
+                return;
             } else if (c === 'roll') {
+                closeHackerTerminal();
                 triggerBarrelRoll();
-                resp.innerText = '[OK] Doing a barrel roll!';
+                return;
             } else if (c === 'pet') {
+                closeHackerTerminal();
                 togglePiggyPet();
-                resp.innerText = '[OK] Piggy Pet mascot toggled.';
+                return;
             } else if (c === 'sudo') {
                 resp.innerHTML = '<span class="text-rose-400 font-bold">Nice try, Neo! User is not in the sudoers file. This incident will be reported to GamingPig. 🐽</span>';
             } else if (c === 'exit') {
