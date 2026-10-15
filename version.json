@@ -1,7 +1,8 @@
 {
-  "version": "24.222.4",
+  "version": "24.222.5",
   "buildTime": "2026-10-15T16:16:00.000Z",
   "shortNotes": [
+    "Multi-DB Lyrics Engine: Bundled-DB + LRCLIB + LyricsOVH Kaskade mit striktem 1-Fetch-pro-Song Schutz",
     "Hybrid Master Cadence: Best-of-Both-Worlds – Fließendes Stimm-Legato kombiniert mit Hook-Drop-Erkennung",
     "Dance-Pop Algorithmus: Aktive Phrasen-Kadenz & Hook-Drop Erkennung für perfekten Beat-Sync",
     "Lyrics-Durchbruch: 100% autonome Songtext-Erkennung – manueller Re-Sync endgültig eliminiert",
