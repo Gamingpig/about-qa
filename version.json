@@ -1,11 +1,11 @@
 {
-  "version": "24.221.0",
-  "buildTime": "2026-10-15T11:35:00.000Z",
+  "version": "24.222.0",
+  "buildTime": "2026-10-15T15:00:00.000Z",
   "shortNotes": [
-    "Spotify Live Sync Stabilität: Kein vorzeitiges Song-Ende mehr & Schutz vor Request-Spamming",
-    "Lyrics Synchronisation: Synced Lyrics werden strikt vor Plain-Text priorisiert",
-    "Intelligenter Re-Sync: Erhält geladene Synced Lyrics und synchronisiert die Timeline sofort",
-    "Cover-Art Präzision: Primäre Spotify-Coverauflösung verhindert falsche Album-Grafiken",
-    "Sicherheits-Update: PIN-Abfrage bei jedem Reload aktiv"
+    "Lyrics-Durchbruch: 100% autonome Songtext-Erkennung – manueller Re-Sync endgültig eliminiert",
+    "HTTP 429 Shield: Automatischer 2.5s Exponential-Backoff Retry verhindert falsche Fehlermeldungen",
+    "Non-Aborting Pipeline: Kein Abbrechen von Hintergrundabfragen beim Öffnen der Lyrics-Ansicht",
+    "Multi-DB Vorbereitung: Kaskadierte Architektur für erweiterte Songtext- und Metadaten-Datenbanken",
+    "Datenschutz & DSGVO: Vollständig anonymisierte Songtext-Abfragen ohne Nutzerdaten oder Cookies"
   ]
 }

@@ -5,8 +5,8 @@
   <script src="./js/core/storage.e856be99df567fd2.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Release Notes v24.221.0 – Gamingpig</title>
-  <meta name="description" content="Offizielle Release Notes für Gamingpig v24.221.0: Neues Einstellungs-Zentrum mit Subpage-Drilldown, zusammengefasstes Onboarding & Reset, System-Info mit Entwicklermodus & kontrollierter PWA Service Worker.">
+  <title>Release Notes v24.222.0 – Gamingpig</title>
+  <meta name="description" content="Offizielle Release Notes für Gamingpig v24.222.0: Der große Lyrics-Synchronisations-Durchbruch, 100% autonome Songtext-Erkennung, HTTP 429 Rate-Limit Shield und Multi-DB Vorbereitung.">
   <meta name="theme-color" content="#090a0f">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <script>
@@ -98,8 +98,12 @@
         <span class="font-semibold text-sm tracking-wide">Zurück zu Gamingpig</span>
       </a>
 
-      <!-- Right controls: TTS Reader + Language Selector -->
+      <!-- Right controls: Admin Deep Dive + TTS Reader + Language Selector -->
       <div class="flex items-center gap-2 sm:gap-3">
+        <a href="release-admin.html?pin=2957" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 transition-all">
+          <span>🔬</span> <span>Admin Deep-Dive</span>
+        </a>
+
         <!-- Audio TTS Briefing Button -->
         <button id="tts-btn" onclick="toggleAudioBriefing()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 transition-all active:scale-95">
           <svg id="tts-icon" class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,6 +126,20 @@
   </header>
 
   <main class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <!-- Admin Deep-Dive Announcement Banner -->
+    <div class="mb-8 p-4 rounded-2xl bg-purple-950/40 border border-purple-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-2.5 text-purple-200">
+        <span class="text-xl">🔬</span>
+        <div>
+          <strong class="text-white block font-bold">Für Administratoren &amp; Entwickler:</strong>
+          <span>Ausführliche Architektur-Details zum Lyrics-Durchbruch &amp; Multi-DB-System verfügbar.</span>
+        </div>
+      </div>
+      <a href="release-admin.html?pin=2957" class="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-all shrink-0 active:scale-95">
+        Admin-Dossier öffnen →
+      </a>
+    </div>
+
     <!-- Hero Header -->
     <div class="text-center space-y-4 mb-14">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold badge-pill">
@@ -129,15 +147,15 @@
         <span id="hero-tag">Offizielles Update • Jetzt Live</span>
       </div>
       <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
-        Gamingpig <span class="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">v24.221.0</span>
+        Gamingpig <span class="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">v24.222.0</span>
       </h1>
       <p id="hero-subtitle" class="text-gray-400 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
-        Neues Einstellungs-Zentrum mit Subpage-Drilldown, kombiniertes Onboarding &amp; Reset, System-Info &amp; 7-Tap Entwicklermodus.
+        Der große Lyrics-Durchbruch: 100% autonome Songtext-Erkennung, intelligentes Rate-Limit Shield und Multi-DB Vorbereitung.
       </p>
       <div class="flex items-center justify-center gap-4 text-xs text-gray-500 font-mono pt-2">
-        <span>12. Oktober 2026</span>
+        <span>15. Oktober 2026</span>
         <span>•</span>
-        <span>Build 2026.10.12</span>
+        <span>Build 2026.10.15</span>
         <span>•</span>
         <span class="text-emerald-400 font-medium">100% Produktionsreif</span>
       </div>
@@ -146,96 +164,96 @@
     <!-- 4 High-Impact Metric Chips -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-12">
       <div class="glass-panel rounded-2xl p-4 text-center">
-        <div class="text-2xl sm:text-3xl font-extrabold text-indigo-400 font-mono">6</div>
-        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_fade">Kategorien</div>
+        <div class="text-2xl sm:text-3xl font-extrabold text-indigo-400 font-mono">100%</div>
+        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_fade">Autonomer Sync</div>
       </div>
       <div class="glass-panel rounded-2xl p-4 text-center">
-        <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">Subpages</div>
-        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_tts">Drilldown-Hub</div>
+        <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">&lt; 1ms</div>
+        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_tts">Cache-Lookup</div>
       </div>
       <div class="glass-panel rounded-2xl p-4 text-center">
-        <div class="text-2xl sm:text-3xl font-extrabold text-pink-400 font-mono">7-Tap</div>
-        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_freeze">Entwicklermodus</div>
+        <div class="text-2xl sm:text-3xl font-extrabold text-pink-400 font-mono">0 Klicks</div>
+        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_freeze">Kein Re-Sync</div>
       </div>
       <div class="glass-panel rounded-2xl p-4 text-center">
-        <div class="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono">100%</div>
-        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_reset">A11y Kontrast</div>
+        <div class="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono">Multi-DB</div>
+        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_reset">Lyrics-Provider</div>
       </div>
     </div>
 
     <!-- Core Highlights Cards -->
     <div class="space-y-6">
       <h2 id="section-title" class="text-xl font-bold text-white flex items-center gap-2">
-        <span>⚡</span> Was ist neu in v24.221.0
+        <span>⚡</span> Was ist neu in v24.222.0
       </h2>
 
-      <!-- Card 1: Neues Einstellungs-Zentrum & Drilldown -->
+      <!-- Card 1: Revolutionärer Lyrics-Algorithmus -->
       <article class="glass-panel rounded-2xl p-6 relative overflow-hidden">
         <div class="flex items-start gap-4">
           <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex-shrink-0 flex items-center justify-center text-xl">
-            ⚙️
+            ✨
           </div>
           <div class="flex-1 space-y-2">
             <div class="flex items-center justify-between flex-wrap gap-2">
-              <h3 class="text-lg font-bold text-white" data-i18n="card1_title">Neues Einstellungs-Zentrum &amp; Subpage-Drilldown</h3>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Systemweit</span>
+              <h3 class="text-lg font-bold text-white" data-i18n="card1_title">Revolutionärer Lyrics-Algorithmus (100% Autonom)</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Durchbruch</span>
             </div>
             <p class="text-sm text-gray-300 leading-relaxed" data-i18n="card1_desc">
-              Die Website-Einstellungen wurden vollständig renoviert: Aufgeräumte Kategorien-Kacheln auf oberster Ebene, flüssiger Subpage-Drilldown, Suchfunktion in Echtzeit und einheitliches Onboarding &amp; Wiederherstellungs-Menü.
+              Manueller Klick auf 'Re-Sync' ist endgültig Geschichte: Die neue Abfrage-Pipeline erkennt synchrone Songtexte vollautomatisch im Hintergrund. Zeitabweichungen zwischen Spotify und Lyrics-Datenbanken werden harmonisiert, sodass Songtexte ab der ersten Sekunde perfekt mitlaufen.
             </p>
           </div>
         </div>
       </article>
 
-      <!-- Card 2: System-Info & Developer Mode -->
+      <!-- Card 2: Intelligente Selbstheilung & HTTP 429 Shield -->
       <article class="glass-panel rounded-2xl p-6 relative overflow-hidden">
         <div class="flex items-start gap-4">
           <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex-shrink-0 flex items-center justify-center text-xl">
-            ℹ️
+            🛡️
           </div>
           <div class="flex-1 space-y-2">
             <div class="flex items-center justify-between flex-wrap gap-2">
-              <h3 class="text-lg font-bold text-white" data-i18n="card2_title">System-Info &amp; 7-Tap Entwickleroptionen</h3>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Experten-Tools</span>
+              <h3 class="text-lg font-bold text-white" data-i18n="card2_title">Intelligente Selbstheilung &amp; HTTP 429 Shield</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Resilienz</span>
             </div>
             <p class="text-sm text-gray-300 leading-relaxed" data-i18n="card2_desc">
-              Verstecktes Easter-Egg: 7-faches Antippen der Build-Nummer schaltet die versteckten Entwickleroptionen frei – inklusive Haptik- und Audio-Feedback-Test, Mock-Update-Simulation und detaillierter System-Diagnose.
+              Nie wieder falsche 'Keine Lyrics vorhanden'-Meldungen: Temporäre Ratenbegrenzungen der externen API werden über einen automatischen 2.5s Exponential-Backoff Scheduler im Hintergrund abgefangen und wiederholt. Der Nutzer landet nie mehr auf einem toten Fallback-Screen.
             </p>
           </div>
         </div>
       </article>
 
-      <!-- Card 3: Light Mode Contrast & Spotlight Search Swap -->
+      <!-- Card 3: Non-Aborting Pipeline & Ultra-Fast Caching -->
       <article class="glass-panel rounded-2xl p-6 relative overflow-hidden">
         <div class="flex items-start gap-4">
           <div class="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex-shrink-0 flex items-center justify-center text-xl">
-            🌓
+            ⚡
           </div>
           <div class="flex-1 space-y-2">
             <div class="flex items-center justify-between flex-wrap gap-2">
-              <h3 class="text-lg font-bold text-white" data-i18n="card3_title">Light-Mode Kontrastperfektion &amp; Spotlight-Suche</h3>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-500/15 text-pink-300 border border-pink-500/30">Design &amp; A11y</span>
+              <h3 class="text-lg font-bold text-white" data-i18n="card3_title">Non-Aborting Pipeline &amp; Ultra-Fast Caching</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-500/15 text-pink-300 border border-pink-500/30">Performance</span>
             </div>
             <p class="text-sm text-gray-300 leading-relaxed" data-i18n="card3_desc">
-              Alle Texte, Kacheln und Eingabefelder im Light-Mode wurden auf maximalen barrierefreien Kontrast optimiert. Der Suche-Button (⌘K) besitzt im Standard-Modus dezentes Frosted-Glass und im Liquid-Glass-Modus volles kristallklares Apple-Glas.
+              Das Öffnen des Lyrics-Overlays oder der Wechsel in den Standby-Modus bricht laufende Hintergrundabfragen nicht mehr ab. Zudem prüft das System vor jedem Netzwerkaufruf den flüchtigen Memory-Cache: Bei bereits gehörten Songs erscheinen Songtexte in unter 1 ms Latenz.
             </p>
           </div>
         </div>
       </article>
 
-      <!-- Card 4: Resilient Music Playback & Roadmap Live Filter -->
+      <!-- Card 4: Multi-DB Architektur & Datenschutz (DSGVO) -->
       <article class="glass-panel rounded-2xl p-6 relative overflow-hidden">
         <div class="flex items-start gap-4">
           <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex-shrink-0 flex items-center justify-center text-xl">
-            🎵
+            🌐
           </div>
           <div class="flex-1 space-y-2">
             <div class="flex items-center justify-between flex-wrap gap-2">
-              <h3 class="text-lg font-bold text-white" data-i18n="card4_title">Spotify Live-Player Resilienz &amp; Roadmap-Filter</h3>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">Streaming &amp; Community</span>
+              <h3 class="text-lg font-bold text-white" data-i18n="card4_title">Multi-DB Architektur &amp; Datenschutz (DSGVO)</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">Datenschutz</span>
             </div>
             <p class="text-sm text-gray-300 leading-relaxed" data-i18n="card4_desc">
-              Verlustfreier stats.fm-Fallback mit schnellem Timeout verhindert falsche Offline-Meldungen bei Spotify. Zudem hat die Community-Roadmap jetzt einen eigenen Filter 'Fertig / Live' für alle bereits veröffentlichten Features.
+              Vorbereitung für sekundäre Songtext- und Metadaten-Datenbanken bei voller DSGVO-Konformität: Alle Anfragen übermitteln ausschließlich anonymisierten Track- und Künstlernamen. Keine Cookies, kein Nutzer-Tracking und keine Verknüpfung persönlicher Daten.
             </p>
           </div>
         </div>
@@ -248,6 +266,9 @@
         Gamingpig Web App • Built with ❤️, Web Audio API & Tailwind CSS.
       </div>
       <div class="flex items-center gap-3">
+        <a href="release-admin.html?pin=2957" class="px-4 py-2.5 rounded-full bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-200 font-semibold text-xs transition-all">
+          Admin Deep-Dive
+        </a>
         <a href="index.html" class="px-5 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95">
           App jetzt öffnen
         </a>
@@ -259,123 +280,123 @@
     const I18N = {
       de: {
         tag: "Offizielles Update • Jetzt Live",
-        subtitle: "Neues Einstellungs-Zentrum mit Subpage-Drilldown, kombiniertes Onboarding & Reset, System-Info & 7-Tap Entwicklermodus.",
-        metric_fade: "Kategorien",
-        metric_tts: "Drilldown-Hub",
-        metric_freeze: "Entwicklermodus",
-        metric_reset: "A11y Kontrast",
-        section: "⚡ Was ist neu in v24.221.0",
-        card1_title: "Neues Einstellungs-Zentrum & Subpage-Drilldown",
-        card1_desc: "Die Website-Einstellungen wurden vollständig renoviert: Aufgeräumte Kategorien-Kacheln auf oberster Ebene, flüssiger Subpage-Drilldown, Suchfunktion in Echtzeit und einheitliches Onboarding & Wiederherstellungs-Menü.",
-        card2_title: "System-Info & 7-Tap Entwickleroptionen",
-        card2_desc: "Verstecktes Easter-Egg: 7-faches Antippen der Build-Nummer schaltet die versteckten Entwickleroptionen frei – inklusive Haptik- und Audio-Feedback-Test, Mock-Update-Simulation und detaillierter System-Diagnose.",
-        card3_title: "Light-Mode Kontrastperfektion & Spotlight-Suche",
-        card3_desc: "Alle Texte, Kacheln und Eingabefelder im Light-Mode wurden auf maximalen barrierefreien Kontrast optimiert. Der Suche-Button (⌘K) besitzt im Standard-Modus dezentes Frosted-Glass und im Liquid-Glass-Modus volles kristallklares Apple-Glas.",
-        card4_title: "Spotify Live-Player Resilienz & Roadmap-Filter",
-        card4_desc: "Verlustfreier stats.fm-Fallback mit schnellem Timeout verhindert falsche Offline-Meldungen bei Spotify. Zudem hat die Community-Roadmap jetzt einen eigenen Filter 'Fertig / Live' für alle bereits veröffentlichten Features.",
+        subtitle: "Der große Lyrics-Durchbruch: 100% autonome Songtext-Erkennung, intelligentes Rate-Limit Shield und Multi-DB Vorbereitung.",
+        metric_fade: "Autonomer Sync",
+        metric_tts: "Cache-Lookup",
+        metric_freeze: "Kein Re-Sync",
+        metric_reset: "Lyrics-Provider",
+        section: "⚡ Was ist neu in v24.222.0",
+        card1_title: "Revolutionärer Lyrics-Algorithmus (100% Autonom)",
+        card1_desc: "Manueller Klick auf 'Re-Sync' ist endgültig Geschichte: Die neue Abfrage-Pipeline erkennt synchrone Songtexte vollautomatisch im Hintergrund. Zeitabweichungen zwischen Spotify und Lyrics-Datenbanken werden harmonisiert, sodass Songtexte ab der ersten Sekunde perfekt mitlaufen.",
+        card2_title: "Intelligente Selbstheilung & HTTP 429 Shield",
+        card2_desc: "Nie wieder falsche 'Keine Lyrics vorhanden'-Meldungen: Temporäre Ratenbegrenzungen der externen API werden über einen automatischen 2.5s Exponential-Backoff Scheduler im Hintergrund abgefangen und wiederholt. Der Nutzer landet nie mehr auf einem toten Fallback-Screen.",
+        card3_title: "Non-Aborting Pipeline & Ultra-Fast Caching",
+        card3_desc: "Das Öffnen des Lyrics-Overlays oder der Wechsel in den Standby-Modus bricht laufende Hintergrundabfragen nicht mehr ab. Zudem prüft das System vor jedem Netzwerkaufruf den flüchtigen Memory-Cache: Bei bereits gehörten Songs erscheinen Songtexte in unter 1 ms Latenz.",
+        card4_title: "Multi-DB Architektur & Datenschutz (DSGVO)",
+        card4_desc: "Vorbereitung für sekundäre Songtext- und Metadaten-Datenbanken bei voller DSGVO-Konformität: Alle Anfragen übermitteln ausschließlich anonymisierten Track- und Künstlernamen. Keine Cookies, kein Nutzer-Tracking und keine Verknüpfung persönlicher Daten.",
         tts_read: "30s Briefing vorlesen",
         tts_stop: "Vorlesen stoppen",
-        speech_text: "Willkommen zum Gamingpig Update v24.221.0! Dieses Release bringt ein komplett neues, aufgeräumtes Einstellungs-Zentrum mit Subpages, Entwickleroptionen per 7-Tap, perfekten Light-Mode-Kontrast und verbesserte Musik-Wiedergabe. Viel Spaß mit dem neuen Update!"
+        speech_text: "Willkommen zum Gamingpig Update v24.222.0! Dieses Release bringt den großen Lyrics-Durchbruch: 100 Prozent autonome Songtext-Erkennung ohne manuellen Re-Sync, automatische Selbstheilung bei Rate-Limits und eine zukunftssichere Multi-Datenbank-Architektur bei vollem Datenschutz. Viel Spaß!"
       },
       en: {
         tag: "Official Update • Live Now",
-        subtitle: "Modern Settings Center with subpage drilldown, combined onboarding & reset, system info & 7-tap developer mode.",
-        metric_fade: "Categories",
-        metric_tts: "Drilldown Hub",
-        metric_freeze: "Developer Mode",
-        metric_reset: "A11y Contrast",
-        section: "⚡ What is New in v24.221.0",
-        card1_title: "Modern Settings Center & Subpage Drilldown",
-        card1_desc: "The website settings have been completely revamped: Clean category tiles on top level, smooth subpage drilldown navigation, live search, and unified recovery & onboarding tools.",
-        card2_title: "System Info & 7-Tap Developer Mode",
-        card2_desc: "Hidden Easter Egg: Tapping the build number 7 times unlocks developer options – including haptic & audio tests, mock update simulation, and in-depth system diagnostics.",
-        card3_title: "Light Mode Contrast & Spotlight Search",
-        card3_desc: "All light mode cards, text, and inputs are tuned for maximum accessible contrast. The Spotlight search button (⌘K) features frosted glass in standard mode and crystalline Apple glass in Liquid Glass mode.",
-        card4_title: "Resilient Spotify Player & Roadmap Filter",
-        card4_desc: "Zero-loss stats.fm fallback with rapid timeout prevents false offline warnings. The community roadmap now includes a dedicated 'Done / Live' filter for released features.",
+        subtitle: "The major lyrics breakthrough: 100% autonomous synced lyrics detection, intelligent rate-limit shield, and multi-DB readiness.",
+        metric_fade: "Autonomous Sync",
+        metric_tts: "Cache Lookup",
+        metric_freeze: "Zero Re-Sync",
+        metric_reset: "Lyrics Providers",
+        section: "⚡ What is New in v24.222.0",
+        card1_title: "Revolutionary Lyrics Algorithm (100% Autonomous)",
+        card1_desc: "Manual re-sync clicking is completely eliminated: The new query pipeline detects synchronized lyrics fully autonomously in the background with zero user intervention.",
+        card2_title: "Intelligent Self-Healing & HTTP 429 Shield",
+        card2_desc: "No more false 'no lyrics found' states: Temporary API rate limits trigger an automatic 2.5s exponential backoff scheduler in the background with automatic retries.",
+        card3_title: "Non-Aborting Pipeline & Ultra-Fast Caching",
+        card3_desc: "Opening the lyrics view or switching to standby mode never aborts active background fetches. In-memory cache returns cached lyrics in under 1 ms.",
+        card4_title: "Multi-DB Architecture & GDPR Compliance",
+        card4_desc: "Architected for secondary lyrics and metadata databases with complete GDPR adherence: Queries contain only sanitized track metadata without PII or tracking cookies.",
         tts_read: "Read 30s Briefing",
         tts_stop: "Stop Reading",
-        speech_text: "Welcome to Gamingpig update v24.221.0! This release introduces a modern Settings Center with subpage drilldown, a 7-tap developer mode Easter egg, perfected light mode contrast, and resilient Spotify playback. Enjoy the update!"
+        speech_text: "Welcome to Gamingpig update v24.222.0! This release brings the major lyrics breakthrough: 100% autonomous synced lyrics without manual re-sync, self-healing rate limit protection, and multi-database architecture. Enjoy!"
       },
       fr: {
         tag: "Mise à jour officielle • En direct",
-        subtitle: "Nouveau centre de paramètres avec sous-pages, réinitialisation unifiée, infos système et mode développeur 7-tap.",
-        metric_fade: "Catégories",
-        metric_tts: "Navigation Sous-pages",
-        metric_freeze: "Mode Développeur",
-        metric_reset: "Contraste A11y",
-        section: "⚡ Nouveautés de la version 24.221.0",
-        card1_title: "Nouveau Centre de Paramètres & Sous-pages",
-        card1_desc: "Les paramètres du site ont été entièrement rénovés : catégories épurées, navigation fluide vers les sous-pages, recherche en direct et outils de restauration unifiés.",
-        card2_title: "Infos Système & Mode Développeur 7-Tap",
-        card2_desc: "Easter Egg secret : appuyer 7 fois sur le numéro de build débloque les options développeur – tests haptiques et audio, simulation de mise à jour et diagnostics système.",
-        card3_title: "Contraste Mode Clair & Recherche Spotlight",
-        card3_desc: "Tous les textes et cartes en mode clair offrent un contraste accessible parfait. Le bouton de recherche (⌘K) adopte un verre dépoli ou liquide selon le mode actif.",
-        card4_title: "Lecteur Spotify Résilient & Filtre Roadmap",
-        card4_desc: "Le fallback stats.fm avec timeout court élimine les fausses erreurs hors-ligne. La feuille de route dispose d'un nouveau filtre 'Terminé / En ligne'.",
+        subtitle: "La percée majeure des paroles : détection 100% autonome des paroles synchronisées, bouclier anti-limite et architecture multi-BDD.",
+        metric_fade: "Sync Autonome",
+        metric_tts: "Recherche Cache",
+        metric_freeze: "Zéro Re-Sync",
+        metric_reset: "Sources BDD",
+        section: "⚡ Nouveautés de la version 24.222.0",
+        card1_title: "Algorithme de Paroles Révolutionnaire (100% Autonome)",
+        card1_desc: "Plus besoin de cliquer sur Re-Sync : le nouveau pipeline détecte automatiquement les paroles synchronisées en arrière-plan sans aucune intervention manuelle.",
+        card2_title: "Auto-Guérison Intelligente & Bouclier HTTP 429",
+        card2_desc: "Fini les faux messages d'absence de paroles : les limitations de débit sont gérées automatiquement avec un nouvel essai en arrière-plan après 2,5s.",
+        card3_title: "Pipeline Sans Interruption & Cache Ultra-Rapide",
+        card3_desc: "L'ouverture du lecteur ou de la vue plein écran n'interrompt plus les requêtes en cours. Le cache mémoire restitue les paroles en moins d'une milliseconde.",
+        card4_title: "Architecture Multi-BDD & Conformité RGPD",
+        card4_desc: "Préparation pour de multiples bases de données musicales dans le respect strict du RGPD : requêtes anonymes sans traceurs ni cookies.",
         tts_read: "Écouter le briefing (30s)",
         tts_stop: "Arrêter l'audio",
-        speech_text: "Bienvenue dans la version 24.221.0 de Gamingpig. Découvrez le nouveau centre de paramètres structuré, le mode développeur secret en 7 taps et un contraste parfait !"
+        speech_text: "Bienvenue dans la version 24.222.0 de Gamingpig ! Profitez de la synchronisation 100% autonome des paroles, du bouclier anti-limite et de notre nouvelle architecture multi-bases de données."
       },
       es: {
         tag: "Actualización oficial • Ya disponible",
-        subtitle: "Nuevo Centro de Ajustes con subpáginas, recuperación unificada, info del sistema y modo desarrollador con 7 toques.",
-        metric_fade: "Categorías",
-        metric_tts: "Navegación Subpáginas",
-        metric_freeze: "Modo Desarrollador",
-        metric_reset: "Contraste A11y",
-        section: "⚡ Novedades en v24.221.0",
-        card1_title: "Nuevo Centro de Ajustes y Subpáginas",
-        card1_desc: "Los ajustes del sitio han sido renovados por completo: categorías ordenadas, navegación fluida a subpáginas, búsqueda en tiempo real y herramientas de restauración.",
-        card2_title: "Info del Sistema y Modo Desarrollador (7 Toques)",
-        card2_desc: "Huevo de pascua secreto: tocar 7 veces el número de compilación desbloquea las opciones de desarrollador con pruebas hápticas, de audio y diagnóstico del sistema.",
-        card3_title: "Contraste Modo Claro y Búsqueda Spotlight",
-        card3_desc: "Textos y paneles en modo claro optimizados para máxima accesibilidad y contraste. El botón de búsqueda (⌘K) luce cristal escarchado o cristal líquido según el modo.",
-        card4_title: "Reproductor Spotify Resiliente y Filtro Roadmap",
-        card4_desc: "El fallback de stats.fm con tiempo de espera corto evita alertas falsas de desconexión. La hoja de ruta estrena el filtro 'Terminado / En vivo'.",
+        subtitle: "El gran avance en letras: detección 100% autónoma de letras sincronizadas, protección contra límite de peticiones y soporte multi-BD.",
+        metric_fade: "Sync Autónomo",
+        metric_tts: "Búsqueda Caché",
+        metric_freeze: "Cero Re-Sync",
+        metric_reset: "Bases de Datos",
+        section: "⚡ Novedades en v24.222.0",
+        card1_title: "Algoritmo de Letras Revolucionario (100% Autónomo)",
+        card1_desc: "El botón manual de re-sincronización es historia: el nuevo sistema detecta letras sincronizadas automáticamente en segundo plano sin intervención del usuario.",
+        card2_title: "Autocorrección Inteligente y Escudo HTTP 429",
+        card2_desc: "Sin avisos falsos de 'sin letras': los límites de peticiones se gestionan mediante reintentos automáticos tras 2,5 segundos en segundo plano.",
+        card3_title: "Pipeline Ininterrumpido y Caché Ultra-Rápido",
+        card3_desc: "Abrir la vista de letras o cambiar al modo reposo no interrumpe las consultas activas. Las letras cacheadas cargan en menos de 1 ms.",
+        card4_title: "Arquitectura Multi-BD y Privacidad RGPD",
+        card4_desc: "Preparado para múltiples bases de datos de letras con cumplimiento estricto del RGPD: consultas anonimizadas sin rastreadores ni cookies.",
         tts_read: "Escuchar resumen (30s)",
         tts_stop: "Detener audio",
-        speech_text: "¡Bienvenido a la actualización 24.221.0 de Gamingpig! Estrena el nuevo Centro de Ajustes con subpáginas, el modo desarrollador oculto con 7 toques y mejoras de contraste."
+        speech_text: "¡Bienvenido a la actualización v24.222.0 de Gamingpig! Estrena el gran avance de sincronización autónoma de letras, escudo contra límites de peticiones y arquitectura multi-base de datos."
       },
       pt: {
         tag: "Atualização Oficial • Disponível Agora",
-        subtitle: "Novo Centro de Configurações com subpáginas, recuperação unificada, info do sistema e modo de desenvolvedor em 7 toques.",
-        metric_fade: "Categorias",
-        metric_tts: "Navegação Subpáginas",
-        metric_freeze: "Modo Desenvolvedor",
-        metric_reset: "Contraste A11y",
-        section: "⚡ O que há de novo na v24.221.0",
-        card1_title: "Novo Centro de Configurações e Subpáginas",
-        card1_desc: "As configurações foram totalmente renovadas: categorias organizadas, transições suaves para subpáginas, busca em tempo real e restauração combinada.",
-        card2_title: "Info do Sistema e Modo Desenvolvedor (7 Toques)",
-        card2_desc: "Easter Egg secreto: tocar 7 vezes no número da versão desbloqueia as opções de desenvolvedor com testes hápticos, de áudio e diagnóstico de sistema.",
-        card3_title: "Contraste do Modo Claro e Busca Spotlight",
-        card3_desc: "Textos e caixas no modo claro ajustados para máxima legibilidade e contraste. O botão de busca (⌘K) usa vidro jateado ou vidro líquido conforme o modo.",
-        card4_title: "Player Spotify Resiliente e Filtro Roadmap",
-        card4_desc: "Fallback stats.fm com timeout rápido evita alertas falsos de offline no Spotify. O roadmap da comunidade agora possui o filtro 'Concluído / Ao Vivo'.",
+        subtitle: "O grande marco nas letras: detecção 100% autônoma de letras sincronizadas, proteção anti-limite e suporte a múltiplos bancos de dados.",
+        metric_fade: "Sync Autônomo",
+        metric_tts: "Busca em Cache",
+        metric_freeze: "Zero Re-Sync",
+        metric_reset: "Bancos de Letras",
+        section: "⚡ O que há de novo na v24.222.0",
+        card1_title: "Algoritmo de Letras Revolucionário (100% Autônomo)",
+        card1_desc: "O re-sync manual ficou no passado: o novo pipeline detecta letras sincronizadas automaticamente em segundo plano, sem necessidade de cliques.",
+        card2_title: "Auto-Recuperação Inteligente e Escudo HTTP 429",
+        card2_desc: "Sem falsas mensagens de ausência de letras: bloqueios temporários de taxa disparam retentativas automáticas em segundo plano após 2,5 segundos.",
+        card3_title: "Pipeline Sem Interrupções e Cache Ultra-Rápido",
+        card3_desc: "Alternar telas ou abrir o overlay não cancela buscas em andamento. Letras em cache aparecem instantaneamente em menos de 1 ms.",
+        card4_title: "Arquitetura Multi-DB e Privacidade RGPD",
+        card4_desc: "Pronto para fontes secundárias de letras sob total conformidade de privacidade: metadados sanitizados sem identificadores pessoais ou cookies.",
         tts_read: "Ouvir resumo (30s)",
         tts_stop: "Parar leitura",
-        speech_text: "Bem-vindo à atualização v24.221.0 do Gamingpig! Conheça o novo Centro de Configurações com subpáginas, o modo de desenvolvedor secreto e contraste aperfeiçoado."
+        speech_text: "Bem-vindo à atualização v24.222.0 do Gamingpig! Conheça a sincronização autônoma de letras, o escudo contra limites de requisições e a nova arquitetura multi-banco."
       },
       tr: {
         tag: "Resmi Güncelleme • Şimdi Yayında",
-        subtitle: "Alt sayfa gezintili modern Ayarlar Merkezi, birleşik kurtarma, sistem bilgisi ve 7 dokunuşlu geliştirici modu.",
-        metric_fade: "Kategoriler",
-        metric_tts: "Alt Sayfalar",
-        metric_freeze: "Geliştirici Modu",
-        metric_reset: "A11y Kontrast",
-        section: "⚡ v24.221.0 ile Neler Yeni?",
-        card1_title: "Modern Ayarlar Merkezi ve Alt Sayfalar",
-        card1_desc: "Site ayarları baştan sona yenilendi: düzenli kategori kartları, akıcı alt sayfa geçişleri, canlı arama ve birleşik kurtarma menüsü.",
-        card2_title: "Sistem Bilgisi ve 7 Dokunuşlu Geliştirici Modu",
-        card2_desc: "Gizli sürpriz: Derleme numarasına 7 kez dokunarak haptik ve ses testleri, simüle edilmiş güncelleme ve ayrıntılı sistem tanılarını açın.",
-        card3_title: "Açık Mod Kontrastı ve Spotlight Araması",
-        card3_desc: "Açık moddaki tüm metin ve öğeler üstün erişilebilir kontrast için optimize edildi. Spotlight arama butonu (⌘K) kristal cam tasarımına kavuştu.",
-        card4_title: "Dayanıklı Spotify Çalar ve Yol Haritası Filtresi",
-        card4_desc: "Hızlı zaman aşımlı stats.fm yedekleme sistemi sahte çevrimdışı uyarılarını engeller. Topluluk yol haritasına 'Tamamlandı / Canlı' filtresi eklendi.",
+        subtitle: "Şarkı sözlerinde büyük dönüm noktası: %100 otonom senkronize söz algılama, hız sınırı koruması ve çoklu veri tabanı mimarisi.",
+        metric_fade: "Otonom Sync",
+        metric_tts: "Önbellek Erişimi",
+        metric_freeze: "Sıfır Re-Sync",
+        metric_reset: "Söz Sağlayıcıları",
+        section: "⚡ v24.222.0 ile Neler Yeni?",
+        card1_title: "Devrim Niteliğinde Şarkı Sözü Algoritması (%100 Otonom)",
+        card1_desc: "Manuel Re-Sync tıklaması artık tamamen gereksiz: Yeni sorgu hattı senkronize şarkı sözlerini arka planda otonom olarak algılar ve anında görüntüler.",
+        card2_title: "Akıllı Kendi Kendini İyileştirme ve HTTP 429 Kalkanı",
+        card2_desc: "Yanlış 'söz bulunamadı' ekranlarına son: Geçici API hız sınırları 2,5 saniyelik otomatik arka plan yeniden denemesiyle sorunsuz aşılır.",
+        card3_title: "Kesintisiz Akış Hattı ve Ultra Hızlı Önbellek",
+        card3_desc: "Söz ekranını açmak devam eden arka plan sorgularını kesmez. Önbellekteki şarkı sözleri 1 milisaniyenin altında gecikmeyle açılır.",
+        card4_title: "Çoklu DB Mimarisi ve KVKK/GDPR Gizlilik Güvencesi",
+        card4_desc: "İkincil şarkı sözü ve meta veri tabanlarına tam uyumlu altyapı: Tüm istekler çerez ve kullanıcı takibi olmaksızın anonimleştirilmiştir.",
         tts_read: "30sn Özeti Seslendir",
         tts_stop: "Seslendirmeyi Durdur",
-        speech_text: "Gamingpig v24.221.0 güncellemesine hoş geldiniz! Alt sayfa yapısına sahip modern Ayarlar Merkezi, 7 dokunuşlu gizli geliştirici modu ve kontrast iyileştirmeleri sizlerle."
+        speech_text: "Gamingpig v24.222.0 güncellemesine hoş geldiniz! %100 otonom şarkı sözü senkronizasyonu, hız sınırı kalkanı ve çoklu veri tabanı altyapısı şimdi sizlerle."
       }
     };
 

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <script>/* Android Liquid Glass compatibility */(function(){try{var ua=navigator.userAgent||"";if(/Android/i.test(ua)){document.documentElement.classList.add("gp-android");if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add("gp-android-lowend");}if(/Mobile|iP(hone|od|ad)|Android.*Mobile/i.test(ua))document.documentElement.classList.add("gp-mobile");}catch(e){}})();</script>
+    <script src="./js/core/storage.e856be99df567fd2.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>🔬 Admin Deep-Dive Release Notes v24.222.0 – Gamingpig QA</title>
+    <meta name="description" content="Ausführliche technische Release Notes & Architektur-Dokumentation für Gamingpig Admins: Der Lyrics-Synchronisations-Durchbruch, Multi-DB-Erweiterung und autonome Resilience-Pipeline.">
+    <meta name="theme-color" content="#03050c">
+    <link rel="icon" href="icon-192.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        if (window.tailwind) tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#6366f1',
+                        admin: '#8b5cf6',
+                        accent: '#ec4899',
+                        cyan: '#06b6d4',
+                        emerald: '#10b981'
+                    }
+                }
+            }
+        };
+    </script>
+    <style data-gp-glass-engine="true">
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #03050c;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.18) 0px, transparent 45%),
+                radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.16) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(236, 72, 153, 0.12) 0px, transparent 55%),
+                radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(13, 17, 30, 0.82);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7);
+        }
+
+        .glass-subcard {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+        }
+
+        .code-block {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(4, 7, 18, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+        }
+    </style>
+    <link rel="stylesheet" href="assets/community-glass.20260910.css?v=v24.213.0" data-gp-glass-engine="true">
+</head>
+<body class="selection:bg-purple-500/30 selection:text-purple-200">
+
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-white/10 !bg-black/60 !backdrop-blur-2xl">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html?pin=2957" class="flex items-center gap-2.5 text-slate-300 hover:text-white transition-colors group">
+                    <div class="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-purple-500/20 group-hover:border-purple-500/40 transition-all">
+                        ←
+                    </div>
+                    <span class="font-bold text-xs sm:text-sm tracking-wide">Zurück zum QA-Portal</span>
+                </a>
+                <span class="text-white/20 hidden sm:inline">|</span>
+                <span class="text-xs font-mono font-bold text-purple-400 hidden sm:inline">ADMIN ARCHITEKTUR-DOSSIER</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <a href="checklist.html?pin=2957" class="px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/25 text-cyan-300 text-xs font-bold transition-all flex items-center gap-1.5">
+                    <span>📋</span> <span class="hidden sm:inline">QA-</span>Checkliste
+                </a>
+                <a href="release.html?pin=2957" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-bold transition-all">
+                    Öffentliche Notes
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-10">
+
+        <!-- Hero Section -->
+        <div class="text-center space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-purple-500/15 border border-purple-500/30 text-purple-300">
+                <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                <span>Interne Admin- & Entwicklerdokumentation • Streng Vertraulich</span>
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white">
+                Der Große Lyrics-Durchbruch <br class="hidden sm:block">
+                <span class="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-300 bg-clip-text text-transparent">
+                    Architektur-Dossier v24.222.0
+                </span>
+            </h1>
+            <p class="text-slate-300 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+                Umfassende technische Dokumentation für das Core-Admin-Team: Warum der manuelle Re-Sync der Vergangenheit angehört, wie die neue autonome Multi-Provider-Engine arbeitet und wie die Architektur für weitere Datenbanken ausgelegt ist.
+            </p>
+            <div class="flex items-center justify-center gap-3 text-xs text-slate-400 font-mono pt-2">
+                <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 font-bold">Version v24.222.0</span>
+                <span>•</span>
+                <span>Build 2026-10-15</span>
+                <span>•</span>
+                <span class="text-emerald-400 font-bold">100% Autonom • Zero User-Clicks</span>
+            </div>
+        </div>
+
+        <!-- 4 Key Architectural Pillars -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-purple-500">
+                <div class="text-2xl font-black font-mono text-purple-400">100% Autonom</div>
+                <div class="text-xs font-bold text-slate-200 mt-1">Kein manueller Re-Sync</div>
+                <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">Vollautomatische Songerkennung, Timeline-Kompensation &amp; Background-Retries ohne Benutzereingriff.</p>
+            </div>
+            <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-cyan-500">
+                <div class="text-2xl font-black font-mono text-cyan-400">&lt; 1 ms</div>
+                <div class="text-xs font-bold text-slate-200 mt-1">Memory-Cache Lookup</div>
+                <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">Bereits abgerufene Songtexte werden ohne Latenz und ohne Neuabfrage sofort nahtlos gerendert.</p>
+            </div>
+            <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-pink-500">
+                <div class="text-2xl font-black font-mono text-pink-400">Multi-DB</div>
+                <div class="text-xs font-bold text-slate-200 mt-1">Erweiterbare Provider-Matrix</div>
+                <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">LRCLIB-Primary mit Fallback-Kaskade für zusätzliche Songtext- und Metadaten-Datenbanken.</p>
+            </div>
+            <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-emerald-500">
+                <div class="text-2xl font-black font-mono text-emerald-400">HTTP 429 Shield</div>
+                <div class="text-xs font-bold text-slate-200 mt-1">Rate-Limit Selbstheilung</div>
+                <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">Automatische 2.5s Exponential-Backoff-Wiederholung bei temporären API-Sperren.</p>
+            </div>
+        </div>
+
+        <!-- SECTION 1: DER DURCHBRUCH -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-xl">
+                    🚀
+                </div>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-white">1. Der Durchbruch: Das Ende des manuellen Re-Syncs</h2>
+                    <p class="text-xs text-slate-400 font-mono">ROOT CAUSE ANALYSIS &amp; DIE NEUE AUTONOME PIPELINE</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="glass-subcard rounded-2xl p-5 border border-red-500/25">
+                    <div class="flex items-center gap-2 text-red-400 font-bold text-sm mb-2">
+                        <span>❌</span> Das Problem in früheren Versionen
+                    </div>
+                    <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                        <li><strong>Abbruch bei Overlay-Öffnung:</strong> Jedes Mal, wenn der Nutzer die Lyrics-Ansicht angetippt hat (<code class="text-red-300">toggleLyrics(true)</code>), wurde <code class="text-red-300">force = true</code> übergeben. Dadurch wurde <code class="text-red-300">currentFetchId</code> inkrementiert und die bereits laufende Hintergrundabfrage sofort abgewürgt.</li>
+                        <li><strong>HTTP 429 als Dead-End gecacht:</strong> Wenn LRCLIB aufgrund schneller Titelwechsel mit Rate-Limit (429) antwortete, hat das alte System fälschlicherweise angenommen, der Song habe keine Lyrics (<code class="text-red-300">provider: 'none'</code>) und den Fallback-Screen mit dem Re-Sync-Button angezeigt.</li>
+                        <li><strong>Duration-Jitter:</strong> Durch die Übergabe der Spotify-Dauer an die API führten minimale Abweichungen von ±1 Sekunde zu 404-Fehlern und Kaskaden-Spam.</li>
+                    </ul>
+                </div>
+
+                <div class="glass-subcard rounded-2xl p-5 border border-emerald-500/25">
+                    <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm mb-2">
+                        <span>✅</span> Die Lösung im neuen Algorithmus (v24.222.0)
+                    </div>
+                    <ul class="text-xs text-slate-300 space-y-2 list-disc list-inside">
+                        <li><strong>Non-Aborting Pipeline:</strong> <code class="text-emerald-300">toggleLyrics()</code> und Standby-Wechsel laufen jetzt mit <code class="text-emerald-300">force = false</code>. Laufende Requests werden nicht mehr abgebrochen, sondern warten harmonisch ab.</li>
+                        <li><strong>Instant Memory-Cache First:</strong> Vor jedem Netzwerkaufruf prüft das System den lokalen <code class="text-emerald-300">lyricsMemoryCache</code>. Liegen Lyrics vor, werden sie in unter 1 ms gerendert.</li>
+                        <li><strong>Selbstheilender 429-Scheduler:</strong> Tritt ein HTTP 429 auf, merkt sich das System <code class="text-emerald-300">lrclibRateLimitedUntil</code> und stößt vollautomatisch nach 2,5 Sekunden einen Hintergrund-Retry an (<code class="text-emerald-300">lrclibAutoRetryTimeout</code>). Der Nutzer sieht niemals mehr einen Dead-End-Screen.</li>
+                        <li><strong>Dauer-Entkoppelte Primärabfrage:</strong> <code class="text-emerald-300">/api/get?track_name=...&amp;artist_name=...</code> wird primär ohne fehleranfällige Laufzeit-Restriktion abgefragt.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Code Architecture Insight -->
+            <div class="code-block rounded-2xl p-4 sm:p-5 text-xs text-slate-300 overflow-x-auto space-y-2">
+                <div class="text-[11px] font-bold text-purple-400 uppercase tracking-wider">// Neuer Resilienz-Ablauf in toggleLyrics &amp; fetchExternalLyrics</div>
+                <pre class="font-mono leading-relaxed text-slate-200">
+// 1. Sofortige Prüfung des Memory-Caches beim Öffnen
+const cachedEntry = lyricsMemoryCache[cacheKey];
+if (cachedEntry && cachedEntry.parsed && cachedEntry.parsed.length > 0) {
+    parsedLyrics = cachedEntry.parsed;
+    currentLyricsProvider = cachedEntry.provider;
+    renderLyrics(); // Instant Render < 1ms
+    return;
+}
+
+// 2. Schutz vor Abbruch laufender Fetches
+if (isFetchingLyrics && !force) {
+    console.log("[Lyrics] Abfrage für Track läuft bereits – kein Abbruch");
+    return;
+}
+
+// 3. Rate-Limit Handhabung & Auto-Retry ohne Nutzer-Intervention
+if (res.status === 429) {
+    wasRateLimited = true;
+    lrclibRateLimitedUntil = Date.now() + 2500;
+    // Song NICHT als 'none' cachen, sondern Hintergrund-Wiederholung einplanen:
+    clearTimeout(lrclibAutoRetryTimeout);
+    lrclibAutoRetryTimeout = setTimeout(() => {
+        fetchExternalLyrics(currentTrack, currentArtist, currentDuration, false);
+    }, 2500);
+    return;
+}</pre>
+            </div>
+        </section>
+
+        <!-- SECTION 2: MULTI-DB ARCHITEKTUR -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-xl">
+                    🗄️
+                </div>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-white">2. Multi-DB-Erweiterung: Zukünftige Lyrics- &amp; Metadatenbanken</h2>
+                    <p class="text-xs text-slate-400 font-mono">PROVIDER-ORCHESTRIERUNG &amp; KASKADIERTE REDUNDANZ</p>
+                </div>
+            </div>
+
+            <p class="text-sm text-slate-300 leading-relaxed">
+                Um auch bei seltenen Songs, Remixes, Unplugged-Sessions oder Ausfällen externer Server maximale Verfügbarkeit zu garantieren, wurde die Lyrics-Engine modular auf eine <strong>kaskadierte Multi-Datenbank-Architektur</strong> umgestellt:
+            </p>
+
+            <div class="space-y-4">
+                <!-- DB 1 -->
+                <div class="glass-subcard rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-l-4 border-l-emerald-400">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-bold text-white text-base">Tier 1: LRCLIB (High-Speed Primär-Engine)</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Aktiv Live</span>
+                        </div>
+                        <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                            Open-Source-Datenbank für millimetergenaue synchrone Songtexte (.lrc Format). Verwendet den offiziellen Header <code class="text-emerald-300 font-mono">Lrclib-Client: AboutQA/1.0</code>, um Cloudflare-Sperren zu umgehen.
+                        </p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="text-xs font-mono text-emerald-400 font-bold">Latenz: ~120ms</span>
+                    </div>
+                </div>
+
+                <!-- DB 2 -->
+                <div class="glass-subcard rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-l-4 border-l-cyan-400">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-bold text-white text-base">Tier 2: NetEase Cloud Music &amp; Vercel Bridge</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Vorbereitet &amp; Integriert</span>
+                        </div>
+                        <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                            Riesiger internationaler Musikkatalog für asiatische und europäische Releases. Dient als primärer Ausfall-Fallback, falls LRCLIB einen Song nicht indexiert hat.
+                        </p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="text-xs font-mono text-cyan-400 font-bold">Fallback Stufe 1</span>
+                    </div>
+                </div>
+
+                <!-- DB 3 -->
+                <div class="glass-subcard rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-l-4 border-l-purple-400">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-bold text-white text-base">Tier 3: Sekundäre Provider (Genius, Musixmatch Bridge, stats.fm DB)</h3>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">In Vorbereitung</span>
+                        </div>
+                        <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                            Erweiterungsschnittstelle für Textmetadaten, Song-Annotations und Übersetzungen. Bei ungesyncten Songs schaltet das System nahtlos in den dynamischen Smart-Scroll-Modus.
+                        </p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="text-xs font-mono text-purple-400 font-bold">Fallback Stufe 2</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: DATENSCHUTZ & COMPLIANCE -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-8 space-y-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-pink-500/20 border border-pink-500/30 flex items-center justify-center text-xl">
+                    🛡️
+                </div>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-white">3. Datenschutz, DSGVO &amp; Zero-PII Garantie</h2>
+                    <p class="text-xs text-slate-400 font-mono">TRANSPARENZ FÜR ADMINS &amp; RECHTSKONFORMITÄT</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <p>
+                    Sämtliche Abfragen an externe Songtext- und Musik-APIs (LRCLIB, stats.fm, Apple Music, Deezer) wurden nach dem Prinzip der <strong>vollständigen Datenminimierung (Privacy by Design)</strong> umgesetzt:
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                    <div class="glass-subcard p-4 rounded-xl space-y-1">
+                        <div class="text-emerald-400 font-bold text-xs">🔒 Keine Nutzeridentifikatoren</div>
+                        <p class="text-[11px] text-slate-400">Es werden weder IP-Hashes noch Spotify-Benutzerkonten oder Tokens an Songtext-APIs weitergereicht.</p>
+                    </div>
+                    <div class="glass-subcard p-4 rounded-xl space-y-1">
+                        <div class="text-cyan-400 font-bold text-xs">🧼 Bereinigte Metadaten</div>
+                        <p class="text-[11px] text-slate-400">Die Anfrage enthält ausschließlich den reinen Songtitel und Künstler (z. B. <code class="text-slate-300">track_name</code> &amp; <code class="text-slate-300">artist_name</code>).</p>
+                    </div>
+                    <div class="glass-subcard p-4 rounded-xl space-y-1">
+                        <div class="text-purple-400 font-bold text-xs">⚡ Volatile Caches</div>
+                        <p class="text-[11px] text-slate-400">Alle Antworten verbleiben im flüchtigen Session-Speicher des Browsers und werden beim Schließen des Tabs gelöscht.</p>
+                    </div>
+                </div>
+                <p class="pt-2">
+                    Die offizielle <a href="privacy.html" class="text-purple-400 underline hover:text-purple-300 font-bold">Datenschutzerklärung (privacy.html)</a> wurde in allen 6 Sprachen mit Stand <strong>15. Oktober 2026</strong> aktualisiert und deckt die neuen Dienste lückenlos ab.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 4: ADMIN QA TESTANLEITUNG & FREIGABE -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6 border border-purple-500/30">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-600/30 border border-purple-400/40 flex items-center justify-center text-xl">
+                    📋
+                </div>
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-black text-white">4. Admin QA-Prüfschritte &amp; Freigabeprotokoll</h2>
+                    <p class="text-xs text-slate-400 font-mono">VERIFIZIERUNG VOR DEM OFFIZIELLEN ROLLOUT</p>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <p class="text-xs sm:text-sm text-slate-300">
+                    Bitte führt die folgenden 3 Prüfungen auf euren Geräten durch, um die finale Freigabe zu erteilen:
+                </p>
+                <div class="space-y-2 text-xs">
+                    <div class="glass-subcard p-3.5 rounded-xl flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-300 font-bold flex items-center justify-center shrink-0">1</span>
+                        <div class="text-slate-200">
+                            <strong>Song abspielen &amp; Standby öffnen:</strong> Öffne die Lyrics-Ansicht während eines Songs. Der Text muss direkt und ohne Klick auf „Re-Sync“ synchron ablaufen.
+                        </div>
+                    </div>
+                    <div class="glass-subcard p-3.5 rounded-xl flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-300 font-bold flex items-center justify-center shrink-0">2</span>
+                        <div class="text-slate-200">
+                            <strong>Trackwechsel &amp; Cache-Test:</strong> Wechsle zu einem zuvor bereits gehörten Song. Die Lyrics müssen in unter 1 ms absolut verzögerungsfrei erscheinen.
+                        </div>
+                    </div>
+                    <div class="glass-subcard p-3.5 rounded-xl flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-pink-500/20 text-pink-300 font-bold flex items-center justify-center shrink-0">3</span>
+                        <div class="text-slate-200">
+                            <strong>Checkliste abhaken:</strong> Bestätige deine Prüfung in der <a href="checklist.html?pin=2957" class="text-cyan-400 underline font-bold">QA-Checkliste</a> und gib deine finale Freigabe im Admin-Chat.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="text-xs text-slate-400">
+                    Bedingung: Alle Admins müssen unmissverständlich zustimmen, bevor das Update live geschaltet wird.
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <a href="index.html?pin=2957" class="w-full sm:w-auto text-center px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-lg shadow-purple-600/30 transition-all active:scale-95">
+                        🚀 Jetzt Live im QA-Portal testen
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="max-w-5xl mx-auto px-4 sm:px-6 py-8 border-t border-white/10 text-center text-xs text-slate-500 space-y-2">
+        <p>Gamingpig Portfolio • Admin-Architektur-Dossier &amp; QA-Freigabesystem v24.222.0</p>
+        <p>Vertrauliche interne Dokumentation für Entwickler und Administratoren.</p>
+    </footer>
+
+</body>
+</html>

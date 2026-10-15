@@ -7,7 +7,7 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
-    [LYRICS / TIMING / COVER / QA PIN GATE] Release v24.221.0: Strenge Synced-Lyrics-Priorisierung, Beseitigung von Songende-Zeitsprüngen, Original-API-Cover im Haupt-Player, Präziser Re-Sync mit Zeitabgleich & Reload-gesichertes PIN-Gate
+    [LYRICS / TIMING / COVER / QA PIN GATE] Release v24.222.0: Strenge Synced-Lyrics-Priorisierung, Beseitigung von Songende-Zeitsprüngen, Original-API-Cover im Haupt-Player, Präziser Re-Sync mit Zeitabgleich & Reload-gesichertes PIN-Gate
       - Strikte Priorisierung synchronisierter Lyrics:
         Symptom: Bei Songwechsel wurden oft ungesyncte Plain-Lyrics geladen, obwohl synchronisierte in der Datenbank existierten.
         Ursache: Schritt 1 (/api/get) gab gelegentlich Plain-Lyrics zurück, brach sofort ab und verhinderte die Ausführung von Schritt 2 (/api/search).
@@ -3426,7 +3426,7 @@
     <script src="./js/core/storage.e856be99df567fd2.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.221.0</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.222.0</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3455,7 +3455,7 @@
             AppStorage.setItem('app_visit_count', String(_visitCount));
 
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.221.0 · 2026-10-15';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.222.0 · 2026-10-15';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -9605,7 +9605,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.221.0</span>
+                <span>🧪 QA TESTUMGEBUNG v24.222.0</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -11007,7 +11007,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.221.0</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.222.0</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -17380,7 +17380,7 @@ html.gp-android:not(.dark) #ui-controls {
             function updateSettingsSystemUpdateUI(pending) {
                 const currentVer = String(window.ONBOARDING_VERSION || '').split(' · ')[0].replace(/^v/, '').trim();
                 const currEl = document.getElementById('settings-update-current-ver');
-                if (currEl) currEl.textContent = 'Installiert: v' + (currentVer || '24.221.0');
+                if (currEl) currEl.textContent = 'Installiert: v' + (currentVer || '24.222.0');
 
                 const statusPill = document.getElementById('settings-update-status-pill');
                 const availBox = document.getElementById('settings-update-available-box');
@@ -18141,7 +18141,7 @@ let shareCardLoading;
                 { icon: '🎬', label: t('cp_canvas_video', 'Spotify Canvas Loop Video'), keywords: 'canvas video hintergrund spotify loop video', action: () => toggleCanvasVideo() },
                 { icon: '✨', label: t('cp_cover_glow', 'Cover Glow Scheinwerfer'), keywords: 'cover glow leuchten effekt aura glow', action: () => toggleCoverGlow() },
                 { icon: '🧭', label: t('cp_tutorial', 'Interaktives Tutorial starten'), keywords: 'tutorial hilfe guide anleitung walkthrough tour', action: () => btnStartTutorial && btnStartTutorial.click() },
-                { icon: '📋', label: 'QA Test-Checkliste (v24.221.0)', keywords: 'qa test checkliste pruefung status testplan verifikation suite', action: () => window.open('checklist.html', '_blank') },
+                { icon: '📋', label: 'QA Test-Checkliste (v24.222.0)', keywords: 'qa test checkliste pruefung status testplan verifikation suite', action: () => window.open('checklist.html', '_blank') },
                 { icon: '🔥', label: 'Release Notes (Was ist neu)', keywords: 'release notes changelog update was ist neu v24 changelog', action: () => window.open('release.html', '_self') },
                 { icon: '⚖️', label: t('footer_impressum', 'Impressum / Legal Notice'), keywords: 'impressum legal notice rechtliches privacy datenschutz kontakt angaben ddg mstv', action: () => { window.location.href = 'impressum.html'; } },
                 { icon: '📋', label: t('cp_copy_link', 'Seiten-Link kopieren'), keywords: 'copy link teilen share url link kopieren', action: () => { if (typeof copyPageLink === 'function') copyPageLink(); } },
@@ -19540,6 +19540,22 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+        { version: "v24.222.0", date: "15. Oktober 2026", type: "feature", items: {
+            de: [
+                "✨ Lyrics-Synchronisation Durchbruch: 100% autonome Songtext-Erkennung – manueller Re-Sync endgültig eliminiert",
+                "🛡️ HTTP 429 Shield & Selbstheilung: Automatischer 2.5s Exponential-Backoff Retry verhindert falsche Fehlermeldungen",
+                "⚡ Non-Aborting Pipeline: Kein Abbrechen laufender Hintergrundabfragen beim Öffnen der Lyrics-Ansicht oder im Standby",
+                "🌐 Multi-DB Architektur: Vorbereitung für zusätzliche Songtext- und Metadaten-Datenbanken mit optimierter LRCLIB-Engine",
+                "🔒 Datenschutz (DSGVO): Vollständig anonymisierte Songtext-Abfragen ohne Nutzerkonten, Tracking oder Cookies"
+            ],
+            en: [
+                "✨ Lyrics Synchronization Breakthrough: 100% autonomous detection – manual 'Re-Sync' clicking is completely eliminated",
+                "🛡️ HTTP 429 Shield: Automatic 2.5s exponential backoff scheduler reliably prevents false 'no lyrics' screens",
+                "⚡ Non-Aborting Pipeline: Opening the lyrics overlay or switching to standby mode never aborts active background fetches",
+                "🌐 Multi-DB Architecture: Scalable infrastructure for secondary lyrics and metadata databases with tuned LRCLIB engine",
+                "🔒 Privacy Policy (GDPR): Fully anonymized metadata queries without user accounts, tracking, or cookies"
+            ]
+        }},
     { version: "v24.221.0", date: "15. Oktober 2026", type: "fix", items: {
         de: [
             "🎵 Songtext-Synchronisation & Priorität: Synchrone Lyrics haben nun absolute Priorität bei der Suche und werden nicht mehr durch ungesyncte Plain-Texte verdrängt",
@@ -30049,7 +30065,7 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.221.0</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.222.0</span>
         </a>
     </div>
 </body>

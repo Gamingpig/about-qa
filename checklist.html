@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>📋 QA Test-Checkliste v24.221.0 – Gamingpig</title>
+    <title>📋 QA Test-Checkliste v24.222.0 – Gamingpig</title>
     <link rel="icon" href="icon-192.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -78,7 +78,7 @@
                     </div>
                     <div>
                         <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-300 text-[10px] font-black uppercase tracking-wider border border-pink-500/30">
-                            <span>🧪 QA TEST-PORTAL v24.221.0</span>
+                            <span>🧪 QA TEST-PORTAL v24.222.0</span>
                         </div>
                         <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight mt-1">Tester-Checkliste</h1>
                         <p class="text-xs text-slate-300">Knappe Punkte für einen schnellen &amp; gründlichen Komplett-Check.</p>
@@ -86,8 +86,11 @@
                 </div>
 
                 <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <a href="release-admin.html?pin=2957" target="_blank" class="w-full sm:w-auto px-3.5 py-2.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-400/40 text-purple-200 font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-1.5 active:scale-95 text-center">
+                        <span>🔬</span> <span>Admin-Dossier</span>
+                    </a>
                     <a href="index.html?pin=2957" target="_blank" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-2 active:scale-95 text-center">
-                        <span>🚀</span> <span>App öffnen (PIN: 2957)</span>
+                        <span>🚀</span> <span>App öffnen</span>
                     </a>
                 </div>
             </div>
@@ -130,8 +133,10 @@
                         <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-pink-300 shrink-0 font-bold">Player &amp; DJ</span>
                     </div>
                     <ul class="text-xs text-slate-300 mt-2 space-y-1 list-disc list-inside">
+                        <li><strong>100% Autonome Lyrics-Synchronisation:</strong> Synced Lyrics starten vollautomatisch ab Songstart (kein manuelles Anklicken von 'Re-Sync' mehr nötig).</li>
+                        <li><strong>HTTP 429 Shield &amp; Multi-DB:</strong> Rate-Limits der API führen nicht mehr zu Abbrüchen, sondern werden im Hintergrund mit 2.5s Auto-Retry abgefangen.</li>
                         <li>Play, Pause, Track-Wechsel &amp; Lautstärke reagieren sauber (keine Songende-Zeitsprünge mehr).</li>
-                        <li>Synchronisierte Lyrics werden streng vor Plain-Lyrics bevorzugt; Status-Badge zeigt sauber <em>Lyrics: Synced</em> bzw. <em>Nicht synchronisiert</em>.</li>
+                        <li>Status-Badge zeigt sauber <em>Lyrics: Synced</em> bzw. <em>Nicht synchronisiert</em>.</li>
                         <li>Re-Sync gleicht die Abspielzeit millimetergenau live mit Spotify ab und behält bestehende Synced Lyrics bei.</li>
                         <li>Haupt-Player lädt verlässlich das echte Spotify-Albumcover (identisch zum StandBy-Screen).</li>
                         <li>Button <strong class="text-pink-300">💽 Scratch</strong> oder Doppeltippen auf das Cover-Artwork spielt satten DJ-Vinyl-Scratch-Sound &amp; animiert das Cover.</li>
@@ -398,7 +403,7 @@
             const pct = Math.round((checkedCount / TOTAL_POINTS) * 100);
             const statusSummary = (checkedCount === TOTAL_POINTS) ? 'ALLE TESTS ERFOLGREICH BESTANDEN! 🎉' : `${checkedCount} von ${TOTAL_POINTS} Punkten geprüft (${pct}%)`;
 
-            const fullReport = `🧪 QA TESTBERICHT (v24.221.0)
+            const fullReport = `🧪 QA TESTBERICHT (v24.222.0)
 👤 Tester: ${tester}
 📊 Status: ${statusSummary}
 🔗 Geprüfte App: https://gamingpig.github.io/about-qa/
