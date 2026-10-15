@@ -15010,7 +15010,7 @@ html.gp-android:not(.dark) #ui-controls {
         // FIX v24.63: Global statt nur lokal in updateMusicUI() definiert - wird jetzt auch
         // von der Dynamic Island und dem StandBy-Lockscreen gebraucht, die bisher gar keinen
         // Fallback bei kaputten Cover-URLs hatten.
-        const fallbackImg = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%230f172a'/%3E%3Cpath d='M250 120v100c0 33.1-26.9 60-60 60s-60-26.9-60-60 26.9-60 60-60c7.1 0 13.7 1.2 20 3.5V120h40z' fill='%23334155'/%3E%3C/svg%3E";
+        const fallbackImg = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%230f172a'/%3E%3Ccircle cx='200' cy='200' r='130' fill='%23fde047' opacity='0.95'/%3E%3Ccircle cx='170' cy='185' r='50' fill='%230f172a'/%3E%3C/svg%3E";
 
         // ========================================================= 
         // NEU v24.87: GETEILTE BILD-DEKODIERUNG (Nutzerwunsch - "warum 4 unabhängige
@@ -18693,7 +18693,19 @@ let shareCardLoading;
                 for (const layer of [bg, cardBg]) if (layer) { layer.style.backgroundImage = 'none'; layer.style.opacity = '0'; }
             };
             if (idle) {
-                if (standbyArtJob || textChanged || isNewTrack) { cancelStandbyArtwork(); clearArt(); }
+                if (standbyArtJob || textChanged || isNewTrack) { cancelStandbyArtwork(); }
+                // Mond-Platzhalter-Cover im StandBy-Idle-Zustand anzeigen (kein Song spielt)
+                const ctx = canvas?.getContext('2d');
+                if (canvas && ctx) {
+                    const moonImg = new Image();
+                    moonImg.src = fallbackImg;
+                    moonImg.onload = () => {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(moonImg, 0, 0, canvas.width, canvas.height);
+                        canvas.style.opacity = '1';
+                    };
+                }
+                for (const layer of [bg, cardBg]) if (layer) { layer.style.backgroundImage = 'url(' + JSON.stringify(fallbackImg) + ')'; layer.style.opacity = '1'; }
                 return;
             }
             const source = typeof artUrl === 'string' && artUrl ? artUrl : fallbackImg;
