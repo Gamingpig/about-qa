@@ -24166,59 +24166,62 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
         }
 
             window.resetSyncOffset = async function(btn) {
-                haptic(10);
-                const title = mTitle ? mTitle.innerText : null;
-                let artist = mArtist ? mArtist.innerText : null;
+                haptic(15);
+                const title = currentTrackTitle || (mTitle ? mTitle.innerText : null);
+                let artist = currentRawArtist || (mArtist ? mArtist.innerText : null);
             
-            // FIX: Smart Shuffle Suffix entfernen (genau wie beim ersten Laden), 
-            // sonst scheitert die API Suche beim Re-Sync!
-            if (artist) {
-                artist = artist.replace(/\s*•\s*From Smart Shuffle/gi, '').trim();
-            }
-            
-            const originalText = btn ? btn.innerText : "Re-Sync";
-            
-            if (btn) {
-                btn.innerText = "SYNCING";
-                btn.classList.add('opacity-50', 'pointer-events-none', 'animate-pulse');
-            }
-            
-            // NEW: Bugfix - der Songtext-Abruf lief bisher OHNE try/catch. Schlug er aus
-            // irgendeinem Grund fehl (Netzwerkfehler, kein Treffer, API-Timeout), wurde die
-            // Exception nie abgefangen, wodurch der komplette restliche Code darunter -
-            // inklusive dem Zurücksetzen des Buttons - NIE mehr ausgeführt wurde. Der
-            // Button blieb dadurch dauerhaft auf "SYNCING" hängen (deaktiviert, pulsierend)
-            // und wirkte für den Nutzer wie "kaputt", obwohl eigentlich nur ein einzelner
-            // Fetch-Versuch fehlgeschlagen war. Jetzt mit try/catch/finally abgesichert,
-            // damit der Button garantiert IMMER wieder freigegeben wird.
-            try {
-                if (title && artist) {
-                    const cacheKey = (title + '---' + (artist || '')).toLowerCase().trim();
-                    lyricsMemoryCache.delete(cacheKey);
+                if (artist) {
+                    artist = artist.replace(/\s*•\s*From Smart Shuffle/gi, '').trim();
                 }
-                await fetchMusicData();
-                if (title && artist && title !== t('standby_idle_title') && (!parsedLyrics || parsedLyrics.length === 0)) {
-                    await fetchExternalLyrics(title, artist, totalMs, true);
-                }
-            } catch (err) {
-                console.warn('Re-Sync: Songtext-Abruf fehlgeschlagen', err);
-                if (typeof showToast === 'function') showToast('Re-Sync fehlgeschlagen, versuch es nochmal.');
-            } finally {
-                liveSyncOffset = typeof DEFAULT_SYNC_OFFSET !== 'undefined' ? DEFAULT_SYNC_OFFSET : 0;
-                AppStorage.removeItem('userSyncOffset'); // NEW: Re-Sync setzt auch den gespeicherten manuellen Wert zurück auf den Standard
-                if (syncSlider) syncSlider.value = liveSyncOffset;
-                if (syncValueEl) syncValueEl.innerText = String(liveSyncOffset);
-                const syncNumInput = document.getElementById('sync-number-input');
-                if (syncNumInput) syncNumInput.value = liveSyncOffset;
-
-                syncLyricsUI(true, true);
-
+            
+                const originalText = btn ? btn.innerText : "Re-Sync";
+            
                 if (btn) {
-                    btn.innerText = originalText;
-                    btn.classList.remove('opacity-50', 'pointer-events-none', 'animate-pulse');
+                    btn.innerText = "SYNCING...";
+                    btn.classList.add('opacity-50', 'pointer-events-none', 'animate-pulse');
                 }
-            }
-        };
+            
+                try {
+                    window.isForceMusicSync = true;
+                    lastSeenProgressMs = -1;
+                    if (typeof lastSeenStatsFmProgressMs !== 'undefined') lastSeenStatsFmProgressMs = -1;
+
+                    if (title && artist) {
+                        const cacheKey = (title + '---' + (artist || '')).toLowerCase().trim();
+                        lyricsMemoryCache.delete(cacheKey);
+                        if (typeof inFlightLyricsKey !== 'undefined') inFlightLyricsKey = null;
+                        if (typeof inFlightLyricsPromise !== 'undefined') inFlightLyricsPromise = null;
+                    }
+
+                    // 1. Frische Musik- & Timing-Daten direkt von der API anfordern
+                    await fetchMusicData();
+
+                    // 2. Songtext garantiert frisch laden und rendern (force = true)
+                    if (title && artist && title !== t('standby_idle_title')) {
+                        await fetchExternalLyrics(title, artist, totalMs, true);
+                    }
+
+                    // 3. Offset zurücksetzen & Sync-UI aktualisieren
+                    liveSyncOffset = typeof DEFAULT_SYNC_OFFSET !== 'undefined' ? DEFAULT_SYNC_OFFSET : 0;
+                    AppStorage.removeItem('userSyncOffset');
+                    if (syncSlider) syncSlider.value = liveSyncOffset;
+                    if (syncValueEl) syncValueEl.innerText = String(liveSyncOffset);
+                    const syncNumInput = document.getElementById('sync-number-input');
+                    if (syncNumInput) syncNumInput.value = liveSyncOffset;
+
+                    syncLyricsUI(true, true);
+                    if (typeof showToast === 'function') showToast('🔄 Live-Sync mit Spotify erfolgreich!', 'success');
+                } catch (err) {
+                    console.warn('Re-Sync fehlgeschlagen', err);
+                    if (typeof showToast === 'function') showToast('Re-Sync fehlgeschlagen, versuch es nochmal.', 'info');
+                } finally {
+                    window.isForceMusicSync = false;
+                    if (btn) {
+                        btn.innerText = originalText;
+                        btn.classList.remove('opacity-50', 'pointer-events-none', 'animate-pulse');
+                    }
+                }
+            };
         
         let lyricsSettingsTimeout;
         // NEW: Tipp-zum-Springen - Uhr-Icon aktiviert einen Modus, in dem ein Antippen
@@ -27618,7 +27621,7 @@ window.setLyricsStyle = function(style) {
             // Auf keinen Fall bei erstem Laden abbrechen (fehlendes Cover immer durchlassen)
             // Auch NICHT abbrechen, wenn die lokale Zeitmessung bereits am Songende festsitzt (currentMs >= totalMs)
             // und entklemmt werden muss!
-            if (currentApiProgress === lastSeenProgressMs && trackIsPlaying === isPlaying && !isNewTrack && currentResolvedArtUrl && (totalMs <= 0 || currentMs < totalMs)) {
+            if (!window.isForceMusicSync && currentApiProgress === lastSeenProgressMs && trackIsPlaying === isPlaying && !isNewTrack && currentResolvedArtUrl && (totalMs <= 0 || currentMs < totalMs)) {
                 return;
             }
             lastSeenProgressMs = currentApiProgress;
@@ -27808,7 +27811,7 @@ window.setLyricsStyle = function(style) {
                         let absDrift = Math.abs(drift);
 
                         const needsUnclamp = trackIsPlaying && totalMs > 0 && (currentMs >= totalMs || expectedLocalProgress >= totalMs) && (apiProgress + addedDelay) < totalMs;
-                        if (needsUnclamp) {
+                        if (window.isForceMusicSync || needsUnclamp) {
                             serverBaseProgress = apiProgress + addedDelay;
                             localStartTime = performance.now();
                             currentMs = serverBaseProgress;
