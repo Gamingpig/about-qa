@@ -1,14 +1,14 @@
 {
-  "version": "24.222.6",
-  "buildTime": "2026-10-15T20:50:00.000Z",
+  "version": "24.222.7",
+  "buildTime": "2026-10-15T21:10:00.000Z",
   "shortNotes": [
-    "Lyrics-Sync Priorität: Reines Search-First System garantiert 100% Vorrang für synchronisierte Songtexte",
-    "Plain-Hijacker eliminiert: Ungetaktetes lyrics.ovh und vorzeitige Plain-Überschreibungen vollständig entfernt",
-    "Cache-Resilienz: Plain-Lyrics verfallen nach 30s im Speicher, damit synchronisierte Lyrics nachgeladen werden",
+    "Sofortige Synced-Garantie: Automatischer 2.5s HTTP-429 Backoff-Retry fängt Rate-Limits direkt im Skeleton-Loader ab",
+    "Multi-Query Suchkaskade: Clean-Query, Primary-Artist & Raw-Query finden getaktete Texte im 1. Versuch",
+    "Kollaborations-Matching: Volle Unterstützung für 'x', '/', '+', 'with' & 'feat' ohne falsche Ablehnungen",
+    "Apostroph-Toleranz: 'Don't' und 'Dont' werden einheitlich normalisiert für 100% Trefferquote",
+    "Zero-Plain-Hijack: Plain-Lyrics werden erst nach vollständigem Durchlauf aller Synced-Suchwege als Notnagel erwogen",
+    "Cache-Resilienz: Ungetaktete Lyrics verfallen nach 30s im Speicher, damit synchronisierte Lyrics nachgeladen werden",
     "Multi-DB Offline-Engine: Bundled-DB (Marcus & Martinus Unforgettable) + LRCLIB Pacing Shield mit 1-Fetch-pro-Song Schutz",
-    "Hybrid Master Cadence: Best-of-Both-Worlds – Fließendes Stimm-Legato kombiniert mit Hook-Drop-Erkennung",
-    "Dance-Pop Algorithmus: Aktive Phrasen-Kadenz & Hook-Drop Erkennung für perfekten Beat-Sync",
-    "HTTP 429 Shield: Automatischer Exponential-Backoff Retry verhindert falsche Fehlermeldungen",
-    "Non-Aborting Pipeline: Kein Abbrechen von Hintergrundabfragen beim Öffnen der Lyrics-Ansicht"
+    "Hybrid Master Cadence: Best-of-Both-Worlds – Fließendes Stimm-Legato kombiniert mit Hook-Drop-Erkennung"
   ]
 }
