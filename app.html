@@ -8980,7 +8980,11 @@ html.gp-android:not(.dark) #ui-controls {
             const modal = document.getElementById('qa-pin-gate-modal');
             const fb = document.getElementById('qa-pin-feedback');
             if (currentEnteredPin === QA_VALID_PIN) {
-                sessionStorage.setItem('gp_qa_auth', 'true');
+                // Keine Persistierung in sessionStorage/localStorage: bei Reload MUSS der PIN neu eingegeben werden!
+                try {
+                    sessionStorage.removeItem('gp_qa_auth');
+                    localStorage.removeItem('gp_qa_auth');
+                } catch(e) {}
                 if (typeof haptic === 'function') haptic([30, 40, 50]);
                 if (fb) {
                     fb.className = 'text-xs font-semibold text-emerald-400';
@@ -8989,7 +8993,10 @@ html.gp-android:not(.dark) #ui-controls {
                 setTimeout(() => {
                     if (modal) {
                         modal.classList.add('opacity-0', 'pointer-events-none');
-                        setTimeout(() => modal.remove(), 350);
+                        setTimeout(() => {
+                            if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
+                            document.documentElement.classList.remove('overflow-hidden');
+                        }, 350);
                     }
                     if (typeof showToast === 'function') {
                         showToast('🧪 QA Testumgebung aktiv – Alle Tools bereit!', 'success');
@@ -9014,29 +9021,34 @@ html.gp-android:not(.dark) #ui-controls {
 
         (function checkPinGateImmediate() {
             try {
+                // Bei jedem Seitenstart / Reload den Auth-Status bewusst löschen
+                sessionStorage.removeItem('gp_qa_auth');
+                localStorage.removeItem('gp_qa_auth');
+
                 const params = new URLSearchParams(window.location.search);
                 const urlPin = params.get('pin');
-                const urlUnlocked = params.get('qa_unlocked') === '1';
-                if (urlPin === QA_VALID_PIN || urlUnlocked) {
-                    sessionStorage.setItem('gp_qa_auth', 'true');
-                }
-                if (sessionStorage.getItem('gp_qa_auth') === 'true') {
+                if (urlPin === QA_VALID_PIN) {
                     const modal = document.getElementById('qa-pin-gate-modal');
-                    if (modal) modal.remove();
-                } else {
-                    window.addEventListener('keydown', (e) => {
-                        const modal = document.getElementById('qa-pin-gate-modal');
-                        if (!modal || modal.classList.contains('opacity-0') || !document.body.contains(modal)) return;
-                        if (/^[0-9]$/.test(e.key)) {
-                            enterPinDigit(e.key);
-                        } else if (e.key === 'Backspace' || e.key === 'Delete') {
-                            currentEnteredPin = currentEnteredPin.slice(0, -1);
-                            updatePinDotsUI();
-                        } else if (e.key === 'Enter') {
-                            submitPinCheck();
-                        }
-                    });
+                    if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
+                    document.documentElement.classList.remove('overflow-hidden');
+                    return;
                 }
+
+                // Scrollen der Hintergrund-Seite sperren, solange gesperrt
+                document.documentElement.classList.add('overflow-hidden');
+
+                window.addEventListener('keydown', (e) => {
+                    const modal = document.getElementById('qa-pin-gate-modal');
+                    if (!modal || modal.classList.contains('opacity-0') || !document.body.contains(modal)) return;
+                    if (/^[0-9]$/.test(e.key)) {
+                        enterPinDigit(e.key);
+                    } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                        currentEnteredPin = currentEnteredPin.slice(0, -1);
+                        updatePinDotsUI();
+                    } else if (e.key === 'Enter') {
+                        submitPinCheck();
+                    }
+                });
             } catch(e) {}
         })();
     </script>
@@ -29383,67 +29395,10 @@ window.setLyricsStyle = function(style) {
         };
 
         window.submitPinCheck = function() {
-            const modal = document.getElementById('qa-pin-gate-modal');
-            const fb = document.getElementById('qa-pin-feedback');
-            if (currentEnteredPin === QA_VALID_PIN) {
-                sessionStorage.setItem('gp_qa_auth', 'true');
-                if (typeof haptic === 'function') haptic([30, 40, 50]);
-                if (fb) {
-                    fb.className = 'text-xs font-semibold text-emerald-400';
-                    fb.innerText = '✓ PIN korrekt! Testumgebung freigeschaltet...';
-                }
-                setTimeout(() => {
-                    if (modal) {
-                        modal.classList.add('opacity-0', 'pointer-events-none');
-                        setTimeout(() => modal.remove(), 350);
-                    }
-                    if (typeof showToast === 'function') {
-                        showToast('🧪 QA Testumgebung aktiv – Alle Tools bereit!', 'success');
-                    }
-                }, 400);
-            } else {
-                if (typeof haptic === 'function') haptic([60, 40, 60]);
-                if (fb) {
-                    fb.className = 'text-xs font-semibold text-red-400';
-                    fb.innerText = '❌ Falscher PIN. Bitte autorisierten Tester-PIN eingeben.';
-                }
-                const dotsBox = document.getElementById('qa-pin-dots');
-                if (dotsBox) {
-                    dotsBox.style.animation = 'none';
-                    dotsBox.offsetHeight; // trigger reflow
-                    dotsBox.style.animation = 'head-shake 0.4s ease-in-out';
-                }
-                setTimeout(window.clearPinInput, 700);
+            if (typeof submitPinCheck === 'function') {
+                submitPinCheck();
             }
         };
-
-        (function initQaPinGate() {
-            try {
-                const params = new URLSearchParams(window.location.search);
-                const urlPin = params.get('pin');
-                const urlUnlocked = params.get('qa_unlocked') === '1';
-                if (urlPin === QA_VALID_PIN || urlUnlocked) {
-                    sessionStorage.setItem('gp_qa_auth', 'true');
-                }
-                if (sessionStorage.getItem('gp_qa_auth') === 'true') {
-                    const modal = document.getElementById('qa-pin-gate-modal');
-                    if (modal) modal.remove();
-                } else {
-                    window.addEventListener('keydown', (e) => {
-                        const modal = document.getElementById('qa-pin-gate-modal');
-                        if (!modal || modal.classList.contains('opacity-0') || !document.body.contains(modal)) return;
-                        if (/^[0-9]$/.test(e.key)) {
-                            window.enterPinDigit(e.key);
-                        } else if (e.key === 'Backspace' || e.key === 'Delete') {
-                            currentEnteredPin = currentEnteredPin.slice(0, -1);
-                            window.updatePinDotsUI();
-                        } else if (e.key === 'Enter') {
-                            window.submitPinCheck();
-                        }
-                    });
-                }
-            } catch(e) {}
-        })();
 
 </script>
     <!-- 🧪 FIXED QA WATERMARK PILL -->
