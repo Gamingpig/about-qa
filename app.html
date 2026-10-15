@@ -26748,6 +26748,14 @@ window.setLyricsStyle = function(style) {
                             const wTime = (wm_m * 60000) + (wm_s * 1000) + wm_ms;
                             tokens.push({ timeMs: wTime, text: wm[4] }); 
                         });
+                        parsedLyrics.push({ 
+                            timeMs: lineTime,
+                            startMs: lineTime,
+                            text: rawText.replace(/<\d{2}:\d{2}\.\d{2,3}>/g, '').trim() || "♪ ♪ ♪",
+                            tokens: tokens,
+                            hasWordTimings: hasWordTimings,
+                            isInstrumental: false
+                        });
                     } else {
                         const cleanText = rawText.replace(/<\d{2}:\d{2}\.\d{2,3}>/g, '').trim();
                         const isNoteOrBreak = !cleanText || cleanText === "♪" || cleanText === "(Instrumental)" || /^[♪\s\-—]+$/.test(cleanText);
@@ -26767,17 +26775,7 @@ window.setLyricsStyle = function(style) {
                             hasWordTimings: hasWordTimings,
                             isInstrumental: isNoteOrBreak
                         });
-                        continue;
                     }
-
-                    parsedLyrics.push({ 
-                        timeMs: lineTime,
-                        startMs: lineTime,
-                        text: rawText.replace(/<\d{2}:\d{2}\.\d{2,3}>/g, '').trim() || "♪ ♪ ♪",
-                        tokens: tokens,
-                        hasWordTimings: hasWordTimings,
-                        isInstrumental: false
-                    });
                 }
             });
 
@@ -29811,48 +29809,7 @@ window.setLyricsStyle = function(style) {
 
 
 
-        // ==============================================================================
-        // 🔒 QA TESTER PIN GATE CONTROLLER (PIN: 2957)
-        // ==============================================================================
-        let currentEnteredPin = '';
-        const QA_VALID_PIN = '2957';
 
-        window.updatePinDotsUI = function() {
-            const dots = document.querySelectorAll('#qa-pin-dots .pin-dot');
-            dots.forEach((dot, idx) => {
-                if (idx < currentEnteredPin.length) {
-                    dot.classList.add('bg-cyan-400', 'border-cyan-300', 'shadow-[0_0_8px_rgba(6,182,212,0.8)]');
-                    dot.classList.remove('bg-transparent', 'border-cyan-400/40');
-                } else {
-                    dot.classList.remove('bg-cyan-400', 'border-cyan-300', 'shadow-[0_0_8px_rgba(6,182,212,0.8)]');
-                    dot.classList.add('bg-transparent', 'border-cyan-400/40');
-                }
-            });
-        };
-
-        window.enterPinDigit = function(digit) {
-            if (currentEnteredPin.length >= 4) return;
-            currentEnteredPin += digit;
-            if (typeof haptic === 'function') haptic(15);
-            window.updatePinDotsUI();
-            if (currentEnteredPin.length === 4) {
-                setTimeout(window.submitPinCheck, 120);
-            }
-        };
-
-        window.clearPinInput = function() {
-            currentEnteredPin = '';
-            if (typeof haptic === 'function') haptic(25);
-            window.updatePinDotsUI();
-            const fb = document.getElementById('qa-pin-feedback');
-            if (fb) fb.innerText = '';
-        };
-
-        window.submitPinCheck = function() {
-            if (typeof submitPinCheck === 'function') {
-                submitPinCheck();
-            }
-        };
 
 </script>
     <!-- 🧪 FIXED QA WATERMARK PILL -->
