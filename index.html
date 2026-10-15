@@ -24009,6 +24009,7 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
             clearTimeout(statusTextTimeout);
             
             if (isDashboardOpen) {
+                if (typeof scheduleNextMusicPoll === 'function') scheduleNextMusicPoll(0);
                 if (musicCardLayoutWrapper) musicCardLayoutWrapper.classList.remove('hidden');
                 
                 setTimeout(() => {
@@ -27839,44 +27840,25 @@ window.setLyricsStyle = function(style) {
                 renderMusicServicePicker(data);
             };
 
+            // BLITZSCHNELLE AKTUALISIERUNG BEIM SONGWECHSEL (0ms Verzögerung)
+            // applyDataChanges sofort ausführen, damit Titel, Interpret, Cover und Lyrics ohne Warten aktualisiert werden
+            applyDataChanges(0);
+
             if (isNewTrack && !isFirstLoad && trackIsPlaying && !document.body.classList.contains('low-end') && isDashboardOpen) {
                 const mediaCont = document.getElementById('media-container');
                 const infoCont = document.getElementById('track-info-container');
                 const lyricsCont = document.getElementById('lyrics-container');
-                
                 if (mediaCont && infoCont && lyricsCont) {
-                    mediaCont.classList.add('impact-media-out'); infoCont.classList.add('impact-text-out'); lyricsCont.classList.add('impact-lyrics-out');
-
+                    mediaCont.classList.remove('impact-media-out');
+                    mediaCont.classList.add('impact-media-in');
+                    infoCont.classList.add('impact-text-in');
+                    lyricsCont.classList.add('impact-lyrics-in');
                     setTimeout(() => {
-                        applyDataChanges(500); 
-                        mediaCont.classList.remove('impact-media-out'); infoCont.classList.remove('impact-text-out'); lyricsCont.classList.remove('impact-lyrics-out');
-                        void mediaCont.offsetWidth;
-                        mediaCont.classList.add('impact-media-in'); infoCont.classList.add('impact-text-in'); lyricsCont.classList.add('impact-lyrics-in');
-                        
-                        setTimeout(() => {
-                            document.body.classList.add('is-shaking');
-                            const shockwave = document.getElementById('global-emp-shockwave');
-                            const mediaTarget = document.getElementById('media-container');
-                            if (shockwave && mediaTarget) {
-                                const rect = mediaTarget.getBoundingClientRect();
-                                const centerX = rect.left + (rect.width / 2);
-                                const centerY = rect.top + (rect.height / 2);
-                                shockwave.style.left = `${centerX}px`; shockwave.style.top = `${centerY}px`;
-                                shockwave.classList.remove('trigger-emp'); void shockwave.offsetWidth; shockwave.classList.add('trigger-emp');
-                            }
-                            setTimeout(() => document.body.classList.remove('is-shaking'), 500);
-                            setTimeout(() => { if (shockwave) shockwave.classList.remove('trigger-emp'); }, 3000);
-                        }, 300); 
-                        
-                        setTimeout(() => {
-                            mediaCont.classList.remove('impact-media-in'); infoCont.classList.remove('impact-text-in'); lyricsCont.classList.remove('impact-lyrics-in');
-                        }, 600); 
-                    }, 500); 
-                } else {
-                    applyDataChanges(0);
+                        mediaCont.classList.remove('impact-media-in');
+                        infoCont.classList.remove('impact-text-in');
+                        lyricsCont.classList.remove('impact-lyrics-in');
+                    }, 400);
                 }
-            } else {
-                applyDataChanges(0);
             }
         }
 
@@ -27943,7 +27925,14 @@ window.setLyricsStyle = function(style) {
             let pStart = performance.now();
             let npcError = null;
             try {
-                const response = await fetch('https://npc-api.aikins.xyz/v1/users/gamingpig/now', {
+                // Cache-Busting & no-store: verhindert, dass Browser alte Track-Daten cachen
+                const cacheBuster = Date.now();
+                const response = await fetch(`https://npc-api.aikins.xyz/v1/users/gamingpig/now?_t=${cacheBuster}`, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    },
                     signal: AbortSignal.timeout(2500)
                 });
                 if (!response.ok && response.status !== 204) throw new Error('NPC fetch failed with status ' + response.status);
@@ -27999,7 +27988,7 @@ window.setLyricsStyle = function(style) {
         // 3. Wenn nichts läuft (Ruhemodus): Sparsamer 25s-Takt
         function getAdaptiveMusicPollDelay() {
             if (Date.now() < statsFmRateLimitedUntil) {
-                return Math.max(4000, statsFmRateLimitedUntil - Date.now());
+                return Math.max(3500, statsFmRateLimitedUntil - Date.now());
             }
 
             if (isHuntingForNextTrack) {
@@ -28008,25 +27997,34 @@ window.setLyricsStyle = function(style) {
                     hasTriggeredSongEndFetch = false;
                     if (standByActive) updateWakeLockForPlaybackState();
                 } else {
-                    return 1200; // Schnelle 1.2s Erkennung beim Songwechsel
+                    return 800; // Blitzschnelle 800ms Erkennung beim Songwechsel
                 }
             }
 
             if (trackIsPlaying && totalMs > 0) {
                 const remainingMs = Math.max(0, totalMs - currentMs);
-                if (remainingMs <= 4000) {
+                if (remainingMs <= 5000) {
                     isHuntingForNextTrack = true;
                     songTransitionStartedAt = Date.now();
-                    return Math.max(800, remainingMs);
+                    return Math.max(600, remainingMs);
                 }
-                // Ultra-responsives Polling bei geöffnetem Songtext (1.8s statt 2.5s)
+                // Ultra-responsives Polling bei geöffnetem Songtext (1.1s)
                 if (mainMusicCard && mainMusicCard.classList.contains('lyrics-open')) {
-                    return 1800;
+                    return 1100;
                 }
-                return 3500;
+                // Wenn Dashboard geöffnet ist: responsives 1.4s Polling für sofortigen Songwechsel!
+                if (isDashboardOpen) {
+                    return 1400;
+                }
+                return 2400;
             }
 
-            return 7000;
+            // Wenn Dashboard geöffnet ist, aber pausiert: 2s statt 7s Takt
+            if (isDashboardOpen) {
+                return 2000;
+            }
+
+            return 4500;
         }
 
         let musicPollTimer = null;
