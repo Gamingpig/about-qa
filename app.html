@@ -10831,11 +10831,14 @@ html.gp-android:not(.dark) #ui-controls {
                     </div>
                     <span id="tutorial-counter-badge" class="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 font-mono text-xs font-bold">0</span>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="window.resetTutorialAndStart()" id="btn-restart-tutorial" class="min-h-[44px] py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm transition-all active:scale-95 flex items-center justify-center gap-2 border border-blue-400/30 cursor-pointer">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <button onclick="window.resetTutorialAndStart()" id="btn-restart-tutorial" class="min-h-[44px] py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm transition-all active:scale-95 flex items-center justify-center gap-1.5 border border-blue-400/30 cursor-pointer" title="Tutorial von vorne starten">
                         <span>▶️</span> <span id="btn-restart-tutorial-text" data-i18n="settings_tutorial_restart">Tutorial starten</span>
                     </button>
-                    <button onclick="window.toggleTutorialCompletedStatus()" id="btn-toggle-tutorial-status" class="min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs sm:text-sm transition-all active:scale-95 flex items-center justify-center gap-2 border border-white/10 cursor-pointer">
+                    <button onclick="window.completeTutorialFromSettings()" id="btn-complete-tutorial" class="min-h-[44px] py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm transition-all active:scale-95 flex items-center justify-center gap-1.5 border border-emerald-400/30 cursor-pointer" title="Tutorial abschließen und Seite neu laden">
+                        <span>✓</span> <span id="btn-complete-tutorial-text" data-i18n="settings_tutorial_complete">Vervollständigen</span>
+                    </button>
+                    <button onclick="window.toggleTutorialCompletedStatus()" id="btn-toggle-tutorial-status" class="min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs sm:text-sm transition-all active:scale-95 flex items-center justify-center gap-1.5 border border-white/10 cursor-pointer" title="Tutorial-Zähler umschalten">
                         <span>🔄</span> <span id="btn-toggle-tutorial-text">Auf 0 setzen</span>
                     </button>
                 </div>
@@ -11819,6 +11822,11 @@ html.gp-android:not(.dark) #ui-controls {
                 tutorial_step: (n, total) => `Schritt ${n}/${total}`,
                 t_step1_title: 'Willkommen in meiner Welt!',
                 t_step1_text: 'Dauert nur 30 Sekunden, versprochen! Das ist mein persönliches Portfolio - und ja, es gibt hier auch versteckte Easter Eggs zu entdecken. Lohnt sich wirklich. Übrigens: Der "🔊 Vorlesen"-Button oben rechts liest dir jeden Tutorial-Schritt vor, falls du lieber zuhörst - das gibt es an vielen Stellen der Seite.',
+                t_step_settings_title: '⚙️ Website-Einstellungen & System',
+                t_step_settings_text: 'Das Herzstück zur Personalisierung: Über das Zahnrad-Icon öffnest du alle Website-Einstellungen. Hier steuerst du System-Updates, das Apple Liquid Glass Design, Soundeffekte & Haptik, das interaktive Tutorial & Onboarding-Wiederherstellung, Entwickler-Optionen sowie Leistungs- und Reset-Funktionen.',
+                settings_tutorial_complete: 'Vervollständigen',
+                tutorial_completed_reload_toast: '✓ Tutorial vervollständigt – Seite lädt neu...',
+                tutorial_skipped_toast: 'Tutorial übersprungen – Seite lädt neu...',
                 t_step2_title: 'Dein Kontrollzentrum',
                 t_step2_text: 'Oben rechts hast du die volle Kontrolle: "Apple Liquid Glass" schaltet den edlen, aber leistungshungrigen Blur-Look ein, Dark Mode wechselt zwischen hell/dunkel, Low-End-Modus deaktiviert aufwendige Animationen für ältere/langsamere Geräte, StandBy öffnet den Lockscreen-Modus, und der letzte Button startet dieses Tutorial jederzeit neu.',
                 t_step3_title: 'Deep Dive: Wer bin ich?',
@@ -12048,6 +12056,11 @@ html.gp-android:not(.dark) #ui-controls {
                 tutorial_step: (n, total) => `Step ${n}/${total}`,
                 t_step1_title: 'Welcome to my world!',
                 t_step1_text: "Only takes 30 seconds, promise! This is my personal portfolio - and yes, there are hidden Easter eggs to find here too. Genuinely worth it. By the way: the \"🔊 Read aloud\" button up top reads every tutorial step to you, if you'd rather listen - available in many spots across the site.",
+                t_step_settings_title: '⚙️ Settings Center & System',
+                t_step_settings_text: 'The customization hub: Tap the gear icon to open all website settings. Here you control system updates, Apple Liquid Glass design, sound effects & haptics, interactive tutorial & onboarding recovery, developer options, performance tuning, and reset features.',
+                settings_tutorial_complete: 'Complete Tutorial',
+                tutorial_completed_reload_toast: '✓ Tutorial completed – Reloading page...',
+                tutorial_skipped_toast: 'Tutorial skipped – Reloading page...',
                 t_step2_title: 'Your control center',
                 t_step2_text: 'Top right you have full control: "Apple Liquid Glass" turns on the fancy but performance-hungry blur look, Dark Mode switches between light/dark, Low-End Mode disables heavy animations for older/slower devices, StandBy opens lock-screen mode, and the last button restarts this tutorial anytime.',
                 t_step3_title: 'Deep dive: who am I?',
@@ -12306,6 +12319,11 @@ html.gp-android:not(.dark) #ui-controls {
                 tutorial_step: (n, total) => `Paso ${n}/${total}`,
                 t_step1_title: '¡Bienvenido a mi mundo!',
                 t_step1_text: '¡Solo toma 30 segundos, lo prometo! Este es mi portafolio personal - y sí, también hay Easter eggs escondidos por descubrir. Vale la pena de verdad. Por cierto: el botón "🔊 Escuchar" de arriba te lee cada paso del tutorial, por si prefieres escuchar - disponible en muchos lugares de la página.',
+                t_step_settings_title: '⚙️ Centro de Ajustes y Sistema',
+                t_step_settings_text: 'El centro de personalización: toca el icono de engranaje para abrir todos los ajustes del sitio web. Aquí controlas actualizaciones, diseño Liquid Glass, efectos de sonido y hápticos, tutorial interactivo, opciones de desarrollador y funciones de reinicio.',
+                settings_tutorial_complete: 'Completar',
+                tutorial_completed_reload_toast: '✓ Tutorial completado – Recargando...',
+                tutorial_skipped_toast: 'Tutorial omitido – Recargando...',
                 t_step2_title: 'Tu centro de control',
                 t_step2_text: 'Arriba a la derecha tienes el control total: "Apple Liquid Glass" activa el elegante pero exigente efecto de desenfoque, Modo Oscuro cambia entre claro/oscuro, Modo de Bajo Rendimiento desactiva animaciones pesadas para dispositivos más antiguos/lentos, StandBy abre el modo de pantalla de bloqueo, y el último botón reinicia este tutorial cuando quieras.',
                 t_step3_title: 'A fondo: ¿quién soy?',
@@ -12546,6 +12564,11 @@ html.gp-android:not(.dark) #ui-controls {
                 tutorial_step: (n, total) => `Étape ${n}/${total}`,
                 t_step1_title: 'Bienvenue dans mon monde !',
                 t_step1_text: "Ça ne prend que 30 secondes, promis ! C'est mon portfolio personnel - et oui, il y a aussi des easter eggs cachés à découvrir. Ça vaut vraiment le coup. Au fait : le bouton \"🔊 Écouter\" en haut te lit chaque étape du tutoriel, si tu préfères écouter - disponible à plein d'endroits sur le site.",
+                t_step_settings_title: '⚙️ Centre de Paramètres & Système',
+                t_step_settings_text: 'Le centre de personnalisation : appuie sur la roue dentée pour ouvrir tous les paramètres. Gère les mises à jour, le design Liquid Glass, les effets sonores & haptiques, le tutoriel interactif, les options développeur et les réinitialisations.',
+                settings_tutorial_complete: 'Terminer',
+                tutorial_completed_reload_toast: '✓ Tutoriel terminé – Rechargement...',
+                tutorial_skipped_toast: 'Tutoriel ignoré – Rechargement...',
                 t_step2_title: 'Ton centre de contrôle',
                 t_step2_text: 'En haut à droite, tu as le contrôle total : "Apple Liquid Glass" active le look flou chic mais gourmand en performances, le mode sombre bascule entre clair/sombre, le mode basse consommation désactive les animations lourdes pour les appareils plus anciens/lents, StandBy ouvre le mode écran verrouillé, et le dernier bouton relance ce tutoriel à tout moment.',
                 t_step3_title: 'Plongée en profondeur : qui suis-je ?',
@@ -12749,6 +12772,11 @@ html.gp-android:not(.dark) #ui-controls {
                 tutorial_step: (n, total) => `Passo ${n}/${total}`,
                 t_step1_title: 'Bem-vindo ao meu mundo!',
                 t_step1_text: 'Leva só 30 segundos, prometo! Este é meu portfólio pessoal - e sim, também tem easter eggs escondidos pra descobrir aqui. Vale muito a pena. Aliás: o botão "🔊 Ouvir" lá em cima lê cada passo do tutorial pra você, caso prefira ouvir - disponível em vários lugares do site.',
+                t_step_settings_title: '⚙️ Centro de Configurações & Sistema',
+                t_step_settings_text: 'O centro de personalização: toque na engrenagem para abrir todas as configurações. Controle atualizações de sistema, design Liquid Glass, efeitos sonoros & feedback tátil, tutorial interativo, opções de desenvolvedor e restaurações.',
+                settings_tutorial_complete: 'Concluir',
+                tutorial_completed_reload_toast: '✓ Tutorial concluído – Recarregando...',
+                tutorial_skipped_toast: 'Tutorial pulado – Recarregando...',
                 t_step2_title: 'Seu centro de controle',
                 t_step2_text: 'No canto superior direito você tem controle total: "Apple Liquid Glass" ativa o visual desfocado elegante, Modo Escuro alterna entre claro/escuro, Modo de Baixo Desempenho desativa animações pesadas para aparelhos mais lentos, StandBy abre o modo de tela de bloqueio, e o último botão reinicia este tutorial a qualquer momento.',
                 t_step3_title: 'Mergulho profundo: quem sou eu?',
@@ -12952,6 +12980,11 @@ html.gp-android:not(.dark) #ui-controls {
                 tutorial_step: (n, total) => `Adım ${n}/${total}`,
                 t_step1_title: 'Dünyama hoş geldin!',
                 t_step1_text: 'Sadece 30 saniye sürer, söz! Bu benim kişisel portföyüm - ve evet, burada keşfedilecek gizli sürprizler (Easter eggs) de var. Kesinlikle değer. Bu arada: yukarıdaki "🔊 Sesli Oku" butonu, dinlemeyi tercih edersen her eğitim adımını senin için okur - sitede birçok yerde mevcuttur.',
+                t_step_settings_title: '⚙️ Ayar Merkezi ve Sistem',
+                t_step_settings_text: 'Özelleştirme merkezi: Tüm site ayarlarını açmak için dişli simgesine dokunun. Buradan sistem güncellemelerini, Apple Liquid Glass tasarımını, ses efektlerini & dokunsal geri bildirimi, interaktif eğitimi ve sıfırlama işlevlerini yönetebilirsiniz.',
+                settings_tutorial_complete: 'Tamamla',
+                tutorial_completed_reload_toast: '✓ Eğitim tamamlandı – Sayfa yenileniyor...',
+                tutorial_skipped_toast: 'Eğitim atlandı – Sayfa yenileniyor...',
                 t_step2_title: 'Kontrol Merkezin',
                 t_step2_text: 'Sağ üstte tam kontrole sahipsin: "Apple Liquid Glass" şık ama performans tüketen bulanıklık efektini açar, Karanlık Mod açık/koyu arasında geçiş yapar, Düşük Performans Modu eski/yavaş cihazlar için ağır animasyonları devre dışı bırakır, StandBy kilit ekranı modunu açar ve son buton bu eğitimi istediğin zaman yeniden başlatır.',
                 t_step3_title: 'Derinlemesine: Ben kimim?',
@@ -18599,12 +18632,45 @@ let shareCardLoading;
             }, 250);
         };
 
+        window.completeTutorialFromSettings = function() {
+            window.setTutorialCompleted(true);
+            AppStorage.setItem('tutorialCompletedV2', 'true');
+            AppStorage.setItem('tutorialCompletedV5', 'true');
+            AppStorage.setItem('onboarding_completed', 'true');
+            AppStorage.setItem('app_tutorial_completed', '1');
+            try {
+                const url = new URL(window.location.href);
+                ['first_visit', 'onboarding', 'tutorial'].forEach(k => url.searchParams.delete(k));
+                window.history.replaceState(null, '', url.href);
+            } catch(e) {}
+            if (typeof updateSettingsTutorialUI === 'function') updateSettingsTutorialUI();
+            if (typeof showToast === 'function') {
+                showToast(typeof t === 'function' ? t('tutorial_completed_reload_toast', '✓ Tutorial vervollständigt – Seite lädt neu...') : '✓ Tutorial vervollständigt – Seite lädt neu...', 2500);
+            }
+            setTimeout(() => {
+                window.location.reload();
+            }, 350);
+        };
+
         window.toggleTutorialCompletedStatus = function() {
             const current = window.getTutorialStatus();
             const next = current === '1' ? '0' : '1';
             window.setTutorialCompleted(next === '1');
-            if (typeof showToast === 'function') {
-                showToast(next === '1' ? '✓ Tutorial auf 1 gesetzt (Abgeschlossen)' : '🔄 Tutorial auf 0 gesetzt (Offen)', 2500);
+            if (next === '1') {
+                AppStorage.setItem('onboarding_completed', 'true');
+                AppStorage.setItem('tutorialCompletedV2', 'true');
+                AppStorage.setItem('tutorialCompletedV5', 'true');
+                if (typeof showToast === 'function') {
+                    showToast('✓ Tutorial auf 1 gesetzt (Abgeschlossen) – Seite lädt neu...', 2000);
+                }
+                setTimeout(() => window.location.reload(), 350);
+            } else {
+                AppStorage.removeItem('onboarding_completed');
+                AppStorage.removeItem('tutorialCompletedV2');
+                AppStorage.removeItem('tutorialCompletedV5');
+                if (typeof showToast === 'function') {
+                    showToast('🔄 Tutorial auf 0 gesetzt (Offen)', 2500);
+                }
             }
         };
 
@@ -18613,6 +18679,7 @@ let shareCardLoading;
             const statusBadge = document.getElementById('tutorial-status-badge');
             const counterBadge = document.getElementById('tutorial-counter-badge');
             const toggleBtnText = document.getElementById('btn-toggle-tutorial-text');
+            const completeBtn = document.getElementById('btn-complete-tutorial');
             
             if (statusBadge) {
                 statusBadge.textContent = isDone ? 'Status: Abgeschlossen (1)' : 'Status: Nicht abgeschlossen (0)';
@@ -18626,6 +18693,13 @@ let shareCardLoading;
             }
             if (toggleBtnText) {
                 toggleBtnText.textContent = isDone ? 'Auf 0 setzen' : 'Auf 1 setzen';
+            }
+            if (completeBtn) {
+                if (isDone) {
+                    completeBtn.classList.add('opacity-60');
+                } else {
+                    completeBtn.classList.remove('opacity-60');
+                }
             }
         };
 
@@ -18677,6 +18751,15 @@ let shareCardLoading;
                 }
                 clearTutorialHighlights();
                 window.setTutorialCompleted(true);
+                AppStorage.setItem('onboarding_completed', 'true');
+                AppStorage.setItem('tutorialCompletedV2', 'true');
+                AppStorage.setItem('tutorialCompletedV5', 'true');
+                AppStorage.setItem('app_tutorial_completed', '1');
+                try {
+                    const url = new URL(window.location.href);
+                    ['first_visit', 'onboarding', 'tutorial'].forEach(k => url.searchParams.delete(k));
+                    window.history.replaceState(null, '', url.href);
+                } catch(e) {}
                 
                 if (originalPerfModeState !== 'true' && window.innerWidth >= 360) {
                     applyPerformanceMode(false);
@@ -18687,12 +18770,9 @@ let shareCardLoading;
                 }
                 window.scrollTo({ top: 0, behavior: 'auto' });
                 
-                setTimeout(() => {
-                    if (window.OnboardingCoordinator.isOnboarding) {
-                        window.OnboardingCoordinator.step3_whatsNew();
-                    }
-                }, 150);
-            }, 850);
+                // USER REQUIREMENT: Bei Skip oder Abschluss des Tutorials Seite neu laden
+                window.location.reload();
+            }, 500);
         }
 
         // NEU v24.45: Liest Titel + Text des gerade angezeigten Tutorial-Schritts vor - für
@@ -18981,10 +19061,10 @@ let shareCardLoading;
                 '<h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">' + t('onboarding_exploration_done', 'Erkundung abgeschlossen') + '</h2>' +
                 '<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mb-6 leading-relaxed">' + t('onboarding_exploration_desc', 'Du hast alle Stationen des Portfolios erfolgreich kennengelernt.') + '</p>' +
                 '<div class="flex flex-col sm:flex-row items-center gap-2.5 w-full max-w-xs mx-auto">' +
-                    '<button onclick="window.closeModal(); if(window.OnboardingCoordinator) window.OnboardingCoordinator.step3_whatsNew();" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs text-center transition-all active:scale-[0.98] border border-blue-400/30">' +
-                        t('onboarding_to_whatsnew', 'Weiter zu Neuerungen ➔') +
+                    '<button onclick="window.setTutorialCompleted(true); AppStorage.setItem(\'onboarding_completed\', \'true\'); window.closeModal(); setTimeout(() => window.location.reload(), 200);" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs text-center transition-all active:scale-[0.98] border border-blue-400/30">' +
+                        t('onboarding_finish_reload', 'Abschließen & Neu laden ➔') +
                     '</button>' +
-                    '<button onclick="window.setTutorialCompleted(true); AppStorage.setItem(\'onboarding_completed\', \'true\'); window.closeModal(); window.location.reload();" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs text-center transition-all active:scale-[0.98] border border-white/10">' +
+                    '<button onclick="window.setTutorialCompleted(true); AppStorage.setItem(\'onboarding_completed\', \'true\'); window.closeModal(); setTimeout(() => window.location.reload(), 200);" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs text-center transition-all active:scale-[0.98] border border-white/10">' +
                         t('onboarding_maybe_later', 'Vielleicht später') +
                     '</button>' +
                 '</div>' +
@@ -19056,13 +19136,25 @@ let shareCardLoading;
         window.skipTutorialChoice = function() {
             window._tutorialChoiceModalOpen = false;
             window.setTutorialCompleted(true);
+            AppStorage.setItem('tutorialCompletedV2', 'true');
+            AppStorage.setItem('tutorialCompletedV5', 'true');
+            AppStorage.setItem('onboarding_completed', 'true');
+            AppStorage.setItem('app_tutorial_completed', '1');
+            try {
+                const url = new URL(window.location.href);
+                ['first_visit', 'onboarding', 'tutorial'].forEach(k => url.searchParams.delete(k));
+                window.history.replaceState(null, '', url.href);
+            } catch(e) {}
             if (modalOverlay) {
                 modalOverlay.classList.remove('flex');
                 modalOverlay.classList.add('hidden');
             }
-            if (window.OnboardingCoordinator.isOnboarding) {
-                window.OnboardingCoordinator.step3_whatsNew();
+            if (typeof showToast === 'function') {
+                showToast(typeof t === 'function' ? t('tutorial_skipped_toast', 'Tutorial übersprungen – Seite lädt neu...') : 'Tutorial übersprungen – Seite lädt neu...', 1500);
             }
+            setTimeout(() => {
+                window.location.reload();
+            }, 300);
         };
 
         window.startInteractiveLearning = function() {
