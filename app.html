@@ -27475,9 +27475,12 @@ window.setLyricsStyle = function(style) {
                 const now = performance.now();
                 const expected = serverBaseProgress + (trackIsPlaying ? now - localStartTime : 0);
                 const songEndedLocally = playing && totalMs > 0 && (currentMs >= totalMs || expected >= totalMs);
-                const isLegitRepeat = songEndedLocally && progress !== null && progress < 12000 && progress < totalMs * 0.2 && (Date.now() - songTransitionStartedAt > 2000);
+                const isLegitRepeat = (playing && progress !== null) && (
+                    (songEndedLocally && progress < Math.max(25000, totalMs * 0.4)) ||
+                    (expected - progress > 4000)
+                );
 
-                // Wenn der Song am Ende ist, niemals durch verzögerte API-Snapshots zurück in den alten Song springen!
+                // Wenn der Song am Ende ist, niemals durch verzögerte API-Snapshots zurück in den alten Song springen (außer bei echtem Repeat/Rücksprung)!
                 if (newTrack || playbackChanged || (progress !== null && progress !== previous.progress && !songEndedLocally) || isLegitRepeat) {
                     let target = progress ?? (newTrack ? 0 : expected);
                     if (playing && progress !== null) {
@@ -27509,12 +27512,19 @@ window.setLyricsStyle = function(style) {
                 if (totalMs > 0) currentMs = Math.min(currentMs, totalMs);
                 standbyProgressSample = { id, progress: progress ?? (newTrack ? null : previous.progress), playing };
                 const ended = playing && totalMs > 0 && currentMs >= totalMs;
-                if (playing && !ended) {
+                if (playing) {
+                    if (ended) {
+                        if (!isHuntingForNextTrack) {
+                            isHuntingForNextTrack = true;
+                            songTransitionStartedAt = Date.now();
+                        }
+                    } else {
+                        isHuntingForNextTrack = false;
+                        hasTriggeredSongEndFetch = false;
+                    }
+                } else {
                     isHuntingForNextTrack = false;
                     hasTriggeredSongEndFetch = false;
-                } else if (!playing && !isHuntingForNextTrack) {
-                    isHuntingForNextTrack = true;
-                    songTransitionStartedAt = Date.now();
                 }
                 const changed = newTrack || title !== lastStandbyTrackInfo?.title || artist !== lastStandbyTrackInfo?.artist;
                 const art = track?.artwork_url || (changed ? fallbackImg : lastStandbyTrackInfo?.artUrl) || fallbackImg;
@@ -27527,21 +27537,22 @@ window.setLyricsStyle = function(style) {
             const hasTrack = data && data.track && Boolean(data.track.title || data.track.name);
             const isPlaying = data && data.status === "playing";
 
-            // Entweder läuft was oder es ist Ruhe — Pause gibt es nicht.
-            // Wenn pausiert oder kein Track → sofort Offline-/Ruhe-Zustand.
+            // Intelligente Unterscheidung: Echter Songwechsel vs. Pause vs. Offline (Kopfhörer ausgesteckt/Spotify geschlossen)
             if (!hasTrack || !isPlaying) {
-                if (trackIsPlaying && !isHuntingForNextTrack) {
+                const isNaturalEndTransition = trackIsPlaying && totalMs > 0 && currentMs >= totalMs - 2500;
+                if (isNaturalEndTransition && !isHuntingForNextTrack) {
                     isHuntingForNextTrack = true;
                     songTransitionStartedAt = Date.now();
+                } else if (!isNaturalEndTransition) {
+                    // Echter Pause- oder Stop-Fall: Sofort aufhören nach neuem Track zu suchen!
+                    isHuntingForNextTrack = false;
+                    hasTriggeredSongEndFetch = false;
                 }
-                consecutiveEmptyPolls++;
-                if (consecutiveEmptyPolls < 3) {
-                    return;
-                }
+
                 trackIsPlaying = false;
                 stopProgressTracking();
-                const liquidBg = document.getElementById('liquid-blobs');
-                if (liquidBg) liquidBg.style.setProperty('opacity', '0');
+                updateWakeLockForPlaybackState();
+
                 if (ttsSyncedPlaybackActive || (typeof ttsQueueActive !== 'undefined' && ttsQueueActive)) {
                     ttsSyncedPlaybackActive = false;
                     if (typeof ttsQueueActive !== 'undefined') ttsQueueActive = false;
@@ -27549,25 +27560,55 @@ window.setLyricsStyle = function(style) {
                     const btnSpeak = document.getElementById('btn-speak-lyrics');
                     if (btnSpeak && typeof ttsSetButtonState === 'function') ttsSetButtonState(btnSpeak, 'idle');
                 }
-                if (!offlineTimeout) {
-                    offlineTimeout = setTimeout(() => {
-                        if (mainMusicCard) {
-                            mainMusicCard.classList.add('offline');
-                            mainMusicCard.classList.remove('playing', 'paused');
-                            if(mainMusicCard.classList.contains('lyrics-open')) toggleLyrics(false);
-                        }
-                        if (mTitle) mTitle.innerText = "Aktuell ist es ruhig...";
-                        if (mArtist) mArtist.innerText = "Genieße die Stille";
-                        if (mHeader) mHeader.innerText = t('status_offline');
-                        if (mDot) mDot.className = "h-1 w-1 xxs:h-1.5 xxs:w-1.5 xs:h-2 xs:w-2 rounded-full bg-blue-500";
-                        if (miniTitle) miniTitle.innerText = t('mini_dashboard_minimized');
-                        if (miniStatus) miniStatus.innerText = t('mini_click_to_open');
-                        if (miniIconBg) miniIconBg.className = 'w-8 h-8 xxs:w-10 xxs:h-10 sm:w-12 sm:h-12 shrink-0 rounded-lg xxs:rounded-xl flex items-center justify-center transition-colors bg-white/5 text-slate-400';
-                        updateProgressUI();
-                        offlineTimeout = null;
-                        hideIslandCompletely();
-                    }, 4000);
+
+                if (offlineTimeout) {
+                    clearTimeout(offlineTimeout);
+                    offlineTimeout = null;
                 }
+
+                // Fall 1: Kopfhörer abgezogen / Spotify beendet / Kein Track mehr
+                if (!hasTrack) {
+                    consecutiveEmptyPolls++;
+                    if (mainMusicCard) {
+                        mainMusicCard.classList.add('offline');
+                        mainMusicCard.classList.remove('playing', 'paused');
+                        if (mainMusicCard.classList.contains('lyrics-open')) toggleLyrics(false);
+                    }
+                    if (mTitle) mTitle.innerText = "Aktuell ist es ruhig...";
+                    if (mArtist) mArtist.innerText = "Genieße die Stille";
+                    if (mHeader) mHeader.innerText = t('status_offline');
+                    if (mDot) mDot.className = "h-1 w-1 xxs:h-1.5 xxs:w-1.5 xs:h-2 xs:w-2 rounded-full bg-blue-500";
+                    if (miniTitle) miniTitle.innerText = t('mini_dashboard_minimized');
+                    if (miniStatus) miniStatus.innerText = t('mini_click_to_open');
+                    if (miniIconBg) miniIconBg.className = 'w-8 h-8 xxs:w-10 xxs:h-10 sm:w-12 sm:h-12 shrink-0 rounded-lg xxs:rounded-xl flex items-center justify-center transition-colors bg-white/5 text-slate-400';
+                    const liquidBg = document.getElementById('liquid-blobs');
+                    if (liquidBg) liquidBg.style.setProperty('opacity', '0');
+                    hideIslandCompletely();
+                    if (standByActive) {
+                        syncStandByTrackInfo('', '', null, false, false, true, true);
+                        releaseStandbyWakeLock();
+                    }
+                    updateProgressUI();
+                    return;
+                }
+
+                // Fall 2: Song existiert, ist aber PAUSIERT (Nutzer hat pausiert oder Headset kurz getrennt)
+                if (mainMusicCard) {
+                    mainMusicCard.classList.remove('playing', 'offline');
+                    mainMusicCard.classList.add('paused');
+                }
+                if (mHeader) mHeader.innerText = t('status_paused') || 'Pausiert';
+                if (mDot) mDot.className = "h-1 w-1 xxs:h-1.5 xxs:w-1.5 xs:h-2 xs:w-2 rounded-full bg-amber-500";
+                if (miniIconBg) miniIconBg.className = 'w-8 h-8 xxs:w-10 xxs:h-10 sm:w-12 sm:h-12 shrink-0 rounded-lg xxs:rounded-xl flex items-center justify-center transition-colors bg-amber-500/10 text-amber-500';
+                const liquidBg = document.getElementById('liquid-blobs');
+                if (liquidBg) liquidBg.style.setProperty('opacity', '0');
+                if (standByActive) {
+                    const rawArtist = (data.track && data.track.artist) || "Unknown";
+                    const cleanArtist = rawArtist.replace(/\s*•\s*From Smart Shuffle/gi, '').trim();
+                    const trackTitle = (data.track && data.track.title) || "";
+                    syncStandByTrackInfo(trackTitle, cleanArtist, null, false, false, true, false);
+                }
+                updateProgressUI();
                 return;
             }
 
@@ -27921,19 +27962,25 @@ window.setLyricsStyle = function(style) {
                         let absDrift = Math.abs(drift);
 
                         const songEndedLocally = trackIsPlaying && totalMs > 0 && (currentMs >= totalMs || expectedLocalProgress >= totalMs);
-                        const isLegitRepeat = songEndedLocally && (apiProgress + addedDelay) < 12000 && (apiProgress + addedDelay) < totalMs * 0.2 && (Date.now() - songTransitionStartedAt > 2000);
+                        const newProgressVal = apiProgress + addedDelay;
+                        const isLegitRepeatOrSeek = (
+                            (songEndedLocally && newProgressVal < Math.max(25000, totalMs * 0.4)) ||
+                            (expectedLocalProgress - newProgressVal > 4000)
+                        );
 
-                        if (window.isForceMusicSync || isLegitRepeat) {
-                            serverBaseProgress = apiProgress + addedDelay;
+                        if (window.isForceMusicSync || isLegitRepeatOrSeek) {
+                            serverBaseProgress = newProgressVal;
                             localStartTime = performance.now();
                             currentMs = serverBaseProgress;
                             hasTriggeredSongEndFetch = false;
                             isHuntingForNextTrack = false;
+                            trackIsPlaying = true;
+                            startProgressTracking();
                             syncLyricsUI(true, true);
                         } else if (songEndedLocally) {
                             // FIX: Song ist lokal bereits zu Ende gelaufen. Wenn die API noch denselben alten Song meldet
                             // (weil Spotify/stats.fm 5-15s Verzögerung hat), NIEMALS zurückspringen oder zum Anfang springen!
-                            // Am Ende (totalMs) fixiert bleiben und weiter mit 2s-Intervall nach dem neuen Song suchen.
+                            // Am Ende (totalMs) fixiert bleiben und geordnet nach dem neuen Song suchen.
                             currentMs = totalMs;
                             isHuntingForNextTrack = true;
                         } else if (data.source === 'statsfm') {
