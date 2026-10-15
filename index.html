@@ -24196,18 +24196,22 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
                     lastSeenProgressMs = -1;
                     if (typeof lastSeenStatsFmProgressMs !== 'undefined') lastSeenStatsFmProgressMs = -1;
 
-                    if (title && artist) {
+                    const hasExistingSyncedLyrics = Boolean(parsedLyrics && parsedLyrics.length > 0);
+
+                    // Nur wenn noch KEINE synchronisierten Lyrics vorliegen, den Cache leeren
+                    // (um nach neu hinzugefügten Synced Lyrics zu suchen, ohne bestehende zu zerstören)
+                    if (!hasExistingSyncedLyrics && title && artist) {
                         const cacheKey = (title + '---' + (artist || '')).toLowerCase().trim();
                         lyricsMemoryCache.delete(cacheKey);
                         if (typeof inFlightLyricsKey !== 'undefined') inFlightLyricsKey = null;
                         if (typeof inFlightLyricsPromise !== 'undefined') inFlightLyricsPromise = null;
                     }
 
-                    // 1. Frische Musik- & Timing-Daten direkt von der API anfordern
+                    // 1. Frische Musik- & Timing-Daten direkt von der API abrufen (gleicht Zeit live ab)
                     await fetchMusicData();
 
-                    // 2. Songtext garantiert frisch laden und rendern (force = true)
-                    if (title && artist && title !== t('standby_idle_title')) {
+                    // 2. Songtext nur dann aus dem Netz neu anfragen, wenn noch keine Synced Lyrics vorliegen!
+                    if (!hasExistingSyncedLyrics && title && artist && title !== t('standby_idle_title')) {
                         await fetchExternalLyrics(title, artist, totalMs, true);
                     }
 
@@ -24219,6 +24223,8 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
                     const syncNumInput = document.getElementById('sync-number-input');
                     if (syncNumInput) syncNumInput.value = liveSyncOffset;
 
+                    // 4. Zeitleiste und aktive Textzeile sofort auf die synchronisierte Echtzeit springen lassen
+                    updateProgressUI();
                     syncLyricsUI(true, true);
                     if (typeof showToast === 'function') showToast('🔄 Live-Sync mit Spotify erfolgreich!', 'success');
                 } catch (err) {
@@ -27246,6 +27252,10 @@ window.setLyricsStyle = function(style) {
 
                     const saveAndRender = (synced, plain, provider = "LRCLIB", writer = "") => {
                         if (fetchId !== currentFetchId) return false;
+                        // Niemals bereits geladene synchronisierte Lyrics durch Plain-Lyrics ersetzen!
+                        if (!synced && parsedLyrics && parsedLyrics.length > 0) {
+                            return false;
+                        }
                         lyricsMemoryCache.set(cacheKey, { syncedLyrics: synced, plainLyrics: plain, provider, writer });
                         currentLyricsProvider = provider;
                         currentLyricsWriter = writer;
@@ -27968,11 +27978,16 @@ window.setLyricsStyle = function(style) {
             const artists = Array.isArray(track.artists) ? track.artists.map(a => a && a.name).filter(Boolean) : [];
             const album = Array.isArray(track.albums) ? track.albums[0] : null;
             const spotifyId = track.externalIds && Array.isArray(track.externalIds.spotify) ? track.externalIds.spotify[0] : null;
+            let streamTime = Date.now();
+            if (item.date) {
+                const parsed = new Date(item.date).getTime();
+                if (!isNaN(parsed) && parsed > 0) streamTime = parsed;
+            }
             return {
                 status: item.isPlaying ? 'playing' : 'stopped',
                 provider: item.platform ? String(item.platform).toLowerCase() : 'spotify',
                 progress_ms: Number(item.progressMs) || 0,
-                timestamp: Date.now(),
+                timestamp: streamTime,
                 source: 'statsfm',
                 track: {
                     id: spotifyId || track.id || '',
