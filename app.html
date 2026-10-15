@@ -18439,7 +18439,7 @@ let shareCardLoading;
                 resyncOverlayHistoryDepth();
                 updateScrollUI();
                 updateTimeOfDayColors();
-                if (trackIsPlaying && !parsedLyrics.length && currentTrackTitle) fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs);
+                if (trackIsPlaying && !parsedLyrics.length && currentTrackTitle) fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs, true);
             }
         };
 
@@ -26380,7 +26380,7 @@ window.setLyricsStyle = function(style) {
                 void mainMusicCard.offsetWidth; // Reflow erzwingen
                 mainMusicCard.classList.add('lyrics-open');
                 if (trackIsPlaying && currentTrackTitle && (!parsedLyrics || parsedLyrics.length === 0)) {
-                    fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs);
+                    fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs, true);
                 }
                 setTimeout(() => {
                     syncLyricsUI(true);
@@ -27315,6 +27315,8 @@ window.setLyricsStyle = function(style) {
             const trackMatch = t1 === t2 || (t1.length >= 3 && t2.length >= 3 && (t1.includes(t2) || t2.includes(t1)));
             if (!trackMatch) return false;
 
+            let isExactTrackAndArtist = (t1 === t2);
+
             if (apiArtist && searchArtist) {
                 const a1 = cleanStr(apiArtist);
                 const a2 = cleanStr(searchArtist);
@@ -27322,12 +27324,15 @@ window.setLyricsStyle = function(style) {
                 const a2Primary = a2.split(/\s+/)[0];
                 const artistMatch = a1 === a2 || a1.includes(a2) || a2.includes(a1) || (a1Primary && a2Primary && a1Primary === a2Primary);
                 if (!artistMatch) return false;
+                if (a1 !== a2) isExactTrackAndArtist = false;
             }
 
             if (apiDurationSec && searchDurationMs) {
                 const searchSec = searchDurationMs / 1000;
-                // Toleranz auf 25s erhöht (Radio Edits, Intros, Outros auf Spotify vs LRCLIB)
-                if (Math.abs(apiDurationSec - searchSec) > 25) {
+                // Exakter Track & Interpret: bis zu 45s Toleranz (Radio Edits, Intros, Outros)
+                // Partieller Match: bis zu 30s Toleranz
+                const maxDiff = isExactTrackAndArtist ? 45 : 30;
+                if (Math.abs(apiDurationSec - searchSec) > maxDiff) {
                     return false;
                 }
             }
@@ -27340,7 +27345,6 @@ window.setLyricsStyle = function(style) {
         let inFlightLyricsPromise = null;
 
         async function fetchExternalLyrics(title, artist, searchDurationMs = 0, force = false) {
-            if (standByActive) return;
             if (!title) return;
 
             const cacheKey = (title + '---' + (artist || '')).toLowerCase().trim();
@@ -27364,8 +27368,12 @@ window.setLyricsStyle = function(style) {
                     renderLyrics(cached.plainLyrics, true);
                     return;
                 } else if (cached.provider === 'none') {
-                    renderLyrics(currentNoLyricsMessage);
-                    return;
+                    // Negativer Cache: Nur innerhalb von 15s respektieren.
+                    // Danach automatisch neu versuchen, falls Lyrics inzwischen verfügbar sind oder erste Anfrage fehlschlug.
+                    if (Date.now() - (cached.cachedAt || 0) < 15000) {
+                        renderLyrics(currentNoLyricsMessage);
+                        return;
+                    }
                 }
             }
 
@@ -27378,7 +27386,7 @@ window.setLyricsStyle = function(style) {
                         lyricsContent.innerHTML = `
                             <div class="w-full flex-1 flex flex-col justify-center min-h-full py-16 px-2 sm:px-4 md:px-8">
                                 <h2 class="text-xl sm:text-3xl md:text-4xl font-extrabold text-white/30 tracking-tight leading-tight text-left animate-pulse">
-                                    Suche Songtext...
+                                    ${t('lyrics_loading') || 'Suche Songtext...'}
                                 </h2>
                             </div>`;
                     }
@@ -27397,7 +27405,7 @@ window.setLyricsStyle = function(style) {
                         if (!synced && parsedLyrics && parsedLyrics.length > 0) {
                             return false;
                         }
-                        lyricsMemoryCache.set(cacheKey, { syncedLyrics: synced, plainLyrics: plain, provider, writer });
+                        lyricsMemoryCache.set(cacheKey, { syncedLyrics: synced, plainLyrics: plain, provider, writer, cachedAt: Date.now() });
                         currentLyricsProvider = provider;
                         currentLyricsWriter = writer;
                         if (synced && !isDummyLyrics(synced)) {
@@ -27447,32 +27455,53 @@ window.setLyricsStyle = function(style) {
                     };
 
                     let plainFallback = null;
+                    let lrclibMatched = false;
 
-                    // 1. LRCLIB Direct Get (Clean Title & Primary Artist)
+                    // 1a. LRCLIB Direct Get mit Dauer (Exakter Match)
                     try {
                         const getParams = new URLSearchParams({ track_name: cleanT || title, artist_name: cleanA || artist });
                         if (searchDurationMs > 0) getParams.set('duration', Math.round(searchDurationMs / 1000));
-                        const res = await fetch(`https://lrclib.net/api/get?` + getParams, { signal: AbortSignal.timeout(3000) });
+                        const res = await fetch(`https://lrclib.net/api/get?` + getParams, { signal: AbortSignal.timeout(4500) });
                         if (fetchId !== currentFetchId) return;
                         if (res.ok) {
                             const data = await res.json();
                             if (data && isStrictMatch(data.trackName, data.artistName, data.duration, title, artist, searchDurationMs)) {
-                                // Nur sofort zurückkehren, wenn ECHTE synced Lyrics vorhanden sind!
                                 if (data.syncedLyrics && !isDummyLyrics(data.syncedLyrics)) {
                                     if (saveAndRender(data.syncedLyrics, data.plainLyrics, "LRCLIB")) return;
                                 } else if (data.plainLyrics && !isDummyLyrics(data.plainLyrics)) {
-                                    // Plain Lyrics nur als Fallback merken, damit Suche nach Synced Lyrics weiterlaufen kann!
                                     plainFallback = { plain: data.plainLyrics, provider: "LRCLIB" };
                                 }
+                                lrclibMatched = true;
                             }
                         }
                     } catch(e) {}
+
+                    // 1b. LRCLIB Direct Get OHNE Dauer (Rettet Matches mit leichter Dauer-Abweichung z.B. Spotify vs LRCLIB)
+                    if (!lrclibMatched) {
+                        try {
+                            if (fetchId !== currentFetchId) return;
+                            const getParamsNoDur = new URLSearchParams({ track_name: cleanT || title, artist_name: cleanA || artist });
+                            const resNoDur = await fetch(`https://lrclib.net/api/get?` + getParamsNoDur, { signal: AbortSignal.timeout(4500) });
+                            if (fetchId !== currentFetchId) return;
+                            if (resNoDur.ok) {
+                                const data = await resNoDur.json();
+                                if (data && isStrictMatch(data.trackName, data.artistName, data.duration, title, artist, searchDurationMs)) {
+                                    if (data.syncedLyrics && !isDummyLyrics(data.syncedLyrics)) {
+                                        if (saveAndRender(data.syncedLyrics, data.plainLyrics, "LRCLIB")) return;
+                                    } else if (data.plainLyrics && !isDummyLyrics(data.plainLyrics)) {
+                                        plainFallback = { plain: data.plainLyrics, provider: "LRCLIB" };
+                                    }
+                                    lrclibMatched = true;
+                                }
+                            }
+                        } catch(e) {}
+                    }
 
                     // 2. LRCLIB Search Query (Sucht gezielt nach Versionen mit Synced Lyrics)
                     try {
                         if (fetchId !== currentFetchId) return;
                         const queryStr = `${cleanT || title} ${cleanA || artist}`.trim();
-                        const searchRes = await fetch(`https://lrclib.net/api/search?q=` + encodeURIComponent(queryStr), { signal: AbortSignal.timeout(3500) });
+                        const searchRes = await fetch(`https://lrclib.net/api/search?q=` + encodeURIComponent(queryStr), { signal: AbortSignal.timeout(5000) });
                         if (fetchId !== currentFetchId) return;
                         if (searchRes.ok) {
                             const searchData = await searchRes.json();
@@ -27491,7 +27520,7 @@ window.setLyricsStyle = function(style) {
                     if (cleanT !== title || cleanA !== artist) {
                         try {
                             if (fetchId !== currentFetchId) return;
-                            const rawSearchRes = await fetch(`https://lrclib.net/api/search?q=` + encodeURIComponent(`${title} ${artist}`.trim()), { signal: AbortSignal.timeout(3000) });
+                            const rawSearchRes = await fetch(`https://lrclib.net/api/search?q=` + encodeURIComponent(`${title} ${artist}`.trim()), { signal: AbortSignal.timeout(5000) });
                             if (fetchId !== currentFetchId) return;
                             if (rawSearchRes.ok) {
                                 const rawData = await rawSearchRes.json();
@@ -27512,12 +27541,12 @@ window.setLyricsStyle = function(style) {
                         if (saveAndRender(null, plainFallback.plain, plainFallback.provider)) return;
                     }
 
-                    // 4. Plain Lyrics Fallback: lyrics.ovh (fast & lightweight)
+                    // 5. Plain Lyrics Fallback: lyrics.ovh (fast & lightweight)
                     try {
                         if (fetchId !== currentFetchId) return;
                         const ovhArtist = encodeURIComponent(cleanA || primaryArtist || artist);
                         const ovhTitle = encodeURIComponent(cleanT || title);
-                        const ovhRes = await fetch(`https://api.lyrics.ovh/v1/${ovhArtist}/${ovhTitle}`, { signal: AbortSignal.timeout(2500) });
+                        const ovhRes = await fetch(`https://api.lyrics.ovh/v1/${ovhArtist}/${ovhTitle}`, { signal: AbortSignal.timeout(3000) });
                         if (fetchId !== currentFetchId) return;
                         if (ovhRes.ok) {
                             const ovhData = await ovhRes.json();
@@ -27527,10 +27556,10 @@ window.setLyricsStyle = function(style) {
                         }
                     } catch(e) {}
 
-                    // Alle Quellen ohne Treffer -> im Cache als 'none' merken & Fallback-Hinweistext anzeigen
+                    // Alle Quellen ohne Treffer -> im Cache als 'none' merken mit Zeitstempel & Fallback-Hinweistext anzeigen
                     if (fetchId !== currentFetchId) return;
                     currentLyricsProvider = "none";
-                    lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, provider: "none", writer: "" });
+                    lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, provider: "none", writer: "", cachedAt: Date.now() });
                     renderLyrics(currentNoLyricsMessage);
                 } finally {
                     if (inFlightLyricsKey === cacheKey) {
@@ -27615,6 +27644,16 @@ window.setLyricsStyle = function(style) {
                 const changed = newTrack || title !== lastStandbyTrackInfo?.title || artist !== lastStandbyTrackInfo?.artist;
                 const art = track?.artwork_url || (changed ? fallbackImg : lastStandbyTrackInfo?.artUrl) || fallbackImg;
                 syncStandByTrackInfo(title, artist, art, changed, playing && !ended, true);
+                if (changed && playing && title) {
+                    const cleanA = artist.replace(/\s*•\s*From Smart Shuffle/gi, '').trim();
+                    currentTrackTitle = title;
+                    currentRawArtist = cleanA;
+                    currentTrackId = title + "-" + cleanA;
+                    totalMs = Number(track?.duration_ms || data?.duration_ms) || 0;
+                    parsedLyrics = [];
+                    currentLyricIndex = -1;
+                    fetchExternalLyrics(title, cleanA, totalMs, true);
+                }
                 const isTransitioning = isHuntingForNextTrack && (Date.now() - songTransitionStartedAt < 35000);
                 if ((ended || !playing) && !isTransitioning) releaseStandbyWakeLock(); else updateWakeLockForPlaybackState();
                 updateProgressUI();
@@ -27979,8 +28018,21 @@ window.setLyricsStyle = function(style) {
                 if (isPlaying) showIslandPersistent(trackTitle, rawArtist, finalArtUrl);
 
                 const currentTrackCacheKey = (trackTitle + '---' + (cleanArtist || '')).toLowerCase().trim();
-                const needsLyricsFetch = isNewTrack || (isPlaying && (!parsedLyrics || parsedLyrics.length === 0) && (!currentLyricsProvider || currentLyricsProvider === '') && inFlightLyricsKey !== currentTrackCacheKey);
+                const needsLyricsFetch = isNewTrack || (isPlaying && (!parsedLyrics || parsedLyrics.length === 0) && inFlightLyricsKey !== currentTrackCacheKey);
                 if (isNewTrack) {
+                    // Songwechsel: Vorherige Songtexte sofort leeren und Ladezustand anzeigen
+                    parsedLyrics = [];
+                    currentLyricIndex = -1;
+                    currentLyricsProvider = "";
+                    currentLyricsWriter = "";
+                    if (lyricsContent) {
+                        lyricsContent.innerHTML = `
+                            <div class="w-full flex-1 flex flex-col justify-center min-h-full py-16 px-2 sm:px-4 md:px-8">
+                                <h2 class="text-xl sm:text-3xl md:text-4xl font-extrabold text-white/30 tracking-tight leading-tight text-left animate-pulse">
+                                    ${t('lyrics_loading') || 'Suche Songtext...'}
+                                </h2>
+                            </div>`;
+                    }
                     addToRecentlyPlayed(trackTitle, rawArtist, finalArtUrl);
                     if (!isFirstLoad && isPlaying) {
                         triggerDynamicIsland(trackTitle, rawArtist, finalArtUrl);
@@ -28011,7 +28063,7 @@ window.setLyricsStyle = function(style) {
                     currentNoLyricsMessage = fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
                 }
                 if (needsLyricsFetch && isPlaying) {
-                    fetchExternalLyrics(trackTitle, cleanArtist, trackDuration);
+                    fetchExternalLyrics(trackTitle, cleanArtist, trackDuration, isNewTrack);
                 }
                 if (!isNewTrack) {
                     if (!trackIsPlaying && isPlaying) {
