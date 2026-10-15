@@ -27043,12 +27043,7 @@ window.setLyricsStyle = function(style) {
                                 </button>
                             </div>
                         </div>`;
-                    // Automatischer Hintergrund-Retry nach 3.5 Sekunden
-                    setTimeout(() => {
-                        if (currentLyricsProvider === 'none' && currentTrackTitle && trackIsPlaying) {
-                            fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs, true);
-                        }
-                    }, 3500);
+
                 } else {
                     if (syncBadge) syncBadge.style.display = 'none';
                     lyricsContent.innerHTML = `<div class="w-full flex-1 pt-[10vh] pb-[50vh] px-2 sm:px-4 md:px-8"><p class="text-xs xxs:text-sm xs:text-base sm:text-2xl md:text-3xl font-bold text-white/80 leading-relaxed whitespace-pre-wrap text-left break-words">${escapeHTML(displayMsg.trim())}</p></div>`;
@@ -27726,13 +27721,9 @@ window.setLyricsStyle = function(style) {
                         lyricsMemoryCache.delete(cacheKey);
                     }
                 } else if (cached.provider === 'none') {
-                    // Negativer Cache: Nach 15s verwerfen
-                    if (Date.now() - (cached.cachedAt || 0) < 15000) {
-                        renderLyrics(currentNoLyricsMessage);
-                        return;
-                    } else {
-                        lyricsMemoryCache.delete(cacheKey);
-                    }
+                    // Negativer Cache: Für die Dauer des Tracks merken (verhindert ständige Schleifen)
+                    renderLyrics(currentNoLyricsMessage);
+                    return;
                 }
             }
 
@@ -28423,7 +28414,8 @@ window.setLyricsStyle = function(style) {
                 if (isPlaying) showIslandPersistent(trackTitle, rawArtist, finalArtUrl);
 
                 const currentTrackCacheKey = (trackTitle + '---' + (cleanArtist || '')).toLowerCase().trim();
-                const needsLyricsFetch = isNewTrack || (isPlaying && (!parsedLyrics || parsedLyrics.length === 0) && inFlightLyricsKey !== currentTrackCacheKey);
+                const hasCachedLyrics = lyricsMemoryCache.has(currentTrackCacheKey);
+                const needsLyricsFetch = isNewTrack || (isPlaying && !hasCachedLyrics && inFlightLyricsKey !== currentTrackCacheKey);
                 if (isNewTrack) {
                     // Songwechsel: Vorherige Songtexte sofort leeren und Ladezustand anzeigen
                     parsedLyrics = [];
