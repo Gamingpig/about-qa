@@ -6944,22 +6944,28 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             100% { filter: hue-rotate(360deg); }
         }
 
-        /* Piggy Pet Mascot */
+        /* Piggy Pet Mascot - Safely positioned ABOVE #cp-trigger (bottom-left Spotlight search button) */
         #piggy-pet-avatar {
             position: fixed;
-            bottom: 16px;
-            left: 20px;
+            bottom: 5.25rem; /* ~84px on mobile: 20px above top edge of #cp-trigger */
+            left: 1.25rem;
             z-index: 9998;
             cursor: pointer;
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             user-select: none;
             -webkit-user-select: none;
         }
+        @media (min-width: 640px) {
+            #piggy-pet-avatar {
+                bottom: 6.5rem; /* ~104px on desktop: 20px above top edge of desktop #cp-trigger */
+                left: 2rem;
+            }
+        }
         #piggy-pet-avatar:hover {
-            transform: scale(1.2) translateY(-4px);
+            transform: scale(1.08) translateY(-3px);
         }
         #piggy-pet-avatar:active {
-            transform: scale(0.9) translateY(2px);
+            transform: scale(0.95) translateY(2px);
         }
 
         /* Barrierefreiheit: reduzierte Bewegung respektieren (Systemeinstellung) */
@@ -11466,13 +11472,44 @@ html.gp-android:not(.dark) #ui-controls {
 </div>
 
 <!-- ========================================================= -->
+<!-- 🕹️ ACTIVE EASTER EGG HUD / UNIFIED STOP CONTROLLER        -->
+<!-- ========================================================= -->
+<div id="active-easter-egg-hud" class="hidden fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-[100050] max-w-[94vw] sm:max-w-md transition-all duration-300 select-none animate-fadeInDown">
+    <div class="flex items-center gap-2 sm:gap-3 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-slate-950/95 border border-pink-500/50 shadow-[0_0_30px_rgba(244,114,182,0.35)] backdrop-blur-2xl text-white">
+        <!-- Live Pulsing indicator -->
+        <span class="flex h-2.5 w-2.5 relative shrink-0">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-pink-500"></span>
+        </span>
+        
+        <!-- Info: Icon + Name -->
+        <div class="flex items-center gap-1.5 min-w-0">
+            <span id="easter-egg-hud-icon" class="text-base sm:text-lg shrink-0">🕹️</span>
+            <div class="min-w-0 flex items-center gap-1.5">
+                <span id="easter-egg-hud-name" class="text-xs sm:text-sm font-bold text-pink-200 truncate max-w-[130px] xxs:max-w-[180px] sm:max-w-[220px]">Minispiel aktiv</span>
+                <span id="easter-egg-hud-count" class="hidden text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-pink-500/20 text-pink-300 font-bold border border-pink-500/30"></span>
+            </div>
+        </div>
+
+        <!-- Stop Button -->
+        <button id="easter-egg-hud-stop-btn" onclick="ActiveEasterEggManager.stopActive()" class="ml-1 sm:ml-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-gradient-to-r from-red-600 via-rose-600 to-red-600 hover:from-red-500 hover:to-rose-500 active:scale-95 text-white font-black text-xs tracking-wider uppercase shadow-md hover:shadow-red-500/40 transition-all flex items-center gap-1 cursor-pointer border border-white/20 shrink-0" title="Easter Egg beenden">
+            <span class="text-xs leading-none">✕</span>
+            <span>Stopp</span>
+        </button>
+    </div>
+</div>
+
+<!-- ========================================================= -->
 <!-- 🐷 PIGGY PET DESKTOP MASCOT (v24.220.0)                   -->
 <!-- ========================================================= -->
-<div id="piggy-pet-avatar" onclick="interactWithPiggyPet()" class="hidden flex items-end gap-2 group">
-    <div class="w-12 h-12 rounded-2xl bg-pink-500/20 border-2 border-pink-400/60 shadow-[0_0_20px_rgba(244,114,182,0.3)] backdrop-blur-md flex items-center justify-center text-2xl transition hover:scale-110 active:scale-95">
-        🐷
+<div id="piggy-pet-avatar" class="hidden flex items-end gap-2 group select-none">
+    <div class="relative">
+        <button onclick="event.stopPropagation(); togglePiggyPet(false);" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-black flex items-center justify-center shadow-lg border border-white/40 z-10 opacity-70 hover:opacity-100 transition cursor-pointer" title="Pet schlafen legen">✕</button>
+        <div onclick="interactWithPiggyPet()" class="w-12 h-12 rounded-2xl bg-pink-500/20 border-2 border-pink-400/60 shadow-[0_0_20px_rgba(244,114,182,0.3)] backdrop-blur-md flex items-center justify-center text-2xl transition hover:scale-110 active:scale-95 cursor-pointer">
+            🐷
+        </div>
     </div>
-    <div id="piggy-pet-bubble" class="hidden px-3 py-1.5 rounded-xl bg-slate-900/95 border border-pink-500/40 text-pink-200 text-xs shadow-xl backdrop-blur-md max-w-xs animate-fadeIn font-mono">
+    <div id="piggy-pet-bubble" onclick="interactWithPiggyPet()" class="hidden px-3 py-1.5 rounded-xl bg-slate-900/95 border border-pink-500/40 text-pink-200 text-xs shadow-xl backdrop-blur-md max-w-xs animate-fadeIn font-mono cursor-pointer">
         Oink! 🎮
     </div>
 </div>
@@ -22093,13 +22130,128 @@ let shareCardLoading;
             if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
         };
 
+        // ========================================================= //
+        // 🕹️ ACTIVE EASTER EGG MANAGER & UNIFIED STOP CONTROLLER    //
+        // ========================================================= //
+        window.ActiveEasterEggManager = (function() {
+            const activeEggs = new Map();
+
+            function updateUI() {
+                const hud = document.getElementById('active-easter-egg-hud');
+                if (!hud) return;
+                if (activeEggs.size === 0) {
+                    hud.classList.add('hidden');
+                    return;
+                }
+                hud.classList.remove('hidden');
+                const entries = Array.from(activeEggs.values());
+                const latest = entries[entries.length - 1];
+                const iconEl = document.getElementById('easter-egg-hud-icon');
+                const nameEl = document.getElementById('easter-egg-hud-name');
+                const countEl = document.getElementById('easter-egg-hud-count');
+                if (iconEl) iconEl.innerText = latest.icon || '🕹️';
+                if (nameEl) nameEl.innerText = latest.name || 'Easter Egg';
+                if (countEl) {
+                    if (activeEggs.size > 1) {
+                        countEl.innerText = `+${activeEggs.size - 1}`;
+                        countEl.classList.remove('hidden');
+                    } else {
+                        countEl.classList.add('hidden');
+                    }
+                }
+            }
+
+            return {
+                register: function(id, name, icon, stopFn) {
+                    activeEggs.set(id, { id, name, icon, stopFn });
+                    updateUI();
+                },
+                unregister: function(id) {
+                    if (activeEggs.has(id)) {
+                        activeEggs.delete(id);
+                        updateUI();
+                    }
+                },
+                stopActive: function() {
+                    if (activeEggs.size === 0) return;
+                    const entries = Array.from(activeEggs.values());
+                    const latest = entries[entries.length - 1];
+                    if (latest) {
+                        haptic(15);
+                        activeEggs.delete(latest.id);
+                        try {
+                            if (typeof latest.stopFn === 'function') {
+                                latest.stopFn();
+                            }
+                        } catch (err) {
+                            console.error('Error stopping easter egg:', err);
+                        }
+                        updateUI();
+                        showToast(`🛑 ${latest.name} beendet`, 'info');
+                    }
+                },
+                stopAll: function() {
+                    haptic(20);
+                    activeEggs.forEach(egg => {
+                        try {
+                            if (typeof egg.stopFn === 'function') egg.stopFn();
+                        } catch (e) {}
+                    });
+                    activeEggs.clear();
+                    updateUI();
+                    showToast('🛑 Alle Easter Eggs beendet', 'info');
+                },
+                getActiveCount: function() {
+                    return activeEggs.size;
+                }
+            };
+        })();
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (window.ActiveEasterEggManager && window.ActiveEasterEggManager.getActiveCount() > 0) {
+                    const settingsModal = document.getElementById('standalone-settings-modal');
+                    const cpModal = document.getElementById('command-palette-modal');
+                    if ((settingsModal && !settingsModal.classList.contains('hidden')) || (cpModal && !cpModal.classList.contains('hidden'))) {
+                        return;
+                    }
+                    window.ActiveEasterEggManager.stopActive();
+                }
+            }
+        });
+
         // "matrix" tippen -> kontinuierlicher grüner Digital-Regen (9s Dauer)
+        let matrixWaveInterval = null;
+        let matrixStopTimeout = null;
+
+        function stopMatrixRain() {
+            if (matrixWaveInterval) {
+                clearInterval(matrixWaveInterval);
+                matrixWaveInterval = null;
+            }
+            if (matrixStopTimeout) {
+                clearTimeout(matrixStopTimeout);
+                matrixStopTimeout = null;
+            }
+            document.querySelectorAll('.matrix-rain-col').forEach(el => el.remove());
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.unregister('matrix');
+            }
+            haptic(10);
+        }
+        window.stopMatrixRain = stopMatrixRain;
+
         function launchMatrixRain(durationMs = 9000) {
+            stopMatrixRain();
             // Modale schließen, damit der Nutzer den Regen direkt sieht
             if (typeof closeHackerTerminal === 'function') closeHackerTerminal();
             if (typeof closeArcadeVault === 'function') closeArcadeVault();
             if (typeof closePiggyArcade === 'function') closePiggyArcade();
             if (typeof closeStandaloneSettings === 'function') closeStandaloneSettings();
+
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.register('matrix', 'Matrix Code Rain', '🟢', stopMatrixRain);
+            }
 
             const container = document.getElementById('confetti-container');
             if (!container) return;
@@ -22129,12 +22281,12 @@ let shareCardLoading;
             }
 
             spawnWave();
-            const waveInterval = setInterval(() => {
+            matrixWaveInterval = setInterval(() => {
                 spawnWave();
             }, 650);
 
-            setTimeout(() => {
-                clearInterval(waveInterval);
+            matrixStopTimeout = setTimeout(() => {
+                stopMatrixRain();
             }, durationMs);
         }
         window.launchMatrixRain = launchMatrixRain;
@@ -22429,6 +22581,9 @@ let shareCardLoading;
             if (titleEl) titleEl.innerText = 'CYBER PIGGY DASH';
             resetArcadeGame();
             renderArcadeFrame();
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.register('arcade', 'Piggy Cyber Dash', '🕹️', window.closePiggyArcade);
+            }
         };
 
         window.closePiggyArcade = function() {
@@ -22445,6 +22600,9 @@ let shareCardLoading;
                 modal.classList.add('hidden');
             }, 300);
             popOverlayHistory();
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.unregister('arcade');
+            }
         };
 
         window.toggleArcadeSound = function() {
@@ -22796,6 +22954,9 @@ let shareCardLoading;
                 modal.classList.remove('opacity-0');
             });
             updateVaultStatuses();
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.register('vault', 'Arcade Secret Vault', '🗄️', window.closeArcadeVault);
+            }
         };
 
         window.closeArcadeVault = function(skipHistory = false) {
@@ -22810,6 +22971,9 @@ let shareCardLoading;
                     modal.classList.add('hidden');
                 }, 300);
                 if (typeof popOverlayHistory === 'function') popOverlayHistory();
+            }
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.unregister('vault');
             }
         };
 
@@ -22840,10 +23004,14 @@ let shareCardLoading;
             }
         };
 
-        window.toggleFpsHud = function() {
+        window.toggleFpsHud = function(forceState) {
             const hud = document.getElementById('fps-hud-widget');
             if (!hud) return;
-            fpsHudActive = !fpsHudActive;
+            if (typeof forceState === 'boolean') {
+                fpsHudActive = forceState;
+            } else {
+                fpsHudActive = !fpsHudActive;
+            }
             haptic(15);
             if (fpsHudActive) {
                 hud.classList.remove('hidden');
@@ -22862,6 +23030,9 @@ let shareCardLoading;
                 }, 8000);
 
                 showToast('⚡ Cyber FPS & Performance HUD aktiviert!', 'info');
+                if (window.ActiveEasterEggManager) {
+                    window.ActiveEasterEggManager.register('fps', 'FPS Diagnostics HUD', '⚡', () => window.toggleFpsHud(false));
+                }
             } else {
                 hud.classList.add('hidden');
                 if (fpsHudInterval) {
@@ -22869,6 +23040,9 @@ let shareCardLoading;
                     fpsHudInterval = null;
                 }
                 showToast('HUD geschlossen.', 'info');
+                if (window.ActiveEasterEggManager) {
+                    window.ActiveEasterEggManager.unregister('fps');
+                }
             }
             updateVaultStatuses();
         };
@@ -22955,6 +23129,9 @@ let shareCardLoading;
 
                 playNextStep();
                 showToast('🎹 8-Bit Chiptune Retro Arpeggio spielt!', 'success');
+                if (window.ActiveEasterEggManager) {
+                    window.ActiveEasterEggManager.register('synth', 'Retro Synthesizer', '🎹', window.stopRetroSynth);
+                }
             });
         };
 
@@ -22966,20 +23143,41 @@ let shareCardLoading;
             }
             const banner = document.getElementById('synth-visualizer-banner');
             if (banner) banner.classList.add('hidden');
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.unregister('synth');
+            }
             haptic(10);
         };
 
         // ========================================================= //
         // 🪩 CYBER DISCO RAVE MODE (v24.220.0)
         // ========================================================= //
+        let partyModeTimer = null;
+        window.stopPartyMode = function() {
+            if (partyModeTimer) {
+                clearTimeout(partyModeTimer);
+                partyModeTimer = null;
+            }
+            document.body.classList.remove('party-rave-mode');
+            document.querySelectorAll('.confetti-emoji, .confetti-piece').forEach(el => el.remove());
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.unregister('party');
+            }
+            haptic(10);
+        };
+
         window.launchPartyMode = function() {
+            window.stopPartyMode();
             haptic(25);
             document.body.classList.add('party-rave-mode');
             launchEmojiRain(['🪩', '🕹️', '👾', '⚡', '🍕', '🐷'], 60);
             playUISound('pop');
             showToast('🪩 CYBER PARTY RAVE AKTIVIERT! LET\'S GO!', 'success');
-            setTimeout(() => {
-                document.body.classList.remove('party-rave-mode');
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.register('party', 'Cyber Disco Rave', '🪩', window.stopPartyMode);
+            }
+            partyModeTimer = setTimeout(() => {
+                window.stopPartyMode();
             }, 8500);
         };
 
@@ -23051,6 +23249,9 @@ let shareCardLoading;
             const overlay = document.getElementById('snake-overlay');
             if (overlay) overlay.classList.remove('hidden');
             initSnakeCanvas();
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.register('snake', 'Neon Cyber Snake', '🐍', window.closeSnakeGame);
+            }
         };
 
         window.closeSnakeGame = function() {
@@ -23062,6 +23263,9 @@ let shareCardLoading;
             snakeIsRunning = false;
             const modal = document.getElementById('snake-game-modal');
             if (modal) modal.classList.add('hidden');
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.unregister('snake');
+            }
         };
 
         function initSnakeCanvas() {
@@ -23244,12 +23448,18 @@ let shareCardLoading;
             if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
             const modal = document.getElementById('soundboard-modal');
             if (modal) modal.classList.remove('hidden');
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.register('soundboard', 'SFX Soundboard', '🔊', window.closeSoundboard);
+            }
         };
 
         window.closeSoundboard = function() {
             haptic(10);
             const modal = document.getElementById('soundboard-modal');
             if (modal) modal.classList.add('hidden');
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.unregister('soundboard');
+            }
         };
 
         window.playSoundboardSfx = function(type) {
@@ -23359,12 +23569,18 @@ let shareCardLoading;
                     if (input) input.focus();
                 }, 100);
             }
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.register('terminal', 'Hacker Terminal', '💻', window.closeHackerTerminal);
+            }
         };
 
         window.closeHackerTerminal = function() {
             haptic(10);
             const modal = document.getElementById('hacker-terminal-modal');
             if (modal) modal.classList.add('hidden');
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.unregister('terminal');
+            }
         };
 
         window.submitTerminalCmd = function(e) {
@@ -23503,6 +23719,9 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
             if (banner) banner.classList.remove('hidden');
             playSoundboardSfx('warp');
             showToast('🌌 ZERO GRAVITY AKTIVIERT: Schwerelosigkeit!', 'info');
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.register('zerog', 'Zero Gravity', '🌌', window.resetGravity);
+            }
         };
 
         window.resetGravity = function() {
@@ -23512,16 +23731,40 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
             if (banner) banner.classList.add('hidden');
             playSoundboardSfx('sub');
             showToast('🌍 Erdanziehungskraft normalisiert.', 'success');
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.unregister('zerog');
+            }
         };
 
         // ========================================================= //
         // 📺 CRT RETRO TV SCANLINES MODE (v24.220.0)
         // ========================================================= //
-        window.toggleCrtMode = function() {
+        window.toggleCrtMode = function(forceState) {
             haptic(20);
-            const active = document.body.classList.toggle('crt-retro-mode');
+            let active;
+            if (typeof forceState === 'boolean') {
+                if (forceState) {
+                    document.body.classList.add('crt-retro-mode');
+                    active = true;
+                } else {
+                    document.body.classList.remove('crt-retro-mode');
+                    active = false;
+                }
+            } else {
+                active = document.body.classList.toggle('crt-retro-mode');
+            }
             playSoundboardSfx('laser');
-            showToast(active ? '📺 CRT Retro-Fernseher Scanlines: AN' : '📺 CRT Scanlines: AUS', 'info');
+            if (active) {
+                showToast('📺 CRT Retro Scanlines: AN', 'info');
+                if (window.ActiveEasterEggManager) {
+                    window.ActiveEasterEggManager.register('crt', 'CRT Scanlines', '📺', () => window.toggleCrtMode(false));
+                }
+            } else {
+                showToast('📺 CRT Scanlines: AUS', 'info');
+                if (window.ActiveEasterEggManager) {
+                    window.ActiveEasterEggManager.unregister('crt');
+                }
+            }
         };
 
         // ========================================================= //
@@ -23532,21 +23775,45 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
             document.body.classList.add('barrel-roll-active');
             playSoundboardSfx('v8');
             showToast('🔄 DO A BARREL ROLL! 360° SPIN!', 'success');
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.register('roll', 'Barrel Roll 360°', '🔄', () => {
+                    document.body.classList.remove('barrel-roll-active');
+                    if (window.ActiveEasterEggManager) window.ActiveEasterEggManager.unregister('roll');
+                });
+            }
             setTimeout(() => {
                 document.body.classList.remove('barrel-roll-active');
+                if (window.ActiveEasterEggManager) window.ActiveEasterEggManager.unregister('roll');
             }, 1250);
         };
 
         // ========================================================= //
         // ⭐ SUPER STAR POWER / GODMODE (v24.220.0)
         // ========================================================= //
+        let starPowerTimer = null;
+        window.stopStarPower = function() {
+            if (starPowerTimer) {
+                clearTimeout(starPowerTimer);
+                starPowerTimer = null;
+            }
+            document.body.classList.remove('star-power-mode');
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.unregister('star');
+            }
+            haptic(10);
+        };
+
         window.launchStarPower = function() {
+            window.stopStarPower();
             haptic(35);
             document.body.classList.add('star-power-mode');
             playSoundboardSfx('fanfare');
             showToast('⭐ SUPER STAR POWER AKTIVIERT! UNBESIEGBAR! ⭐', 'success');
-            setTimeout(() => {
-                document.body.classList.remove('star-power-mode');
+            if (window.ActiveEasterEggManager) {
+                window.ActiveEasterEggManager.register('star', 'Super Star Power', '⭐', window.stopStarPower);
+            }
+            starPowerTimer = setTimeout(() => {
+                window.stopStarPower();
                 showToast('✨ Star Power abgeklungen.', 'info');
             }, 10000);
         };
@@ -23554,16 +23821,30 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
         // ========================================================= //
         // 🐷 PIGGY PET DESKTOP MASCOT (v24.220.0)
         // ========================================================= //
-        window.togglePiggyPet = function() {
+        window.togglePiggyPet = function(forceState) {
             haptic(20);
             const pet = document.getElementById('piggy-pet-avatar');
             if (!pet) return;
-            const isHidden = pet.classList.toggle('hidden');
-            if (!isHidden) {
+            let shouldShow;
+            if (typeof forceState === 'boolean') {
+                shouldShow = forceState;
+                if (shouldShow) pet.classList.remove('hidden');
+                else pet.classList.add('hidden');
+            } else {
+                shouldShow = pet.classList.contains('hidden');
+                pet.classList.toggle('hidden');
+            }
+            if (shouldShow) {
                 interactWithPiggyPet();
                 showToast('🐷 Piggy Pet Desktop-Buddy ist da!', 'success');
+                if (window.ActiveEasterEggManager) {
+                    window.ActiveEasterEggManager.register('pet', 'Piggy Pet Buddy', '🐷', () => window.togglePiggyPet(false));
+                }
             } else {
                 showToast('🐷 Piggy Pet schläft jetzt.', 'info');
+                if (window.ActiveEasterEggManager) {
+                    window.ActiveEasterEggManager.unregister('pet');
+                }
             }
         };
 
