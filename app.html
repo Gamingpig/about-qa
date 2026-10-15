@@ -26897,8 +26897,8 @@ window.setLyricsStyle = function(style) {
                     } else {
                         const lineAvailableMs = Math.max(250, timeToNextLine);
                         const endOfLineBreak = lineAvailableMs >= 2000
-                            ? Math.min(lineAvailableMs * 0.50, Math.max(500, lineAvailableMs * (isLineBallad ? 0.25 : 0.35)))
-                            : Math.min(200, Math.max(80, lineAvailableMs * 0.15));
+                            ? Math.min(lineAvailableMs * 0.45, Math.max(400, lineAvailableMs * (isLineBallad ? 0.20 : 0.30)))
+                            : Math.min(180, Math.max(60, lineAvailableMs * 0.12));
 
                         const maxSingingBySyllables = line.totalSyllables * (isLineBallad ? 450 : 260) + (isLineBallad ? 300 : 180);
                         targetSingingTime = Math.min(lineAvailableMs - endOfLineBreak, maxSingingBySyllables);
@@ -26919,18 +26919,16 @@ window.setLyricsStyle = function(style) {
                         if (isLastWord) {
                             tok.rawPause = 0;
                         } else if (hasDash) {
-                            tok.rawPause = isLineBallad ? 220 : 150;
+                            tok.rawPause = isLineBallad ? 140 : 80;
                         } else if (hasPeriod) {
-                            tok.rawPause = isLineBallad ? 280 : 200;
+                            tok.rawPause = isLineBallad ? 160 : 90;
                         } else if (hasComma) {
-                            tok.rawPause = isMajorClause ? (isLineBallad ? 320 : 220) : (isLineBallad ? 200 : 140);
+                            tok.rawPause = isMajorClause ? (isLineBallad ? 180 : 100) : (isLineBallad ? 100 : 60);
                         } else {
                             // Phonetische Artikulationspause (Konsonanten vs Vokale)
                             const endsWithConsonant = /[bcdfghjklmnpqrstvwxyz]$/i.test(tok.cleanText);
                             const nextStartsWithConsonant = /^[bcdfghjklmnpqrstvwxyz]/i.test(nextTokText);
-                            // Basis-Pause für natürlichen Gesangfluss und Atempausen
-                            const basePause = isLineBallad ? 70 : 50;
-                            tok.rawPause = (endsWithConsonant && nextStartsWithConsonant) ? Math.max(basePause, 100) : basePause;
+                            tok.rawPause = (endsWithConsonant && nextStartsWithConsonant) ? 18 : 10;
                         }
 
                         totalRawTime += tok.rawDuration + tok.rawPause;
@@ -27774,8 +27772,12 @@ window.setLyricsStyle = function(style) {
                         lyricsMemoryCache.delete(cacheKey);
                     }
                 } else if (cached.isRateLimited) {
-                    // Rate-Limit-Einträge nicht als dauerhaftes "Keine Lyrics" behandeln – erneut abfragen
-                    lyricsMemoryCache.delete(cacheKey);
+                    if (Date.now() - (cached.cachedAt || 0) < 15000) {
+                        renderLyrics(currentNoLyricsMessage);
+                        return;
+                    } else {
+                        lyricsMemoryCache.delete(cacheKey);
+                    }
                 } else if (cached.provider === 'none') {
                     // Negativer Cache: für 30 Sekunden merken, damit bei fehlendem Song nicht endlos gespammt wird
                     if (Date.now() - (cached.cachedAt || 0) < 30000) {
@@ -28014,10 +28016,11 @@ window.setLyricsStyle = function(style) {
 
                     if (fetchId !== currentFetchId) return;
 
-                    // 4. Rate-Limit Handling: nur Cooldown setzen und automatischen Wiederholungsversuch planen
-                    // Kein dauerhaftes "Keine Lyrics" anzeigen – Lyrics werden bei Verfügbarkeit geladen
+                    // 4. Rate-Limit Handling: im Cache merken und kontrollierten Wiederholungsversuch planen
                     if (wasRateLimited) {
-                        console.warn('LRCLIB: Rate-Limit aktiv. Cooldown aktiviert, automatischer Retry geplant.');
+                        console.warn('LRCLIB: Rate-Limit aktiv. Cooldown für 15s aktiviert.');
+                        lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, isRateLimited: true, provider: 'none', cachedAt: Date.now() });
+                        renderLyrics(currentNoLyricsMessage);
                         if (trackIsPlaying && fetchId === currentFetchId) {
                             if (lrclibAutoRetryTimeout) clearTimeout(lrclibAutoRetryTimeout);
                             lrclibAutoRetryTimeout = setTimeout(() => {
