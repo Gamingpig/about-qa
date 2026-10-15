@@ -5950,8 +5950,8 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
            dazu, bei jedem 120Hz-Scroll-Frame Dutzende Offscreen-Textur-Shader auszuführen, was massive
            Überhitzung und Scroll-Ruckeln verursachte. Saubere Opazitäts- & Skalierungs-Staffelung liefert
            dieselbe edle Tiefenwirkung bei 0% Shader-Overhead. */
-        .lyric-line { display: block; max-width: 94%; margin: 4vh 0; line-height: 1.25; transition: opacity 0.3s ease, transform 0.4s var(--apple-bounce); transform-origin: left center; overflow-wrap: break-word; word-wrap: break-word; white-space: pre-wrap; padding-right: 1rem; transform: translate3d(0,0,0); contain: layout style; }
-        .lyric-line.active { will-change: opacity, transform; contain: none; }
+        .lyric-line { display: block; max-width: 94%; margin: 4vh 0; line-height: 1.25; transition: opacity 0.3s ease, transform 0.4s var(--apple-bounce); transform-origin: left center; overflow-wrap: break-word; word-wrap: break-word; white-space: pre-wrap; padding-right: 1rem; transform: translate3d(0,0,0); }
+        .lyric-line.active { will-change: opacity, transform; }
         .lyrics-open .lyric-line { opacity: 0.28; transform: scale(0.96) translate3d(0,0,0); }
         .lyrics-open .lyric-line.active { opacity: 1; transform: scale(1.05) translate3d(0,0,0); }
 
@@ -27041,10 +27041,7 @@ window.setLyricsStyle = function(style) {
             }
 
             if (mainMusicCard && mainMusicCard.classList.contains('lyrics-open')) {
-                if (currentPerfNow - lastLyricFrameTime >= 33) {
-                    syncLyricsUI();
-                    lastLyricFrameTime = currentPerfNow;
-                }
+                syncLyricsUI();
             }
 
             lyricAnimFrame = requestAnimationFrame(animateLoop);
