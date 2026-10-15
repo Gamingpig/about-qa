@@ -10970,7 +10970,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <span>🔊</span> <span>Audio &amp; Haptik Signal testen</span>
                     </button>
                     <!-- Geheimer Cyber Arcade & Easter Egg Vault im Entwicklermodus -->
-                    <button onclick="closeStandaloneSettings(); openArcadeVault();" class="w-full min-h-[44px] py-2 px-3 rounded-xl bg-gradient-to-r from-pink-950/60 via-purple-950/40 to-slate-800 border border-pink-500/40 text-pink-300 hover:text-white hover:border-pink-400 text-xs font-bold flex items-center justify-between transition-all shadow-lg group">
+                    <button onclick="if(typeof closeStandaloneSettings==='function')closeStandaloneSettings(); openArcadeVault();" class="w-full min-h-[44px] py-2 px-3 rounded-xl bg-gradient-to-r from-pink-950/60 via-purple-950/40 to-slate-800 border border-pink-500/40 text-pink-300 hover:text-white hover:border-pink-400 text-xs font-bold flex items-center justify-between transition-all shadow-lg group cursor-pointer">
                         <span class="flex items-center gap-2"><span class="text-base group-hover:scale-110 transition-transform">🕹️</span> <span>Cyber Arcade &amp; Easter Egg Vault</span></span>
                         <span class="text-[10px] px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 font-mono font-bold">16 Games</span>
                     </button>
@@ -10986,7 +10986,7 @@ html.gp-android:not(.dark) #ui-controls {
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
 <!-- ========================================================= -->
-<div id="arcade-vault-modal" class="fixed inset-0 z-[125] bg-black/90 backdrop-blur-2xl hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300 overflow-y-auto">
+<div id="arcade-vault-modal" class="fixed inset-0 z-[10005] bg-black/90 backdrop-blur-2xl hidden flex flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300 overflow-y-auto" style="display: none;">
     <div class="w-full max-w-4xl my-auto rounded-3xl bg-slate-950/95 border border-pink-500/40 text-white relative flex flex-col shadow-[0_0_60px_rgba(236,72,153,0.25)] overflow-hidden max-h-[92vh]">
         <!-- Vault Header -->
         <div class="w-full px-5 py-4 bg-slate-900/95 border-b border-pink-500/30 flex items-center justify-between z-10 shrink-0">
@@ -23048,18 +23048,29 @@ let shareCardLoading;
             requestAnimationFrame(fpsLoop);
         }
 
+        // Standalone Settings Helper
+        window.closeStandaloneSettings = function() {
+            if (typeof isGlobalSettingsOpen !== 'undefined' && isGlobalSettingsOpen && typeof window.toggleStandaloneSettings === 'function') {
+                window.toggleStandaloneSettings();
+            }
+        };
+
         // Arcade Vault Modal Controls
         window.openArcadeVault = function() {
+            if (typeof isGlobalSettingsOpen !== 'undefined' && isGlobalSettingsOpen && typeof window.toggleStandaloneSettings === 'function') {
+                window.toggleStandaloneSettings();
+            }
             const modal = document.getElementById('arcade-vault-modal');
             if (!modal) return;
             haptic(15);
             if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
             if (typeof pushOverlayHistory === 'function') pushOverlayHistory();
+            modal.style.display = 'flex';
             modal.classList.remove('hidden');
             requestAnimationFrame(() => {
                 modal.classList.remove('opacity-0');
             });
-            updateVaultStatuses();
+            if (typeof updateVaultStatuses === 'function') updateVaultStatuses();
             if (window.ActiveEasterEggManager) {
                 window.ActiveEasterEggManager.register('vault', 'Arcade Secret Vault', '🗄️', window.closeArcadeVault);
             }
@@ -23069,15 +23080,12 @@ let shareCardLoading;
             const modal = document.getElementById('arcade-vault-modal');
             if (!modal) return;
             haptic(10);
-            if (skipHistory) {
-                modal.classList.add('opacity-0', 'hidden');
-            } else {
-                modal.classList.add('opacity-0');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                }, 300);
-                if (typeof popOverlayHistory === 'function') popOverlayHistory();
-            }
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }, 300);
+            if (!skipHistory && typeof popOverlayHistory === 'function') popOverlayHistory();
             if (window.ActiveEasterEggManager) {
                 window.ActiveEasterEggManager.unregister('vault');
             }
