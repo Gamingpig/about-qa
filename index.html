@@ -8355,7 +8355,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         })();
 
 
-        const DEFAULT_SYNC_OFFSET = -400;
+        const DEFAULT_SYNC_OFFSET = 0;
 
         // NEU v24.119: Dynamischer Live-Share Handler für geteilte Links
         (function handleLiveShareIncoming() {
@@ -9043,9 +9043,9 @@ html.gp-android:not(.dark) #ui-controls {
 
     <!-- Footer Bubble (fixed, centered between #cp-trigger and #back-to-top) -->
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
-        <span id="footer-established" onclick="handleFooterEasterTap()" title="© 2026 GAMINGPIG (Tippe für Party-Rave! 🪩)" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
+        <span id="footer-established" onclick="handleFooterEasterTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.220.0 (QA Testversion • Tippe 5x für Developer Modus 🤖)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.220.0 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.220.0 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.220.0 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9291,75 +9291,6 @@ html.gp-android:not(.dark) #ui-controls {
     </div>
 
     <main id="main-content" class="max-w-4xl mx-auto px-4 xs:px-6 sm:px-8 pt-24 xs:pt-28 sm:pt-32 pb-16 sm:pb-24">
-        
-        <!-- ⏳ ADMIN ACTION & RELEASE GATE BANNER -->
-        <div id="admin-action-banner" class="mb-6 p-4 rounded-2xl bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-amber-500/20 border border-amber-500/40 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-amber-200 animate-pulse">
-            <div class="flex items-center gap-3">
-                <span class="text-2xl p-2 rounded-xl bg-amber-500/20 border border-amber-500/30 shrink-0">⏳</span>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <strong class="text-amber-300 font-bold text-sm sm:text-base">Release v24.216.0 pausiert</strong>
-                        <span class="px-2 py-0.5 rounded-full bg-amber-500/30 text-amber-300 text-[10px] font-mono font-bold border border-amber-400/40 uppercase">Admin Action Required</span>
-                    </div>
-                    <p class="text-xs text-amber-200/90 mt-0.5 leading-snug">Warten auf Server-Admin-Rückmeldung &amp; Freigabe. Das neue Einstellungs-Zentrum ist vorübergehend gesperrt.</p>
-                </div>
-            </div>
-            <a href="status.html" class="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 font-bold text-xs whitespace-nowrap transition-all self-end sm:self-auto">Status prüfen ➔</a>
-        </div>
-
-        <header id="header-section" class="glass-card mb-6 xxs:mb-8 sm:mb-12 reveal mt-2 sm:mt-0 rounded-2xl relative z-10 p-4 xxs:p-6 sm:p-8">
-            <div class="inline-flex items-center gap-2 px-2 py-1 sm:px-3 sm:py-1 mb-2 sm:mb-3 text-[8px] xxs:text-[10px] xs:text-xs font-bold tracking-widest text-blue-600 uppercase bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 rounded-full shadow-sm">
-                <span class="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-blue-500"></span>
-                </span>
-                <span id="systems-integration-badge">Systems Integration</span>
-            </div>
-            <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
-                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.220.0</span>
-            </div>
-            <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
-            <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
-                <h1 id="header-main-title" class="text-3xl sm:text-5xl md:text-6xl font-extrabold py-1 tracking-tighter bg-gradient-to-br from-slate-900 via-slate-800 to-slate-600 dark:from-white dark:via-slate-200 dark:to-slate-400 bg-clip-text text-transparent leading-tight break-words drop-shadow-md">
-                    Über Gamingpig
-                </h1>
-                <button id="header-pig-avatar" onclick="handlePigAvatarEasterTap()" title="Gamingpig Maskottchen (Tippe mich 5x an! 🐷)" class="inline-flex items-center justify-center text-2xl sm:text-4xl hover:scale-125 active:scale-90 transition-transform cursor-pointer bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/25 rounded-2xl p-1.5 sm:p-2 shadow-sm select-none" aria-label="Gamingpig Maskottchen Easter Egg">
-                    <span>🐷</span>
-                </button>
-            </div>
-            <p id="header-intro-p1" class="text-sm sm:text-base md:text-lg leading-relaxed text-slate-700 dark:text-slate-300 font-medium drop-shadow-sm">
-                Hallo! Ich bin Gamingpig, technikaffin und leidenschaftlicher Entwickler. Ich habe ADHS - das ist eine echte Entwicklungsstörung, keine Superkraft. Mein <span class="text-blue-600 dark:text-blue-400 font-bold italic">Hyperfokus</span> hilft mir zwar, komplexe Probleme zu lösen, wo andere schon längst aufgegeben hätten, aber wenn er zu stark wird, bekomme ich auch nichts mehr um mich herum mit.
-            </p>
-            <p id="header-intro-p2" class="mt-2.5 sm:mt-4 text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed drop-shadow-sm">
-                In meiner Freizeit beschäftige ich mich mit Gaming und Streaming. Ich bin zwar etwas schüchtern, jedoch an sich ein sehr freundlicher und gelassener Mensch. Ich repariere auch gerne IT Geräte (Laptops, Tablets, PCs, Smartphones usw.).
-            </p>
-            <!-- Audio Quick Actions: Bio Vorlesen & Ultra-Smart Live-Briefing with Speed Dropdown -->
-            <div class="mt-4 xxs:mt-5 sm:mt-8 flex items-center gap-2.5 sm:gap-4 flex-wrap relative">
-                <div class="relative inline-flex flex-col items-start">
-                    <div class="inline-flex items-center rounded-xl bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/20 shadow-sm">
-                        <button onclick="speakBio(this)" id="btn-speak-bio" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-l-xl hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-xs xxs:text-sm font-bold active:scale-95 transition-all">
-                            <span>🔊</span> <span id="btn-speak-bio-text">Bio vorlesen</span>
-                        </button>
-                        <button onclick="toggleTtsSpeedMenu('tts-speed-menu-bio')" class="px-2 py-2 text-blue-500 hover:bg-blue-500/20 rounded-r-xl border-l border-blue-500/20 text-[10px] xxs:text-xs font-mono font-bold transition-colors" title="Tempo anpassen">
-                            <span class="tts-speed-indicator-val">1.0x</span>
-                        </button>
-                    </div>
-                    <!-- Mini-Menü Bio -->
-                    <div id="tts-speed-menu-bio" class="hidden absolute top-full left-0 mt-2 z-50 p-2 rounded-xl bg-slate-900/95 border border-slate-700 shadow-2xl backdrop-blur-xl min-w-[170px]">
-                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
-                            <span>Tempo</span>
-                            <button onclick="speechSynthesis.cancel(); ttsSetButtonState(document.getElementById('btn-speak-bio'), 'idle'); toggleTtsSpeedMenu('tts-speed-menu-bio', false);" class="text-rose-400 hover:text-rose-300 transition-colors font-sans">⏹ Stopp</button>
-                        </div>
-                        <div class="grid grid-cols-5 gap-1 mt-1">
-                            <button onclick="setTtsSpeed(0.8)" data-rate="0.8" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">0.8x</button>
-                            <button onclick="setTtsSpeed(1.0)" data-rate="1.0" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-emerald-600 text-white transition-all">1.0x</button>
-                            <button onclick="setTtsSpeed(1.2)" data-rate="1.2" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">1.2x</button>
-                            <button onclick="setTtsSpeed(1.5)" data-rate="1.5" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">1.5x</button>
-                            <button onclick="setTtsSpeed(2.0)" data-rate="2.0" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">2.0x</button>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="relative inline-flex flex-col items-start">
                     <button onclick="speakSmartBriefing(this)" id="btn-smart-briefing" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-xs xxs:text-sm font-black shadow-lg hover:shadow-indigo-500/25 active:scale-95 transition-all relative overflow-hidden group">
@@ -17698,78 +17629,65 @@ let shareCardLoading;
         let cpSelectedIndex = 0;
         let cpFilteredActions = [];
 
-        function getCommandActions() {
+                function getCommandActions() {
             return [
-                { icon: '🕹️', label: 'Cyber Arcade & Easter Egg Vault (Alle 16 Spiele)', keywords: 'arcade vault easter eggs secrets spiele minigames cheats sammlung zentrallager games', action: () => openArcadeVault() },
-                { icon: '🟢', label: 'Matrix Code-Regen (Digital Rain)', keywords: 'matrix rain code regen hacker effect visual', action: () => launchMatrixRain(9000) },
-                { icon: '🏎️', label: 'Forza Supercar Drive-By', keywords: 'forza car auto rennen drive drift speed', action: () => triggerForzaCar() },
-                { icon: '🎯', label: 'Hyperfokus Focus Mode', keywords: 'fokus hyperfokus spotlight vignette focus dunkel zoom', action: () => triggerHyperfokus() },
-                { icon: '🏠', label: t('cp_scroll_top'), keywords: 'header start oben top', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
-                { icon: '🎓', label: t('cp_scroll_cards'), keywords: 'cards ausbildung skills karten', action: () => scrollToId('cards-section') },
-                { icon: '🎵', label: t('cp_scroll_music'), keywords: 'music song track player', action: () => scrollToId('music-section') },
-                { icon: '📬', label: t('cp_scroll_footer'), keywords: 'footer contact kontakt ende', action: () => scrollToId('footer-section') },
-                { icon: '📖', label: t('cp_open_dashboard'), keywords: 'dashboard aufklappen open music', action: () => { if (!isDashboardOpen) toggleDashboard(); scrollToId('music-section'); } },
-                { icon: '🎤', label: t('cp_open_lyrics'), keywords: 'lyrics songtext text', action: () => {
+                { icon: '🏠', label: t('cp_scroll_top', 'Startseite / Übersicht'), keywords: 'header start oben top home main', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
+                { icon: '🎵', label: t('cp_scroll_music', 'Aktueller Song & Player'), keywords: 'music musik spotify now playing track lied cover', action: () => scrollToId('music-section') },
+                { icon: '🎤', label: t('cp_open_lyrics', 'Songtext / Lyrics Ansicht'), keywords: 'lyrics songtext text worte karaoke singen', action: () => {
                     if (!isDashboardOpen) toggleDashboard();
-                    // FIX v24.47: scrollToId() lief bisher SOFORT nach toggleDashboard(), noch
-                    // bevor der Browser das neu sichtbar gemachte Dashboard tatsächlich
-                    // eingemessen/gerendert hatte - dadurch wurde teils noch die alte
-                    // (eingeklappte) Layout-Höhe für die Scroll-Berechnung genutzt. Doppeltes
-                    // requestAnimationFrame wartet zuverlässig, bis der Browser mindestens
-                    // einen echten Render-Durchlauf mit dem neuen Layout gemacht hat.
                     requestAnimationFrame(() => requestAnimationFrame(() => scrollToId('music-section')));
                     setTimeout(() => {
                         toggleLyrics(true);
-                        // FIX v24.48: #main-music-card wächst beim Öffnen der Lyrics per CSS
-                        // (min-height: 80vh) deutlich in der Höhe - die Karte war vorher schon
-                        // korrekt zentriert scrollt, aber durch das nachträgliche Wachstum
-                        // verschiebt sich die tatsächlich sichtbare Position wieder. Nach der
-                        // CSS-Transition (400ms, siehe main-music-card transition) nochmal neu
-                        // zentrieren, diesmal mit der tatsächlichen (gewachsenen) Kartenhöhe.
                         setTimeout(() => scrollToId('music-section'), 450);
                     }, 400);
                 } },
-                { icon: '🌗', label: t('cp_toggle_dark'), keywords: 'dark light theme hell dunkel modus', action: () => themeToggle && themeToggle.click() },
-                { icon: '💧', label: t('cp_toggle_glass'), keywords: 'liquid glass apple design', action: () => liquidGlassToggle && liquidGlassToggle.click() },
-                { icon: '⚡', label: t('cp_toggle_perf'), keywords: 'performance low end animationen aus', action: () => perfToggle && perfToggle.click() },
-                { icon: '📱', label: t('cp_standby'), keywords: 'standby ambient lockscreen uhr', action: () => toggleStandBy() },
-                { icon: '🎨', label: t('cp_ambient'), keywords: 'ambient color farbe cover', action: () => toggleAmbientColor() },
-                { icon: '🪞', label: t('cp_tilt'), keywords: 'tilt gyroskop 3d parallax neigen', action: () => toggleTilt() },
-                { icon: '🎴', label: t('cp_sharecard'), keywords: 'share card teilen bild download', action: () => generateShareCard() },
-                { icon: '📸', label: t('cp_quick_export'), keywords: 'schnellexport screenshot export bild song', action: () => quickExportSongCard() },
-                { icon: '🕓', label: t('cp_recently_played'), keywords: 'zuletzt gehört verlauf history recent songs', action: () => toggleRecentlyPlayed() },
-                { icon: '🖼️', label: t('cp_color_frame'), keywords: 'farbrahmen cover frame rand color border', action: () => toggleColorFrame() },
-                { icon: '🎬', label: t('cp_canvas_video'), keywords: 'canvas video hintergrund spotify loop', action: () => toggleCanvasVideo() },
-                { icon: '✨', label: t('cp_cover_glow'), keywords: 'cover glow leuchten effekt', action: () => toggleCoverGlow() },
-                { icon: '🧭', label: t('cp_tutorial'), keywords: 'tutorial hilfe guide anleitung', action: () => btnStartTutorial && btnStartTutorial.click() },
-                { icon: '🐷', label: t('cp_tiktok'), keywords: 'tiktok social gamingpig', action: () => window.open('https://www.tiktok.com/@gamingpig900', '_blank') },
-                { icon: '🏝️', label: t('cp_island_back'), keywords: 'dynamic island zeigen einblenden reset ausgeblendet wisch', action: () => {
-                    islandDismissed = false;
-                    AppStorage.setItem('islandDismissed', 'false');
-                    const titleEl = document.getElementById('track-title');
-                    const artistEl = document.getElementById('track-artist');
-                    const art = document.getElementById('artwork');
-                    showIslandPersistent(titleEl ? titleEl.innerText : '', artistEl ? artistEl.innerText : '', art ? art.getAttribute('src') : null);
-                    if (typeof showToast === 'function') showToast(t('toast_island_back'));
-                } },
-                { icon: '🔥', label: 'v24.116 Mega-Release Page', keywords: 'release notes changelog update was ist neu v24 116 mega', action: () => window.open('release-v24-115.html', '_self') },
-                { icon: '🕹️', label: 'Retro Piggy Arcade (Minispiel)', keywords: 'arcade minigame minispiel spiel game jump piggy retro play dash 8bit', action: () => openPiggyArcade() },
-                { icon: '⚡', label: 'Live FPS & Performance Monitor', keywords: 'fps hud monitor diagnostics lag performance bildrate latency frame', action: () => toggleFpsHud() },
-                { icon: '🎹', label: '8-Bit Chiptune Synthesizer', keywords: 'synth chiptune beat music retro soundboard audio melodie arpeggio', action: () => playRetroSynthArp() },
-                { icon: '🪩', label: 'Cyber Disco Rave Mode', keywords: 'party disco rave neon rgb glow party mode blicklicht', action: () => launchPartyMode() },
-                { icon: '🐍', label: 'Neon Cyber Snake (Minispiel)', keywords: 'snake tron minigame minispiel schlange game retro play', action: () => openSnakeGame() },
-                { icon: '🎛️', label: 'Cyber SFX Soundboard', keywords: 'soundboard sfx audio effekte meme sounds synth pads blast laser', action: () => openSoundboard() },
-                { icon: '💻', label: 'Hacker Matrix Cyber Terminal', keywords: 'terminal console hack hacker matrix shell bash root Befehle cheats', action: () => openHackerTerminal() },
-                { icon: '🌌', label: 'Zero Gravity Schwerelosigkeit', keywords: 'gravity zerog space schwerelosigkeit float all weltraum', action: () => launchZeroGravity() },
-                { icon: '📺', label: 'CRT Retro VHS TV-Filter', keywords: 'crt vhs filter scanlines retro glitch phosphor fernseher', action: () => toggleCrtMode() },
-                { icon: '🔄', label: 'Barrel Roll 360° Spin', keywords: 'barrel roll spin drehen rotate 360 faßrolle trick', action: () => triggerBarrelRoll() },
-                { icon: '⭐', label: 'Super Star Power (Godmode)', keywords: 'star mario godmode regenbogen unbesiegbar rainbow invulnerable', action: () => launchStarPower() },
-                { icon: '🐷', label: 'Piggy Pet Desktop-Maskottchen', keywords: 'pet tamagotchi buddy maskottchen pig schwein companion', action: () => togglePiggyPet() },
-                { icon: '🎧', label: 'DJ Turntable Scratch FX', keywords: 'scratch dj turntable vinyl musik beat sound audio plattenspieler effekte', action: () => triggerDjScratch() },
+                { icon: '📖', label: t('cp_open_dashboard', 'Dashboard / Player erweitern'), keywords: 'dashboard aufklappen open music stats details', action: () => { if (!isDashboardOpen) toggleDashboard(); scrollToId('music-section'); } },
+                { icon: '📱', label: t('cp_standby', 'StandBy / Ambient Modus'), keywords: 'standby ambient clock nachtuhr lockscreen display uhr', action: () => toggleStandBy(true) },
+                { icon: '🎓', label: t('cp_scroll_cards', 'Real-Talk Karten'), keywords: 'cards ausbildung skills karten profil werdegang', action: () => scrollToId('cards-section') },
+                { icon: '💬', label: 'Zitate & Weisheiten', keywords: 'zitate quotes weisheiten worte gedanken inspo', action: () => scrollToId('quote-card') },
+                { icon: '📬', label: t('cp_scroll_footer', 'Kontakt & Social Links'), keywords: 'footer contact kontakt ende social discord twitch youtube', action: () => scrollToId('footer-section') },
+                { icon: '⚙️', label: t('settings_title', 'Website-Einstellungen'), keywords: 'settings einstellungen optionen config tools customize system', action: () => toggleStandaloneSettings() },
+                { icon: '🌓', label: t('cp_toggle_dark', 'Dark / Light Theme wechseln'), keywords: 'dark light theme hell dunkel modus farbe', action: () => themeToggle && themeToggle.click() },
+                { icon: '💧', label: t('cp_toggle_glass', 'Apple Liquid Glass Modus'), keywords: 'liquid glass dynamic glass blur aero transparent apple ios visionos design', action: () => liquidGlassToggle && liquidGlassToggle.click() },
+                { icon: '⚡', label: t('cp_toggle_perf', 'Performance Low-End Modus'), keywords: 'performance low end animationen spar modus akku', action: () => perfToggle && perfToggle.click() },
+                { icon: '🎨', label: t('cp_ambient', 'Cover-Farbakzente anpassen'), keywords: 'ambient color farbe cover glow dynamic', action: () => toggleAmbientColor() },
+                { icon: '🪞', label: t('cp_tilt', '3D Parallax Tilt-Effekt'), keywords: 'tilt gyroskop 3d parallax neigen karten', action: () => toggleTilt() },
+                { icon: '🎴', label: t('cp_sharecard', 'Song-Sharecard generieren'), keywords: 'share card teilen bild download sharecard', action: () => generateShareCard() },
+                { icon: '📸', label: t('cp_quick_export', 'Schnellexport Song-Bild'), keywords: 'schnellexport screenshot export bild song snap', action: () => quickExportSongCard() },
+                { icon: '🕓', label: t('cp_recently_played', 'Zuletzt gehört (Verlauf)'), keywords: 'zuletzt gehört verlauf history recent songs history', action: () => toggleRecentlyPlayed() },
+                { icon: '🖼️', label: t('cp_color_frame', 'Farbrahmen für Cover'), keywords: 'farbrahmen cover frame rand color border', action: () => toggleColorFrame() },
+                { icon: '🎬', label: t('cp_canvas_video', 'Spotify Canvas Loop Video'), keywords: 'canvas video hintergrund spotify loop video', action: () => toggleCanvasVideo() },
+                { icon: '✨', label: t('cp_cover_glow', 'Cover Glow Scheinwerfer'), keywords: 'cover glow leuchten effekt aura glow', action: () => toggleCoverGlow() },
+                { icon: '🧭', label: t('cp_tutorial', 'Interaktives Tutorial starten'), keywords: 'tutorial hilfe guide anleitung walkthrough tour', action: () => btnStartTutorial && btnStartTutorial.click() },
+                { icon: '📋', label: 'QA Test-Checkliste (v24.220.0)', keywords: 'qa test checkliste pruefung status testplan verifikation suite', action: () => window.open('checklist.html', '_blank') },
+                { icon: '🔥', label: 'Release Notes (Was ist neu)', keywords: 'release notes changelog update was ist neu v24 changelog', action: () => window.open('release.html', '_self') },
                 { icon: '⚖️', label: t('footer_impressum', 'Impressum / Legal Notice'), keywords: 'impressum legal notice rechtliches privacy datenschutz kontakt angaben ddg mstv', action: () => { window.location.href = 'impressum.html'; } },
-                { icon: '📋', label: t('cp_copy_link'), keywords: 'copy link teilen share url', action: () => { if (typeof copyPageLink === 'function') copyPageLink(); } },
-                { icon: '🔄', label: t('cp_reload'), keywords: 'reload refresh neu laden', action: () => window.location.reload() },
-                { icon: '🌐', label: t('cp_change_lang'), keywords: 'language sprache language change idioma langue idioma dil', keepOpen: true, action: () => openLanguagePicker(true) },
+                { icon: '📋', label: t('cp_copy_link', 'Seiten-Link kopieren'), keywords: 'copy link teilen share url link kopieren', action: () => { if (typeof copyPageLink === 'function') copyPageLink(); } },
+                { icon: '🔄', label: t('cp_reload', 'Seite neu laden'), keywords: 'reload refresh neu laden aktualisieren', action: () => window.location.reload() },
+                { icon: '🌐', label: t('cp_change_lang', 'Sprache ändern'), keywords: 'language sprache language change idioma langue dil', keepOpen: true, action: () => openLanguagePicker(true) }
+            ];
+        }
+
+        // 🤫 GEHEIME EASTER EGGS: Nicht in der Standardliste sichtbar - nur bei gezielter Suche nach Geheimnissen!
+        function getSecretEasterEggActions() {
+            return [
+                { icon: '🕹️', label: 'Retro Piggy Arcade (Minispiel)', keywords: 'arcade minigame minispiel spiel game jump piggy retro play dash 8bit vault geheim secret', action: () => openPiggyArcade() },
+                { icon: '🟢', label: 'Matrix Code-Regen (Digital Rain)', keywords: 'matrix rain code regen hacker effect visual geheim secret hack neo', action: () => launchMatrixRain(9000) },
+                { icon: '🏎️', label: 'Forza Supercar Drive-By', keywords: 'forza car auto rennen drive drift speed sportwagen v8 geheim secret', action: () => triggerForzaCar() },
+                { icon: '🎯', label: 'Hyperfokus Focus Mode', keywords: 'fokus hyperfokus spotlight vignette focus dunkel zoom geheim secret', action: () => triggerHyperfokus() },
+                { icon: '⚡', label: 'Live FPS & Performance Monitor', keywords: 'fps hud monitor diagnostics lag performance bildrate latency frame hz geheim secret', action: () => toggleFpsHud() },
+                { icon: '🎹', label: '8-Bit Chiptune Synthesizer', keywords: 'synth chiptune beat music retro soundboard audio melodie arpeggio geheim secret sound klavier', action: () => playRetroSynthArp() },
+                { icon: '🪩', label: 'Cyber Disco Rave Mode', keywords: 'party disco rave neon rgb glow party mode blicklicht disco party geheim secret feier', action: () => launchPartyMode() },
+                { icon: '🐍', label: 'Neon Cyber Snake (Minispiel)', keywords: 'snake tron minigame minispiel schlange game retro play arcade geheim secret', action: () => openSnakeGame() },
+                { icon: '🎛️', label: 'Cyber SFX Soundboard', keywords: 'soundboard sfx audio effekte meme sounds synth pads blast laser geheim secret sounds audio', action: () => openSoundboard() },
+                { icon: '💻', label: 'Hacker Matrix Cyber Terminal', keywords: 'terminal console hack hacker matrix shell bash root Befehle cheats geheim secret cmd cli prompt', action: () => openHackerTerminal() },
+                { icon: '🌌', label: 'Zero Gravity Schwerelosigkeit', keywords: 'gravity zerog space schwerelosigkeit float all weltraum schwerelos geheim secret schweben', action: () => launchZeroGravity() },
+                { icon: '📺', label: 'CRT Retro VHS TV-Filter', keywords: 'crt vhs filter scanlines retro glitch phosphor fernseher geheim secret vintage', action: () => toggleCrtMode() },
+                { icon: '🔄', label: 'Barrel Roll 360° Spin', keywords: 'barrel roll spin drehen rotate 360 faßrolle trick geheim secret do a barrel roll rolle', action: () => triggerBarrelRoll() },
+                { icon: '⭐', label: 'Super Star Power (Godmode)', keywords: 'star mario godmode regenbogen unbesiegbar rainbow invulnerable geheim secret sterne stern', action: () => launchStarPower() },
+                { icon: '🐷', label: 'Piggy Pet Desktop-Maskottchen', keywords: 'pet tamagotchi buddy maskottchen pig schwein companion tier geheim secret oink haustier', action: () => togglePiggyPet() },
+                { icon: '🎧', label: 'DJ Turntable Scratch FX', keywords: 'scratch dj turntable vinyl musik beat sound audio plattenspieler effekte geheim secret scratch-effekt', action: () => triggerDjScratch() },
+                { icon: '🎮', label: 'Cyber Arcade & Secrets Vault (Alle 16 Spiele)', keywords: 'arcade vault spiele sammlung alle spiele games minigames geheim secret secrets sammlung arcade-halle', action: () => openArcadeVault() }
             ];
         }
 
@@ -17782,8 +17700,16 @@ let shareCardLoading;
             const resultsEl = document.getElementById('cp-results');
             if (!resultsEl) return;
             const q = (query || '').toLowerCase().trim();
-            const all = getCommandActions();
-            cpFilteredActions = q ? all.filter(a => (a.label + ' ' + a.keywords).toLowerCase().includes(q)) : all;
+            const normalActions = getCommandActions();
+            const secretActions = (typeof getSecretEasterEggActions === 'function') ? getSecretEasterEggActions() : [];
+            if (q) {
+                // Bei gezielter Suche: Standard- und geheime Easter-Eggs durchsuchen
+                const combined = normalActions.concat(secretActions);
+                cpFilteredActions = combined.filter(a => (a.label + ' ' + a.keywords).toLowerCase().includes(q));
+            } else {
+                // Ohne Suchbegriff: Nur Standard-Befehle, KEINE Easter-Egg Spoiler!
+                cpFilteredActions = normalActions;
+            }
             cpSelectedIndex = 0;
 
             if (cpFilteredActions.length === 0) {
@@ -23699,7 +23625,7 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
                 console.warn('Re-Sync: Songtext-Abruf fehlgeschlagen', err);
                 if (typeof showToast === 'function') showToast('Re-Sync fehlgeschlagen, versuch es nochmal.');
             } finally {
-                liveSyncOffset = typeof DEFAULT_SYNC_OFFSET !== 'undefined' ? DEFAULT_SYNC_OFFSET : -400;
+                liveSyncOffset = typeof DEFAULT_SYNC_OFFSET !== 'undefined' ? DEFAULT_SYNC_OFFSET : 0;
                 AppStorage.removeItem('userSyncOffset'); // NEW: Re-Sync setzt auch den gespeicherten manuellen Wert zurück auf den Standard
                 if (syncSlider) syncSlider.value = liveSyncOffset;
                 if (syncValueEl) syncValueEl.innerText = String(liveSyncOffset);
@@ -25472,34 +25398,9 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
             }
         };
 
-        try {
-            const _urlQAParam = new URLSearchParams(window.location.search).get('qa_unlocked') === '1';
-            const _sessionQA = sessionStorage.getItem('gp_qa_auth') === 'true';
-            window.SETTINGS_LOCKED_PENDING_ADMIN = !(_urlQAParam || _sessionQA);
-        } catch(e) {
-            window.SETTINGS_LOCKED_PENDING_ADMIN = true;
-        }
-
-        // Falls im QA-Modus, Banner visuell auf Freigabe umstellen
-        try {
-            if (!window.SETTINGS_LOCKED_PENDING_ADMIN) {
-                const banner = document.getElementById('admin-action-banner');
-                if (banner) {
-                    banner.className = 'mb-6 p-4 rounded-2xl bg-gradient-to-r from-emerald-500/20 via-teal-500/15 to-emerald-500/20 border border-emerald-500/40 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-emerald-200';
-                    banner.innerHTML = '<div class="flex items-center gap-3"><span class="text-2xl p-2 rounded-xl bg-emerald-500/20 border border-emerald-500/30 shrink-0">🧪</span><div><div class="flex items-center gap-2"><strong class="text-emerald-300 font-bold text-sm sm:text-base">QA Test-Modus aktiv (Entsperrt)</strong><span class="px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-300 text-[10px] font-mono font-bold border border-emerald-400/40 uppercase">Tester Access</span></div><p class="text-xs text-emerald-200/90 mt-0.5 leading-snug">Einstellungs-Zentrum ist zur Prüfung freigegeben. Bitte alle Funktionen durchtesten.</p></div></div><span class="px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-bold text-xs">PIN 2957 Auth ✓</span>';
-                }
-            }
-        } catch(e) {}
+        window.SETTINGS_LOCKED_PENDING_ADMIN = false;
 
         window.toggleStandaloneSettings = function(event) {
-            if (window.SETTINGS_LOCKED_PENDING_ADMIN) {
-                if (typeof showToast === 'function') {
-                    showToast('🔒 Einstellungs-Zentrum vorübergehend gesperrt – Wartet auf Server-Admin-Freigabe für Release v24.216.0!', 'warn');
-                }
-                if (typeof haptic === 'function') haptic([40, 30, 40]);
-                if (event) event.stopPropagation();
-                return;
-            }
             if (typeof triggerTutorialEvent === "function") triggerTutorialEvent("settings_opened");
             if (event) event.stopPropagation();
             const globalMenu = document.getElementById('global-settings-menu');
@@ -26202,17 +26103,15 @@ window.setLyricsStyle = function(style) {
             startProgressTracking();
         }
 
-        function scrollToLyricElement(el) {
+        function scrollToLyricElement(el, instant = false) {
             if (!el || !lyricsContainer || isUserScrolling) return;
             const containerHeight = lyricsContainer.clientHeight;
             const elementTop = el.offsetTop;
             const elementHeight = el.clientHeight;
-            const scrollBehavior = document.body.classList.contains('low-end') ? 'auto' : 'smooth';
-            requestAnimationFrame(() => {
-                if (typeof lyricsContainer.scrollTo === 'function') {
-                    lyricsContainer.scrollTo({ top: elementTop - (containerHeight / 2) + (elementHeight / 2), behavior: scrollBehavior });
-                }
-            });
+            const scrollBehavior = (instant || document.body.classList.contains('low-end')) ? 'auto' : 'smooth';
+            if (typeof lyricsContainer.scrollTo === 'function') {
+                lyricsContainer.scrollTo({ top: elementTop - (containerHeight / 2) + (elementHeight / 2), behavior: scrollBehavior });
+            }
         }
 
         function markLineFullyPassed(idx) {
@@ -27485,14 +27384,14 @@ window.setLyricsStyle = function(style) {
                     songTransitionStartedAt = Date.now();
                     return Math.max(1000, remainingMs);
                 }
-                // Snappy sync when lyrics open: 3.5s; normal playback: 5s (down from sluggish 18s)
+                // Snappy sync when lyrics open: 2.5s; normal playback: 4s; idle: 7s
                 if (mainMusicCard && mainMusicCard.classList.contains('lyrics-open')) {
-                    return 3500;
+                    return 2500;
                 }
-                return 5000;
+                return 4000;
             }
 
-            return 12000;
+            return 7000;
         }
 
         let musicPollTimer = null;
@@ -27521,14 +27420,14 @@ window.setLyricsStyle = function(style) {
         // Instant Song Sync on tab focus / visibility (0 extra background cost, instant updates when viewed)
         if (typeof document !== 'undefined') {
             document.addEventListener('visibilitychange', () => {
-                if (!document.hidden && trackIsPlaying && typeof fetchMusicData === 'function') {
+                if (!document.hidden && typeof fetchMusicData === 'function') {
                     fetchMusicData().finally(() => scheduleNextMusicPoll());
                 }
             }, { passive: true });
         }
         if (typeof window !== 'undefined') {
             window.addEventListener('focus', () => {
-                if (trackIsPlaying && typeof fetchMusicData === 'function') {
+                if (typeof fetchMusicData === 'function') {
                     fetchMusicData().finally(() => scheduleNextMusicPoll());
                 }
             }, { passive: true });
