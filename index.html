@@ -5975,6 +5975,69 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
            dazu, bei jedem 120Hz-Scroll-Frame Dutzende Offscreen-Textur-Shader auszuführen, was massive
            Überhitzung und Scroll-Ruckeln verursachte. Saubere Opazitäts- & Skalierungs-Staffelung liefert
            dieselbe edle Tiefenwirkung bei 0% Shader-Overhead. */
+        /* --- INSTRUMENTAL BREAK BEAT DOTS (Apple Music Style) --- */
+        .lyric-line.lyric-instrumental {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.75rem 0;
+            margin: 3.5vh 0;
+            min-height: 2.2rem;
+            opacity: 0.25;
+            transition: opacity 0.4s ease, transform 0.4s var(--apple-spring);
+        }
+        .lyrics-open .lyric-line.lyric-instrumental.active {
+            opacity: 1 !important;
+            transform: scale(1.08) translate3d(0,0,0);
+        }
+        .beat-dots-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.45rem 0.9rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .beat-dot {
+            width: 0.7rem;
+            height: 0.7rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.35);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+        }
+        .lyric-line.lyric-instrumental.active .beat-dot {
+            animation: appleBeatWave 1.4s ease-in-out infinite;
+        }
+        .lyric-line.lyric-instrumental.active .dot-1 {
+            animation-delay: 0s;
+        }
+        .lyric-line.lyric-instrumental.active .dot-2 {
+            animation-delay: 0.22s;
+        }
+        .lyric-line.lyric-instrumental.active .dot-3 {
+            animation-delay: 0.44s;
+        }
+        .lyric-line.lyric-instrumental.active .beat-dot.countdown-lit {
+            background: #38bdf8 !important;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.95), 0 0 24px rgba(56, 189, 248, 0.5) !important;
+            transform: scale(1.35) !important;
+            animation: none !important;
+        }
+        @keyframes appleBeatWave {
+            0%, 100% {
+                transform: scale(0.85);
+                background: rgba(255, 255, 255, 0.28);
+                box-shadow: none;
+            }
+            50% {
+                transform: scale(1.25);
+                background: rgba(255, 255, 255, 0.95);
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(59, 130, 246, 0.5);
+            }
+        }
+
         .lyric-line { display: block; max-width: 94%; margin: 4vh 0; line-height: 1.25; transition: opacity 0.3s ease, transform 0.4s var(--apple-bounce); transform-origin: left center; overflow-wrap: break-word; word-wrap: break-word; white-space: pre-wrap; padding-right: 1rem; transform: translate3d(0,0,0); }
         .lyric-line.active { will-change: opacity, transform; }
         .lyrics-open .lyric-line { opacity: 0.28; transform: scale(0.96) translate3d(0,0,0); }
@@ -26591,6 +26654,31 @@ window.setLyricsStyle = function(style) {
 
         let currentLineAnimCache = null;
 
+        function countSyllables(word) {
+            const w = (word || '').toLowerCase().replace(/[^a-zäöüßáéíóúàèìòùâêîôûãẽĩõũ]/g, '');
+            if (!w) return 1;
+            if (w.length <= 3) return 1;
+            const matches = w.match(/[aeiouyäöüáéíóúàèìòùâêîôûãẽĩõũ]+/g);
+            let count = matches ? matches.length : 1;
+            if (w.endsWith('e') && !w.endsWith('le') && !w.endsWith('ee') && count > 1) {
+                count--;
+            }
+            return Math.max(1, count);
+        }
+
+        function classifyWordEnding(cleanText) {
+            const t = (cleanText || '').toLowerCase().replace(/[\.,!?;:"'—\-\s]/g, '');
+            if (!t) return 'neutral';
+            if (/[aeiouyäöüáéíóúàèìòùâêîôûãẽĩõũ]$/.test(t) ||
+                /(?:ld|nd|rd|er|ar|or|ir|ur|ay|ey|oy|ow|aw|ew|ee|oo|ing|ng|al|el|il|ol|ul|am|em|im|om|um|an|en|in|on|un|se|ze|ve|fe|the)$/.test(t)) {
+                return 'sustain';
+            }
+            if (/[tkpq]$/.test(t) || /(?:ck|tch|ch|sh|ts|pt|kt|ft|ss|x)$/.test(t)) {
+                return 'hardStop';
+            }
+            return 'neutral';
+        }
+
         function parseLrc(lrcString) {
             const lines = lrcString.split('\n');
             const lineRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
@@ -26668,9 +26756,13 @@ window.setLyricsStyle = function(style) {
                 line.endMs = trueNextLineTime;
 
                 let lineWeight = 0;
+                let totalSyllables = 0;
                 line.tokens.forEach((tok, idx) => {
                     tok.cleanText = tok.text.replace(/\s+$/, '');
                     tok.trailingSpace = tok.text.slice(tok.cleanText.length);
+                    tok.syllableCount = countSyllables(tok.cleanText);
+                    tok.endingType = classifyWordEnding(tok.cleanText);
+                    totalSyllables += tok.syllableCount;
                     
                     let pureText = tok.cleanText.replace(/[.,!?]/g, '');
                     tok.rawWeight = 0;
@@ -26680,32 +26772,59 @@ window.setLyricsStyle = function(style) {
                         tok.rawWeight += getCharWeight(c, tok.isPhraseEnd, /[aeiouy]/.test(c.toLowerCase()));
                     }
                     if (tok.rawWeight === 0) tok.rawWeight = 0.5; 
+
+                    // Weiche Sustain-Endungen harmonisch dehnbar machen
+                    if (tok.endingType === 'sustain') {
+                        tok.rawWeight *= 1.25;
+                    }
                     
                     tok.weight = Math.pow(tok.rawWeight, 0.75);
-                    
                     lineWeight += tok.weight;
                 });
+                line.totalSyllables = totalSyllables;
 
+                // Adaptives Tempo- und Gesangsmodell
                 if (!line.hasWordTimings && line.tokens.length > 0) {
+                    const durationSec = Math.max(0.5, timeToNextLine / 1000);
+                    const lineDensity = totalSyllables / durationSec; // Silben pro Sekunde
+                    const isRapMode = lineDensity > 3.8;
+                    const isBalladMode = lineDensity < 2.2;
+
                     let maxAvailableTime = timeToNextLine * 0.95; 
-                    if (maxAvailableTime > 15000) maxAvailableTime = 15000;
+                    if (timeToNextLine >= 5000) {
+                        const naturalSingCap = Math.max(2200, totalSyllables * (isBalladMode ? 420 : 280));
+                        maxAvailableTime = Math.min(timeToNextLine - 1800, naturalSingCap);
+                    }
 
                     let totalRawTime = 0;
-                    line.tokens.forEach((tok) => {
-                        tok.rawDuration = tok.weight * 80;
-                        tok.rawPause = 30;
-                        let maxGap = Math.min(timeToNextLine, 8000);
-                        let dynamicPauseBase = maxGap * 0.05;
+                    line.tokens.forEach((tok, idx) => {
+                        tok.rawDuration = tok.weight * (isBalladMode ? 95 : 75);
+                        tok.rawPause = 20;
 
-                        if (tok.isPhraseEnd) {
-                            if (/[.!?]$/.test(tok.cleanText)) {
-                                tok.rawPause = Math.max(400, Math.min(dynamicPauseBase * 2.5, 1500));
-                            } else if (/[,;:]$/.test(tok.cleanText)) {
-                                tok.rawPause = Math.max(200, Math.min(dynamicPauseBase * 1.5, 800));
+                        if (isRapMode) {
+                            tok.rawPause = tok.isPhraseEnd ? 35 : 15;
+                        } else if (isBalladMode) {
+                            if (tok.endingType === 'sustain') {
+                                tok.rawPause = 25; // Nahtloser Tonübergang (kein Stille-Loch)
+                                tok.rawDuration *= 1.2;
+                            } else if (tok.endingType === 'hardStop') {
+                                tok.rawPause = tok.isPhraseEnd ? 180 : 70;
                             } else {
-                                tok.rawPause = Math.max(100, Math.min(dynamicPauseBase * 0.8, 400));
+                                tok.rawPause = tok.isPhraseEnd ? 120 : 40;
+                            }
+                        } else {
+                            if (tok.endingType === 'hardStop') {
+                                tok.rawPause = tok.isPhraseEnd ? 200 : 80;
+                            } else {
+                                tok.rawPause = tok.isPhraseEnd ? 80 : 35;
                             }
                         }
+
+                        // Sicherheitslimit: Pausen dürfen nie mehr als 15% der Zeilenzeit fressen
+                        if (tok.rawPause > maxAvailableTime * 0.15) {
+                            tok.rawPause = maxAvailableTime * 0.15;
+                        }
+
                         totalRawTime += tok.rawDuration + tok.rawPause;
                     });
 
@@ -26713,7 +26832,7 @@ window.setLyricsStyle = function(style) {
                     if (totalRawTime > maxAvailableTime) {
                         timeScale = maxAvailableTime / totalRawTime; 
                     } else {
-                        timeScale = Math.min(maxAvailableTime / totalRawTime, 1.25); 
+                        timeScale = Math.min(maxAvailableTime / totalRawTime, isBalladMode ? 1.6 : 1.3); 
                     }
                     
                     let currentOffsetMs = line.timeMs;
@@ -26727,8 +26846,8 @@ window.setLyricsStyle = function(style) {
 
                         if (j === line.tokens.length - 1 && totalRawTime * timeScale < maxAvailableTime) {
                             let remainingExtra = maxAvailableTime - (totalRawTime * timeScale);
-                            if (/[aeiouyæøåœäöüáéíóúàèìòùâêîôûãẽĩõũ][^a-zA-Z]*$/.test(tok.cleanText.toLowerCase())) {
-                                tok.duration += Math.min(remainingExtra * 0.6, 1200); 
+                            if (tok.endingType === 'sustain') {
+                                tok.duration += Math.min(remainingExtra * 0.75, 1800); 
                             }
                         }
                         
@@ -26742,6 +26861,7 @@ window.setLyricsStyle = function(style) {
 
                         currentOffsetMs += tok.duration + microPause; 
                     }
+                    line.singingEndMs = currentOffsetMs;
                 } else if (line.hasWordTimings) {
                     for (let j = 0; j < line.tokens.length; j++) {
                         let tok = line.tokens[j];
@@ -26769,8 +26889,44 @@ window.setLyricsStyle = function(style) {
                         tok.startMs = tok.timeMs;
                         tok.endMs = tok.timeMs + tok.duration;
                     }
+                    line.singingEndMs = line.tokens[line.tokens.length - 1]?.endMs || line.endMs;
                 }
             }
+
+            // 3. Echte Instrumental-Pausen (> 3.2s) mit 3 Takt-Punkten anreichern
+            const enriched = [];
+            if (parsedLyrics.length > 0 && parsedLyrics[0].timeMs >= 4000) {
+                enriched.push({
+                    timeMs: 0,
+                    startMs: 0,
+                    endMs: parsedLyrics[0].timeMs,
+                    text: "♪ ♪ ♪",
+                    isInstrumental: true,
+                    tokens: []
+                });
+            }
+
+            for (let i = 0; i < parsedLyrics.length; i++) {
+                const line = parsedLyrics[i];
+                enriched.push(line);
+
+                const nextLine = parsedLyrics[i + 1];
+                if (nextLine) {
+                    const singEnd = line.singingEndMs || line.endMs;
+                    const breakDuration = nextLine.timeMs - singEnd;
+                    if (breakDuration >= 3200) {
+                        enriched.push({
+                            timeMs: singEnd,
+                            startMs: singEnd,
+                            endMs: nextLine.timeMs,
+                            text: "♪ ♪ ♪",
+                            isInstrumental: true,
+                            tokens: []
+                        });
+                    }
+                }
+            }
+            parsedLyrics = enriched;
         }
 
         function renderLyrics(fallbackText, isUnsyncedData = false) {
@@ -26824,6 +26980,15 @@ window.setLyricsStyle = function(style) {
             }
             
             lyricsContent.innerHTML = '<div class="w-full pt-[40vh] pb-[40vh] px-2 sm:px-4">' + parsedLyrics.map((line, idx) => {
+                if (line.isInstrumental) {
+                    return `<div id="lyric-line-${idx}" class="lyric-line lyric-instrumental" data-start="${line.timeMs}" data-end="${line.endMs}">
+                        <div class="beat-dots-container" title="Instrumental">
+                            <span class="beat-dot dot-1"></span>
+                            <span class="beat-dot dot-2"></span>
+                            <span class="beat-dot dot-3"></span>
+                        </div>
+                    </div>`;
+                }
                 if (!needsCharSplit) {
                     return `<div id="lyric-line-${idx}" class="lyric-line">` + 
                         line.tokens.map((tok, wIdx) => {
@@ -27023,6 +27188,25 @@ window.setLyricsStyle = function(style) {
 
             if (currentLineAnimCache && currentLineAnimCache.words) {
                 renderActiveLineWordVisuals(adjustedMs);
+            } else if (curLine && curLine.isInstrumental) {
+                const timeLeft = curLine.endMs - adjustedMs;
+                const instEl = document.getElementById(`lyric-line-${currentLyricIndex}`);
+                if (instEl) {
+                    const d1 = instEl.querySelector('.dot-1');
+                    const d2 = instEl.querySelector('.dot-2');
+                    const d3 = instEl.querySelector('.dot-3');
+                    if (d1 && d2 && d3) {
+                        if (timeLeft <= 3000 && timeLeft > 0) {
+                            d1.classList.toggle('countdown-lit', timeLeft <= 3000);
+                            d2.classList.toggle('countdown-lit', timeLeft <= 2000);
+                            d3.classList.toggle('countdown-lit', timeLeft <= 1000);
+                        } else {
+                            d1.classList.remove('countdown-lit');
+                            d2.classList.remove('countdown-lit');
+                            d3.classList.remove('countdown-lit');
+                        }
+                    }
+                }
             }
         }
 
