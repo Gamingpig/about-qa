@@ -14982,12 +14982,22 @@ html.gp-android:not(.dark) #ui-controls {
                 window[cbName] = function(resp) {
                     cleanup();
                     if (resp && resp.data && resp.data[0] && resp.data[0].album) {
-                        const alb = resp.data[0].album;
-                        const cover = alb.cover_xl || alb.cover_big || alb.cover_medium;
-                        resolve(cover || null);
-                    } else {
-                        resolve(null);
+                        const item = resp.data[0];
+                        const dTitle = (item.title || item.title_short || '').toLowerCase();
+                        const dArtist = (item.artist && item.artist.name ? item.artist.name : '').toLowerCase();
+                        const searchT = (cleanT || title || '').toLowerCase();
+                        const searchA = (cleanA || artist || '').toLowerCase();
+                        const titleMatch = Boolean(searchT && (dTitle.includes(searchT) || searchT.includes(dTitle)));
+                        const artistMatch = Boolean(searchA && (dArtist.includes(searchA) || searchA.includes(dArtist)));
+                        // Nur akzeptieren, wenn Titel ODER Interpret tatsächlich übereinstimmen!
+                        if (titleMatch || artistMatch) {
+                            const alb = item.album;
+                            const cover = alb.cover_xl || alb.cover_big || alb.cover_medium;
+                            resolve(cover || null);
+                            return;
+                        }
                     }
+                    resolve(null);
                 };
 
                 script.onerror = function() {
@@ -15140,7 +15150,7 @@ html.gp-android:not(.dark) #ui-controls {
                             if (r.ok) {
                                 const d = await r.json();
                                 if (d?.results?.length) {
-                                    const match = d.results.find(it => it.trackName && it.trackName.toLowerCase().includes(cleanT.toLowerCase())) || d.results[0];
+                                    const match = d.results.find(it => it.trackName && it.trackName.toLowerCase().includes(cleanT.toLowerCase()));
                                     const art = match?.artworkUrl100;
                                     if (art) return art.replace('100x100bb', '640x640bb');
                                 }
@@ -15180,7 +15190,7 @@ html.gp-android:not(.dark) #ui-controls {
                             if (r.ok) {
                                 const d = await r.json();
                                 if (d?.results?.length) {
-                                    const match = (cleanA ? d.results.find(it => it.artistName && it.artistName.toLowerCase().includes(cleanA.toLowerCase())) : null) || d.results[0];
+                                    const match = cleanA ? d.results.find(it => it.artistName && it.artistName.toLowerCase().includes(cleanA.toLowerCase())) : null;
                                     const art = match?.artworkUrl100;
                                     if (art) return art.replace('100x100bb', '640x640bb');
                                 }
@@ -27569,11 +27579,22 @@ window.setLyricsStyle = function(style) {
 
             let rawArtwork = (data.track && data.track.artwork_url) || '';
             let isBrokenNpcProxy = rawArtwork.includes('npc-api.aikins.xyz/v1/artwork/');
+            const hasValidRawCover = Boolean(rawArtwork && rawArtwork.startsWith('http') && !isBrokenNpcProxy);
 
             const trackKey = getTrackCacheKey(trackTitle, cleanArtist);
             if (trackKey !== lastResolvedTrackKey) {
                 lastResolvedTrackKey = trackKey;
-                currentResolvedArtUrl = trackCoverMemoryCache.get(trackKey) || null;
+                // FIX: Wenn die API ein echtes, valides Cover liefert (wie im StandBy-Screen, der immer korrekt ist),
+                // dieses DIREKT verwenden und im Cache sichern, anstatt falsche Drittanbieter-Cover zu raten!
+                if (hasValidRawCover) {
+                    currentResolvedArtUrl = rawArtwork;
+                    setCachedCover(trackKey, rawArtwork);
+                } else {
+                    currentResolvedArtUrl = trackCoverMemoryCache.get(trackKey) || null;
+                }
+            } else if (hasValidRawCover && (!currentResolvedArtUrl || currentResolvedArtUrl === fallbackImg)) {
+                currentResolvedArtUrl = rawArtwork;
+                setCachedCover(trackKey, rawArtwork);
             }
 
             const updateAllCoverVisuals = (srcUrl) => {
@@ -27616,9 +27637,9 @@ window.setLyricsStyle = function(style) {
                 }
             };
 
-            // Proaktive Cover-Auflösung: sofort starten wenn für den aktuellen Track noch kein Cover
-            // aufgelöst wurde (auch beim Erstaufruf) oder die Proxy-URL kaputt ist.
-            if (!currentResolvedArtUrl || isBrokenNpcProxy) {
+            // Proaktive Cover-Auflösung: NUR WENN KEIN valides API-Cover existiert!
+            // Verhindert, dass korrekte Spotify/Stats.fm-Cover durch ungenaue Deezer/iTunes-Suchtreffer überschrieben werden.
+            if (!hasValidRawCover && (!currentResolvedArtUrl || isBrokenNpcProxy)) {
                 const capturedTrackKey = trackKey;
                 findBestArtworkFallback(
                     trackTitle,
@@ -27707,7 +27728,8 @@ window.setLyricsStyle = function(style) {
 
                 const cachedCover = trackCoverMemoryCache.get(trackKey);
                 const safeRawCover = (!isBrokenNpcProxy && rawArtwork && rawArtwork.startsWith('http') && !rawArtwork.includes('npc-api.aikins.xyz/v1/artwork/')) ? rawArtwork : null;
-                const finalArtUrl = currentResolvedArtUrl || cachedCover || safeRawCover || fallbackImg;
+                // Echtes API-Cover (safeRawCover) hat absolute Priorität vor unsicheren Drittanbieter-Caches
+                const finalArtUrl = safeRawCover || currentResolvedArtUrl || cachedCover || fallbackImg;
 
                 updateAllCoverVisuals(finalArtUrl);
                 
