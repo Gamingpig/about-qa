@@ -12001,7 +12001,9 @@ html.gp-android:not(.dark) #ui-controls {
                 music_sync_note: '*Hinweis: Der Time-Sync ist auf -400ms optimiert.',
                 lyrics_placeholder_title: 'Titel',
                 lyrics_placeholder_artist: 'Artist',
-                lyrics_synced_label: 'Lyrics: Synced',
+                lyrics_synced_label: 'Synced',
+                label_synced: 'Synced',
+                label_unsynced: 'Nicht synchronisiert',
                 aria_lyrics_settings: 'Lyrics Einstellungen',
                 label_animation_style: 'Animation Style',
                 label_overkill_shaders: 'Overkill Shaders',
@@ -12233,7 +12235,8 @@ html.gp-android:not(.dark) #ui-controls {
                 music_sync_note: '*Note: Time sync is optimized for -400ms.',
                 lyrics_placeholder_title: 'Title',
                 lyrics_placeholder_artist: 'Artist',
-                lyrics_synced_label: 'Lyrics: Synced',
+                lyrics_synced_label: 'Synced',
+                label_synced: 'Synced',
                 aria_lyrics_settings: 'Lyrics settings',
                 label_animation_style: 'Animation Style',
                 label_overkill_shaders: 'Overkill Shaders',
@@ -26645,9 +26648,9 @@ window.setLyricsStyle = function(style) {
                 
                 if (isUnsyncedData) {
                     if (syncBadge) {
-                        syncBadge.style.display = 'inline-block';
-                        syncBadge.innerText = t('label_unsynced');
-                        syncBadge.className = "px-1.5 xxs:px-2 py-1 mr-1 xxs:mr-2 bg-orange-500/20 text-orange-400 text-[8px] xxs:text-[10px] sm:text-xs rounded font-bold shrink-0 whitespace-nowrap";
+                        syncBadge.style.display = 'inline-flex';
+                        syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-amber-500/20 text-amber-400 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
+                        syncBadge.innerHTML = `<span class="hidden sm:inline">Lyrics:&nbsp;</span><span>${t('label_unsynced')}</span>`;
                     }
                     lyricsContent.innerHTML = `
                     <div class="w-full flex-1 pt-[10vh] pb-[50vh] px-1 sm:px-4 md:px-8">
@@ -26665,9 +26668,9 @@ window.setLyricsStyle = function(style) {
             }
             
             if (syncBadge) {
-                syncBadge.style.display = 'inline-block';
-                syncBadge.innerText = "Synced";
-                syncBadge.className = "px-1.5 xxs:px-2 py-1 mr-1 xxs:mr-2 bg-blue-500/20 text-blue-400 text-[8px] xxs:text-[10px] sm:text-xs rounded font-bold shrink-0 whitespace-nowrap";
+                syncBadge.style.display = 'inline-flex';
+                syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-blue-500/20 text-blue-400 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
+                syncBadge.innerHTML = `<span class="hidden sm:inline">Lyrics:&nbsp;</span><span>${t('label_synced') || t('lyrics_synced_label') || 'Synced'}</span>`;
             }
             
             const isLowEnd = document.body.classList.contains('low-end');
