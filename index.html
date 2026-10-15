@@ -27285,6 +27285,8 @@ window.setLyricsStyle = function(style) {
                         return matches[0];
                     };
 
+                    let plainFallback = null;
+
                     // 1. LRCLIB Direct Get (Clean Title & Primary Artist)
                     try {
                         const getParams = new URLSearchParams({ track_name: cleanT || title, artist_name: cleanA || artist });
@@ -27294,12 +27296,18 @@ window.setLyricsStyle = function(style) {
                         if (res.ok) {
                             const data = await res.json();
                             if (data && isStrictMatch(data.trackName, data.artistName, data.duration, title, artist, searchDurationMs)) {
-                                if (saveAndRender(data.syncedLyrics, data.plainLyrics, "LRCLIB")) return;
+                                // Nur sofort zurückkehren, wenn ECHTE synced Lyrics vorhanden sind!
+                                if (data.syncedLyrics && !isDummyLyrics(data.syncedLyrics)) {
+                                    if (saveAndRender(data.syncedLyrics, data.plainLyrics, "LRCLIB")) return;
+                                } else if (data.plainLyrics && !isDummyLyrics(data.plainLyrics)) {
+                                    // Plain Lyrics nur als Fallback merken, damit Suche nach Synced Lyrics weiterlaufen kann!
+                                    plainFallback = { plain: data.plainLyrics, provider: "LRCLIB" };
+                                }
                             }
                         }
                     } catch(e) {}
 
-                    // 2. LRCLIB Search Query (Fast & comprehensive)
+                    // 2. LRCLIB Search Query (Sucht gezielt nach Versionen mit Synced Lyrics)
                     try {
                         if (fetchId !== currentFetchId) return;
                         const queryStr = `${cleanT || title} ${cleanA || artist}`.trim();
@@ -27309,12 +27317,16 @@ window.setLyricsStyle = function(style) {
                             const searchData = await searchRes.json();
                             const best = pickBestMatch(searchData, searchDurationMs);
                             if (best) {
-                                if (saveAndRender(best.syncedLyrics, best.plainLyrics, "LRCLIB")) return;
+                                if (best.syncedLyrics && !isDummyLyrics(best.syncedLyrics)) {
+                                    if (saveAndRender(best.syncedLyrics, best.plainLyrics, "LRCLIB")) return;
+                                } else if (!plainFallback && best.plainLyrics && !isDummyLyrics(best.plainLyrics)) {
+                                    plainFallback = { plain: best.plainLyrics, provider: "LRCLIB" };
+                                }
                             }
                         }
                     } catch(e) {}
 
-                    // 3. LRCLIB Raw Search (with uncleaned title)
+                    // 3. LRCLIB Raw Search (mit ungekürztem Titel für Treffer bei Deluxe/Remaster)
                     if (cleanT !== title || cleanA !== artist) {
                         try {
                             if (fetchId !== currentFetchId) return;
@@ -27324,10 +27336,19 @@ window.setLyricsStyle = function(style) {
                                 const rawData = await rawSearchRes.json();
                                 const bestRaw = pickBestMatch(rawData, searchDurationMs);
                                 if (bestRaw) {
-                                    if (saveAndRender(bestRaw.syncedLyrics, bestRaw.plainLyrics, "LRCLIB")) return;
+                                    if (bestRaw.syncedLyrics && !isDummyLyrics(bestRaw.syncedLyrics)) {
+                                        if (saveAndRender(bestRaw.syncedLyrics, bestRaw.plainLyrics, "LRCLIB")) return;
+                                    } else if (!plainFallback && bestRaw.plainLyrics && !isDummyLyrics(bestRaw.plainLyrics)) {
+                                        plainFallback = { plain: bestRaw.plainLyrics, provider: "LRCLIB" };
+                                    }
                                 }
                             }
                         } catch(e) {}
+                    }
+
+                    // 4. Falls LRCLIB Synced nirgends existiert, aber Plain-Lyrics gefunden wurden -> Plain rendern
+                    if (plainFallback) {
+                        if (saveAndRender(null, plainFallback.plain, plainFallback.provider)) return;
                     }
 
                     // 4. Plain Lyrics Fallback: lyrics.ovh (fast & lightweight)
