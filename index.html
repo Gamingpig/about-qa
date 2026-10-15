@@ -26495,7 +26495,7 @@ window.setLyricsStyle = function(style) {
                 mainMusicCard.classList.remove('lyrics-closing-state');
                 void mainMusicCard.offsetWidth; // Reflow erzwingen
                 mainMusicCard.classList.add('lyrics-open');
-                if (trackIsPlaying && currentTrackTitle && (!parsedLyrics || parsedLyrics.length === 0)) {
+                if (trackIsPlaying && currentTrackTitle && (!parsedLyrics || parsedLyrics.length === 0 || !currentLyricsProvider)) {
                     const currentTrackCacheKey = (currentTrackTitle + '---' + (currentRawArtist || '')).toLowerCase().trim();
                     const cachedLyricsEntry = lyricsMemoryCache.get(currentTrackCacheKey);
                     if (cachedLyricsEntry && cachedLyricsEntry.syncedLyrics && !isDummyLyrics(cachedLyricsEntry.syncedLyrics)) {
