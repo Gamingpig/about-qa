@@ -3401,7 +3401,7 @@
     <script src="./js/core/storage.e856be99df567fd2.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🧪 Gamingpig QA Testumgebung (v24.220.0)</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.220.0</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -9445,6 +9445,30 @@ html.gp-android:not(.dark) #ui-controls {
 
     <main id="main-content" class="max-w-4xl mx-auto px-4 xs:px-6 sm:px-8 pt-24 xs:pt-28 sm:pt-32 pb-16 sm:pb-24">
 
+        <!-- 🧪 QA TESTUMGEBUNG NOTIFICATION BANNER -->
+        <div id="qa-staging-banner" class="mb-4 sm:mb-6 p-4 rounded-2xl bg-gradient-to-r from-cyan-950/80 via-blue-950/70 to-purple-950/80 border-2 border-cyan-400/50 backdrop-blur-2xl shadow-[0_0_30px_rgba(6,182,212,0.2)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-cyan-200">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl p-2.5 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 shrink-0">🧪</span>
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
+                        <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.220.0</span>
+                    </div>
+                    <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                <a href="checklist.html" class="px-3.5 py-2 rounded-xl bg-cyan-500/30 hover:bg-cyan-500/45 text-cyan-200 border border-cyan-400/50 font-bold text-xs whitespace-nowrap transition-all shadow-md flex items-center gap-1.5 active:scale-95">
+                    <span>📋</span> <span>Checkliste öffnen</span>
+                </a>
+                <a href="https://gamingpig.github.io/About-Gamingpig/" target="_blank" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1" title="Zur produktiven Hauptseite wechseln">
+                    <span>Zur Live-Seite</span> <span>↗</span>
+                </a>
+            </div>
+        </div>
+
+
         <header id="header-section" class="glass-card mb-6 xxs:mb-8 sm:mb-12 reveal mt-2 sm:mt-0 rounded-2xl relative z-10 p-4 xxs:p-6 sm:p-8">
             <div class="inline-flex items-center gap-2 px-2 py-1 sm:px-3 sm:py-1 mb-2 sm:mb-3 text-[8px] xxs:text-[10px] xs:text-xs font-bold tracking-widest text-blue-600 uppercase bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 rounded-full shadow-sm">
                 <span class="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
@@ -9459,9 +9483,12 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
-                <h1 id="header-main-title" onclick="handleHeaderTitleEasterTap()" class="text-3xl sm:text-5xl md:text-6xl font-extrabold py-1 tracking-tighter bg-gradient-to-br from-slate-900 via-slate-800 to-slate-600 dark:from-white dark:via-slate-200 dark:to-slate-400 bg-clip-text text-transparent leading-tight break-words drop-shadow-md cursor-pointer select-none">
-                    Über Gamingpig
-                </h1>
+                <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                    <h1 id="header-main-title" onclick="handleHeaderTitleEasterTap()" class="text-3xl sm:text-5xl md:text-6xl font-extrabold py-1 tracking-tighter bg-gradient-to-br from-slate-900 via-slate-800 to-slate-600 dark:from-white dark:via-slate-200 dark:to-slate-400 bg-clip-text text-transparent leading-tight break-words drop-shadow-md cursor-pointer select-none">
+                        Über Gamingpig
+                    </h1>
+                    <span class="px-2.5 py-1 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 text-[10px] sm:text-xs font-mono font-black tracking-widest uppercase shadow-sm select-none">🧪 TESTUMGEBUNG</span>
+                </div>
                 <button id="header-pig-avatar" onclick="handlePigAvatarEasterTap()" title="Gamingpig Maskottchen" class="inline-flex items-center justify-center text-2xl sm:text-4xl hover:scale-125 active:scale-90 transition-transform cursor-pointer bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/25 rounded-2xl p-1.5 sm:p-2 shadow-sm select-none" aria-label="Gamingpig Maskottchen Easter Egg">
                     <span>🐷</span>
                 </button>
@@ -28897,5 +28924,13 @@ window.setLyricsStyle = function(style) {
             } catch(e) {}
         })();
 
-</script></body>
+</script>
+    <!-- 🧪 FIXED QA WATERMARK PILL -->
+    <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
+        <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
+            <span>🧪 QA-TESTUMGEBUNG v24.220.0</span>
+        </a>
+    </div>
+</body>
 </html>
