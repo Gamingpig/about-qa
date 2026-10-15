@@ -26750,20 +26750,33 @@ window.setLyricsStyle = function(style) {
                         });
                     } else {
                         const cleanText = rawText.replace(/<\d{2}:\d{2}\.\d{2,3}>/g, '').trim();
-                        if (cleanText) {
+                        const isNoteOrBreak = !cleanText || cleanText === "♪" || cleanText === "(Instrumental)" || /^[♪\s\-—]+$/.test(cleanText);
+                        if (cleanText && !isNoteOrBreak) {
                             const words = cleanText.match(/([^\s\-]+[\s\-]*|[\s\-]+)/g) || [cleanText];
                             tokens = words.map(w => ({ timeMs: null, text: w }));
                         } else {
-                            tokens = [{ timeMs: lineTime, text: "♪" }];
+                            tokens = [];
+                            hasWordTimings = false;
                         }
+                        
+                        parsedLyrics.push({ 
+                            timeMs: lineTime,
+                            startMs: lineTime,
+                            text: isNoteOrBreak ? "♪ ♪ ♪" : cleanText,
+                            tokens: tokens,
+                            hasWordTimings: hasWordTimings,
+                            isInstrumental: isNoteOrBreak
+                        });
+                        continue;
                     }
 
                     parsedLyrics.push({ 
                         timeMs: lineTime,
                         startMs: lineTime,
-                        text: rawText.replace(/<\d{2}:\d{2}\.\d{2,3}>/g, '').trim() || "♪",
+                        text: rawText.replace(/<\d{2}:\d{2}\.\d{2,3}>/g, '').trim() || "♪ ♪ ♪",
                         tokens: tokens,
-                        hasWordTimings: hasWordTimings
+                        hasWordTimings: hasWordTimings,
+                        isInstrumental: false
                     });
                 }
             });
@@ -26952,7 +26965,8 @@ window.setLyricsStyle = function(style) {
                 enriched.push(line);
 
                 const nextLine = parsedLyrics[i + 1];
-                if (nextLine) {
+                // Nur wenn weder diese noch die nächste Zeile bereits ein Instrumental-Break/Note ist
+                if (nextLine && !line.isInstrumental && !nextLine.isInstrumental) {
                     const singEnd = line.singingEndMs || line.endMs;
                     const breakDuration = nextLine.timeMs - singEnd;
                     // Bereits ab 2.0s Pause Takt-Punkte einblenden
@@ -27022,7 +27036,7 @@ window.setLyricsStyle = function(style) {
             }
             
             lyricsContent.innerHTML = '<div class="w-full pt-[40vh] pb-[40vh] px-2 sm:px-4">' + parsedLyrics.map((line, idx) => {
-                if (line.isInstrumental) {
+                if (line.isInstrumental || line.text === "♪" || line.text === "♪ ♪ ♪" || (line.tokens && line.tokens.length === 0)) {
                     return `<div id="lyric-line-${idx}" class="lyric-line lyric-instrumental" data-start="${line.timeMs}" data-end="${line.endMs}">
                         <div class="beat-dots-container" title="Instrumental">
                             <span class="beat-dot dot-1"></span>
