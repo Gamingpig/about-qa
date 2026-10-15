@@ -28142,6 +28142,7 @@ window.setLyricsStyle = function(style) {
                     totalMs = Number(track?.duration_ms || data?.duration_ms) || 0;
                     parsedLyrics = [];
                     currentLyricIndex = -1;
+                    currentLyricsProvider = "";
                     fetchExternalLyrics(title, cleanA, totalMs, false);
                 }
                 const isTransitioning = isHuntingForNextTrack && (Date.now() - songTransitionStartedAt < 35000);
@@ -28211,6 +28212,7 @@ window.setLyricsStyle = function(style) {
                 if (mainMusicCard) {
                     mainMusicCard.classList.remove('playing', 'offline');
                     mainMusicCard.classList.add('paused');
+                    if (mainMusicCard.classList.contains('lyrics-open')) toggleLyrics(false);
                 }
                 if (mHeader) mHeader.innerText = t('status_paused') || 'Pausiert';
                 if (mDot) mDot.className = "h-1 w-1 xxs:h-1.5 xxs:w-1.5 xs:h-2 xs:w-2 rounded-full bg-amber-500";
