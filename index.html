@@ -6007,50 +6007,54 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             width: 0.75rem;
             height: 0.75rem;
             border-radius: 9999px;
-            background-color: rgba(255, 255, 255, 0.28);
-            transition: transform var(--dot-pop-speed, 0.25s) cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+            background-color: rgba(255, 255, 255, 0.25);
+            transition: transform var(--dot-beat-speed, 0.35s) cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
             opacity: 0.35;
             transform: scale(0.92);
         }
-        /* Kein Discord-Typing-Wave mehr! Die Punkte ruhen dezent, bis sie nacheinander zünden */
-        .lyric-line.lyric-instrumental.active .beat-dot.countdown-lit {
+        /* Default leuchtender Zustand (wird durch Theme-Styles überschrieben) */
+        .beat-dot.countdown-lit {
+            background-color: #ffffff;
+            box-shadow: 0 0 14px rgba(255, 255, 255, 0.95), 0 0 28px rgba(255, 255, 255, 0.45);
             opacity: 1 !important;
-            transform: scale(1.28) !important;
-            animation: dotPop var(--dot-pop-speed, 0.32s) cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: scale(1.22);
+        }
+        /* Aktueller Taktschlag: Anschwellen passend zur Beat-Geschwindigkeit */
+        .lyric-line.lyric-instrumental.active .beat-dot.current-beat {
+            animation: dotBeatPop var(--dot-beat-speed, 0.45s) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
         /* Reaktionszeit: Alle 3 Punkte pulsieren synchron kurz vor dem Gesangseinsatz (Atemzug / Bereit!) */
         .lyric-line.lyric-instrumental.active .beat-dots-container.ready-to-sing .beat-dot.countdown-lit {
-            animation: dotReadyPulse var(--dot-speed, 0.45s) ease-in-out infinite alternate !important;
+            animation: dotReadyPulse var(--dot-ready-speed, 0.45s) ease-in-out infinite alternate !important;
         }
 
-        @keyframes dotPop {
-            0% { transform: scale(0.85); }
-            55% { transform: scale(1.42); }
-            100% { transform: scale(1.28); }
+        @keyframes dotBeatPop {
+            0% { transform: scale(0.92); }
+            40% { transform: scale(1.48); }
+            100% { transform: scale(1.22); }
         }
 
         @keyframes dotReadyPulse {
             0% { transform: scale(1.22); filter: brightness(1); }
-            100% { transform: scale(1.38); filter: brightness(1.28); }
+            100% { transform: scale(1.44); filter: brightness(1.35); }
         }
         /* Style-spezifische Taktpunkt-Farben */
-        .lyrics-style-neon .beat-dot.countdown-lit { background-color: #06b6d4 !important; box-shadow: 0 0 14px #06b6d4, 0 0 28px rgba(6, 182, 212, 0.6) !important; }
-        .lyrics-style-matrix .beat-dot.countdown-lit { background-color: #00ff41 !important; box-shadow: 0 0 14px #00ff41, 0 0 28px rgba(0, 255, 65, 0.6) !important; }
-        .lyrics-style-cyberpunk .beat-dot.countdown-lit { background-color: #ff00ff !important; box-shadow: 0 0 14px #ff00ff, 0 0 28px #00ffcc !important; }
-        .lyrics-style-hellfire .beat-dot.countdown-lit { background-color: #ff9a9e !important; box-shadow: 0 0 14px #ff9a9e, 0 0 28px rgba(255, 154, 158, 0.6) !important; }
-        .lyrics-style-goldleaf .beat-dot.countdown-lit { background-color: #fde68a !important; box-shadow: 0 0 14px #fde68a, 0 0 28px rgba(253, 230, 138, 0.6) !important; }
-        .lyrics-style-sunrise .beat-dot.countdown-lit { background-color: #ffd08a !important; box-shadow: 0 0 14px #ff8a5c, 0 0 28px rgba(255, 208, 138, 0.6) !important; }
-        .lyrics-style-retrowave .beat-dot.countdown-lit { background-color: #f472b6 !important; box-shadow: 0 0 14px #f472b6, 0 0 28px rgba(244, 114, 182, 0.6) !important; }
-        .lyrics-style-velvet .beat-dot.countdown-lit { background-color: #f5d0e0 !important; box-shadow: 0 0 14px #be185d, 0 0 28px rgba(190, 24, 93, 0.5) !important; }
-        .lyrics-style-frostbite .beat-dot.countdown-lit, .lyrics-style-ice .beat-dot.countdown-lit { background-color: #8cc8e8 !important; box-shadow: 0 0 14px #8cc8e8, 0 0 28px rgba(140, 200, 232, 0.6) !important; }
-        .lyrics-style-aurora .beat-dot.countdown-lit { background-color: #4ade80 !important; box-shadow: 0 0 14px #4ade80, 0 0 28px rgba(74, 222, 128, 0.6) !important; }
-        .lyrics-style-liquid .beat-dot.countdown-lit { background-color: #06b6d4 !important; box-shadow: 0 0 14px #06b6d4, 0 0 28px rgba(6, 182, 212, 0.6) !important; }
-        .lyrics-style-rainbow .beat-dot.countdown-lit { background-color: #ff00ff !important; box-shadow: 0 0 14px #00ffee, 0 0 28px #ff0066 !important; }
-        .lyrics-style-lasertag .beat-dot.countdown-lit { background-color: #ef4444 !important; box-shadow: 0 0 14px #ef4444, 0 0 28px rgba(239, 68, 68, 0.6) !important; }
-        .lyrics-style-bubble .beat-dot.countdown-lit { background-color: #60a5fa !important; box-shadow: 0 0 14px #60a5fa, 0 0 28px rgba(96, 165, 250, 0.6) !important; }
-        .lyrics-style-starlight .beat-dot.countdown-lit { background-color: #a5b4fc !important; box-shadow: 0 0 14px #a5b4fc, 0 0 28px rgba(165, 180, 252, 0.6) !important; }
-        .lyrics-style-vinyl .beat-dot.countdown-lit { background-color: #f4e8d0 !important; box-shadow: 0 0 14px rgba(214, 160, 80, 0.8) !important; }
-        .beat-dot.countdown-lit { background-color: #ffffff !important; box-shadow: 0 0 14px rgba(255, 255, 255, 0.95), 0 0 28px rgba(255, 255, 255, 0.5) !important; }
+        .lyrics-style-neon .beat-dot.countdown-lit { background-color: #06b6d4 !important; box-shadow: 0 0 16px #06b6d4, 0 0 32px rgba(6, 182, 212, 0.65) !important; }
+        .lyrics-style-matrix .beat-dot.countdown-lit { background-color: #00ff41 !important; box-shadow: 0 0 16px #00ff41, 0 0 32px rgba(0, 255, 65, 0.65) !important; }
+        .lyrics-style-cyberpunk .beat-dot.countdown-lit { background-color: #ff00ff !important; box-shadow: 0 0 16px #ff00ff, 0 0 32px #00ffcc !important; }
+        .lyrics-style-hellfire .beat-dot.countdown-lit { background-color: #ff9a9e !important; box-shadow: 0 0 16px #ff9a9e, 0 0 32px rgba(255, 154, 158, 0.65) !important; }
+        .lyrics-style-goldleaf .beat-dot.countdown-lit { background-color: #fde68a !important; box-shadow: 0 0 16px #fde68a, 0 0 32px rgba(253, 230, 138, 0.65) !important; }
+        .lyrics-style-sunrise .beat-dot.countdown-lit { background-color: #ffd08a !important; box-shadow: 0 0 16px #ff8a5c, 0 0 32px rgba(255, 208, 138, 0.65) !important; }
+        .lyrics-style-retrowave .beat-dot.countdown-lit { background-color: #f472b6 !important; box-shadow: 0 0 16px #f472b6, 0 0 32px rgba(244, 114, 182, 0.65) !important; }
+        .lyrics-style-velvet .beat-dot.countdown-lit { background-color: #f5d0e0 !important; box-shadow: 0 0 16px #be185d, 0 0 32px rgba(190, 24, 93, 0.55) !important; }
+        .lyrics-style-frostbite .beat-dot.countdown-lit, .lyrics-style-ice .beat-dot.countdown-lit { background-color: #8cc8e8 !important; box-shadow: 0 0 16px #8cc8e8, 0 0 32px rgba(140, 200, 232, 0.65) !important; }
+        .lyrics-style-aurora .beat-dot.countdown-lit { background-color: #4ade80 !important; box-shadow: 0 0 16px #4ade80, 0 0 32px rgba(74, 222, 128, 0.65) !important; }
+        .lyrics-style-liquid .beat-dot.countdown-lit { background-color: #06b6d4 !important; box-shadow: 0 0 16px #06b6d4, 0 0 32px rgba(6, 182, 212, 0.65) !important; }
+        .lyrics-style-rainbow .beat-dot.countdown-lit { background-color: #ff00ff !important; box-shadow: 0 0 16px #00ffee, 0 0 32px #ff0066 !important; }
+        .lyrics-style-lasertag .beat-dot.countdown-lit { background-color: #ef4444 !important; box-shadow: 0 0 16px #ef4444, 0 0 32px rgba(239, 68, 68, 0.65) !important; }
+        .lyrics-style-bubble .beat-dot.countdown-lit { background-color: #60a5fa !important; box-shadow: 0 0 16px #60a5fa, 0 0 32px rgba(96, 165, 250, 0.65) !important; }
+        .lyrics-style-starlight .beat-dot.countdown-lit { background-color: #a5b4fc !important; box-shadow: 0 0 16px #a5b4fc, 0 0 32px rgba(165, 180, 252, 0.65) !important; }
+        .lyrics-style-vinyl .beat-dot.countdown-lit { background-color: #f4e8d0 !important; box-shadow: 0 0 16px rgba(214, 160, 80, 0.85) !important; }
 
 
 
@@ -26709,6 +26713,8 @@ window.setLyricsStyle = function(style) {
             return /^(?:He|He's|She|She's|I|You|We|They|Yeah|God|Lord|Glory|Worthy|Holy|My|The)\b/i.test(cleanNext);
         }
 
+        let isCurrentSongBallad = false;
+
         function parseLrc(lrcString) {
             const lines = lrcString.split('\n');
             const lineRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
@@ -26826,6 +26832,7 @@ window.setLyricsStyle = function(style) {
             const songDurationSec = Math.max(10, (lastSongTime - firstSongTime) / 1000);
             const songCadence = totalSongSyllables / songDurationSec; // z.B. ~1.2 bei My Defender, ~3.6 bei Unforgettable
             const isBalladSong = songCadence < 2.0;
+            isCurrentSongBallad = isBalladSong;
 
             for (let i = 0; i < parsedLyrics.length; i++) {
                 let line = parsedLyrics[i];
@@ -26844,21 +26851,31 @@ window.setLyricsStyle = function(style) {
                 line.startMs = line.timeMs;
                 line.endMs = trueNextLineTime;
 
-                // 2. Feinjustierter Pausen- & Timing-Algorithmus (phrasengerecht mit garantierter Zeilen-Atempause)
+                // 2. Natürlicher, hochpräziser Timing- & Phrasierungs-Algorithmus
                 if (!line.hasWordTimings && line.tokens.length > 0) {
                     const durationSec = Math.max(0.5, timeToNextLine / 1000);
                     const lineDensity = line.totalSyllables / durationSec;
-                    const isLineBallad = isBalladSong || (lineDensity < 1.7);
+                    const isLineBallad = isBalladSong || (lineDensity < 2.2);
                     const isRapMode = lineDensity > 3.8;
 
-                    // Garantierte Atempause am Zeilenende (80-160ms) vor dem Start der Folgezeile
-                    const lineBreathMargin = Math.min(160, Math.max(80, timeToNextLine * 0.05));
-                    const maxAvailableTime = Math.min(Math.max(250, timeToNextLine - lineBreathMargin), 15000);
+                    // Natürlicher Zeilen-Atemzug vor Beginn der Folgezeile:
+                    // In Pop/Dance (wie Unforgettable) ca. 30% Pause am Phrasenende, in Balladen ca. 20%
+                    const lineAvailableMs = Math.max(250, timeToNextLine);
+                    let endOfLineBreak = 0;
+                    if (lineAvailableMs >= 2000) {
+                        endOfLineBreak = Math.min(2500, Math.max(500, lineAvailableMs * (isLineBallad ? 0.22 : 0.32)));
+                    } else {
+                        endOfLineBreak = Math.min(180, Math.max(60, lineAvailableMs * 0.12));
+                    }
+
+                    // Sing-Zeitfenster: strikt begrenzt auf die natürliche Singzeit der Silben
+                    const maxSingingBySyllables = line.totalSyllables * (isLineBallad ? 650 : 420) + 400;
+                    const targetSingingTime = Math.min(lineAvailableMs - endOfLineBreak, maxSingingBySyllables);
 
                     let totalRawTime = 0;
                     line.tokens.forEach((tok, idx) => {
                         const isLastWord = (idx === line.tokens.length - 1);
-                        const baseMs = isLineBallad ? 95 : (isRapMode ? 65 : 72);
+                        const baseMs = isLineBallad ? 100 : (isRapMode ? 65 : 78);
                         tok.rawDuration = tok.weight * baseMs;
 
                         const nextTokText = line.tokens[idx + 1]?.cleanText || '';
@@ -26870,34 +26887,23 @@ window.setLyricsStyle = function(style) {
                         if (isLastWord) {
                             tok.rawPause = 0;
                         } else if (hasDash) {
-                            tok.rawPause = isLineBallad ? 180 : 130;
+                            tok.rawPause = isLineBallad ? 180 : 120;
                         } else if (hasPeriod) {
-                            tok.rawPause = isLineBallad ? 170 : 110;
+                            tok.rawPause = isLineBallad ? 220 : 150;
                         } else if (hasComma) {
-                            // Teilsatz-Komma bekommt sanften Atemzug, Aufzählungs-Komma bleibt knackig
-                            tok.rawPause = isMajorClause ? (isLineBallad ? 150 : 95) : (isLineBallad ? 100 : 70);
+                            tok.rawPause = isMajorClause ? (isLineBallad ? 240 : 160) : (isLineBallad ? 140 : 90);
                         } else {
-                            // Phonetische Artikulationspause (Konsonantenstopp vs. Vokal-Legato)
+                            // Phonetische Artikulationspause (Konsonanten vs Vokale)
                             const endsWithConsonant = /[bcdfghjklmnpqrstvwxyz]$/i.test(tok.cleanText);
                             const nextStartsWithConsonant = /^[bcdfghjklmnpqrstvwxyz]/i.test(nextTokText);
-                            if (endsWithConsonant && nextStartsWithConsonant) {
-                                tok.rawPause = isLineBallad ? 28 : 22;
-                            } else {
-                                tok.rawPause = isLineBallad ? 18 : 14;
-                            }
+                            tok.rawPause = (endsWithConsonant && nextStartsWithConsonant) ? 22 : 14;
                         }
 
                         totalRawTime += tok.rawDuration + tok.rawPause;
                     });
 
-                    // Natürliche Geschwindigkeitsbegrenzung (Pop: 1.20x, Ballade: 1.35x)
-                    let timeScale = 1.0;
-                    const maxScale = isLineBallad ? 1.35 : 1.20;
-                    if (totalRawTime > maxAvailableTime) {
-                        timeScale = maxAvailableTime / totalRawTime;
-                    } else {
-                        timeScale = Math.min(maxAvailableTime / totalRawTime, maxScale);
-                    }
+                    // Zeit-Skalierung: füllt das Singfenster musikalisch passend aus
+                    const timeScale = totalRawTime > 0 ? (targetSingingTime / totalRawTime) : 1.0;
                     
                     let currentOffsetMs = line.timeMs;
                     
@@ -26908,27 +26914,20 @@ window.setLyricsStyle = function(style) {
                         tok.duration = tok.rawDuration * timeScale;
                         let microPause = tok.rawPause * timeScale;
 
-                        // Harmonisches Ausklingen des letzten Wortes in die Takt-Reserve
-                        if (j === line.tokens.length - 1 && (totalRawTime * timeScale < maxAvailableTime)) {
-                            const rem = (line.timeMs + maxAvailableTime) - (currentOffsetMs + tok.duration);
+                        // Harmonisches Ausklingen des letzten Wortes (z.B. Yahweh oder langgezogene Vokale)
+                        if (j === line.tokens.length - 1) {
+                            const rem = (line.timeMs + targetSingingTime) - (currentOffsetMs + tok.duration);
                             if (rem > 0) {
                                 if (tok.endingType === 'sacred_hold') {
-                                    // Hymnische Namen wie Yahweh, Defender, Hallelujah halten voll aus
-                                    tok.duration += Math.min(rem * 0.75, 2500);
-                                } else if (tok.endingType === 'vocal_sustain') {
-                                    // Vokale/Weichlaute: in Pop max 400ms, in Ballade bis 1200ms
-                                    const maxHold = isLineBallad ? 1200 : 400;
-                                    tok.duration += Math.min(rem * 0.40, maxHold);
-                                } else if (tok.endingType === 'hardStop') {
-                                    // Harte Stopps (venomous, lips, resist, it) stoppen sauber im Takt
-                                } else if (isLineBallad) {
-                                    tok.duration += Math.min(rem * 0.30, 600);
+                                    tok.duration += rem;
+                                } else if (tok.endingType === 'vocal_sustain' || isLineBallad) {
+                                    tok.duration += Math.min(rem, 600);
                                 }
                             }
                         }
 
-                        // Sicherheitsgrenze: Dauer darf niemals in die nächste Zeile ragen
-                        const maxAllowed = (trueNextLineTime - lineBreathMargin) - tok.timeMs;
+                        // Sicherheitsgrenze: Dauer darf niemals in die Folgezeile hineinragen
+                        const maxAllowed = (trueNextLineTime - 60) - tok.timeMs;
                         if (tok.duration > maxAllowed) {
                             tok.duration = Math.max(10, maxAllowed);
                         }
@@ -26939,7 +26938,7 @@ window.setLyricsStyle = function(style) {
                         currentOffsetMs += tok.duration + microPause;
                     }
 
-                    line.singingEndMs = Math.min(trueNextLineTime - lineBreathMargin, currentOffsetMs);
+                    line.singingEndMs = Math.min(trueNextLineTime - 50, currentOffsetMs);
                 } else if (line.hasWordTimings) {
                     for (let j = 0; j < line.tokens.length; j++) {
                         let tok = line.tokens[j];
@@ -27289,48 +27288,56 @@ window.setLyricsStyle = function(style) {
                     const d2 = instEl.querySelector('.dot-2');
                     const d3 = instEl.querySelector('.dot-3');
                     if (d1 && d2 && d3) {
-                        // Musikalische 4-Beat-Aufteilung: 3 Taktschläge Countdown + 1 Taktschlag Reaktions-Atemzug
-                        // Dynamische Beat-Berechnung: Passt Taktgeschwindigkeit für jede Pausendauer an!
+                        // 4-Takt-Struktur: 3 Taktschläge für Punkte 1, 2, 3 + 1 Taktschlag Reaktions-Atemzug
                         let beatTime;
-                        if (totalBreak <= 3200) {
-                            // Kürzere Pausen (2s - 3.2s): exakt in 4 Beats aufteilen (3 Beats Countdown + 1 Beat Reaktionszeit)
+                        if (totalBreak <= 3500) {
+                            // Pausen bis 3.5s: exakt 4 Takte, um die gesamte Pause harmonisch auszufüllen
                             beatTime = totalBreak / 4;
-                        } else if (totalBreak <= 6000) {
-                            // Mittlere Pausen (3.2s - 6s): komfortable 600-800ms pro Beat
-                            beatTime = Math.min(800, totalBreak / 5);
                         } else {
-                            // Lange Pausen / Soli (> 6s): 600ms (100 BPM Taktmaß)
-                            beatTime = 600;
+                            // Längere Pausen / Soli: Taktmaß aus Songkadenz (Ballade ~720ms, Pop ~520ms)
+                            beatTime = isCurrentSongBallad ? 720 : 520;
                         }
-                        beatTime = Math.max(220, beatTime);
+                        beatTime = Math.max(220, Math.min(900, beatTime));
 
-                        const reactionMargin = beatTime; // Exakt 1 Beat Atempause vor Gesangsstart
-                        const countdownWindow = beatTime * 3; // 3 Beats für Punkte 1, 2, 3
-                        const countdownStart = countdownWindow + reactionMargin;
+                        const reactionMargin = beatTime; // 1 voller Takt Reaktionszeit / Vorbereitung
+                        const countdownWindow = beatTime * 4; // 3 Countdown-Takte + 1 Reaktions-Takt
                         const dotStep = beatTime;
 
-                        // Dynamische Animations-Geschwindigkeit per CSS-Variable an Dots übergeben
                         if (dotsContainer) {
-                            const popSpeed = Math.round(beatTime * 0.65);
-                            dotsContainer.style.setProperty('--dot-speed', `${Math.round(beatTime)}ms`);
-                            dotsContainer.style.setProperty('--dot-pop-speed', `${popSpeed}ms`);
+                            dotsContainer.style.setProperty('--dot-beat-speed', `${Math.round(beatTime)}ms`);
+                            dotsContainer.style.setProperty('--dot-ready-speed', `${Math.round(beatTime * 0.75)}ms`);
                         }
 
-                        if (timeLeft <= countdownStart && timeLeft > 0) {
-                            const countdownElapsed = countdownStart - timeLeft;
-                            d1.classList.toggle('countdown-lit', countdownElapsed >= 0);
-                            d2.classList.toggle('countdown-lit', countdownElapsed >= dotStep);
-                            d3.classList.toggle('countdown-lit', countdownElapsed >= (dotStep * 2));
-
-                            // Beat 4: Alle 3 Punkte leuchten synchron ("Ready to sing!")
+                        if (timeLeft <= countdownWindow && timeLeft > 0) {
+                            const countdownElapsed = countdownWindow - timeLeft;
                             const isReadyPhase = (timeLeft <= reactionMargin);
+
+                            // Punkt 1: leuchtet ab Start des Countdown-Fensters, schwillt in Takt 1 an
+                            const p1Lit = countdownElapsed >= 0;
+                            const p1Current = !isReadyPhase && (countdownElapsed >= 0 && countdownElapsed < dotStep);
+                            d1.classList.toggle('countdown-lit', p1Lit);
+                            d1.classList.toggle('current-beat', p1Current);
+
+                            // Punkt 2: leuchtet ab Takt 2, schwillt in Takt 2 an
+                            const p2Lit = countdownElapsed >= dotStep;
+                            const p2Current = !isReadyPhase && (countdownElapsed >= dotStep && countdownElapsed < dotStep * 2);
+                            d2.classList.toggle('countdown-lit', p2Lit);
+                            d2.classList.toggle('current-beat', p2Current);
+
+                            // Punkt 3: leuchtet ab Takt 3, schwillt in Takt 3 an
+                            const p3Lit = countdownElapsed >= (dotStep * 2);
+                            const p3Current = !isReadyPhase && (countdownElapsed >= dotStep * 2 && countdownElapsed < dotStep * 3);
+                            d3.classList.toggle('countdown-lit', p3Lit);
+                            d3.classList.toggle('current-beat', p3Current);
+
+                            // Takt 4 (Reaktionszeit / Atemzug): Alle 3 Punkte pulsieren synchron
                             if (dotsContainer) {
                                 dotsContainer.classList.toggle('ready-to-sing', isReadyPhase);
                             }
                         } else {
-                            d1.classList.remove('countdown-lit');
-                            d2.classList.remove('countdown-lit');
-                            d3.classList.remove('countdown-lit');
+                            d1.classList.remove('countdown-lit', 'current-beat');
+                            d2.classList.remove('countdown-lit', 'current-beat');
+                            d3.classList.remove('countdown-lit', 'current-beat');
                             if (dotsContainer) {
                                 dotsContainer.classList.remove('ready-to-sing');
                             }
