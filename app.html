@@ -3401,7 +3401,7 @@
     <script src="./js/core/storage.e856be99df567fd2.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Gamingpig | Portfolio</title>
+    <title>🧪 Gamingpig QA Testumgebung (v24.220.0)</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -9045,7 +9045,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEasterTap()" title="© 2026 GAMINGPIG (Tippe für Party-Rave! 🪩)" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.215.0 (Tippe 5x für Developer Modus 🤖)" class="font-mono font-bold text-pink-400 whitespace-nowrap cursor-pointer hover:underline">v24.215.0</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.220.0 (QA Testversion • Tippe 5x für Developer Modus 🤖)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.220.0 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9314,6 +9314,10 @@ html.gp-android:not(.dark) #ui-controls {
                     <span class="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-blue-500"></span>
                 </span>
                 <span id="systems-integration-badge">Systems Integration</span>
+            </div>
+            <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                <span>🧪 QA TESTUMGEBUNG v24.220.0</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -26315,11 +26319,20 @@ window.setLyricsStyle = function(style) {
             const adjustedMs = currentMs + liveSyncOffset;
 
             let activeIndex = -1;
-            for (let i = parsedLyrics.length - 1; i >= 0; i--) {
-                const lineStart = (typeof parsedLyrics[i].startMs === 'number') ? parsedLyrics[i].startMs : parsedLyrics[i].timeMs;
-                if (adjustedMs >= lineStart) {
-                    activeIndex = i;
-                    break;
+            const curLine = (currentLyricIndex >= 0 && currentLyricIndex < parsedLyrics.length) ? parsedLyrics[currentLyricIndex] : null;
+            const curStart = curLine ? ((typeof curLine.startMs === 'number') ? curLine.startMs : curLine.timeMs) : -1;
+            const nextLine = (currentLyricIndex + 1 < parsedLyrics.length) ? parsedLyrics[currentLyricIndex + 1] : null;
+            const nextStart = nextLine ? ((typeof nextLine.startMs === 'number') ? nextLine.startMs : nextLine.timeMs) : Infinity;
+
+            if (curLine && adjustedMs >= curStart && adjustedMs < nextStart) {
+                activeIndex = currentLyricIndex;
+            } else {
+                for (let i = parsedLyrics.length - 1; i >= 0; i--) {
+                    const lineStart = (typeof parsedLyrics[i].startMs === 'number') ? parsedLyrics[i].startMs : parsedLyrics[i].timeMs;
+                    if (adjustedMs >= lineStart) {
+                        activeIndex = i;
+                        break;
+                    }
                 }
             }
 
@@ -26384,32 +26397,39 @@ window.setLyricsStyle = function(style) {
                 const wSpan = word.span;
 
                 if (adjustedMs < word.startMs) {
-                    if (wSpan) {
-                        wSpan.style.setProperty('--fill-percent', '0%');
-                        wSpan.classList.remove('word-active', 'word-passed');
-                    }
-                    for (let c = 0; c < word.chars.length; c++) {
-                        const charObj = word.chars[c];
-                        if (charObj.el && charObj.lastState !== 'none') {
-                            charObj.lastState = 'none';
-                            charObj.el.classList.remove('char-passed', 'char-active');
+                    if (word.lastState !== 'pending') {
+                        word.lastState = 'pending';
+                        if (wSpan) {
+                            wSpan.style.setProperty('--fill-percent', '0%');
+                            wSpan.classList.remove('word-active', 'word-passed');
+                        }
+                        for (let c = 0; c < word.chars.length; c++) {
+                            const charObj = word.chars[c];
+                            if (charObj.el && charObj.lastState !== 'none') {
+                                charObj.lastState = 'none';
+                                charObj.el.classList.remove('char-passed', 'char-active');
+                            }
                         }
                     }
                 } else if (adjustedMs >= word.endMs) {
-                    if (wSpan) {
-                        wSpan.style.setProperty('--fill-percent', '100%');
-                        wSpan.classList.add('word-passed');
-                        wSpan.classList.remove('word-active');
-                    }
-                    for (let c = 0; c < word.chars.length; c++) {
-                        const charObj = word.chars[c];
-                        if (charObj.el && charObj.lastState !== 'passed') {
-                            charObj.lastState = 'passed';
-                            charObj.el.classList.add('char-passed');
-                            charObj.el.classList.remove('char-active');
+                    if (word.lastState !== 'passed') {
+                        word.lastState = 'passed';
+                        if (wSpan) {
+                            wSpan.style.setProperty('--fill-percent', '100%');
+                            wSpan.classList.add('word-passed');
+                            wSpan.classList.remove('word-active');
+                        }
+                        for (let c = 0; c < word.chars.length; c++) {
+                            const charObj = word.chars[c];
+                            if (charObj.el && charObj.lastState !== 'passed') {
+                                charObj.lastState = 'passed';
+                                charObj.el.classList.add('char-passed');
+                                charObj.el.classList.remove('char-active');
+                            }
                         }
                     }
                 } else {
+                    word.lastState = 'active';
                     const wordElapsed = adjustedMs - word.startMs;
                     const wordProgress = word.duration > 0 ? Math.min(1, Math.max(0, wordElapsed / word.duration)) : 1;
                     const fillPercent = (wordProgress * 100).toFixed(1) + '%';
@@ -26528,11 +26548,6 @@ window.setLyricsStyle = function(style) {
 
             if (mainMusicCard && mainMusicCard.classList.contains('lyrics-open')) {
                 syncLyricsUI();
-
-                // Wort- & Zeichen-Highlights für Apple Music Pro & animierte Stile
-                if (currentLineAnimCache && currentLineAnimCache.words) {
-                    renderActiveLineWordVisuals(currentMs + liveSyncOffset);
-                }
             }
 
             lyricAnimFrame = requestAnimationFrame(animateLoop);
@@ -27450,7 +27465,7 @@ window.setLyricsStyle = function(style) {
         // 3. Wenn nichts läuft (Ruhemodus): Sparsamer 25s-Takt
         function getAdaptiveMusicPollDelay() {
             if (Date.now() < statsFmRateLimitedUntil) {
-                return Math.max(5000, statsFmRateLimitedUntil - Date.now());
+                return Math.max(4000, statsFmRateLimitedUntil - Date.now());
             }
 
             if (isHuntingForNextTrack) {
@@ -27459,7 +27474,7 @@ window.setLyricsStyle = function(style) {
                     hasTriggeredSongEndFetch = false;
                     if (standByActive) updateWakeLockForPlaybackState();
                 } else {
-                    return 5000;
+                    return 2500;
                 }
             }
 
@@ -27470,11 +27485,14 @@ window.setLyricsStyle = function(style) {
                     songTransitionStartedAt = Date.now();
                     return Math.max(1000, remainingMs);
                 }
-                const targetDelay = remainingMs > 25000 ? 18000 : Math.max(5000, remainingMs - 2500);
-                return targetDelay;
+                // Snappy sync when lyrics open: 3.5s; normal playback: 5s (down from sluggish 18s)
+                if (mainMusicCard && mainMusicCard.classList.contains('lyrics-open')) {
+                    return 3500;
+                }
+                return 5000;
             }
 
-            return 25000;
+            return 12000;
         }
 
         let musicPollTimer = null;
@@ -27500,6 +27518,21 @@ window.setLyricsStyle = function(style) {
             configurable: true
         });
         scheduleNextMusicPoll();
+        // Instant Song Sync on tab focus / visibility (0 extra background cost, instant updates when viewed)
+        if (typeof document !== 'undefined') {
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && trackIsPlaying && typeof fetchMusicData === 'function') {
+                    fetchMusicData().finally(() => scheduleNextMusicPoll());
+                }
+            }, { passive: true });
+        }
+        if (typeof window !== 'undefined') {
+            window.addEventListener('focus', () => {
+                if (trackIsPlaying && typeof fetchMusicData === 'function') {
+                    fetchMusicData().finally(() => scheduleNextMusicPoll());
+                }
+            }, { passive: true });
+        }
 
         // NEU v24.60 (v24.216.0): Watchdog - prüft alle 15s, ob trotz vermeintlich laufender Musik oder aktivem
         // Songwechsel seit über 30 Sekunden kein erfolgreiches Update mehr angekommen ist.
