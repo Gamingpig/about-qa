@@ -1,11 +1,11 @@
 {
-  "version": "24.215.0",
-  "buildTime": "2026-10-12T10:45:00.000Z",
+  "version": "24.221.0",
+  "buildTime": "2026-10-15T11:35:00.000Z",
   "shortNotes": [
-    "Neues Einstellungs-Zentrum: Aufgeräumte Kategorien-Übersicht mit Subpage-Drilldown",
-    "Onboarding & Reset vereint in gemeinsame Wiederherstellungs-Kategorie",
-    "Neue System-Info mit 7-Tap Build-Nummer Easter Egg für Entwickleroptionen",
-    "Light-Mode Typografie & Spotlight-Suche: Gestochen scharfer Kontrast & Apple-Glas",
-    "Spotify Live-Player Resilienz & Roadmap 'Fertig / Live'-Filter"
+    "Spotify Live Sync Stabilität: Kein vorzeitiges Song-Ende mehr & Schutz vor Request-Spamming",
+    "Lyrics Synchronisation: Synced Lyrics werden strikt vor Plain-Text priorisiert",
+    "Intelligenter Re-Sync: Erhält geladene Synced Lyrics und synchronisiert die Timeline sofort",
+    "Cover-Art Präzision: Primäre Spotify-Coverauflösung verhindert falsche Album-Grafiken",
+    "Sicherheits-Update: PIN-Abfrage bei jedem Reload aktiv"
   ]
 }
