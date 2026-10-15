@@ -1,7 +1,8 @@
 {
-  "version": "24.222.3",
+  "version": "24.222.4",
   "buildTime": "2026-10-15T16:16:00.000Z",
   "shortNotes": [
+    "Hybrid Master Cadence: Best-of-Both-Worlds – Fließendes Stimm-Legato kombiniert mit Hook-Drop-Erkennung",
     "Dance-Pop Algorithmus: Aktive Phrasen-Kadenz & Hook-Drop Erkennung für perfekten Beat-Sync",
     "Lyrics-Durchbruch: 100% autonome Songtext-Erkennung – manueller Re-Sync endgültig eliminiert",
     "HTTP 429 Shield: Automatischer 2.5s Exponential-Backoff Retry verhindert falsche Fehlermeldungen",
