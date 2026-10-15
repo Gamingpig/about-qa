@@ -6008,7 +6008,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             height: 0.75rem;
             border-radius: 9999px;
             background-color: rgba(255, 255, 255, 0.28);
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+            transition: transform var(--dot-pop-speed, 0.25s) cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
             opacity: 0.35;
             transform: scale(0.92);
         }
@@ -6016,11 +6016,11 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         .lyric-line.lyric-instrumental.active .beat-dot.countdown-lit {
             opacity: 1 !important;
             transform: scale(1.28) !important;
-            animation: dotPop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: dotPop var(--dot-pop-speed, 0.32s) cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         /* Reaktionszeit: Alle 3 Punkte pulsieren synchron kurz vor dem Gesangseinsatz (Atemzug / Bereit!) */
         .lyric-line.lyric-instrumental.active .beat-dots-container.ready-to-sing .beat-dot.countdown-lit {
-            animation: dotReadyPulse 0.45s ease-in-out infinite alternate !important;
+            animation: dotReadyPulse var(--dot-speed, 0.45s) ease-in-out infinite alternate !important;
         }
 
         @keyframes dotPop {
@@ -12115,6 +12115,7 @@ html.gp-android:not(.dark) #ui-controls {
                 secret_5: '💙 Danke fürs Neugierig-Sein und Herumklicken!',
                                 music_section_title: 'Was bei mir gerade läuft',
                 music_sync_note: '*Hinweis: Der Time-Sync ist auf -400ms optimiert.',
+                lyrics_loading: 'Songtext wird geladen...',
                 lyrics_placeholder_title: 'Titel',
                 lyrics_placeholder_artist: 'Artist',
                 lyrics_synced_label: 'Synced',
@@ -12349,6 +12350,7 @@ html.gp-android:not(.dark) #ui-controls {
                 secret_5: '💙 Thanks for being curious and clicking around!',
                                 music_section_title: 'What I\'m currently listening to',
                 music_sync_note: '*Note: Time sync is optimized for -400ms.',
+                lyrics_loading: 'Loading lyrics...',
                 lyrics_placeholder_title: 'Title',
                 lyrics_placeholder_artist: 'Artist',
                 lyrics_synced_label: 'Synced',
@@ -12612,6 +12614,7 @@ html.gp-android:not(.dark) #ui-controls {
                 secret_5: '💙 ¡Gracias por ser curioso y andar haciendo clic por todos lados!',
                                 music_section_title: 'Lo que estoy escuchando ahora',
                 music_sync_note: '*Nota: La sincronización está optimizada para -400ms.',
+                lyrics_loading: 'Cargando letra...',
                 lyrics_placeholder_title: 'Título',
                 lyrics_placeholder_artist: 'Artista',
                 lyrics_synced_label: 'Letra: Sincronizada',
@@ -26971,7 +26974,7 @@ window.setLyricsStyle = function(style) {
             // 3. Echte Instrumental-Pausen (lange Intros, Solos & Bridges ab 5.0 Sekunden) mit 3 Takt-Punkten anreichern
             // Normal große Abstände zwischen Zeilen (2-4s) bleiben saubere Songtext-Pausen ohne störendes Aufploppen
             const enriched = [];
-            if (parsedLyrics.length > 0 && parsedLyrics[0].timeMs >= 3500) {
+            if (parsedLyrics.length > 0 && parsedLyrics[0].timeMs >= 2000) {
                 enriched.push({
                     timeMs: 0,
                     startMs: 0,
@@ -26992,7 +26995,7 @@ window.setLyricsStyle = function(style) {
                     const singEnd = line.singingEndMs || line.endMs;
                     const breakDuration = nextLine.timeMs - singEnd;
                     // Echte längere Soli / Bridges ab 5.0s Pause erhalten Takt-Punkte
-                    if (breakDuration >= 5000) {
+                    if (breakDuration >= 2000) {
                         enriched.push({
                             timeMs: singEnd,
                             startMs: singEnd,
@@ -27030,7 +27033,22 @@ window.setLyricsStyle = function(style) {
                     </div>`;
                 } else if (isCustomFallback) {
                     if (syncBadge) syncBadge.style.display = 'none';
-                    lyricsContent.innerHTML = `<div class="w-full flex-1 flex flex-col justify-center min-h-full py-8 px-2 sm:px-4 md:px-8"><h2 class="text-sm xxs:text-lg xs:text-xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-[1.2] text-left break-words">${escapeHTML(displayMsg)}</h2></div>`;
+                    lyricsContent.innerHTML = `
+                        <div class="w-full flex-1 flex flex-col justify-center min-h-full py-8 px-2 sm:px-4 md:px-8">
+                            <h2 class="text-sm xxs:text-lg xs:text-xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-[1.2] text-left break-words">${escapeHTML(displayMsg)}</h2>
+                            <div class="mt-6 flex items-center gap-3">
+                                <button type="button" onclick="if (typeof fetchExternalLyrics === 'function') fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs, true);" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-xs sm:text-sm font-semibold text-white/90 border border-white/15">
+                                    <svg class="w-3.5 h-3.5 text-blue-400 animate-spin-reverse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                                    <span>${t('btn_resync') || 'Erneut suchen'}</span>
+                                </button>
+                            </div>
+                        </div>`;
+                    // Automatischer Hintergrund-Retry nach 3.5 Sekunden
+                    setTimeout(() => {
+                        if (currentLyricsProvider === 'none' && currentTrackTitle && trackIsPlaying) {
+                            fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs, true);
+                        }
+                    }, 3500);
                 } else {
                     if (syncBadge) syncBadge.style.display = 'none';
                     lyricsContent.innerHTML = `<div class="w-full flex-1 pt-[10vh] pb-[50vh] px-2 sm:px-4 md:px-8"><p class="text-xs xxs:text-sm xs:text-base sm:text-2xl md:text-3xl font-bold text-white/80 leading-relaxed whitespace-pre-wrap text-left break-words">${escapeHTML(displayMsg.trim())}</p></div>`;
@@ -27277,11 +27295,31 @@ window.setLyricsStyle = function(style) {
                     const d3 = instEl.querySelector('.dot-3');
                     if (d1 && d2 && d3) {
                         // Musikalische 4-Beat-Aufteilung: 3 Taktschläge Countdown + 1 Taktschlag Reaktions-Atemzug
-                        const beatTime = Math.max(260, Math.min(650, totalBreak <= 4500 ? (totalBreak / 4) : 600));
+                        // Dynamische Beat-Berechnung: Passt Taktgeschwindigkeit für jede Pausendauer an!
+                        let beatTime;
+                        if (totalBreak <= 3200) {
+                            // Kürzere Pausen (2s - 3.2s): exakt in 4 Beats aufteilen (3 Beats Countdown + 1 Beat Reaktionszeit)
+                            beatTime = totalBreak / 4;
+                        } else if (totalBreak <= 6000) {
+                            // Mittlere Pausen (3.2s - 6s): komfortable 600-800ms pro Beat
+                            beatTime = Math.min(800, totalBreak / 5);
+                        } else {
+                            // Lange Pausen / Soli (> 6s): 600ms (100 BPM Taktmaß)
+                            beatTime = 600;
+                        }
+                        beatTime = Math.max(220, beatTime);
+
                         const reactionMargin = beatTime; // Exakt 1 Beat Atempause vor Gesangsstart
                         const countdownWindow = beatTime * 3; // 3 Beats für Punkte 1, 2, 3
                         const countdownStart = countdownWindow + reactionMargin;
                         const dotStep = beatTime;
+
+                        // Dynamische Animations-Geschwindigkeit per CSS-Variable an Dots übergeben
+                        if (dotsContainer) {
+                            const popSpeed = Math.round(beatTime * 0.65);
+                            dotsContainer.style.setProperty('--dot-speed', `${Math.round(beatTime)}ms`);
+                            dotsContainer.style.setProperty('--dot-pop-speed', `${popSpeed}ms`);
+                        }
 
                         if (timeLeft <= countdownStart && timeLeft > 0) {
                             const countdownElapsed = countdownStart - timeLeft;
@@ -27625,6 +27663,36 @@ window.setLyricsStyle = function(style) {
         let inFlightLyricsKey = null;
         let inFlightLyricsPromise = null;
 
+        function renderLyricsLoading(title = '', artist = '') {
+            if (!lyricsContent) return;
+            const cleanT = title || (typeof currentTrackTitle !== 'undefined' ? currentTrackTitle : '');
+            const cleanA = artist || (typeof currentRawArtist !== 'undefined' ? currentRawArtist : '');
+            const label = (typeof t === 'function' ? t('lyrics_loading') : null) || 'Songtext wird geladen...';
+
+            lyricsContent.innerHTML = `
+                <div class="w-full flex-1 flex flex-col justify-center min-h-[50vh] py-12 px-3 sm:px-6 md:px-10 max-w-2xl">
+                    <div class="flex items-center gap-2.5 mb-5">
+                        <div class="flex items-center gap-1 h-4">
+                            <span class="w-1.5 h-3 bg-blue-400 rounded-full animate-pulse" style="animation-duration: 0.6s"></span>
+                            <span class="w-1.5 h-4.5 bg-blue-300 rounded-full animate-pulse" style="animation-duration: 0.8s; animation-delay: 0.15s"></span>
+                            <span class="w-1.5 h-3.5 bg-blue-400 rounded-full animate-pulse" style="animation-duration: 0.7s; animation-delay: 0.3s"></span>
+                        </div>
+                        <span class="text-xs sm:text-sm font-bold uppercase tracking-wider text-blue-400/90">${escapeHTML(label)}</span>
+                    </div>
+                    ${cleanT ? `
+                    <div class="mb-8">
+                        <h3 class="text-xl sm:text-2xl font-black text-white/90 tracking-tight leading-snug">${escapeHTML(cleanT)}</h3>
+                        ${cleanA ? `<p class="text-xs sm:text-sm font-semibold text-white/50 mt-1">${escapeHTML(cleanA)}</p>` : ''}
+                    </div>` : ''}
+                    <div class="flex flex-col gap-3.5 w-full">
+                        <div class="h-6 sm:h-7 rounded-xl bg-gradient-to-r from-white/10 via-white/20 to-white/10 w-4/5 animate-pulse" style="animation-duration: 1.4s; animation-delay: 0.05s;"></div>
+                        <div class="h-6 sm:h-7 rounded-xl bg-gradient-to-r from-white/10 via-white/20 to-white/10 w-3/5 animate-pulse" style="animation-duration: 1.4s; animation-delay: 0.2s;"></div>
+                        <div class="h-6 sm:h-7 rounded-xl bg-gradient-to-r from-white/10 via-white/20 to-white/10 w-5/6 animate-pulse" style="animation-duration: 1.4s; animation-delay: 0.35s;"></div>
+                        <div class="h-6 sm:h-7 rounded-xl bg-gradient-to-r from-white/10 via-white/20 to-white/10 w-2/3 animate-pulse" style="animation-duration: 1.4s; animation-delay: 0.5s;"></div>
+                    </div>
+                </div>`;
+        }
+
         async function fetchExternalLyrics(title, artist, searchDurationMs = 0, force = false) {
             if (!title) return;
 
@@ -27673,14 +27741,7 @@ window.setLyricsStyle = function(style) {
 
             const doFetch = async () => {
                 try {
-                    if (lyricsContent) {
-                        lyricsContent.innerHTML = `
-                            <div class="w-full flex-1 flex flex-col justify-center min-h-full py-16 px-2 sm:px-4 md:px-8">
-                                <h2 class="text-xl sm:text-3xl md:text-4xl font-extrabold text-white/30 tracking-tight leading-tight text-left animate-pulse">
-                                    ${t('lyrics_loading') || 'Suche Songtext...'}
-                                </h2>
-                            </div>`;
-                    }
+                    renderLyricsLoading(title, artist);
                     parsedLyrics = [];
                     currentLyricIndex = -1;
                     currentLyricsProvider = "";
@@ -28369,14 +28430,7 @@ window.setLyricsStyle = function(style) {
                     currentLyricIndex = -1;
                     currentLyricsProvider = "";
                     currentLyricsWriter = "";
-                    if (lyricsContent) {
-                        lyricsContent.innerHTML = `
-                            <div class="w-full flex-1 flex flex-col justify-center min-h-full py-16 px-2 sm:px-4 md:px-8">
-                                <h2 class="text-xl sm:text-3xl md:text-4xl font-extrabold text-white/30 tracking-tight leading-tight text-left animate-pulse">
-                                    ${t('lyrics_loading') || 'Suche Songtext...'}
-                                </h2>
-                            </div>`;
-                    }
+                    renderLyricsLoading(trackTitle, cleanArtist);
                     addToRecentlyPlayed(trackTitle, rawArtist, finalArtUrl);
                     if (!isFirstLoad && isPlaying) {
                         triggerDynamicIsland(trackTitle, rawArtist, finalArtUrl);
