@@ -20,7 +20,7 @@ function footer(){
     bubble.id='footer-bubble';
     bubble.className='gp-universal-footer';
     bubble.setAttribute('aria-hidden','true');
-    bubble.innerHTML='<span id="footer-established">© 2026 GAMINGPIG</span><span aria-hidden="true">•</span><span id="footer-version-label">v24.213.0</span><span aria-hidden="true">•</span><button id="footer-menu-toggle-btn" type="button" aria-expanded="false"><span id="footer-more-label">Mehr</span> <span id="footer-menu-arrow">▲</span></button>';
+    bubble.innerHTML='<span id="footer-established">© 2026 GAMINGPIG</span><span aria-hidden="true">•</span><span id="footer-version-label">v24.221.0</span><span aria-hidden="true">•</span><button id="footer-menu-toggle-btn" type="button" aria-expanded="false"><span id="footer-more-label">Mehr</span> <span id="footer-menu-arrow">▲</span></button>';
     body.appendChild(bubble);
   }
   if(!menu){
@@ -29,7 +29,7 @@ function footer(){
     menu.className='gp-universal-footer-menu hidden';
     menu.setAttribute('role','menu');
     menu.setAttribute('aria-label','Navigation und Links');
-    menu.innerHTML='<div class="gp-footer-head"><span id="footer-menu-title">Navigation & Rechtliches</span><span id="footer-menu-hint">v24.213.0</span></div><div class="gp-footer-grid"><a class="gp-footer-link" href="index.html">⌂ <span data-gp-footer="home">Startseite</span></a><button class="gp-footer-link" id="footer-whats-new-btn" type="button">📜 <span data-gp-footer="news">Was ist neu?</span></button><a class="gp-footer-link" href="status.html">🟢 <span data-gp-footer="status">Live-Status</span></a><a class="gp-footer-link" href="privacy.html">🛡️ <span data-gp-footer="privacy">Datenschutz</span></a><a class="gp-footer-link" href="impressum.html">⚖️ <span data-gp-footer="legal">Impressum</span></a><a class="gp-footer-link" href="roadmap.html">🔮 <span data-gp-footer="roadmap">Roadmap</span></a><a class="gp-footer-link" href="push-admin.html">🔐 <span data-gp-footer="admin">Admin</span></a></div>';
+    menu.innerHTML='<div class="gp-footer-head"><span id="footer-menu-title">Navigation & Rechtliches</span><span id="footer-menu-hint">v24.221.0</span></div><div class="gp-footer-grid"><a class="gp-footer-link" href="index.html">⌂ <span data-gp-footer="home">Startseite</span></a><button class="gp-footer-link" id="footer-whats-new-btn" type="button">📜 <span data-gp-footer="news">Was ist neu?</span></button><a class="gp-footer-link" href="status.html">🟢 <span data-gp-footer="status">Live-Status</span></a><a class="gp-footer-link" href="privacy.html">🛡️ <span data-gp-footer="privacy">Datenschutz</span></a><a class="gp-footer-link" href="impressum.html">⚖️ <span data-gp-footer="legal">Impressum</span></a><a class="gp-footer-link" href="roadmap.html">🔮 <span data-gp-footer="roadmap">Roadmap</span></a><a class="gp-footer-link" href="push-admin.html">🔐 <span data-gp-footer="admin">Admin</span></a></div>';
     body.appendChild(menu);
   }
 

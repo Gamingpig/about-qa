@@ -22544,27 +22544,63 @@ let shareCardLoading;
         };
 
         // ========================================================= //
-        // 🪩 EASTER EGG: FOOTER COPYRIGHT (3x Tap -> Disco Party Rave)
+        // 💬 & 🪩 DUAL EASTER EGG: FOOTER COPYRIGHT (© 2026 GAMINGPIG)
+        // Stufe 1 (3x Tap) -> Geheime Entwickler-Nachrichten (secret_1 bis secret_5)
+        // Stufe 2 (6x Tap) -> Cyber Disco Rave (launchPartyMode)
         // ========================================================= //
         let footerTapCount = 0;
         let footerTapTimer = null;
-        window.handleFooterEasterTap = function(e) {
+        function getSecretMessages() {
+            if (typeof t === 'function') {
+                const list = [t('secret_1'), t('secret_2'), t('secret_3'), t('secret_4'), t('secret_5')].filter(Boolean);
+                if (list.length > 0) return list;
+            }
+            return [
+                '🔧 Nächstes Projekt: noch mehr Homelab-Chaos im Docker-Stack.',
+                '🎮 Aktueller Highscore in Forza Horizon 6: geheim. Frag nicht.',
+                '☕ Diese Seite wurde mit sehr viel Hyperfokus und noch mehr Kaffee gebaut.',
+                '🐛 Bugs sind einfach ungeplante Features. Punkt.',
+                '💙 Danke fürs Neugierig-Sein und Herumklicken!'
+            ];
+        }
+
+        window.handleFooterEstablishedTap = window.handleFooterEasterTap = function(e) {
             if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
-            haptic(15);
+            if (typeof haptic === 'function') haptic(15);
             footerTapCount++;
             clearTimeout(footerTapTimer);
 
-            if (footerTapCount >= 3) {
-                footerTapCount = 0;
-                haptic([40, 40, 40]);
-                if (typeof launchPartyMode === 'function') launchPartyMode();
-                showToast('🪩 DISCO RAVE ENTDECKT! Die Nacht gehört dir!', 'success');
-                if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
-            } else {
-                footerTapTimer = setTimeout(() => {
-                    footerTapCount = 0;
-                }, 2000);
+            const el = document.getElementById('footer-established');
+            if (el) {
+                el.classList.add('text-indigo-400');
             }
+
+            if (footerTapCount === 3) {
+                // Stufe 1: Geheime Entwickler-Botschaft
+                if (typeof haptic === 'function') haptic([30, 40]);
+                const msgs = getSecretMessages();
+                const msg = msgs[Math.floor(Math.random() * msgs.length)];
+                if (typeof showToast === 'function') {
+                    showToast(msg, 4500);
+                }
+                if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
+            } else if (footerTapCount >= 6) {
+                // Stufe 2: Cyber Disco Rave Mode
+                footerTapCount = 0;
+                if (el) el.classList.remove('text-indigo-400');
+                if (typeof haptic === 'function') haptic([40, 40, 40]);
+                if (typeof launchPartyMode === 'function') launchPartyMode();
+                if (typeof showToast === 'function') {
+                    showToast('🪩 DISCO RAVE ENTDECKT! Die Nacht gehört dir!', 'success');
+                }
+                if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
+                return;
+            }
+
+            footerTapTimer = setTimeout(() => {
+                footerTapCount = 0;
+                if (el) el.classList.remove('text-indigo-400');
+            }, 1800);
         };
 
         // ========================================================= //
