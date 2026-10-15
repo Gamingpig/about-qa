@@ -27399,10 +27399,11 @@ window.setLyricsStyle = function(style) {
                 totalMs = Number(track?.duration_ms || data?.duration_ms) || 0;
                 const now = performance.now();
                 const expected = serverBaseProgress + (trackIsPlaying ? now - localStartTime : 0);
-                const needsUnclamp = playing && totalMs > 0 && currentMs >= totalMs && progress !== null && progress < totalMs;
-                // Repeated API snapshots must not restart the locally advancing clock, außer wenn
-                // die lokale Zeit bereits am Ende festsitzt (needsUnclamp) und entklemmt werden muss.
-                if (newTrack || playbackChanged || (progress !== null && progress !== previous.progress) || needsUnclamp) {
+                const songEndedLocally = playing && totalMs > 0 && (currentMs >= totalMs || expected >= totalMs);
+                const isLegitRepeat = songEndedLocally && progress !== null && progress < 12000 && progress < totalMs * 0.2 && (Date.now() - songTransitionStartedAt > 2000);
+
+                // Wenn der Song am Ende ist, niemals durch verzögerte API-Snapshots zurück in den alten Song springen!
+                if (newTrack || playbackChanged || (progress !== null && progress !== previous.progress && !songEndedLocally) || isLegitRepeat) {
                     let target = progress ?? (newTrack ? 0 : expected);
                     if (playing && progress !== null) {
                         const timestamp = data.timestamp || data.updated_at || data.fetched_at || track?.timestamp;
@@ -27413,10 +27414,10 @@ window.setLyricsStyle = function(style) {
                     }
                     target = Math.max(0, totalMs > 0 ? Math.min(target, totalMs) : target);
                     const drift = target - expected;
-                    if (newTrack || playbackChanged || needsUnclamp || Math.abs(drift) > 1200) {
+                    if (newTrack || playbackChanged || isLegitRepeat || Math.abs(drift) > 1200) {
                         serverBaseProgress = target;
                         localStartTime = now;
-                        if (needsUnclamp) {
+                        if (isLegitRepeat) {
                             currentMs = serverBaseProgress;
                             isHuntingForNextTrack = false;
                             hasTriggeredSongEndFetch = false;
@@ -27427,7 +27428,9 @@ window.setLyricsStyle = function(style) {
                     }
                 }
                 trackIsPlaying = playing;
-                currentMs = serverBaseProgress + (playing ? now - localStartTime : 0);
+                currentMs = (songEndedLocally && !isLegitRepeat && !newTrack)
+                    ? totalMs
+                    : serverBaseProgress + (playing ? now - localStartTime : 0);
                 if (totalMs > 0) currentMs = Math.min(currentMs, totalMs);
                 standbyProgressSample = { id, progress: progress ?? (newTrack ? null : previous.progress), playing };
                 const ended = playing && totalMs > 0 && currentMs >= totalMs;
@@ -27640,9 +27643,8 @@ window.setLyricsStyle = function(style) {
             let currentApiProgress = data.progress_ms !== undefined ? data.progress_ms : (data.track && data.track.progress_ms) || 0;
 
             // Auf keinen Fall bei erstem Laden abbrechen (fehlendes Cover immer durchlassen)
-            // Auch NICHT abbrechen, wenn die lokale Zeitmessung bereits am Songende festsitzt (currentMs >= totalMs)
-            // und entklemmt werden muss!
-            if (!window.isForceMusicSync && currentApiProgress === lastSeenProgressMs && trackIsPlaying === isPlaying && !isNewTrack && currentResolvedArtUrl && (totalMs <= 0 || currentMs < totalMs)) {
+            // Bei identischem Snapshot und gleichem Song nicht stören (verhindert Zurückspringen)
+            if (!window.isForceMusicSync && currentApiProgress === lastSeenProgressMs && trackIsPlaying === isPlaying && !isNewTrack && currentResolvedArtUrl) {
                 return;
             }
             lastSeenProgressMs = currentApiProgress;
@@ -27831,14 +27833,22 @@ window.setLyricsStyle = function(style) {
                         let drift = (apiProgress + addedDelay) - expectedLocalProgress;
                         let absDrift = Math.abs(drift);
 
-                        const needsUnclamp = trackIsPlaying && totalMs > 0 && (currentMs >= totalMs || expectedLocalProgress >= totalMs) && (apiProgress + addedDelay) < totalMs;
-                        if (window.isForceMusicSync || needsUnclamp) {
+                        const songEndedLocally = trackIsPlaying && totalMs > 0 && (currentMs >= totalMs || expectedLocalProgress >= totalMs);
+                        const isLegitRepeat = songEndedLocally && (apiProgress + addedDelay) < 12000 && (apiProgress + addedDelay) < totalMs * 0.2 && (Date.now() - songTransitionStartedAt > 2000);
+
+                        if (window.isForceMusicSync || isLegitRepeat) {
                             serverBaseProgress = apiProgress + addedDelay;
                             localStartTime = performance.now();
                             currentMs = serverBaseProgress;
                             hasTriggeredSongEndFetch = false;
                             isHuntingForNextTrack = false;
                             syncLyricsUI(true, true);
+                        } else if (songEndedLocally) {
+                            // FIX: Song ist lokal bereits zu Ende gelaufen. Wenn die API noch denselben alten Song meldet
+                            // (weil Spotify/stats.fm 5-15s Verzögerung hat), NIEMALS zurückspringen oder zum Anfang springen!
+                            // Am Ende (totalMs) fixiert bleiben und weiter mit 2s-Intervall nach dem neuen Song suchen.
+                            currentMs = totalMs;
+                            isHuntingForNextTrack = true;
                         } else if (data.source === 'statsfm') {
                             // stats.fm pollt Spotify mit ca. 10-15s Verzögerung. Wenn stats.fm hinter
                             // unserer stetigen lokalen Zeitmessung zurückhängt (bis zu -15s), ziehen wir den
