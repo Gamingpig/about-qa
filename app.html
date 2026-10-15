@@ -26841,14 +26841,16 @@ window.setLyricsStyle = function(style) {
                 line.startMs = line.timeMs;
                 line.endMs = trueNextLineTime;
 
-                // 2. Genre-adaptiver, präziser Timing-Algorithmus (optimal für Pop wie Unforgettable & Balladen wie My Defender)
+                // 2. Feinjustierter Pausen- & Timing-Algorithmus (phrasengerecht mit garantierter Zeilen-Atempause)
                 if (!line.hasWordTimings && line.tokens.length > 0) {
                     const durationSec = Math.max(0.5, timeToNextLine / 1000);
                     const lineDensity = line.totalSyllables / durationSec;
                     const isLineBallad = isBalladSong || (lineDensity < 1.7);
                     const isRapMode = lineDensity > 3.8;
 
-                    const maxAvailableTime = Math.min(Math.max(300, timeToNextLine * 0.95), 15000);
+                    // Garantierte Atempause am Zeilenende (80-160ms) vor dem Start der Folgezeile
+                    const lineBreathMargin = Math.min(160, Math.max(80, timeToNextLine * 0.05));
+                    const maxAvailableTime = Math.min(Math.max(250, timeToNextLine - lineBreathMargin), 15000);
 
                     let totalRawTime = 0;
                     line.tokens.forEach((tok, idx) => {
@@ -26856,17 +26858,30 @@ window.setLyricsStyle = function(style) {
                         const baseMs = isLineBallad ? 95 : (isRapMode ? 65 : 72);
                         tok.rawDuration = tok.weight * baseMs;
 
+                        const nextTokText = line.tokens[idx + 1]?.cleanText || '';
                         const hasComma = /[,;:]$/.test(tok.cleanText);
+                        const hasDash = /[—\-\/]$/.test(tok.cleanText);
                         const hasPeriod = /[.!?]$/.test(tok.cleanText);
+                        const isMajorClause = isMajorClauseComma(tok.cleanText, nextTokText);
 
                         if (isLastWord) {
                             tok.rawPause = 0;
-                        } else if (hasComma) {
-                            tok.rawPause = isLineBallad ? 110 : 80;
+                        } else if (hasDash) {
+                            tok.rawPause = isLineBallad ? 180 : 130;
                         } else if (hasPeriod) {
-                            tok.rawPause = isLineBallad ? 160 : 120;
+                            tok.rawPause = isLineBallad ? 170 : 110;
+                        } else if (hasComma) {
+                            // Teilsatz-Komma bekommt sanften Atemzug, Aufzählungs-Komma bleibt knackig
+                            tok.rawPause = isMajorClause ? (isLineBallad ? 150 : 95) : (isLineBallad ? 100 : 70);
                         } else {
-                            tok.rawPause = 20;
+                            // Phonetische Artikulationspause (Konsonantenstopp vs. Vokal-Legato)
+                            const endsWithConsonant = /[bcdfghjklmnpqrstvwxyz]$/i.test(tok.cleanText);
+                            const nextStartsWithConsonant = /^[bcdfghjklmnpqrstvwxyz]/i.test(nextTokText);
+                            if (endsWithConsonant && nextStartsWithConsonant) {
+                                tok.rawPause = isLineBallad ? 28 : 22;
+                            } else {
+                                tok.rawPause = isLineBallad ? 18 : 14;
+                            }
                         }
 
                         totalRawTime += tok.rawDuration + tok.rawPause;
@@ -26890,7 +26905,7 @@ window.setLyricsStyle = function(style) {
                         tok.duration = tok.rawDuration * timeScale;
                         let microPause = tok.rawPause * timeScale;
 
-                        // Harmonisches Ausklingen des letzten Wortes
+                        // Harmonisches Ausklingen des letzten Wortes in die Takt-Reserve
                         if (j === line.tokens.length - 1 && (totalRawTime * timeScale < maxAvailableTime)) {
                             const rem = (line.timeMs + maxAvailableTime) - (currentOffsetMs + tok.duration);
                             if (rem > 0) {
@@ -26910,9 +26925,9 @@ window.setLyricsStyle = function(style) {
                         }
 
                         // Sicherheitsgrenze: Dauer darf niemals in die nächste Zeile ragen
-                        const maxAllowed = trueNextLineTime - tok.timeMs;
-                        if (tok.duration > maxAllowed * 0.95) {
-                            tok.duration = Math.max(10, maxAllowed * 0.95);
+                        const maxAllowed = (trueNextLineTime - lineBreathMargin) - tok.timeMs;
+                        if (tok.duration > maxAllowed) {
+                            tok.duration = Math.max(10, maxAllowed);
                         }
                         
                         tok.startMs = tok.timeMs;
@@ -26921,7 +26936,7 @@ window.setLyricsStyle = function(style) {
                         currentOffsetMs += tok.duration + microPause;
                     }
 
-                    line.singingEndMs = Math.min(trueNextLineTime, currentOffsetMs);
+                    line.singingEndMs = Math.min(trueNextLineTime - lineBreathMargin, currentOffsetMs);
                 } else if (line.hasWordTimings) {
                     for (let j = 0; j < line.tokens.length; j++) {
                         let tok = line.tokens[j];
@@ -27261,12 +27276,12 @@ window.setLyricsStyle = function(style) {
                     const d2 = instEl.querySelector('.dot-2');
                     const d3 = instEl.querySelector('.dot-3');
                     if (d1 && d2 && d3) {
-                        // Menschliche Reaktionszeit (Atemzug-Puffer vor Gesangseinsatz):
-                        // 350ms bis 650ms, in denen alle 3 Punkte synchron leuchten ("Bereit zum Mitsingen!")
-                        const reactionMargin = Math.max(300, Math.min(650, totalBreak * 0.16));
-                        const countdownWindow = Math.max(300, totalBreak <= 5000 ? (totalBreak - reactionMargin) : Math.min(3600, totalBreak - reactionMargin));
+                        // Musikalische 4-Beat-Aufteilung: 3 Taktschläge Countdown + 1 Taktschlag Reaktions-Atemzug
+                        const beatTime = Math.max(260, Math.min(650, totalBreak <= 4500 ? (totalBreak / 4) : 600));
+                        const reactionMargin = beatTime; // Exakt 1 Beat Atempause vor Gesangsstart
+                        const countdownWindow = beatTime * 3; // 3 Beats für Punkte 1, 2, 3
                         const countdownStart = countdownWindow + reactionMargin;
-                        const dotStep = countdownWindow / 3;
+                        const dotStep = beatTime;
 
                         if (timeLeft <= countdownStart && timeLeft > 0) {
                             const countdownElapsed = countdownStart - timeLeft;
@@ -27274,7 +27289,7 @@ window.setLyricsStyle = function(style) {
                             d2.classList.toggle('countdown-lit', countdownElapsed >= dotStep);
                             d3.classList.toggle('countdown-lit', countdownElapsed >= (dotStep * 2));
 
-                            // Alle 3 Punkte aktiviert -> Reaktionszeit-Phase ("Ready!")
+                            // Beat 4: Alle 3 Punkte leuchten synchron ("Ready to sing!")
                             const isReadyPhase = (timeLeft <= reactionMargin);
                             if (dotsContainer) {
                                 dotsContainer.classList.toggle('ready-to-sing', isReadyPhase);
