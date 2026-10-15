@@ -26459,6 +26459,9 @@ window.setLyricsStyle = function(style) {
             if (show && mainMusicCard.classList.contains('offline')) {
                 return;
             }
+            if (show && (!trackIsPlaying || !currentTrackTitle)) {
+                return;
+            }
             if (show) { pushOverlayHistory(); } else { popOverlayHistory(); }
             const diEl = document.getElementById('dynamic-island');
             const miniToggleEl = document.getElementById('mini-player-toggle');
