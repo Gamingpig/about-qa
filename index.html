@@ -28020,16 +28020,17 @@ window.setLyricsStyle = function(style) {
         // 3. Wenn nichts läuft (Ruhemodus): Sparsamer 25s-Takt
         function getAdaptiveMusicPollDelay() {
             if (Date.now() < statsFmRateLimitedUntil) {
-                return Math.max(3500, statsFmRateLimitedUntil - Date.now());
+                return Math.max(4000, statsFmRateLimitedUntil - Date.now());
             }
 
+            // Beim Songwechsel (letzte Sekunden): sanfte 2s
             if (isHuntingForNextTrack) {
                 if (Date.now() - songTransitionStartedAt > 35000) {
                     isHuntingForNextTrack = false;
                     hasTriggeredSongEndFetch = false;
                     if (standByActive) updateWakeLockForPlaybackState();
                 } else {
-                    return 800; // Blitzschnelle 800ms Erkennung beim Songwechsel
+                    return 2000;
                 }
             }
 
@@ -28038,25 +28039,14 @@ window.setLyricsStyle = function(style) {
                 if (remainingMs <= 5000) {
                     isHuntingForNextTrack = true;
                     songTransitionStartedAt = Date.now();
-                    return Math.max(600, remainingMs);
+                    return Math.max(1500, remainingMs);
                 }
-                // Ultra-responsives Polling bei geöffnetem Songtext (1.1s)
-                if (mainMusicCard && mainMusicCard.classList.contains('lyrics-open')) {
-                    return 1100;
-                }
-                // Wenn Dashboard geöffnet ist: responsives 1.4s Polling für sofortigen Songwechsel!
-                if (isDashboardOpen) {
-                    return 1400;
-                }
-                return 2400;
+                // Optimaler, akkuschonender 5s-Poll während der Song läuft:
+                return 5000;
             }
 
-            // Wenn Dashboard geöffnet ist, aber pausiert: 2s statt 7s Takt
-            if (isDashboardOpen) {
-                return 2000;
-            }
-
-            return 4500;
+            // Wenn pausiert oder Idle: 8s
+            return 8000;
         }
 
         let musicPollTimer = null;
