@@ -27709,8 +27709,7 @@ window.setLyricsStyle = function(style) {
                     syncLyricsUI(true);
                     return;
                 } else if (cached.isPlainOnly && cached.plainLyrics && !isDummyLyrics(cached.plainLyrics)) {
-                    // Plain-Lyrics dürfen synchronisierte Lyrics NIEMALS dauerhaft blockieren!
-                    // Nach maximal 10 Sekunden Cache verwerfen und erneut nach synchronisierten suchen.
+                    // Plain-Lyrics nur temporär für 10s im Cache halten
                     if (Date.now() - (cached.cachedAt || 0) < 10000) {
                         currentLyricsProvider = cached.provider || "LRCLIB";
                         currentLyricsWriter = cached.writer || "";
@@ -27757,7 +27756,7 @@ window.setLyricsStyle = function(style) {
                             syncLyricsUI(true);
                             return true;
                         } else if (plain && !isDummyLyrics(plain)) {
-                            // Plain-Lyrics nur temporär cachen, damit niemals synchronisierte Lyrics blockiert werden
+                            // Plain-Lyrics nur als absoluter Notnagel, niemals wenn Synced existieren
                             lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: plain, provider, writer, isPlainOnly: true, cachedAt: Date.now() });
                             parsedLyrics = [];
                             currentLyricIndex = -1;
@@ -27811,7 +27810,14 @@ window.setLyricsStyle = function(style) {
                                 if (a1First && c1First && a1First === c1First) {
                                     score += 25;
                                 } else {
-                                    return -1; // Interpret passt nicht
+                                    // Alle beteiligten Künstler prüfen (z.B. bei Alan Walker, Emelie Hollow, K-391)
+                                    const allArtists = (artist || '').toLowerCase().split(/\s*,\s*|\s*&\s*|\s+feat\.?\s+|\s+ft\.?\s+/);
+                                    const matchAny = allArtists.some(a => a.trim() && (cArtist.includes(a.trim()) || a.trim().includes(cArtist)));
+                                    if (matchAny) {
+                                        score += 20;
+                                    } else {
+                                        return -1; // Interpret passt nicht
+                                    }
                                 }
                             }
 
@@ -27852,12 +27858,11 @@ window.setLyricsStyle = function(style) {
                     };
 
                     const lrclibHeaders = { 'Lrclib-Client': 'AboutQA/1.0 (https://about-qa.web.app; contact@gamingpig.de)' };
-                    const fetchLrclib = async (url, timeoutMs = 4500) => {
+                    const fetchLrclib = async (url, timeoutMs = 5000) => {
                         try {
                             let res = await fetch(url, { headers: lrclibHeaders, signal: AbortSignal.timeout(timeoutMs) });
                             if (res.status === 429) {
-                                // Bei HTTP 429 Rate Limit kurz warten und einmal wiederholen
-                                await new Promise(r => setTimeout(r, 1100));
+                                await new Promise(r => setTimeout(r, 1200));
                                 if (fetchId !== currentFetchId) return null;
                                 res = await fetch(url, { headers: lrclibHeaders, signal: AbortSignal.timeout(timeoutMs) });
                             }
@@ -27868,89 +27873,71 @@ window.setLyricsStyle = function(style) {
                         return null;
                     };
 
-                    let plainFallback = null;
+                    let bestSynced = null;
+                    let bestPlain = null;
 
-                    // 1a. LRCLIB Direct Get mit Dauer (Exakter Treffer)
-                    if (searchDurationMs > 0) {
-                        const getParams = new URLSearchParams({ track_name: cleanT || title, artist_name: cleanA || artist, duration: Math.round(searchDurationMs / 1000) });
-                        const data = await fetchLrclib(`https://lrclib.net/api/get?` + getParams);
-                        if (fetchId !== currentFetchId) return;
-                        if (data) {
-                            if (data.syncedLyrics && !isDummyLyrics(data.syncedLyrics)) {
-                                if (saveAndRender(data.syncedLyrics, data.plainLyrics, "LRCLIB")) return;
-                            } else if (data.plainLyrics && !isDummyLyrics(data.plainLyrics)) {
-                                plainFallback = { plain: data.plainLyrics, provider: "LRCLIB" };
+                    // 1. Primäre Suche über LRCLIB Search API
+                    // Liefert alle Treffer & Versionen in EINEM EINZIGEN Request (keine 429-Rate-Limits mehr!)
+                    const queryStr = `${cleanT || title} ${cleanA || artist}`.trim();
+                    const searchData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(queryStr));
+                    if (fetchId !== currentFetchId) return;
+
+                    if (Array.isArray(searchData) && searchData.length > 0) {
+                        const best = pickBestMatch(searchData, searchDurationMs);
+                        if (best) {
+                            if (best.syncedLyrics && !isDummyLyrics(best.syncedLyrics)) {
+                                bestSynced = best;
+                            } else if (best.plainLyrics && !isDummyLyrics(best.plainLyrics)) {
+                                bestPlain = best;
                             }
                         }
                     }
 
-                    // 1b. LRCLIB Direct Get OHNE Dauer (Rettet Treffer bei leichten Dauer-Abweichungen z.B. Spotify vs LRCLIB)
-                    {
-                        const getParamsNoDur = new URLSearchParams({ track_name: cleanT || title, artist_name: cleanA || artist });
-                        const dataNoDur = await fetchLrclib(`https://lrclib.net/api/get?` + getParamsNoDur);
-                        if (fetchId !== currentFetchId) return;
-                        if (dataNoDur) {
-                            if (dataNoDur.syncedLyrics && !isDummyLyrics(dataNoDur.syncedLyrics)) {
-                                if (saveAndRender(dataNoDur.syncedLyrics, dataNoDur.plainLyrics, "LRCLIB")) return;
-                            } else if (!plainFallback && dataNoDur.plainLyrics && !isDummyLyrics(dataNoDur.plainLyrics)) {
-                                plainFallback = { plain: dataNoDur.plainLyrics, provider: "LRCLIB" };
-                            }
-                        }
+                    // Sofort rendern und beenden wenn synchronisiert gefunden!
+                    if (bestSynced) {
+                        if (saveAndRender(bestSynced.syncedLyrics, bestSynced.plainLyrics, "LRCLIB")) return;
                     }
 
-                    // 2. LRCLIB Search Query (Sucht gezielt nach Versionen mit Synced Lyrics)
-                    {
-                        const queryStr = `${cleanT || title} ${cleanA || artist}`.trim();
-                        const searchData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(queryStr), 5000);
+                    // 2. Sekundäre Suche mit ungekürztem Titel & Interpret (für Features & Deluxe)
+                    if (!bestSynced && (cleanT !== title || cleanA !== artist)) {
+                        const rawQuery = `${title} ${artist}`.trim();
+                        const rawData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(rawQuery));
                         if (fetchId !== currentFetchId) return;
-                        if (Array.isArray(searchData)) {
-                            const best = pickBestMatch(searchData, searchDurationMs);
-                            if (best) {
-                                if (best.syncedLyrics && !isDummyLyrics(best.syncedLyrics)) {
-                                    if (saveAndRender(best.syncedLyrics, best.plainLyrics, "LRCLIB")) return;
-                                } else if (!plainFallback && best.plainLyrics && !isDummyLyrics(best.plainLyrics)) {
-                                    plainFallback = { plain: best.plainLyrics, provider: "LRCLIB" };
-                                }
-                            }
-                        }
-                    }
-
-                    // 3. LRCLIB Raw Search (mit ungekürztem Titel/Interpret für Treffer bei Deluxe/Remaster)
-                    if (cleanT !== title || cleanA !== artist) {
-                        const rawQueryStr = `${title} ${artist}`.trim();
-                        const rawData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(rawQueryStr), 5000);
-                        if (fetchId !== currentFetchId) return;
-                        if (Array.isArray(rawData)) {
+                        if (Array.isArray(rawData) && rawData.length > 0) {
                             const bestRaw = pickBestMatch(rawData, searchDurationMs);
                             if (bestRaw) {
                                 if (bestRaw.syncedLyrics && !isDummyLyrics(bestRaw.syncedLyrics)) {
-                                    if (saveAndRender(bestRaw.syncedLyrics, bestRaw.plainLyrics, "LRCLIB")) return;
-                                } else if (!plainFallback && bestRaw.plainLyrics && !isDummyLyrics(bestRaw.plainLyrics)) {
-                                    plainFallback = { plain: bestRaw.plainLyrics, provider: "LRCLIB" };
+                                    bestSynced = bestRaw;
+                                } else if (!bestPlain && bestRaw.plainLyrics && !isDummyLyrics(bestRaw.plainLyrics)) {
+                                    bestPlain = bestRaw;
                                 }
                             }
                         }
                     }
 
-                    // 4. Falls LRCLIB Synced nirgends existiert, aber Plain-Lyrics gefunden wurden -> Plain rendern
-                    if (plainFallback && plainFallback.plain) {
-                        if (saveAndRender(null, plainFallback.plain, plainFallback.provider)) return;
+                    if (bestSynced) {
+                        if (saveAndRender(bestSynced.syncedLyrics, bestSynced.plainLyrics, "LRCLIB")) return;
                     }
 
-                    // 5. Letzter Plain Lyrics Fallback: lyrics.ovh (fast & lightweight)
-                    try {
+                    // 3. Fallback: Direct Get mit exakter Dauer
+                    if (!bestSynced) {
+                        const getParams = new URLSearchParams({ track_name: cleanT || title, artist_name: cleanA || artist });
+                        if (searchDurationMs > 0) getParams.set('duration', Math.round(searchDurationMs / 1000));
+                        const directData = await fetchLrclib(`https://lrclib.net/api/get?` + getParams);
                         if (fetchId !== currentFetchId) return;
-                        const ovhArtist = encodeURIComponent(cleanA || primaryArtist || artist);
-                        const ovhTitle = encodeURIComponent(cleanT || title);
-                        const ovhRes = await fetch(`https://api.lyrics.ovh/v1/${ovhArtist}/${ovhTitle}`, { signal: AbortSignal.timeout(3500) });
-                        if (fetchId !== currentFetchId) return;
-                        if (ovhRes.ok) {
-                            const ovhData = await ovhRes.json();
-                            if (ovhData && ovhData.lyrics && !isDummyLyrics(ovhData.lyrics)) {
-                                if (saveAndRender(null, ovhData.lyrics, "Lyrics.ovh")) return;
+                        if (directData) {
+                            if (directData.syncedLyrics && !isDummyLyrics(directData.syncedLyrics)) {
+                                if (saveAndRender(directData.syncedLyrics, directData.plainLyrics, "LRCLIB")) return;
+                            } else if (!bestPlain && directData.plainLyrics && !isDummyLyrics(directData.plainLyrics)) {
+                                bestPlain = directData;
                             }
                         }
-                    } catch(e) {}
+                    }
+
+                    // 4. Nur wenn nach allen Suchschritten absolut KEINE synchronisierten Lyrics auffindbar sind:
+                    if (bestPlain && bestPlain.plainLyrics && !isDummyLyrics(bestPlain.plainLyrics)) {
+                        if (saveAndRender(null, bestPlain.plainLyrics, "LRCLIB")) return;
+                    }
 
                     // Alle Quellen ohne Treffer -> im Cache als 'none' merken mit Zeitstempel & Fallback-Hinweistext anzeigen
                     if (fetchId !== currentFetchId) return;
