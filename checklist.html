@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>📋 QA Test-Checkliste v24.220.0 – Gamingpig</title>
+    <title>📋 QA Test-Checkliste v24.221.0 – Gamingpig</title>
     <link rel="icon" href="icon-192.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -78,7 +78,7 @@
                     </div>
                     <div>
                         <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-300 text-[10px] font-black uppercase tracking-wider border border-pink-500/30">
-                            <span>🧪 QA TEST-PORTAL v24.220.0</span>
+                            <span>🧪 QA TEST-PORTAL v24.221.0</span>
                         </div>
                         <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight mt-1">Tester-Checkliste</h1>
                         <p class="text-xs text-slate-300">Knappe Punkte für einen schnellen &amp; gründlichen Komplett-Check.</p>
@@ -130,10 +130,11 @@
                         <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-pink-300 shrink-0 font-bold">Player &amp; DJ</span>
                     </div>
                     <ul class="text-xs text-slate-300 mt-2 space-y-1 list-disc list-inside">
-                        <li>Play, Pause, Track-Wechsel &amp; Lautstärke reagieren sauber.</li>
-                        <li>Songtext / Lyrics Dashboard lässt sich per Klick aufklappen und lesen.</li>
+                        <li>Play, Pause, Track-Wechsel &amp; Lautstärke reagieren sauber (keine Songende-Zeitsprünge mehr).</li>
+                        <li>Synchronisierte Lyrics werden streng vor Plain-Lyrics bevorzugt; Status-Badge zeigt sauber <em>Lyrics: Synced</em> bzw. <em>Nicht synchronisiert</em>.</li>
+                        <li>Re-Sync gleicht die Abspielzeit millimetergenau live mit Spotify ab und behält bestehende Synced Lyrics bei.</li>
+                        <li>Haupt-Player lädt verlässlich das echte Spotify-Albumcover (identisch zum StandBy-Screen).</li>
                         <li>Button <strong class="text-pink-300">💽 Scratch</strong> oder Doppeltippen auf das Cover-Artwork spielt satten DJ-Vinyl-Scratch-Sound &amp; animiert das Cover.</li>
-                        <li>Tippen auf das Cover im Offline-Zustand zeigt sanften Hinweis-Toast (kein Ruckeln).</li>
                     </ul>
                 </div>
             </label>
@@ -293,7 +294,7 @@
 
         <!-- FOOTER -->
         <footer class="text-center text-xs text-slate-500 py-4">
-            <span>© 2026 GAMINGPIG • QA Test Suite v24.220.0 • </span>
+            <span>© 2026 GAMINGPIG • QA Test Suite v24.221.0 • </span>
             <a href="index.html" class="text-cyan-400 hover:underline">Zurück zur App</a>
         </footer>
 
@@ -397,7 +398,7 @@
             const pct = Math.round((checkedCount / TOTAL_POINTS) * 100);
             const statusSummary = (checkedCount === TOTAL_POINTS) ? 'ALLE TESTS ERFOLGREICH BESTANDEN! 🎉' : `${checkedCount} von ${TOTAL_POINTS} Punkten geprüft (${pct}%)`;
 
-            const fullReport = `🧪 QA TESTBERICHT (v24.220.0)
+            const fullReport = `🧪 QA TESTBERICHT (v24.221.0)
 👤 Tester: ${tester}
 📊 Status: ${statusSummary}
 🔗 Geprüfte App: https://gamingpig.github.io/about-qa/

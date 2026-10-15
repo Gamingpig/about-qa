@@ -7,6 +7,31 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
+    [LYRICS / TIMING / COVER / QA PIN GATE] Release v24.221.0: Strenge Synced-Lyrics-Priorisierung, Beseitigung von Songende-Zeitsprüngen, Original-API-Cover im Haupt-Player, Präziser Re-Sync mit Zeitabgleich & Reload-gesichertes PIN-Gate
+      - Strikte Priorisierung synchronisierter Lyrics:
+        Symptom: Bei Songwechsel wurden oft ungesyncte Plain-Lyrics geladen, obwohl synchronisierte in der Datenbank existierten.
+        Ursache: Schritt 1 (/api/get) gab gelegentlich Plain-Lyrics zurück, brach sofort ab und verhinderte die Ausführung von Schritt 2 (/api/search).
+        Fix: Schritt 1 speichert Plain-Lyrics nur als plainFallback; nachfolgende Suchschritte priorisieren Treffer mit syncedLyrics.
+      - Kein Zurückspringen / Zeitsprung nach Songende:
+        Symptom: Nach Songende sprang der Fortschrittsbalken und die Lyrics oft um 15-30s zurück oder auf 0:00.
+        Ursache: needsUnclamp überschrieb die lokale Zeitleiste bei currentMs >= totalMs mit veralteten API-Snapshots des vorherigen Songs.
+        Fix: Songende bleibt bei 100% fixiert, bis ein echter neuer Song eintrifft. Echter Song-Loop (Repeat 1) wird erst bei neuem Stream erkannt.
+      - Korrektes Cover-Art im Haupt-Player:
+        Symptom: Haupt-Player lud häufig völlig falsche Coverbilder, während der StandBy-Screen immer das korrekte Cover zeigte.
+        Ursache: Haupt-Player startete bei jedem Song eine ungenaue Deezer/iTunes-Fuzzy-Suche (d.results[0]) und überschrieb das Spotify-Cover.
+        Fix: Haupt-Player übernimmt das offizielle API-Cover direkt (wie StandBy); Fallback-Suche läuft nur bei fehlendem Cover und prüft Titel/Interpret ab.
+      - Re-Sync Live-Zeitabgleich & Lyrics-Schutz:
+        Symptom: Re-Sync synchronisierte die Zeit nicht (hinkte 20s hinterher) und ersetzte synchronisierte Lyrics durch Plain-Lyrics.
+        Ursache: stats.fm item.date wurde mit Date.now() überschrieben; Re-Sync löschte den Lyrics-Cache und erzwang Neuabruf.
+        Fix: item.date wird als echter UTC-Zeitstempel ausgewertet und die verstrichene Zeit addiert; bestehende Synced Lyrics werden bei Re-Sync geschützt.
+      - Korrektes Lyrics-Status-Badge (i18n):
+        Symptom: Bei ungesyncten Lyrics stand oben rechts der Rohschlüssel "label_unsynced".
+        Ursache: Übersetzungsschlüssel fehlte in translations.de.
+        Fix: Schlüssel ergänzt ("Nicht synchronisiert") und Badge-Formatierung vereinheitlicht.
+      - Reload-gesichertes QA PIN-Gate:
+        Symptom: Nach einmaliger PIN-Eingabe wurde die Testumgebung bei Neuladen der Seite ohne PIN geöffnet.
+        Ursache: sessionStorage persistierte den Freischalt-Status über Reloads hinweg.
+        Fix: Persistenz entfernt; jeder Reload fordert den PIN (2957) erneut an.
     [LIQUID GLASS / TRANSPARENCY UNIFICATION] Release v24.213.0: Vollständige Harmonisierung aller Glaskarten-Transparenzen & Beseitigung von Opazitäts-Sprüngen im Liquid Glass Modus
       - Einheitliche Hintergrund-Transparenzen aller Karten:
         Symptom: Im Liquid Glass Modus wiesen Karten stark abweichende Transparenz- und Hintergrundwerte auf (#main-music-card 40%, #footer-bubble 44%, #footer-expandable-menu 52%, #back-to-top 44%, normale Karten 82-90%).
@@ -19387,6 +19412,26 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+    { version: "v24.221.0", date: "15. Oktober 2026", type: "fix", items: {
+        de: [
+            "🎵 Songtext-Synchronisation & Priorität: Synchrone Lyrics haben nun absolute Priorität bei der Suche und werden nicht mehr durch ungesyncte Plain-Texte verdrängt",
+            "⏱️ Nahtloser Songwechsel ohne Zeitsprung: Zeitleiste bleibt am Songende sauber auf 100% fixiert und springt nicht mehr fälschlicherweise zum Anfang oder zurück",
+            "🖼️ Originalgetreues Albumcover: Der Haupt-Player übernimmt das offizielle Spotify-Cover nun direkt aus der API (identisch zum StandBy-Modus) statt fehlerhafte Drittanbieter-Bilder zu laden",
+            "🔄 Präziser Re-Sync & Live-Zeitabgleich: Re-Sync gleicht die Abspielzeit anhand des exakten Stream-Zeitstempels millimetergenau mit Spotify ab und schützt bestehende Synced Lyrics",
+            "🏷️ Lyrics-Status-Badge (i18n): Korrekte deutsche Übersetzung 'Nicht synchronisiert' und harmonisiertes Pill-Badge ('Lyrics: Synced' / 'Lyrics: Nicht synchronisiert')",
+            "🔒 PIN-Gate für QA-Testumgebung: Jeder Reload erfordert zur Sicherheit die erneute PIN-Eingabe (PIN: 2957) mit nativer Tastatur- und Keypad-Unterstützung",
+            "🐷 Aktives Easter-Egg-HUD & Piggy Pet: Schwebendes Kontroll-HUD mit prominentem Stopp-Button zum sofortigen Beenden aller 13 Easter Eggs und neu positionierter Pet-Buddy"
+        ],
+        en: [
+            "🎵 Synced Lyrics Priority: Synchronized lyrics now take absolute priority during search flow and are never displaced by unsynced plain lyrics",
+            "⏱️ Seamless Track Endings: Progress timeline cleanly stays locked at 100% on song completion without rewinding or resetting to 0:00",
+            "🖼️ Authentic Album Artwork: Main player now directly displays the official Spotify cover from the API (matching StandBy mode) without third-party guessing",
+            "🔄 High-Precision Re-Sync: Re-Sync calibrates stream timing directly from Spotify's exact timestamp and reliably preserves loaded synced lyrics",
+            "🏷️ Lyrics Status Badge (i18n): Full localization support ('Nicht synchronisiert' / 'Unsynced') with clean pill badge styling",
+            "🔒 Test Environment PIN Gate: Every reload securely re-requests tester PIN (PIN: 2957) with full keyboard and on-screen keypad support",
+            "🐷 Active Easter Egg HUD & Pet: Floating control HUD with prominent stop button to instantly dismiss all 13 easter eggs, plus repositioned Piggy Pet"
+        ]
+    }},
     { version: "v24.220.0", date: "14. Oktober 2026", type: "feature", items: {
         de: [
             "🕹️ Retro Piggy Cyber Dash Arcade: 8-Bit Jump & Dodge Minigame mit Web-Audio Soundeffekten, Sternen & Highscore",
@@ -29405,7 +29450,7 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.220.0</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.221.0</span>
         </a>
     </div>
 </body>
