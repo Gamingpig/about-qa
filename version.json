@@ -1,14 +1,14 @@
 {
-  "version": "24.222.5",
-  "buildTime": "2026-10-15T16:16:00.000Z",
+  "version": "24.222.6",
+  "buildTime": "2026-10-15T20:50:00.000Z",
   "shortNotes": [
-    "Multi-DB Lyrics Engine: Bundled-DB + LRCLIB + LyricsOVH Kaskade mit striktem 1-Fetch-pro-Song Schutz",
+    "Lyrics-Sync Priorität: Reines Search-First System garantiert 100% Vorrang für synchronisierte Songtexte",
+    "Plain-Hijacker eliminiert: Ungetaktetes lyrics.ovh und vorzeitige Plain-Überschreibungen vollständig entfernt",
+    "Cache-Resilienz: Plain-Lyrics verfallen nach 30s im Speicher, damit synchronisierte Lyrics nachgeladen werden",
+    "Multi-DB Offline-Engine: Bundled-DB (Marcus & Martinus Unforgettable) + LRCLIB Pacing Shield mit 1-Fetch-pro-Song Schutz",
     "Hybrid Master Cadence: Best-of-Both-Worlds – Fließendes Stimm-Legato kombiniert mit Hook-Drop-Erkennung",
     "Dance-Pop Algorithmus: Aktive Phrasen-Kadenz & Hook-Drop Erkennung für perfekten Beat-Sync",
-    "Lyrics-Durchbruch: 100% autonome Songtext-Erkennung – manueller Re-Sync endgültig eliminiert",
-    "HTTP 429 Shield: Automatischer 2.5s Exponential-Backoff Retry verhindert falsche Fehlermeldungen",
-    "Non-Aborting Pipeline: Kein Abbrechen von Hintergrundabfragen beim Öffnen der Lyrics-Ansicht",
-    "Multi-DB Vorbereitung: Kaskadierte Architektur für erweiterte Songtext- und Metadaten-Datenbanken",
-    "Datenschutz & DSGVO: Vollständig anonymisierte Songtext-Abfragen ohne Nutzerdaten oder Cookies"
+    "HTTP 429 Shield: Automatischer Exponential-Backoff Retry verhindert falsche Fehlermeldungen",
+    "Non-Aborting Pipeline: Kein Abbrechen von Hintergrundabfragen beim Öffnen der Lyrics-Ansicht"
   ]
 }
