@@ -6022,13 +6022,29 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         .lyric-line.lyric-instrumental.active .dot-3 {
             animation-delay: calc(var(--dot-speed, 1.2s) * 0.36);
         }
-        /* Countdown in reinem Text-Weiß (kein Fremd-Cyan!) */
         .lyric-line.lyric-instrumental.active .beat-dot.countdown-lit {
-            background-color: #ffffff !important;
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.95), 0 0 25px rgba(255, 255, 255, 0.5) !important;
             transform: scale(1.35) !important;
             animation: none !important;
         }
+        /* Style-spezifische Taktpunkt-Farben */
+        .lyrics-style-neon .beat-dot.countdown-lit { background-color: #06b6d4 !important; box-shadow: 0 0 14px #06b6d4, 0 0 28px rgba(6, 182, 212, 0.6) !important; }
+        .lyrics-style-matrix .beat-dot.countdown-lit { background-color: #00ff41 !important; box-shadow: 0 0 14px #00ff41, 0 0 28px rgba(0, 255, 65, 0.6) !important; }
+        .lyrics-style-cyberpunk .beat-dot.countdown-lit { background-color: #ff00ff !important; box-shadow: 0 0 14px #ff00ff, 0 0 28px #00ffcc !important; }
+        .lyrics-style-hellfire .beat-dot.countdown-lit { background-color: #ff9a9e !important; box-shadow: 0 0 14px #ff9a9e, 0 0 28px rgba(255, 154, 158, 0.6) !important; }
+        .lyrics-style-goldleaf .beat-dot.countdown-lit { background-color: #fde68a !important; box-shadow: 0 0 14px #fde68a, 0 0 28px rgba(253, 230, 138, 0.6) !important; }
+        .lyrics-style-sunrise .beat-dot.countdown-lit { background-color: #ffd08a !important; box-shadow: 0 0 14px #ff8a5c, 0 0 28px rgba(255, 208, 138, 0.6) !important; }
+        .lyrics-style-retrowave .beat-dot.countdown-lit { background-color: #f472b6 !important; box-shadow: 0 0 14px #f472b6, 0 0 28px rgba(244, 114, 182, 0.6) !important; }
+        .lyrics-style-velvet .beat-dot.countdown-lit { background-color: #f5d0e0 !important; box-shadow: 0 0 14px #be185d, 0 0 28px rgba(190, 24, 93, 0.5) !important; }
+        .lyrics-style-frostbite .beat-dot.countdown-lit, .lyrics-style-ice .beat-dot.countdown-lit { background-color: #8cc8e8 !important; box-shadow: 0 0 14px #8cc8e8, 0 0 28px rgba(140, 200, 232, 0.6) !important; }
+        .lyrics-style-aurora .beat-dot.countdown-lit { background-color: #4ade80 !important; box-shadow: 0 0 14px #4ade80, 0 0 28px rgba(74, 222, 128, 0.6) !important; }
+        .lyrics-style-liquid .beat-dot.countdown-lit { background-color: #06b6d4 !important; box-shadow: 0 0 14px #06b6d4, 0 0 28px rgba(6, 182, 212, 0.6) !important; }
+        .lyrics-style-rainbow .beat-dot.countdown-lit { background-color: #ff00ff !important; box-shadow: 0 0 14px #00ffee, 0 0 28px #ff0066 !important; }
+        .lyrics-style-lasertag .beat-dot.countdown-lit { background-color: #ef4444 !important; box-shadow: 0 0 14px #ef4444, 0 0 28px rgba(239, 68, 68, 0.6) !important; }
+        .lyrics-style-bubble .beat-dot.countdown-lit { background-color: #60a5fa !important; box-shadow: 0 0 14px #60a5fa, 0 0 28px rgba(96, 165, 250, 0.6) !important; }
+        .lyrics-style-starlight .beat-dot.countdown-lit { background-color: #a5b4fc !important; box-shadow: 0 0 14px #a5b4fc, 0 0 28px rgba(165, 180, 252, 0.6) !important; }
+        .lyrics-style-vinyl .beat-dot.countdown-lit { background-color: #f4e8d0 !important; box-shadow: 0 0 14px rgba(214, 160, 80, 0.8) !important; }
+        .beat-dot.countdown-lit { background-color: #ffffff !important; box-shadow: 0 0 14px rgba(255, 255, 255, 0.95), 0 0 28px rgba(255, 255, 255, 0.5) !important; }
+
         @keyframes appleBeatWave {
             0%, 100% {
                 transform: scale(0.85);
@@ -26673,8 +26689,8 @@ window.setLyricsStyle = function(style) {
         function classifyWordEnding(cleanText) {
             const t = (cleanText || '').toLowerCase().replace(/[\.,!?;:"'—\-\s]/g, '');
             if (!t) return 'neutral';
-            // Besondere hymnische Ausrufe & sakrale Namen (Yahweh, Hallelujah, Jesus, Lord, Holy, Amen)
-            if (['yahweh', 'yah', 'weh', 'hallelujah', 'amen', 'jesus', 'lord', 'holy', 'forever'].includes(t)) {
+            // Besondere hymnische Ausrufe & sakrale Namen (Yahweh, Hallelujah, Jesus, Lord, Holy, Amen, God)
+            if (['yahweh', 'yah', 'weh', 'hallelujah', 'amen', 'jesus', 'lord', 'holy', 'forever', 'god'].includes(t)) {
                 return 'sacred_hold';
             }
             if (/[aeiouyäöüáéíóúàèìòùâêîôûãẽĩõũ]$/.test(t) ||
@@ -26685,6 +26701,14 @@ window.setLyricsStyle = function(style) {
                 return 'hardStop';
             }
             return 'neutral';
+        }
+
+        function isMajorClauseComma(tokText, nextTokText) {
+            if (!/[,;:]$/.test(tokText)) return false;
+            if (!nextTokText) return true;
+            const cleanNext = nextTokText.replace(/^[^\w]+/, '');
+            // Wenn das nächste Wort ein neuer Satzteil/Pronomen ist (He, He's, I, You, We, They, Yeah, God, Lord, Glory)
+            return /^(?:He|He's|She|She's|I|You|We|They|Yeah|God|Lord|Glory|Worthy|Holy|My|The)\b/i.test(cleanNext);
         }
 
         function parseLrc(lrcString) {
@@ -26795,59 +26819,65 @@ window.setLyricsStyle = function(style) {
                 });
                 line.totalSyllables = totalSyllables;
 
-                // Adaptives Tempo- und Gesangsmodell
+                // 2. Mathematisch striktes, nicht-überlaufendes Zeitmodell
                 if (!line.hasWordTimings && line.tokens.length > 0) {
                     const durationSec = Math.max(0.5, timeToNextLine / 1000);
                     const lineDensity = totalSyllables / durationSec; // Silben pro Sekunde
                     const isRapMode = lineDensity > 3.8;
                     const isBalladMode = lineDensity < 2.5;
 
-                    // Maximale Gesangsdauer:
-                    // In Balladen (wie My Defender) gehört die Zeilendauer dem Gesang!
-                    // Erst wenn timeToNextLine >= 6500ms ist, wird Raum für einen echten Instrumental-Break freigehalten.
-                    let maxAvailableTime;
-                    if (timeToNextLine >= 6500) {
-                        maxAvailableTime = timeToNextLine - 2500;
-                    } else {
-                        maxAvailableTime = timeToNextLine * 0.94;
+                    // GARANTIE: Die Zeile darf NIEMALS mehr Zeit berechnen als verfügbar ist!
+                    const lineAvailableMs = Math.max(300, timeToNextLine);
+                    let breakMs = 0;
+                    // Wenn zwischen den Zeilen >= 2000ms liegen, halten wir sauber Raum für Takt-Punkte
+                    if (lineAvailableMs >= 2000) {
+                        breakMs = Math.min(3000, Math.max(800, lineAvailableMs * 0.35));
                     }
+                    const maxSingingTime = Math.max(200, lineAvailableMs - breakMs);
 
                     let totalRawTime = 0;
                     line.tokens.forEach((tok, idx) => {
+                        const isLastWord = (idx === line.tokens.length - 1);
                         tok.rawDuration = tok.weight * (isBalladMode ? 110 : 80);
                         tok.rawPause = 25;
 
                         const hasComma = /[,;:]$/.test(tok.cleanText);
                         const hasPeriod = /[.!?]$/.test(tok.cleanText);
+                        const nextTokText = line.tokens[idx + 1]?.cleanText || '';
+                        const isMajorClause = isMajorClauseComma(tok.cleanText, nextTokText);
 
                         if (isRapMode) {
                             tok.rawPause = tok.isPhraseEnd ? 35 : 15;
                         } else if (isBalladMode) {
                             if (hasComma) {
-                                // Komma in Ballade: Musikalisch echte Atempause je nach Auslaut
-                                if (tok.endingType === 'hardStop') {
+                                // Wenn Komma einen echten Teilsatz trennt (z.B. "He is the way, He's the truth") -> deutliche Stille
+                                if (isMajorClause) {
+                                    tok.rawPause = 450;
+                                } else if (tok.endingType === 'hardStop') {
                                     tok.rawPause = 320;
-                                } else if (tok.endingType === 'sacred_hold' || tok.endingType === 'sustain') {
-                                    tok.rawPause = 180;
                                 } else {
-                                    tok.rawPause = 220;
+                                    tok.rawPause = 180;
                                 }
                             } else if (hasPeriod) {
-                                tok.rawPause = 350;
+                                tok.rawPause = 400;
                             } else {
                                 tok.rawPause = 30;
                             }
                         } else {
-                            if (hasComma) tok.rawPause = 160;
-                            else if (hasPeriod) tok.rawPause = 250;
+                            if (hasComma) tok.rawPause = isMajorClause ? 250 : 140;
+                            else if (hasPeriod) tok.rawPause = 280;
                             else tok.rawPause = 30;
+                        }
+
+                        if (isLastWord) {
+                            tok.rawPause = 0;
                         }
 
                         totalRawTime += tok.rawDuration + tok.rawPause;
                     });
 
-                    let timeScale = maxAvailableTime / totalRawTime;
-                    
+                    // Skalierung: Summe aller Dauern + Pausen entspricht EXAKT maxSingingTime
+                    const timeScale = maxSingingTime / totalRawTime;
                     let currentOffsetMs = line.timeMs;
                     
                     for (let j = 0; j < line.tokens.length; j++) {
@@ -26857,25 +26887,22 @@ window.setLyricsStyle = function(style) {
                         tok.duration = tok.rawDuration * timeScale;
                         let microPause = tok.rawPause * timeScale;
 
-                        // Letztes Wort (z.B. Yahweh oder Defendeeer): vollen verbleibenden Gesangsbogen ausschöpfen
+                        // Letztes Wort (z.B. Yahweh): eventuelle Rundungsreste voll auskosten
                         if (j === line.tokens.length - 1 && (tok.endingType === 'sustain' || tok.endingType === 'sacred_hold')) {
-                            let remainingExtra = maxAvailableTime - (currentOffsetMs - line.timeMs + tok.duration);
-                            if (remainingExtra > 0) {
-                                tok.duration += remainingExtra * 0.85;
+                            const rem = (line.timeMs + maxSingingTime) - (currentOffsetMs + tok.duration);
+                            if (rem > 0) {
+                                tok.duration += rem;
                             }
                         }
                         
-                        let maxAllowedDuration = trueNextLineTime - tok.timeMs;
-                        if (tok.duration > maxAllowedDuration * 0.95) {
-                            tok.duration = Math.max(10, maxAllowedDuration * 0.95);
-                        }
-
                         tok.startMs = tok.timeMs;
                         tok.endMs = tok.timeMs + tok.duration;
 
                         currentOffsetMs += tok.duration + microPause; 
                     }
-                    line.singingEndMs = currentOffsetMs;
+
+                    // Singen endet strikt bei maxSingingTime, NIEMALS über timeToNextLine hinaus!
+                    line.singingEndMs = Math.min(trueNextLineTime, currentOffsetMs);
                 } else if (line.hasWordTimings) {
                     for (let j = 0; j < line.tokens.length; j++) {
                         let tok = line.tokens[j];
@@ -26907,9 +26934,9 @@ window.setLyricsStyle = function(style) {
                 }
             }
 
-            // 3. Echte Instrumental-Pausen (nur bei >= 5 Sekunden echter Spielzeit)
+            // 3. Echte Instrumental-Pausen ab 2.0 Sekunden mit 3 Takt-Punkten anreichern
             const enriched = [];
-            if (parsedLyrics.length > 0 && parsedLyrics[0].timeMs >= 5000) {
+            if (parsedLyrics.length > 0 && parsedLyrics[0].timeMs >= 2000) {
                 enriched.push({
                     timeMs: 0,
                     startMs: 0,
@@ -26928,8 +26955,8 @@ window.setLyricsStyle = function(style) {
                 if (nextLine) {
                     const singEnd = line.singingEndMs || line.endMs;
                     const breakDuration = nextLine.timeMs - singEnd;
-                    // Echte Instrumental-Pausen: erst ab 5 Sekunden
-                    if (breakDuration >= 5000) {
+                    // Bereits ab 2.0s Pause Takt-Punkte einblenden
+                    if (breakDuration >= 2000) {
                         enriched.push({
                             timeMs: singEnd,
                             startMs: singEnd,
@@ -27205,26 +27232,27 @@ window.setLyricsStyle = function(style) {
                 renderActiveLineWordVisuals(adjustedMs);
             } else if (curLine && curLine.isInstrumental) {
                 const timeLeft = curLine.endMs - adjustedMs;
-                const totalBreak = curLine.endMs - curLine.timeMs;
+                const totalBreak = Math.max(100, curLine.endMs - curLine.timeMs);
                 const instEl = document.getElementById(`lyric-line-${currentLyricIndex}`);
                 if (instEl) {
-                    // Dynamische Geschwindigkeit je nach Dauer des Breaks:
-                    // Ruhiges, elegantes Atmen im Songtakt
-                    const beatPeriod = Math.max(0.7, Math.min(1.5, (totalBreak / 1000) / 4)).toFixed(2) + 's';
+                    // Dynamische Puls-Geschwindigkeit angepasst an die Break-Länge
+                    const beatPeriod = Math.max(0.6, Math.min(1.4, (totalBreak / 1000) / 3)).toFixed(2) + 's';
                     instEl.style.setProperty('--dot-speed', beatPeriod);
 
                     const d1 = instEl.querySelector('.dot-1');
                     const d2 = instEl.querySelector('.dot-2');
                     const d3 = instEl.querySelector('.dot-3');
                     if (d1 && d2 && d3) {
-                        // Taktgenauer Countdown in den letzten 3 Beats (Lead-In)
-                        const leadInTime = Math.min(2700, Math.max(1200, totalBreak * 0.35));
-                        const beatStep = leadInTime / 3;
+                        // Countdown funktioniert für JEDE Dauer (ab 2s bis 60s):
+                        // Bei kurzen Pausen (<= 3s) läuft der Countdown über die gesamte Pause.
+                        // Bei längeren Pausen (> 3s) pulsen die Punkte zuerst und zählen die letzten 2.7s herunter.
+                        const leadInTime = totalBreak <= 3000 ? totalBreak : Math.min(2700, totalBreak * 0.5);
+                        const step = leadInTime / 3;
 
                         if (timeLeft <= leadInTime && timeLeft > 0) {
                             d1.classList.toggle('countdown-lit', timeLeft <= leadInTime);
-                            d2.classList.toggle('countdown-lit', timeLeft <= (beatStep * 2));
-                            d3.classList.toggle('countdown-lit', timeLeft <= beatStep);
+                            d2.classList.toggle('countdown-lit', timeLeft <= (step * 2));
+                            d3.classList.toggle('countdown-lit', timeLeft <= step);
                         } else {
                             d1.classList.remove('countdown-lit');
                             d2.classList.remove('countdown-lit');
