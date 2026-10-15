@@ -26846,20 +26846,22 @@ window.setLyricsStyle = function(style) {
                 line.totalSyllables = totalSyllables;
             }
 
-            // Gesamtkadenz des Songs ermitteln (Silben / Songsekunde)
-            let totalSongSyllables = 0;
-            let validSongLines = 0;
-            parsedLyrics.forEach(l => {
-                if (l.tokens && l.tokens.length > 0) {
-                    validSongLines++;
-                    totalSongSyllables += (l.totalSyllables || 1);
+            // Dynamische Erkennung der Gesangs-Kadenz (Silben / aktiver Gesangssekunde)
+            // WICHTIG: Nicht die gesamte Songdauer inkl. langer EDM-Drops teilen, sondern die aktiven Gesangszeilen betrachten!
+            let activeLineCadences = [];
+            for (let i = 0; i < parsedLyrics.length; i++) {
+                let l = parsedLyrics[i];
+                if (!l.tokens || l.tokens.length === 0) continue;
+                let nextTime = (i + 1 < parsedLyrics.length) ? parsedLyrics[i + 1].timeMs : (l.timeMs + 4000);
+                let gapSec = (nextTime - l.timeMs) / 1000;
+                if (gapSec >= 0.5 && gapSec <= 6.0) {
+                    activeLineCadences.push((l.totalSyllables || 1) / gapSec);
                 }
-            });
-            const firstSongTime = parsedLyrics[0]?.timeMs || 0;
-            const lastSongTime = parsedLyrics[parsedLyrics.length - 1]?.timeMs || 0;
-            const songDurationSec = Math.max(10, (lastSongTime - firstSongTime) / 1000);
-            const songCadence = totalSongSyllables / songDurationSec; // z.B. ~1.2 bei My Defender, ~3.6 bei Unforgettable
-            const isBalladSong = songCadence < 2.0;
+            }
+            const songCadence = activeLineCadences.length > 0 
+                ? (activeLineCadences.reduce((a, b) => a + b, 0) / activeLineCadences.length)
+                : 2.2;
+            const isBalladSong = songCadence < 1.65;
             isCurrentSongBallad = isBalladSong;
 
             for (let i = 0; i < parsedLyrics.length; i++) {
@@ -26883,27 +26885,30 @@ window.setLyricsStyle = function(style) {
                 if (!line.hasWordTimings && line.tokens.length > 0) {
                     const durationSec = Math.max(0.5, timeToNextLine / 1000);
                     const lineDensity = line.totalSyllables / durationSec;
-                    const isLineBallad = isBalladSong || (lineDensity < 2.2);
-                    const isRapMode = lineDensity > 3.8;
+                    const isLineBallad = isBalladSong || (lineDensity < 1.8);
+                    const isRapMode = lineDensity > 3.6;
 
-                    // Natürlicher Zeilen-Atemzug vor Beginn der Folgezeile:
-                    // In Pop/Dance (wie Unforgettable) ca. 30% Pause am Phrasenende, in Balladen ca. 20%
-                    const lineAvailableMs = Math.max(250, timeToNextLine);
-                    let endOfLineBreak = 0;
-                    if (lineAvailableMs >= 2000) {
-                        endOfLineBreak = Math.min(2500, Math.max(500, lineAvailableMs * (isLineBallad ? 0.22 : 0.32)));
+                    // SPEZIALFALL: Drop-Zeile / Hook vor Beat-Drop (z.B. "She's unforgettable" gefolgt von 8s Instrumental-Drop)
+                    const isDropLine = (timeToNextLine >= 4500 && line.totalSyllables <= 8);
+
+                    let targetSingingTime;
+                    if (isDropLine) {
+                        // Gesang endet knackig und direkt auf den Beat, der Rest des 5-8s Fensters ist der Instrumental-Drop!
+                        targetSingingTime = Math.min(timeToNextLine, Math.max(900, line.totalSyllables * 240 + 350));
                     } else {
-                        endOfLineBreak = Math.min(180, Math.max(60, lineAvailableMs * 0.12));
-                    }
+                        const lineAvailableMs = Math.max(250, timeToNextLine);
+                        const endOfLineBreak = lineAvailableMs >= 2000
+                            ? Math.min(lineAvailableMs * 0.45, Math.max(400, lineAvailableMs * (isLineBallad ? 0.20 : 0.30)))
+                            : Math.min(180, Math.max(60, lineAvailableMs * 0.12));
 
-                    // Sing-Zeitfenster: strikt begrenzt auf die natürliche Singzeit der Silben
-                    const maxSingingBySyllables = line.totalSyllables * (isLineBallad ? 650 : 420) + 400;
-                    const targetSingingTime = Math.min(lineAvailableMs - endOfLineBreak, maxSingingBySyllables);
+                        const maxSingingBySyllables = line.totalSyllables * (isLineBallad ? 450 : 260) + (isLineBallad ? 300 : 180);
+                        targetSingingTime = Math.min(lineAvailableMs - endOfLineBreak, maxSingingBySyllables);
+                    }
 
                     let totalRawTime = 0;
                     line.tokens.forEach((tok, idx) => {
                         const isLastWord = (idx === line.tokens.length - 1);
-                        const baseMs = isLineBallad ? 100 : (isRapMode ? 65 : 78);
+                        const baseMs = isLineBallad ? 85 : (isRapMode ? 46 : 56);
                         tok.rawDuration = tok.weight * baseMs;
 
                         const nextTokText = line.tokens[idx + 1]?.cleanText || '';
@@ -26915,16 +26920,16 @@ window.setLyricsStyle = function(style) {
                         if (isLastWord) {
                             tok.rawPause = 0;
                         } else if (hasDash) {
-                            tok.rawPause = isLineBallad ? 180 : 120;
+                            tok.rawPause = isLineBallad ? 140 : 80;
                         } else if (hasPeriod) {
-                            tok.rawPause = isLineBallad ? 220 : 150;
+                            tok.rawPause = isLineBallad ? 160 : 90;
                         } else if (hasComma) {
-                            tok.rawPause = isMajorClause ? (isLineBallad ? 240 : 160) : (isLineBallad ? 140 : 90);
+                            tok.rawPause = isMajorClause ? (isLineBallad ? 180 : 100) : (isLineBallad ? 100 : 60);
                         } else {
                             // Phonetische Artikulationspause (Konsonanten vs Vokale)
                             const endsWithConsonant = /[bcdfghjklmnpqrstvwxyz]$/i.test(tok.cleanText);
                             const nextStartsWithConsonant = /^[bcdfghjklmnpqrstvwxyz]/i.test(nextTokText);
-                            tok.rawPause = (endsWithConsonant && nextStartsWithConsonant) ? 22 : 14;
+                            tok.rawPause = (endsWithConsonant && nextStartsWithConsonant) ? 18 : 10;
                         }
 
                         totalRawTime += tok.rawDuration + tok.rawPause;

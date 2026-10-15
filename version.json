@@ -1,8 +1,8 @@
 {
-  "version": "24.222.1",
-  "buildTime": "2026-10-15T16:10:00.000Z",
+  "version": "24.222.2",
+  "buildTime": "2026-10-15T16:16:00.000Z",
   "shortNotes": [
-    "Hotfix: LRCLIB Pacing Shield – 429 Rate-Limit Endlosschleife im Hintergrund-Poll eliminiert",
+    "Dance-Pop Algorithmus: Aktive Phrasen-Kadenz & Hook-Drop Erkennung für perfekten Beat-Sync",
     "Lyrics-Durchbruch: 100% autonome Songtext-Erkennung – manueller Re-Sync endgültig eliminiert",
     "HTTP 429 Shield: Automatischer 2.5s Exponential-Backoff Retry verhindert falsche Fehlermeldungen",
     "Non-Aborting Pipeline: Kein Abbrechen von Hintergrundabfragen beim Öffnen der Lyrics-Ansicht",
