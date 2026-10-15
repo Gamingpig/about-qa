@@ -27639,7 +27639,7 @@ window.setLyricsStyle = function(style) {
 
         function cleanStringForAPI(str) {
             if (!str) return "";
-            return str.replace(/\s*-\s*(?:remaster(?:ed)?(?:\s*\d{4})?|live(?:\s*at[^)]*)?|radio\s*edit|single\s*version|original\s*mix|deluxe(?:\s*edition)?|bonus\s*track|anniversary(?:\s*edition)?|mono|stereo|album\s*version|acoustic(?:\s*version)?).*$/i, '')
+            return str.replace(/\s*-\s*(?:remaster(?:ed)?(?:\s*\d{4})?|live(?:\s*at[^)]*)?|radio\s*edit|single\s*version|original\s*mix|extended(?:\s*mix)?|club(?:\s*mix)?|deluxe(?:\s*edition)?|bonus\s*track|anniversary(?:\s*edition)?|mono|stereo|album\s*version|acoustic(?:\s*version)?|eurovision(?:\s*\d{4})?|from\s+.*).*$/i, '')
                       .replace(/\s*\(.*?(?:remaster|live|radio|deluxe|version|edit|bonus|feat\.?|ft\.?|with\s+|anniversary).*?\)/gi, '')
                       .replace(/\s*\[.*?(?:remaster|live|radio|deluxe|version|edit|bonus|feat\.?|ft\.?|with\s+|anniversary).*?\]/gi, '')
                       .replace(/\b(?:feat|ft|prod)\.?\s+.*$/gi, '')
@@ -27725,11 +27725,21 @@ window.setLyricsStyle = function(style) {
 
         let lrclibRateLimitedUntil = 0;
         let lrclibAutoRetryTimeout = null;
+        let lastLyricsFetchTime = 0;
 
         async function fetchExternalLyrics(title, artist, searchDurationMs = 0, force = false) {
             if (!title) return;
 
             const cacheKey = (title + '---' + (artist || '')).toLowerCase().trim();
+
+            if (force) {
+                lyricsMemoryCache.delete(cacheKey);
+                lrclibRateLimitedUntil = 0;
+                if (lrclibAutoRetryTimeout) {
+                    clearTimeout(lrclibAutoRetryTimeout);
+                    lrclibAutoRetryTimeout = null;
+                }
+            }
 
             // Deduplizierung: Wenn derselbe Song bereits geladen wird, keinen neuen Fetch starten!
             if (!force && inFlightLyricsKey === cacheKey && inFlightLyricsPromise) {
@@ -27747,8 +27757,8 @@ window.setLyricsStyle = function(style) {
                     syncLyricsUI(true);
                     return;
                 } else if (cached.isPlainOnly && cached.plainLyrics && !isDummyLyrics(cached.plainLyrics)) {
-                    // Plain-Lyrics nur temporär für 15s im Cache halten, damit bei Verfügbarkeit auf Synced aufgerüstet wird
-                    if (Date.now() - (cached.cachedAt || 0) < 15000) {
+                    // Plain-Lyrics nur temporär für 30s im Cache halten, damit bei Verfügbarkeit auf Synced aufgerüstet wird
+                    if (Date.now() - (cached.cachedAt || 0) < 30000) {
                         currentLyricsProvider = cached.provider || "LRCLIB";
                         currentLyricsWriter = cached.writer || "";
                         parsedLyrics = [];
@@ -27757,15 +27767,28 @@ window.setLyricsStyle = function(style) {
                     } else {
                         lyricsMemoryCache.delete(cacheKey);
                     }
+                } else if (cached.isRateLimited) {
+                    if (Date.now() - (cached.cachedAt || 0) < 15000) {
+                        renderLyrics(currentNoLyricsMessage);
+                        return;
+                    } else {
+                        lyricsMemoryCache.delete(cacheKey);
+                    }
                 } else if (cached.provider === 'none') {
-                    // Negativer Cache: nur für 20 Sekunden merken, damit bei kurzzeitigem 429-Limit danach automatisch erneut gesucht wird
-                    if (Date.now() - (cached.cachedAt || 0) < 20000) {
+                    // Negativer Cache: für 30 Sekunden merken, damit bei fehlendem Song nicht endlos gespammt wird
+                    if (Date.now() - (cached.cachedAt || 0) < 30000) {
                         renderLyrics(currentNoLyricsMessage);
                         return;
                     } else {
                         lyricsMemoryCache.delete(cacheKey);
                     }
                 }
+            }
+
+            if (!force && Date.now() < lrclibRateLimitedUntil) {
+                console.warn('LRCLIB: Rate-Limit aktiv. Cooldown wird eingehalten.');
+                renderLyrics(currentNoLyricsMessage);
+                return;
             }
 
             const fetchId = ++currentFetchId;
@@ -27813,10 +27836,11 @@ window.setLyricsStyle = function(style) {
                         const searchSec = searchDurMs > 0 ? searchDurMs / 1000 : 0;
                         
                         const normStr = (s) => (s || '').toLowerCase()
-                            .replace(/\s*-\s*(?:remaster(?:ed)?(?:\s*\d{4})?|live(?:\s*at[^)]*)?|radio\s*edit|single\s*version|original\s*mix|deluxe(?:\s*edition)?|bonus\s*track|anniversary(?:\s*edition)?|mono|stereo|album\s*version|acoustic(?:\s*version)?).*$/i, '')
+                            .replace(/\s*-\s*(?:remaster(?:ed)?(?:\s*\d{4})?|live(?:\s*at[^)]*)?|radio\s*edit|single\s*version|original\s*mix|extended(?:\s*mix)?|club(?:\s*mix)?|deluxe(?:\s*edition)?|bonus\s*track|anniversary(?:\s*edition)?|mono|stereo|album\s*version|acoustic(?:\s*version)?|eurovision(?:\s*\d{4})?|from\s+.*).*$/i, '')
                             .replace(/\s*\(.*?\)/g, '')
                             .replace(/\s*\[.*?\]/g, '')
-                            .replace(/[^\w\s]/gi, '')
+                            .replace(/[^\w\s]/gi, ' ')
+                            .replace(/\s+/g, ' ')
                             .trim();
 
                         const cleanTargetT = normStr(cleanT || title);
@@ -27852,7 +27876,7 @@ window.setLyricsStyle = function(style) {
                                 if (a1First && c1First && a1First === c1First) {
                                     score += 25;
                                 } else {
-                                    // Alle beteiligten Künstler prüfen (z.B. bei Alan Walker, Emelie Hollow, K-391)
+                                    // Alle beteiligten Künstler prüfen (z.B. bei Duos, Features)
                                     const allArtists = (artist || '').toLowerCase().split(/\s*,\s*|\s*&\s*|\s+feat\.?\s+|\s+ft\.?\s+/);
                                     const matchAny = allArtists.some(a => a.trim() && (cArtist.includes(a.trim()) || a.trim().includes(cArtist)));
                                     if (matchAny) {
@@ -27863,7 +27887,7 @@ window.setLyricsStyle = function(style) {
                                 }
                             }
 
-                            // Dauer-Nähe (Bonus für ähnliche Länge, aber kein K.O.-Kriterium)
+                            // Dauer-Nähe (Bonus für ähnliche Länge)
                             if (searchSec > 0 && c.duration > 0) {
                                 const diff = Math.abs(c.duration - searchSec);
                                 score -= Math.min(diff, 40);
@@ -27903,28 +27927,21 @@ window.setLyricsStyle = function(style) {
                         'Lrclib-Client': 'AboutQA/1.0 (https://about-qa.pages.dev)'
                     };
 
-                    const fetchLrclib = async (url, timeoutMs = 5000) => {
+                    const fetchLrclib = async (url, timeoutMs = 6000) => {
                         try {
                             const now = Date.now();
                             if (now < lrclibRateLimitedUntil) {
-                                const waitMs = Math.min(lrclibRateLimitedUntil - now, 3000);
-                                await new Promise(r => setTimeout(r, waitMs));
-                                if (fetchId !== currentFetchId) return null;
+                                wasRateLimited = true;
+                                return null;
                             }
-                            let res = await fetch(url, { headers: lrclibHeaders, signal: AbortSignal.timeout(timeoutMs) });
+                            const res = await fetch(url, { headers: lrclibHeaders, signal: AbortSignal.timeout(timeoutMs) });
                             if (res.status === 429) {
                                 wasRateLimited = true;
                                 const retryHeader = res.headers.get('retry-after');
-                                const retrySec = retryHeader ? parseInt(retryHeader, 10) : 2;
-                                const waitMs = Math.max((isNaN(retrySec) ? 2 : retrySec) * 1000, 2000);
+                                const retrySec = retryHeader ? parseInt(retryHeader, 10) : 10;
+                                const waitMs = Math.max((isNaN(retrySec) ? 10 : retrySec) * 1000, 10000);
                                 lrclibRateLimitedUntil = Date.now() + waitMs;
-                                await new Promise(r => setTimeout(r, waitMs));
-                                if (fetchId !== currentFetchId) return null;
-                                res = await fetch(url, { headers: lrclibHeaders, signal: AbortSignal.timeout(timeoutMs) });
-                                if (res.status === 429) {
-                                    wasRateLimited = true;
-                                    return null;
-                                }
+                                return null;
                             }
                             if (res.ok) {
                                 return await res.json();
@@ -27933,13 +27950,24 @@ window.setLyricsStyle = function(style) {
                         return null;
                     };
 
+                    // Sicherheitsabstand zu vorherigem Request einhalten (mind. 800ms)
+                    const timeSinceLast = Date.now() - lastLyricsFetchTime;
+                    if (timeSinceLast < 800) {
+                        await new Promise(r => setTimeout(r, 800 - timeSinceLast));
+                        if (fetchId !== currentFetchId) return;
+                    }
+                    lastLyricsFetchTime = Date.now();
+
                     let bestSynced = null;
                     let bestPlain = null;
 
-                    // 1. Primärer direkter GET-Aufruf mit bereinigtem Titel & Interpret (ohne Dauer-Einschränkung,
-                    // damit minimale Songdauer-Abweichungen zwischen Spotify und LRCLIB nicht fälschlich 404 auslösen)
+                    // 1. Primärer direkter GET-Aufruf mit bereinigtem Titel & Interpret
                     {
                         const getParams = new URLSearchParams({ track_name: cleanT || title, artist_name: cleanA || artist });
+                        const durSec = searchDurationMs > 0 ? Math.round(searchDurationMs / 1000) : 0;
+                        if (durSec > 0) {
+                            getParams.append('duration', durSec);
+                        }
                         const directData = await fetchLrclib(`https://lrclib.net/api/get?` + getParams);
                         if (fetchId !== currentFetchId) return;
                         if (directData) {
@@ -27951,26 +27979,12 @@ window.setLyricsStyle = function(style) {
                         }
                     }
 
-                    // 2. Direct GET mit primaryArtist (falls Features oder Duos in Spotify angegeben sind)
-                    if (!bestSynced && !wasRateLimited && primaryArtist && primaryArtist !== cleanA) {
-                        await new Promise(r => setTimeout(r, 200));
-                        if (fetchId !== currentFetchId) return;
-                        const getParamsPrimary = new URLSearchParams({ track_name: cleanT || title, artist_name: primaryArtist });
-                        const directPrimary = await fetchLrclib(`https://lrclib.net/api/get?` + getParamsPrimary);
-                        if (fetchId !== currentFetchId) return;
-                        if (directPrimary) {
-                            if (directPrimary.syncedLyrics && !isDummyLyrics(directPrimary.syncedLyrics)) {
-                                if (saveAndRender(directPrimary.syncedLyrics, directPrimary.plainLyrics, "LRCLIB")) return;
-                            } else if (!bestPlain && directPrimary.plainLyrics && !isDummyLyrics(directPrimary.plainLyrics)) {
-                                bestPlain = directPrimary;
-                            }
-                        }
-                    }
-
-                    // 3. LRCLIB Search API (Sucht flexibel nach allen Versionen mit Synced Lyrics)
+                    // 2. LRCLIB Search API (falls direkter GET 404 oder ohne Synced Lyrics)
                     if (!bestSynced && !wasRateLimited) {
-                        await new Promise(r => setTimeout(r, 250));
+                        await new Promise(r => setTimeout(r, 1000));
                         if (fetchId !== currentFetchId) return;
+                        lastLyricsFetchTime = Date.now();
+
                         const queryStr = `${cleanT || title} ${cleanA || artist}`.trim();
                         const searchData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(queryStr));
                         if (fetchId !== currentFetchId) return;
@@ -27991,52 +28005,30 @@ window.setLyricsStyle = function(style) {
                         if (saveAndRender(bestSynced.syncedLyrics, bestSynced.plainLyrics, "LRCLIB")) return;
                     }
 
-                    // 4. Sekundäre Suche mit ungekürztem Titel & Interpret (für Features & Deluxe-Versionen)
-                    if (!bestSynced && !wasRateLimited && (cleanT !== title || cleanA !== artist)) {
-                        await new Promise(r => setTimeout(r, 250));
-                        if (fetchId !== currentFetchId) return;
-                        const rawQuery = `${title} ${artist}`.trim();
-                        const rawData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(rawQuery));
-                        if (fetchId !== currentFetchId) return;
-                        if (Array.isArray(rawData) && rawData.length > 0) {
-                            const bestRaw = pickBestMatch(rawData, searchDurationMs);
-                            if (bestRaw) {
-                                if (bestRaw.syncedLyrics && !isDummyLyrics(bestRaw.syncedLyrics)) {
-                                    bestSynced = bestRaw;
-                                } else if (!bestPlain && bestRaw.plainLyrics && !isDummyLyrics(bestRaw.plainLyrics)) {
-                                    bestPlain = bestRaw;
-                                }
-                            }
-                        }
-                    }
-
-                    if (bestSynced) {
-                        if (saveAndRender(bestSynced.syncedLyrics, bestSynced.plainLyrics, "LRCLIB")) return;
-                    }
-
-                    // 5. Nur wenn nach allen Suchschritten absolut KEINE synchronisierten Lyrics auffindbar sind:
+                    // 3. Fallback auf gefundene Plain-Lyrics
                     if (bestPlain && bestPlain.plainLyrics && !isDummyLyrics(bestPlain.plainLyrics)) {
                         if (saveAndRender(null, bestPlain.plainLyrics, "LRCLIB")) return;
                     }
 
                     if (fetchId !== currentFetchId) return;
 
-                    // 6. WICHTIG: Wenn ein Rate Limit aufgetreten ist -> NICHT als 'none' cachen!
-                    // Stattdessen vollautomatischen Wiederholungsversuch nach 2.5 Sekunden im Hintergrund ausführen
+                    // 4. Rate-Limit Handling: im Cache merken und kontrollierten Wiederholungsversuch planen
                     if (wasRateLimited) {
-                        console.warn('LRCLIB: Rate-Limit aktiv. Automatischer Re-Fetch wird in 2.5s ausgeführt.');
+                        console.warn('LRCLIB: Rate-Limit aktiv. Cooldown für 15s aktiviert.');
+                        lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, isRateLimited: true, provider: 'none', cachedAt: Date.now() });
+                        renderLyrics(currentNoLyricsMessage);
                         if (trackIsPlaying && fetchId === currentFetchId) {
                             if (lrclibAutoRetryTimeout) clearTimeout(lrclibAutoRetryTimeout);
                             lrclibAutoRetryTimeout = setTimeout(() => {
                                 if (trackIsPlaying && currentTrackTitle === title && (!parsedLyrics || parsedLyrics.length === 0)) {
                                     fetchExternalLyrics(title, artist, searchDurationMs, true);
                                 }
-                            }, 2500);
+                            }, 15000);
                         }
                         return;
                     }
 
-                    // Alle Quellen ohne Treffer und kein Rate Limit -> im Cache als 'none' merken mit Zeitstempel (nur für 20s)
+                    // Keine Treffer -> im Cache merken (30s Cooldown)
                     currentLyricsProvider = "none";
                     lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, provider: "none", writer: "", cachedAt: Date.now() });
                     renderLyrics(currentNoLyricsMessage);
@@ -28510,8 +28502,13 @@ window.setLyricsStyle = function(style) {
                 }
 
                 // 2. Automatischer Lyrics-Fetch:
-                // Wenn im Cache vorhanden -> kein neuer Fetch nötig. Sonst bei neuem Track oder fehlenden Lyrics starten
-                const lyricsNeedFetch = !hasSyncedInCache && (isNewTrack || (isPlaying && (!parsedLyrics || parsedLyrics.length === 0) && inFlightLyricsKey !== currentTrackCacheKey));
+                // Nur wenn nicht im Cache vorhanden, nicht kürzlich fehlgeschlagen/rate-limited und kein laufender Request aktiv ist
+                const isAttemptedRecently = cachedLyricsEntry && (
+                    (cachedLyricsEntry.provider === 'none' && Date.now() - (cachedLyricsEntry.cachedAt || 0) < 30000) ||
+                    (cachedLyricsEntry.isRateLimited && Date.now() - (cachedLyricsEntry.cachedAt || 0) < 15000)
+                );
+
+                const lyricsNeedFetch = !hasSyncedInCache && !isAttemptedRecently && (isNewTrack || (isPlaying && (!parsedLyrics || parsedLyrics.length === 0) && inFlightLyricsKey !== currentTrackCacheKey));
                 if (isNewTrack) {
                     if (!hasSyncedInCache) {
                         // Songwechsel: Vorherige Songtexte sofort leeren und Ladezustand anzeigen (NUR wenn nicht im Cache vorhanden)
