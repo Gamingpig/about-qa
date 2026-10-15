@@ -18694,7 +18694,24 @@ let shareCardLoading;
                 for (const layer of [bg, cardBg]) if (layer) { layer.style.backgroundImage = 'none'; layer.style.opacity = '0'; }
             };
             if (idle) {
-                if (standbyArtJob || textChanged || isNewTrack) { cancelStandbyArtwork(); clearArt(); }
+                const idleKey = '__standby_idle__';
+                if (standbyArtJob?.key === idleKey) return;
+                cancelStandbyArtwork();
+                const revision = standbyArtRevision;
+                const job = standbyArtJob = { key: idleKey, image: null, loaded: false };
+                const current = () => standByActive && revision === standbyArtRevision && standbyArtJob === job;
+                const image = job.image = new Image();
+                image.onload = () => {
+                    if (!current()) return;
+                    job.loaded = true;
+                    drawCoverToCanvas(canvas, image);
+                    if (canvas) canvas.style.opacity = '1';
+                    for (const layer of [bg, cardBg]) if (layer) {
+                        layer.style.backgroundImage = 'url(' + JSON.stringify(fallbackImg) + ')';
+                        layer.style.opacity = '1';
+                    }
+                };
+                image.src = fallbackImg;
                 return;
             }
             const source = typeof artUrl === 'string' && artUrl ? artUrl : fallbackImg;
@@ -24327,7 +24344,8 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
         let pickerTimeout;
         window.toggleMusicPicker = function(show) {
             if (mainMusicCard && mPicker) {
-                if (mainMusicCard.classList.contains('offline')) {
+                const isNoTrack = mainMusicCard.classList.contains('offline') || !currentTrackTitle || (!trackIsPlaying && (!lastKnownMusicData || !lastKnownMusicData.track));
+                if (isNoTrack) {
                     if (show) {
                         haptic(10);
                         showToast('💤 Aktuell läuft keine Musik. Sobald ein Track spielt, kannst du hier deinen Player wählen! 🎵', 'info');
