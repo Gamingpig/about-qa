@@ -17382,6 +17382,19 @@ html.gp-android:not(.dark) #ui-controls {
                 const currEl = document.getElementById('settings-update-current-ver');
                 if (currEl) currEl.textContent = 'Installiert: v' + (currentVer || '24.222.0');
 
+                // Veraltete vorgemerkte Updates (Version <= installierte Version) sofort aus dem
+                // Speicher verwerfen, damit kein "Warten auf vX.X.X" mehr angezeigt wird.
+                if (pending && pending.version) {
+                    const currentVerClean = String(currentVer || '').replace(/^v/, '').trim();
+                    const pendingVerClean = String(pending.version || '').replace(/^v/, '').trim();
+                    if (pendingVerClean <= currentVerClean) {
+                        AppStorage.removeItem('gp_pending_update');
+                        AppStorage.removeItem('gp_update_snoozed');
+                        setSettingsUpdateBadge(false);
+                        pending = null;
+                    }
+                }
+
                 const statusPill = document.getElementById('settings-update-status-pill');
                 const availBox = document.getElementById('settings-update-available-box');
                 const newVerTitle = document.getElementById('settings-update-new-ver-title');
@@ -24344,7 +24357,7 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
         let pickerTimeout;
         window.toggleMusicPicker = function(show) {
             if (mainMusicCard && mPicker) {
-                const isNoTrack = mainMusicCard.classList.contains('offline') || !currentTrackTitle || (!trackIsPlaying && (!lastKnownMusicData || !lastKnownMusicData.track));
+                const isNoTrack = !trackIsPlaying || !currentTrackTitle || mainMusicCard.classList.contains('offline');
                 if (isNoTrack) {
                     if (show) {
                         haptic(10);
@@ -25967,7 +25980,7 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
 
         window.simulateMockUpdate = function() {
             const mockUpdate = {
-                version: '24.216.0-beta',
+                version: '24.222.7',
                 shortNotes: [
                     'Simuliertes Entwickler-Update für Stabilitäts- und UI-Tests',
                     'Authentischer System-Update-Ablauf verifiziert'
@@ -25981,7 +25994,7 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
             if (tileBadge) tileBadge.classList.remove('hidden');
             if (typeof setSettingsUpdateBadge === 'function') setSettingsUpdateBadge(true);
             if (typeof showToast === 'function') {
-                showToast('Mock-Update v24.216.0-beta simuliert! Siehe "System & Updates".', 'success');
+                showToast('Mock-Update v24.222.7 simuliert! Siehe "System & Updates".', 'success');
             }
             if (typeof haptic === 'function') haptic(30);
         };
@@ -26475,7 +26488,10 @@ window.setLyricsStyle = function(style) {
         window.toggleLyrics = function(show) {
             if (show && typeof triggerTutorialEvent === "function") triggerTutorialEvent("standby_or_music");
             if (!mainMusicCard) return;
-            if (show && mainMusicCard.classList.contains('offline')) {
+            if (show && (!trackIsPlaying || !currentTrackTitle || mainMusicCard.classList.contains('offline'))) {
+                if (typeof showToast === 'function') {
+                    showToast('🎵 Songtexte sind nur verfügbar, während ein Song abgespielt wird.', 'info');
+                }
                 return;
             }
             if (show) { pushOverlayHistory(); } else { popOverlayHistory(); }
@@ -28206,6 +28222,8 @@ window.setLyricsStyle = function(style) {
 
             // Intelligente Unterscheidung: Echter Songwechsel vs. Pause vs. Offline (Kopfhörer ausgesteckt/Spotify geschlossen)
             if (!hasTrack || !isPlaying) {
+                // Natürliches Song-Ende erkennen: Solange noch nach dem Folgetitel gesucht wird,
+                // den Hunting-Zustand halten, damit der Übergang nicht fälschlich als Offline erscheint.
                 const isNaturalEndTransition = trackIsPlaying && totalMs > 0 && currentMs >= totalMs - 2500;
                 if (isNaturalEndTransition && !isHuntingForNextTrack) {
                     isHuntingForNextTrack = true;
@@ -28220,6 +28238,17 @@ window.setLyricsStyle = function(style) {
                 stopProgressTracking();
                 updateWakeLockForPlaybackState();
 
+                if (offlineTimeout) {
+                    clearTimeout(offlineTimeout);
+                    offlineTimeout = null;
+                }
+
+                // 1. Offenes Lyrics-Dashboard sofort schließen
+                if (mainMusicCard && mainMusicCard.classList.contains('lyrics-open')) {
+                    toggleLyrics(false);
+                }
+
+                // 2. TTS-Vorlesen stoppen falls aktiv
                 if (ttsSyncedPlaybackActive || (typeof ttsQueueActive !== 'undefined' && ttsQueueActive)) {
                     ttsSyncedPlaybackActive = false;
                     if (typeof ttsQueueActive !== 'undefined') ttsQueueActive = false;
@@ -28228,52 +28257,31 @@ window.setLyricsStyle = function(style) {
                     if (btnSpeak && typeof ttsSetButtonState === 'function') ttsSetButtonState(btnSpeak, 'idle');
                 }
 
-                if (offlineTimeout) {
-                    clearTimeout(offlineTimeout);
-                    offlineTimeout = null;
-                }
-
-                // Fall 1: Kopfhörer abgezogen / Spotify beendet / Kein Track mehr
-                if (!hasTrack) {
-                    consecutiveEmptyPolls++;
-                    if (mainMusicCard) {
-                        mainMusicCard.classList.add('offline');
-                        mainMusicCard.classList.remove('playing', 'paused');
-                        if (mainMusicCard.classList.contains('lyrics-open')) toggleLyrics(false);
-                    }
-                    if (mTitle) mTitle.innerText = "Aktuell ist es ruhig...";
-                    if (mArtist) mArtist.innerText = "Genieße die Stille";
-                    if (mHeader) mHeader.innerText = t('status_offline');
-                    if (mDot) mDot.className = "h-1 w-1 xxs:h-1.5 xxs:w-1.5 xs:h-2 xs:w-2 rounded-full bg-blue-500";
-                    if (miniTitle) miniTitle.innerText = t('mini_dashboard_minimized');
-                    if (miniStatus) miniStatus.innerText = t('mini_click_to_open');
-                    if (miniIconBg) miniIconBg.className = 'w-8 h-8 xxs:w-10 xxs:h-10 sm:w-12 sm:h-12 shrink-0 rounded-lg xxs:rounded-xl flex items-center justify-center transition-colors bg-white/5 text-slate-400';
-                    const liquidBg = document.getElementById('liquid-blobs');
-                    if (liquidBg) liquidBg.style.setProperty('opacity', '0');
-                    hideIslandCompletely();
-                    if (standByActive) {
-                        syncStandByTrackInfo('', '', null, false, false, true, true);
-                        releaseStandbyWakeLock();
-                    }
-                    updateProgressUI();
-                    return;
-                }
-
-                // Fall 2: Song existiert, ist aber PAUSIERT (Nutzer hat pausiert oder Headset kurz getrennt)
+                // 3. Karte auf Offline / Ruhe-Zustand setzen (Mond-Platzhalter)
                 if (mainMusicCard) {
-                    mainMusicCard.classList.remove('playing', 'offline');
-                    mainMusicCard.classList.add('paused');
+                    mainMusicCard.classList.add('offline');
+                    mainMusicCard.classList.remove('playing', 'paused');
                 }
-                if (mHeader) mHeader.innerText = t('status_paused') || 'Pausiert';
-                if (mDot) mDot.className = "h-1 w-1 xxs:h-1.5 xxs:w-1.5 xs:h-2 xs:w-2 rounded-full bg-amber-500";
-                if (miniIconBg) miniIconBg.className = 'w-8 h-8 xxs:w-10 xxs:h-10 sm:w-12 sm:h-12 shrink-0 rounded-lg xxs:rounded-xl flex items-center justify-center transition-colors bg-amber-500/10 text-amber-500';
+                if (mTitle) mTitle.innerText = "Aktuell ist es ruhig...";
+                if (mArtist) mArtist.innerText = "Genieße die Stille";
+                if (mHeader) mHeader.innerText = t('status_offline') || "GAMINGPIG IS OFFLINE";
+                if (mDot) mDot.className = "h-1 w-1 xxs:h-1.5 xxs:w-1.5 xs:h-2 xs:w-2 rounded-full bg-blue-500";
+                if (miniTitle) miniTitle.innerText = t('mini_dashboard_minimized') || "Dashboard minimiert";
+                if (miniStatus) miniStatus.innerText = t('mini_click_to_open') || "Klicken zum Öffnen";
+                if (miniIconBg) miniIconBg.className = 'w-8 h-8 xxs:w-10 xxs:h-10 sm:w-12 sm:h-12 shrink-0 rounded-lg xxs:rounded-xl flex items-center justify-center transition-colors bg-white/5 text-slate-400';
+
+                // Cover, Glow & Ambient auf ruhigen Mond-Platzhalter zurücksetzen
+                if (mArtwork && mArtwork.getAttribute('src') !== fallbackImg) mArtwork.src = fallbackImg;
+                const moonBgUrl = 'url(' + JSON.stringify(fallbackImg) + ')';
+                if (mAmbient) mAmbient.style.backgroundImage = moonBgUrl;
+                if (coverGlowEnabled && mGlow) mGlow.style.backgroundImage = moonBgUrl;
+
                 const liquidBg = document.getElementById('liquid-blobs');
                 if (liquidBg) liquidBg.style.setProperty('opacity', '0');
+                if (typeof hideIslandCompletely === 'function') hideIslandCompletely();
                 if (standByActive) {
-                    const rawArtist = (data.track && data.track.artist) || "Unknown";
-                    const cleanArtist = rawArtist.replace(/\s*•\s*From Smart Shuffle/gi, '').trim();
-                    const trackTitle = (data.track && data.track.title) || "";
-                    syncStandByTrackInfo(trackTitle, cleanArtist, null, false, false, true, false);
+                    syncStandByTrackInfo('', '', null, false, false, true, true);
+                    releaseStandbyWakeLock();
                 }
                 updateProgressUI();
                 return;
@@ -28563,8 +28571,28 @@ window.setLyricsStyle = function(style) {
                 const cachedLyricsEntry = lyricsMemoryCache.get(currentTrackCacheKey);
                 const hasSyncedInCache = cachedLyricsEntry && cachedLyricsEntry.syncedLyrics && !isDummyLyrics(cachedLyricsEntry.syncedLyrics);
 
-                // 1. Wenn synchronisierte Lyrics im Cache liegen, aber noch nicht gerendert wurden -> sofort anzeigen!
-                if (hasSyncedInCache && (!parsedLyrics || parsedLyrics.length === 0)) {
+                // Songwechsel-Behandlung (strikte Reihenfolge):
+                // 1. Bei einem echten Songwechsel vorherige Songtexte IMMER restlos leeren und den neuen Text laden/rendern.
+                if (isNewTrack) {
+                    // Bei echtem Songwechsel vorherige Songtexte IMMER restlos leeren!
+                    parsedLyrics = [];
+                    currentLyricIndex = -1;
+                    currentLyricsProvider = "";
+                    currentLyricsWriter = "";
+
+                    if (hasSyncedInCache) {
+                        // Neuen Songtext direkt aus dem Cache oder der Bundled-DB laden und rendern
+                        currentLyricsProvider = cachedLyricsEntry.provider || "LRCLIB";
+                        currentLyricsWriter = cachedLyricsEntry.writer || "";
+                        parseLrc(cachedLyricsEntry.syncedLyrics);
+                        renderLyrics();
+                        syncLyricsUI(true);
+                    } else {
+                        // Noch nicht im Cache: Apple-Music Lade-Skeleton für den neuen Song anzeigen
+                        renderLyricsLoading(trackTitle, cleanArtist);
+                    }
+                } else if (hasSyncedInCache && (!parsedLyrics || parsedLyrics.length === 0)) {
+                    // Kein Songwechsel, aber synchronisierte Lyrics im Cache noch nicht gerendert -> sofort anzeigen!
                     currentLyricsProvider = cachedLyricsEntry.provider || "LRCLIB";
                     currentLyricsWriter = cachedLyricsEntry.writer || "";
                     parseLrc(cachedLyricsEntry.syncedLyrics);
@@ -28583,14 +28611,6 @@ window.setLyricsStyle = function(style) {
                 // Normale 5-Sekunden-Status-Polls dürfen NIEMALS denselben Song erneut abfragen.
                 const lyricsNeedFetch = isNewTrack && !hasSyncedInCache;
                 if (isNewTrack) {
-                    if (!hasSyncedInCache) {
-                        // Songwechsel: Vorherige Songtexte sofort leeren und Ladezustand anzeigen (NUR wenn nicht im Cache vorhanden)
-                        parsedLyrics = [];
-                        currentLyricIndex = -1;
-                        currentLyricsProvider = "";
-                        currentLyricsWriter = "";
-                        renderLyricsLoading(trackTitle, cleanArtist);
-                    }
                     addToRecentlyPlayed(trackTitle, rawArtist, finalArtUrl);
                     if (!isFirstLoad && isPlaying) {
                         triggerDynamicIsland(trackTitle, rawArtist, finalArtUrl);
