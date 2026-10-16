@@ -118,13 +118,30 @@
     @keyframes shimmer{0%{background-position:150% 0}100%{background-position:-150% 0}}
     @keyframes spin{to{transform:rotate(360deg)}}
 
-    /* ═══ [1] Pure Apple Music Minimal ════════════════════════ */
-    .bars{display:flex;align-items:center;gap:4px;height:16px}
-    .bars i{display:block;width:4px;border-radius:999px;background:rgba(96,165,250,.9);animation:barpulse 1.1s ease-in-out infinite}
-    .bars i:nth-child(1){height:12px}
-    .bars i:nth-child(2){height:16px;background:rgba(96,165,250,.65);animation-delay:.15s}
-    .bars i:nth-child(3){height:14px;animation-delay:.3s}
-    @keyframes barpulse{0%,100%{opacity:.4;transform:scaleY(.78)}50%{opacity:1;transform:scaleY(1)}}
+    /* ═══ [1] Pure Apple Music Minimal (perfektioniert) ═══════ */
+    /* Organische 3-Soundbars: unabhängige Höhen, asynchrone Taktung, feiner Glow-Hauch. */
+    .bars{display:flex;align-items:flex-end;gap:3px;height:18px}
+    .bars i{display:block;width:3px;border-radius:9999px;background:rgba(96,165,250,.92);
+        filter:drop-shadow(0 0 6px rgba(96,165,250,.55));transform-origin:bottom center;
+        animation:bar1 1.15s cubic-bezier(.45,.05,.55,.95) infinite}
+    .bars i:nth-child(1){height:16px}
+    .bars i:nth-child(2){height:18px;animation-name:bar2;animation-duration:.85s;animation-timing-function:cubic-bezier(.34,1.56,.64,1)}
+    .bars i:nth-child(3){height:14px;animation-name:bar3;animation-duration:1.35s;animation-timing-function:cubic-bezier(.4,0,.2,1)}
+    @keyframes bar1{0%,100%{transform:scaleY(.34);opacity:.5}50%{transform:scaleY(1);opacity:1}}
+    @keyframes bar2{0%,100%{transform:scaleY(.24);opacity:.55}50%{transform:scaleY(1);opacity:1}}
+    @keyframes bar3{0%,100%{transform:scaleY(.42);opacity:.5}50%{transform:scaleY(1);opacity:1}}
+
+    /* Kaskadierender Lese-Shimmer (nur Option 1): die Lichtwelle gleitet von oben nach unten. */
+    .opt-panel[data-opt="1"] .sk::after{
+        background:linear-gradient(105deg,transparent 25%,rgba(255,255,255,.14) 50%,transparent 75%);
+        background-size:200% 100%;background-repeat:no-repeat;
+        animation-duration:2.4s;animation-timing-function:cubic-bezier(.4,0,.2,1);
+    }
+    .opt-panel[data-opt="1"] .lp-skel .sk:nth-child(1)::after{animation-delay:0s}
+    .opt-panel[data-opt="1"] .lp-skel .sk:nth-child(2)::after{animation-delay:.18s}
+    .opt-panel[data-opt="1"] .lp-skel .sk:nth-child(3)::after{animation-delay:.36s}
+    .opt-panel[data-opt="1"] .lp-skel .sk:nth-child(4)::after{animation-delay:.54s}
+    .opt-panel[data-opt="1"] .lp-skel .sk:nth-child(5)::after{animation-delay:.72s}
 
     /* ═══ [2] Frosted Studio Glass ════════════════════════════ */
     .glass{
@@ -295,7 +312,7 @@
 
     <div id="info-badge">
         <div class="badge-main">Aktuell gewählt: <strong>Option 1</strong> · Pure Apple Music Minimal</div>
-        <div class="badge-desc" id="badge-desc">Schlicht &amp; edel: 3 schmale Sound-Bars, seidiger Glanz-Schimmer.</div>
+        <div class="badge-desc" id="badge-desc">Schlicht &amp; edel: lebendige 3-Soundbar-Equalizer mit Glow-Hauch und kaskadierendem Lese-Shimmer von oben nach unten.</div>
         <span class="hint" id="badge-hint">(Sag im Chat einfach: „Nimm Option 1“)</span>
     </div>
 
@@ -309,7 +326,7 @@
     </div>
 
     <nav class="tabs" id="tabs" aria-label="Animations-Auswahl">
-        <button type="button" class="tab active" data-opt="1" data-name="Pure Apple Music Minimal" data-desc="Schlicht &amp; edel: 3 schmale Sound-Bars, seidiger Glanz-Schimmer."><b>[1]</b> Pure Apple Music Minimal</button>
+        <button type="button" class="tab active" data-opt="1" data-name="Pure Apple Music Minimal" data-desc="Schlicht &amp; edel: lebendige 3-Soundbar-Equalizer mit Glow-Hauch und kaskadierendem Lese-Shimmer von oben nach unten."><b>[1]</b> Pure Apple Music Minimal</button>
         <button type="button" class="tab" data-opt="2" data-name="Frosted Studio Glass" data-desc="Transluzentes Milchglas mit sanftem Atem-Puls."><b>[2]</b> Frosted Studio Glass</button>
         <button type="button" class="tab" data-opt="3" data-name="Cyberpunk Neon Equalizer" data-desc="7-Balken Spectrum-Analyzer in Cyan→Pink→Purple mit kräftigem Bounce."><b>[3]</b> Cyberpunk Neon Equalizer</button>
         <button type="button" class="tab" data-opt="4" data-name="Holographic Spatial Vinyl" data-desc="Gekippte, rotierende Schallplatte mit schillernden Regenbogen-Reflexionen."><b>[4]</b> Holographic Spatial Vinyl</button>
