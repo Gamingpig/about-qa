@@ -19685,6 +19685,8 @@ let shareCardLoading;
                 "🎤 Enhanced-LRC zuerst: Wort- und silbengenaue Apple-Music-Songtexte (Tier 2) schlagen Zeilen-Sync IMMER – inklusive automatischem YRC→Enhanced-LRC-Konverter und eigenem „Wort-synchronisiert“-Badge",
                 "🔮 Klares ELRC-Badge & transparente Quellenangabe: Das Lyrics-Badge zeigt eindeutig „Enhanced LRC (Wort-Sync)“ / „ELRC“ (Fuchsia-Pill) gegenüber „Synced (LRC)“ / „LRC“ (blau) und „Text (Plain)“ – und der Footer nennt Format & Herkunft, z. B. „Provided by NetEase-WordSync · ELRC (Word-Sync)“",
                 "🔢 Kadenz-Korrektur für Ziffern: Zahlen wie „24/7“ oder „365“ werden phonetisch gewichtet (jede Ziffer zählt wie mehrere Buchstaben bzw. ~1.5 Silben) – Zahlenzeilen bleiben damit exakt im Takt statt durchzurasen",
+                "🛡️ Lyrics-Robustheit nach Reload: Der Songtext lädt jetzt sofort aus dem persistenten Cache, ein 503/502/504-Server-Stau von LRCLIB wird NICHT mehr fälschlich als „kein Text“ zwischengespeichert, und ein Klick auf die Lyrics startet garantiert eine frische Suche",
+                "📀 „247365“ von Marcus & Martinus ist jetzt fest in der Bundled-DB hinterlegt (0ms First-Paint, vollständig unabhängig von LRCLIB-Ausfällen)",
                 "🔍 Zweistufige Titelsuche + dauerhafter Songtext-Cache (AppStorage): Gespeicherte Lyrics erscheinen sofort in 0ms, Fallback-Suche nur mit dem Titel findet Songs mit abweichender Artist-Schreibweise",
                 "🎞️ Lyrics-Ladeanimation „Pure Apple Music Minimal“: lebendige 3-Soundbar-Equalizer mit asynchroner Taktung, Glow-Hauch und kaskadierendem Lese-Shimmer, der wie das Auge von oben nach unten durch die Zeilen gleitet",
                 "🎯 Instrumental-Pausen wie bei Apple Music: Dynamisches Taktmaß über die gesamte Pause – die 3 Beat-Punkte blühen mit eigener, organischer Easing-Kurve auf, verweilen länger groß und atmen weich ein/aus, ganz ohne tote Standbilder",
@@ -19699,6 +19701,8 @@ let shareCardLoading;
                 "🎤 Enhanced LRC first: word- and syllable-accurate Apple Music–style lyrics (tier 2) always beat line-sync – including an automatic YRC→Enhanced-LRC converter and a dedicated \"Enhanced Sync\" badge",
                 "🔮 Clear ELRC badge & transparent source info: the lyrics badge now distinctly shows \"Enhanced LRC (Word-Sync)\" / \"ELRC\" (fuchsia pill) versus \"Synced (LRC)\" / \"LRC\" (blue) and \"Text (Plain)\" – and the footer names format & origin, e.g. \"Provided by NetEase-WordSync · ELRC (Word-Sync)\"",
                 "🔢 Number cadence fix: figures like \"24/7\" or \"365\" are weighted phonetically (each digit counts as several letters / ~1.5 syllables), so numeric lines stay perfectly on beat instead of rushing through",
+                "🛡️ Lyrics robustness after reload: lyrics now load instantly from the persistent cache, an LRCLIB 503/502/504 server-overload is no longer cached as \"no lyrics\", and clicking the lyrics always kicks off a fresh search",
+                "📀 \"247365\" by Marcus & Martinus is now bundled (0 ms first paint, fully independent of LRCLIB outages)",
                 "🔍 Two-stage title search + persistent lyrics cache (AppStorage): Cached lyrics appear instantly in 0 ms, and a title-only fallback finds songs whose artist name is spelled differently",
                 "🎞️ Lyrics loading animation \"Pure Apple Music Minimal\": lively 3-bar equalizer with asynchronous timing, a soft glow and a cascading reading shimmer that glides top-to-bottom through the lines just like the eye reads",
                 "🎯 Apple Music–style instrumental breaks: dynamic beat timing across the whole pause – each of the 3 beat dots blooms with its own organic easing curve, lingers large and breathes softly in and out, with no dead frozen frames",
@@ -26954,18 +26958,33 @@ window.setLyricsStyle = function(style) {
                 if (trackIsPlaying && currentTrackTitle && (!parsedLyrics || parsedLyrics.length === 0)) {
                     const currentTrackCacheKey = (currentTrackTitle + '---' + (currentRawArtist || '')).toLowerCase().trim();
                     const cachedLyricsEntry = lyricsMemoryCache.get(currentTrackCacheKey);
+
                     if (cachedLyricsEntry && cachedLyricsEntry.syncedLyrics && !isDummyLyrics(cachedLyricsEntry.syncedLyrics)) {
+                        // 1) Bereits im Memory-Cache -> sofort rendern
                         currentLyricsProvider = cachedLyricsEntry.provider || "LRCLIB";
                         currentLyricsWriter = cachedLyricsEntry.writer || "";
                         parseLrc(cachedLyricsEntry.syncedLyrics);
                         renderLyrics();
                         syncLyricsUI(true);
-                    } else if (inFlightLyricsKey === currentTrackCacheKey && inFlightLyricsPromise) {
-                        // Ein Abruf läuft bereits für diesen Song - nicht abbrechen
-                    } else if (!cachedLyricsEntry || (cachedLyricsEntry.provider !== 'none' && !cachedLyricsEntry.isRateLimited)) {
-                        fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs, false);
                     } else {
-                        renderLyrics(currentNoLyricsMessage);
+                        // 2) Nach einem Reload ist der Memory-Cache leer -> persistenten Speicher (AppStorage) prüfen
+                        const persisted = readPersistedLyrics(currentTrackCacheKey);
+                        if (persisted && persisted.syncedLyrics && !isDummyLyrics(persisted.syncedLyrics)) {
+                            lyricsMemoryCache.set(currentTrackCacheKey, persisted);
+                            currentLyricsProvider = persisted.provider || "LRCLIB";
+                            currentLyricsWriter = persisted.writer || "";
+                            parseLrc(persisted.syncedLyrics);
+                            renderLyrics();
+                            syncLyricsUI(true);
+                        } else if (inFlightLyricsKey === currentTrackCacheKey && inFlightLyricsPromise) {
+                            // Ein Abruf läuft bereits für diesen Song – Lade-Skeleton stehen lassen, nicht abbrechen
+                            renderLyricsLoading(currentTrackTitle, currentRawArtist);
+                        } else {
+                            // 3) Nutzer-Klick = klare Lade-Absicht: Skeleton sofort zeigen und mit force=true suchen.
+                            //    Das überschreibt einen evtl. vorhandenen „none"/Busy-Negativ-Cache und sucht garantiert neu.
+                            renderLyricsLoading(currentTrackTitle, currentRawArtist);
+                            fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs, true);
+                        }
                     }
                 }
                 setTimeout(() => {
@@ -28393,6 +28412,62 @@ window.setLyricsStyle = function(style) {
 
         // ── MULTI-DATENBANK-ARCHITEKTUR & BUNDLED LYRICS ────────────────────────────
         // 1. Lokale Bundled-Datenbank für unzerstörbare Zuverlässigkeit (0ms Latenz, immun gegen 429 Rate-Limits)
+        // Marcus & Martinus – „247365": Enhanced-First-Paint, immun gegen LRCLIB 503/ServerOverload.
+        // Zeilen-Sync (Tier 1), damit die Netzwerk-Suche weiterhin auf Enhanced-LRC (Tier 2) aufwerten kann.
+        const LRC_247365_MARCUS_MARTINUS = `[00:00.16] La-la-la-la, boom-boom-bao
+[00:02.20] You're goin' round and round like
+[00:04.09] La-la-la-la, boom-boom-bao
+[00:06.46] If you wanna stay the night, you can stay here in my arms
+[00:10.38] Wanna hold you close and tight until the break of dawn
+[00:14.37] All the things that we could do if we stay true to me and you
+[00:18.12] Are we just for the night? Are we just for the night?
+[00:22.52] And I'm like, "Ooh, you know my mind is set on you
+[00:27.37] Ooh, and it ain't nothing but the truth
+[00:31.76] You, yeah, you been stuck inside my mind
+[00:34.84] So I know where to find you"
+[00:37.37] (24, 24, 24, 24)
+[00:39.12] 247365, you're goin' round and round like-
+[00:43.16] 24-7 on my mind, thank God I finally found ya
+[00:47.18] I need your love tonight to keep me satisfied
+[00:50.86] 247365 (you're goin' round and round like)
+[00:54.65] La-la-la-la, boom-boom-bao
+[00:56.83] You're goin' round and round like-
+[00:58.54] La-la-la-la, boom-boom-bao
+[01:00.90] Until I lose my ground now
+[01:02.78] I need your love tonight to keep me satisfied
+[01:06.25] 247365
+[01:08.80] Pull me closer to your lips, I don't ever wanna stop
+[01:12.54] You're the only one I miss, we can make it to the top
+[01:16.68] Pull my body next to yours, yeah, it's all I wanna do
+[01:20.51] 'Cause, all I want is you, yeah, all I want is you
+[01:25.26] And I'm like, "Ooh, baby, you're always on my mind
+[01:29.35] I always know where I can find you"
+[01:31.96] (24, 24, 24, 24)
+[01:33.82] 247365, you're goin' round and round like-
+[01:37.55] 24-7 on my mind, thank God I finally found ya
+[01:41.53] I need your love tonight to keep me satisfied
+[01:45.42] 247365 (you're goin' round and round like)
+[01:49.44] La-la-la-la, boom-boom-bao
+[01:51.50] You're goin' round and round like-
+[01:53.20] La-la-la-la, boom-boom-bao
+[01:55.41] Until I lose my ground now
+[01:57.32] I need your love tonight to keep me satisfied
+[02:00.83] 247365, I need your love tonight
+[02:04.89] La-la-la-la, boom-boom-bao
+[02:07.28] Na-na-na-na, na-na-na
+[02:09.07] La-la-la-la, boom-boom-bao (24, 24, 24, 24)
+[02:12.95] La-la-la-la, boom-boom-bao (24, 24, 24, 24)
+[02:16.50] La-la-la-la, boom-boom-bao
+[02:18.53] 247365
+[02:22.44] Need your love tonight
+[02:25.26] I need your-
+[02:26.89] I-I need your love
+[02:34.08] 247365
+[02:36.11] 247365, you're goin' round and round like
+[02:39.89] 24-7 on my mind thank God I finally found ya
+[02:44.16] I need your love tonight to keep me satisfied
+[02:47.84] 247365
+[02:49.69] 247365`;
         const BUNDLED_LYRICS_DB = {
             "unforgettable---marcus & martinus": `[00:09.94] She comes alive at night
 [00:14.02] When her prey's asleep
@@ -28428,7 +28503,9 @@ window.setLyricsStyle = function(style) {
 [02:33.87] She's unforgettable
 [02:36.05] Her love is dangerous and I know it
 [02:38.76] It's venomous 'cause I feel it inside of me
-[02:42.06] She's unforgettable`
+[02:42.06] She's unforgettable`,
+            "247365---marcus & martinus": LRC_247365_MARCUS_MARTINUS,
+            "24/7 365---marcus & martinus": LRC_247365_MARCUS_MARTINUS
         };
 
         let lrclibRateLimitedUntil = 0;
@@ -28530,6 +28607,15 @@ window.setLyricsStyle = function(style) {
                     } else {
                         lyricsMemoryCache.delete(cacheKey);
                     }
+                } else if (cached.isServerBusy) {
+                    // Temporärer Server-Stau (503/502/504/Netzwerk): nur KURZ (5s) bremsen,
+                    // damit ein erneuter Klick sofort wieder suchen darf – niemals als „kein Text" blockieren.
+                    if (Date.now() - (cached.cachedAt || 0) < 5000) {
+                        renderLyrics(currentNoLyricsMessage);
+                        return;
+                    } else {
+                        lyricsMemoryCache.delete(cacheKey);
+                    }
                 } else if (cached.provider === 'none') {
                     // Negativer Cache: für 30 Sekunden merken, damit bei fehlendem Song nicht endlos gespammt wird
                     if (Date.now() - (cached.cachedAt || 0) < 30000) {
@@ -28560,6 +28646,7 @@ window.setLyricsStyle = function(style) {
 
             const doFetch = async () => {
                 let wasRateLimited = false;
+                let wasServerBusy = false; // 503/502/504/Netzwerkfehler: NICHT als „kein Text" negativ cachen
                 try {
                     renderLyricsLoading(title, artist);
                     parsedLyrics = [];
@@ -28681,8 +28768,9 @@ window.setLyricsStyle = function(style) {
                                 if (fetchId !== currentFetchId) return null;
                             }
 
-                            let busyRetries = 0;      // 502/503/504 (ServerOverloaded) – bis zu 2x
+                            let busyRetries = 0;      // 502/503/504 (ServerOverloaded) + Netzwerkfehler – bis zu 3x
                             let rateLimitRetries = 0; // 429 – genau 1x
+                            const BUSY_BACKOFF_MS = [1200, 2000, 2500]; // gestaffeltes Pacing gegen Server-Stau
 
                             while (true) {
                                 let res = null;
@@ -28701,11 +28789,14 @@ window.setLyricsStyle = function(style) {
                                 const status = res ? res.status : 0;
 
                                 // 503 ServerOverloaded (häufig bei LRCLIB!) / 502 / 504: NICHT abbrechen.
-                                // Nach 1000ms automatisch erneut versuchen, während der Skeleton weiterläuft.
+                                // Mit gestaffeltem Pacing (1200/2000/2500ms) bis zu 3x erneut versuchen,
+                                // während der Lade-Skeleton ungestört weiterläuft.
                                 if (status === 503 || status === 502 || status === 504) {
-                                    if (busyRetries < 2) {
+                                    wasServerBusy = true;
+                                    if (busyRetries < 3) {
+                                        const delay = BUSY_BACKOFF_MS[Math.min(busyRetries, BUSY_BACKOFF_MS.length - 1)];
                                         busyRetries++;
-                                        await sleep(1000);
+                                        await sleep(delay);
                                         if (fetchId !== currentFetchId) return null;
                                         continue;
                                     }
@@ -28729,12 +28820,17 @@ window.setLyricsStyle = function(style) {
                                     return null;
                                 }
 
-                                // Netzwerkfehler/Timeout (Status 0): einmaliger leichter Retry
-                                if (status === 0 && busyRetries < 2) {
-                                    busyRetries++;
-                                    await sleep(1000);
-                                    if (fetchId !== currentFetchId) return null;
-                                    continue;
+                                // Netzwerkfehler/Timeout (Status 0): wie Server-Stau behandeln (gestaffeltes Pacing).
+                                if (status === 0) {
+                                    wasServerBusy = true;
+                                    if (busyRetries < 3) {
+                                        const delay = BUSY_BACKOFF_MS[Math.min(busyRetries, BUSY_BACKOFF_MS.length - 1)];
+                                        busyRetries++;
+                                        await sleep(delay);
+                                        if (fetchId !== currentFetchId) return null;
+                                        continue;
+                                    }
+                                    return null;
                                 }
 
                                 // Alle übrigen Fehler (z.B. 404) -> kein Retry.
@@ -28910,15 +29006,26 @@ window.setLyricsStyle = function(style) {
 
                     if (fetchId !== currentFetchId) return;
 
-                    // 4. Rate-Limit Handling: im Cache merken (60s Cooldown) und LRCLIB in Ruhe lassen
+                    // 4. Rate-Limit Handling: im Cache merken (kurzer Cooldown) und LRCLIB in Ruhe lassen
                     if (wasRateLimited) {
-                        console.warn('LRCLIB: Rate-Limit aktiv. Cooldown für 60s gesetzt.');
+                        console.warn('LRCLIB: Rate-Limit aktiv. Cooldown gesetzt.');
                         lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, isRateLimited: true, provider: 'none', cachedAt: Date.now() });
                         renderLyrics(currentNoLyricsMessage);
                         return;
                     }
 
-                    // Keine Treffer -> im Cache merken (60s Ruhe, kein Dauer-Polling)
+                    // 5. Server-Stau (503/502/504/Netzwerkfehler): NIEMALS als „kein Text" für 30s blockieren!
+                    // Ein 503 ist ein temporärer Server-Stau, KEIN 404 („Song existiert nicht").
+                    // Nur eine kurze Busy-Flag (5s) setzen, damit der nächste Klick sofort wieder suchen darf.
+                    if (wasServerBusy) {
+                        console.warn('Provider: Server-Stau – Song NICHT negativ gecacht (sofortiger Retry möglich).');
+                        currentLyricsProvider = "none";
+                        lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, provider: 'none', isServerBusy: true, writer: '', cachedAt: Date.now() });
+                        renderLyrics(currentNoLyricsMessage);
+                        return;
+                    }
+
+                    // Keine Treffer -> im Cache merken (30s Ruhe, kein Dauer-Polling)
                     currentLyricsProvider = "none";
                     lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, provider: "none", writer: "", cachedAt: Date.now() });
                     renderLyrics(currentNoLyricsMessage);
@@ -29371,7 +29478,16 @@ window.setLyricsStyle = function(style) {
                 if (isPlaying) showIslandPersistent(trackTitle, rawArtist, finalArtUrl);
 
                 const currentTrackCacheKey = (trackTitle + '---' + (cleanArtist || '')).toLowerCase().trim();
-                const cachedLyricsEntry = lyricsMemoryCache.get(currentTrackCacheKey);
+                // Persistenter Cache SOFORT beim ersten Start prüfen: nach einem Reload ist der
+                // Memory-Cache leer – der Songtext soll dann trotzdem in 0ms aus AppStorage erscheinen.
+                let cachedLyricsEntry = lyricsMemoryCache.get(currentTrackCacheKey);
+                if (!cachedLyricsEntry) {
+                    const persisted = readPersistedLyrics(currentTrackCacheKey);
+                    if (persisted) {
+                        lyricsMemoryCache.set(currentTrackCacheKey, persisted);
+                        cachedLyricsEntry = persisted;
+                    }
+                }
                 const hasSyncedInCache = cachedLyricsEntry && cachedLyricsEntry.syncedLyrics && !isDummyLyrics(cachedLyricsEntry.syncedLyrics);
 
                 // Songwechsel-Behandlung (strikte Reihenfolge):
