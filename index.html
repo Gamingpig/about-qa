@@ -12220,6 +12220,11 @@ html.gp-android:not(.dark) #ui-controls {
                 label_synced: 'Synced',
                 label_wordsync: 'Wort-synchronisiert',
                 label_unsynced: 'Nicht synchronisiert',
+                label_elrc_desktop: '🔮 Enhanced LRC (Wort-Sync)',
+                label_elrc_mobile: '🔮 ELRC',
+                label_lrc_desktop: '⚡ Synced (LRC)',
+                label_lrc_mobile: '⚡ LRC',
+                label_plain: 'Text (Plain)',
                 aria_lyrics_settings: 'Lyrics Einstellungen',
                 label_animation_style: 'Animation Style',
                 label_overkill_shaders: 'Overkill Shaders',
@@ -12455,6 +12460,11 @@ html.gp-android:not(.dark) #ui-controls {
                 lyrics_synced_label: 'Synced',
                 label_synced: 'Synced',
                 label_wordsync: 'Enhanced Sync',
+                label_elrc_desktop: '🔮 Enhanced LRC (Word-Sync)',
+                label_elrc_mobile: '🔮 ELRC',
+                label_lrc_desktop: '⚡ Synced (LRC)',
+                label_lrc_mobile: '⚡ LRC',
+                label_plain: 'Text (Plain)',
                 aria_lyrics_settings: 'Lyrics settings',
                 label_animation_style: 'Animation Style',
                 label_overkill_shaders: 'Overkill Shaders',
@@ -19673,6 +19683,8 @@ let shareCardLoading;
                 "⚡ Non-Aborting Pipeline: Kein Abbrechen laufender Hintergrundabfragen beim Öffnen der Lyrics-Ansicht oder im Standby",
                 "🌐 Echte Multi-Datenbank-Suche: LRCLIB + NetEase-Wort-Sync werden parallel abgefragt (inkl. Mirror-/CORS-Proxy-Fallback) und objektiv nach Tier, Titel, Künstler, Dauer & Provider-Reputation bewertet",
                 "🎤 Enhanced-LRC zuerst: Wort- und silbengenaue Apple-Music-Songtexte (Tier 2) schlagen Zeilen-Sync IMMER – inklusive automatischem YRC→Enhanced-LRC-Konverter und eigenem „Wort-synchronisiert“-Badge",
+                "🔮 Klares ELRC-Badge & transparente Quellenangabe: Das Lyrics-Badge zeigt eindeutig „Enhanced LRC (Wort-Sync)“ / „ELRC“ (Fuchsia-Pill) gegenüber „Synced (LRC)“ / „LRC“ (blau) und „Text (Plain)“ – und der Footer nennt Format & Herkunft, z. B. „Provided by NetEase-WordSync · ELRC (Word-Sync)“",
+                "🔢 Kadenz-Korrektur für Ziffern: Zahlen wie „24/7“ oder „365“ werden phonetisch gewichtet (jede Ziffer zählt wie mehrere Buchstaben bzw. ~1.5 Silben) – Zahlenzeilen bleiben damit exakt im Takt statt durchzurasen",
                 "🔍 Zweistufige Titelsuche + dauerhafter Songtext-Cache (AppStorage): Gespeicherte Lyrics erscheinen sofort in 0ms, Fallback-Suche nur mit dem Titel findet Songs mit abweichender Artist-Schreibweise",
                 "🎞️ Lyrics-Ladeanimation „Pure Apple Music Minimal“: lebendige 3-Soundbar-Equalizer mit asynchroner Taktung, Glow-Hauch und kaskadierendem Lese-Shimmer, der wie das Auge von oben nach unten durch die Zeilen gleitet",
                 "🎯 Instrumental-Pausen wie bei Apple Music: Dynamisches Taktmaß über die gesamte Pause – die 3 Beat-Punkte blühen mit eigener, organischer Easing-Kurve auf, verweilen länger groß und atmen weich ein/aus, ganz ohne tote Standbilder",
@@ -19685,6 +19697,8 @@ let shareCardLoading;
                 "⚡ Non-Aborting Pipeline: Opening the lyrics overlay or switching to standby mode never aborts active background fetches",
                 "🌐 True multi-database search: LRCLIB + NetEase word-sync are queried in parallel (incl. mirror/CORS-proxy fallback) and objectively ranked by tier, title, artist, duration & provider reputation",
                 "🎤 Enhanced LRC first: word- and syllable-accurate Apple Music–style lyrics (tier 2) always beat line-sync – including an automatic YRC→Enhanced-LRC converter and a dedicated \"Enhanced Sync\" badge",
+                "🔮 Clear ELRC badge & transparent source info: the lyrics badge now distinctly shows \"Enhanced LRC (Word-Sync)\" / \"ELRC\" (fuchsia pill) versus \"Synced (LRC)\" / \"LRC\" (blue) and \"Text (Plain)\" – and the footer names format & origin, e.g. \"Provided by NetEase-WordSync · ELRC (Word-Sync)\"",
+                "🔢 Number cadence fix: figures like \"24/7\" or \"365\" are weighted phonetically (each digit counts as several letters / ~1.5 syllables), so numeric lines stay perfectly on beat instead of rushing through",
                 "🔍 Two-stage title search + persistent lyrics cache (AppStorage): Cached lyrics appear instantly in 0 ms, and a title-only fallback finds songs whose artist name is spelled differently",
                 "🎞️ Lyrics loading animation \"Pure Apple Music Minimal\": lively 3-bar equalizer with asynchronous timing, a soft glow and a cascading reading shimmer that glides top-to-bottom through the lines just like the eye reads",
                 "🎯 Apple Music–style instrumental breaks: dynamic beat timing across the whole pause – each of the 3 beat dots blooms with its own organic easing curve, lingers large and breathes softly in and out, with no dead frozen frames",
@@ -27152,6 +27166,9 @@ window.setLyricsStyle = function(style) {
 
         function getCharWeight(char, isLastWord, isVowel) {
             const c = char.toLowerCase();
+            // Ziffern phonetisch gewichten: "24/7" oder "365" werden gesungen ("twenty-four seven", "three-six-five")
+            // und zählen daher wie mehrere Buchstaben, damit die Kadenz nicht zu schnell durchrast.
+            if (/\d/.test(c)) return 3.5;
             if (/[aeiouyæøåœäöüáéíóúàèìòùâêîôûãẽĩõũ]/.test(c)) {
                 return isLastWord ? 6.0 : 2.5; 
             }
@@ -27164,14 +27181,25 @@ window.setLyricsStyle = function(style) {
         let currentLineAnimCache = null;
 
         function countSyllables(word) {
-            const w = (word || '').toLowerCase().replace(/[^a-zäöüßáéíóúàèìòùâêîôûãẽĩõũ]/g, '');
-            if (!w) return 1;
-            if (w.length <= 3) return 1;
-            const matches = w.match(/[aeiouyäöüáéíóúàèìòùâêîôûãẽĩõũ]+/g);
-            let count = matches ? matches.length : 1;
-            if (w.endsWith('e') && !w.endsWith('le') && !w.endsWith('ee') && count > 1) {
-                count--;
+            const raw = word || '';
+            const digitCount = (raw.match(/\d/g) || []).length;
+            const w = raw.toLowerCase().replace(/[^a-zäöüßáéíóúàèìòùâêîôûãẽĩõũ]/g, '');
+            let count = 0;
+            if (w) {
+                if (w.length <= 3) {
+                    count = 1;
+                } else {
+                    const matches = w.match(/[aeiouyäöüáéíóúàèìòùâêîôûãẽĩõũ]+/g);
+                    count = matches ? matches.length : 1;
+                    if (w.endsWith('e') && !w.endsWith('le') && !w.endsWith('ee') && count > 1) {
+                        count--;
+                    }
+                }
+                count = Math.max(1, count);
             }
+            // Ziffern phonetisch gewichten: jede Ziffer zählt wie ~1.5 Silben,
+            // damit z.B. "24/7 365" (twenty-four seven, three-six-five) real getaktet wird.
+            if (digitCount > 0) count += digitCount * 1.5;
             return Math.max(1, count);
         }
 
@@ -27518,8 +27546,8 @@ window.setLyricsStyle = function(style) {
                 if (isUnsyncedData) {
                     if (syncBadge) {
                         syncBadge.style.display = 'inline-flex';
-                        syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-amber-500/20 text-amber-400 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
-                        syncBadge.innerHTML = `<span class="hidden sm:inline">Lyrics:&nbsp;</span><span>${t('label_unsynced')}</span>`;
+                        syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-slate-500/20 text-slate-300 border border-slate-500/30 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
+                        syncBadge.innerHTML = `<span>${t('label_plain') || 'Text (Plain)'}</span>`;
                     }
                     lyricsContent.innerHTML = `
                     <div class="w-full flex-1 pt-[10vh] pb-[50vh] px-1 sm:px-4 md:px-8">
@@ -27546,16 +27574,16 @@ window.setLyricsStyle = function(style) {
                 return;
             }
             
+            // Enhanced LRC (Wort-/Silben-Sync) sofort auf einen Blick erkennbar machen.
+            const hasWordSync = parsedLyrics.some(l => l && l.hasWordTimings);
             if (syncBadge) {
                 syncBadge.style.display = 'inline-flex';
-                // Enhanced LRC (Wort-/Silben-Sync) bekommt ein eigenes, herausstechenes Badge.
-                const hasWordSync = parsedLyrics.some(l => l && l.hasWordTimings);
                 if (hasWordSync) {
-                    syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-fuchsia-500/20 text-fuchsia-300 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
-                    syncBadge.innerHTML = `<span class="hidden sm:inline">Lyrics:&nbsp;</span><span>${t('label_wordsync') || 'Enhanced Sync'}</span>`;
+                    syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
+                    syncBadge.innerHTML = `<span class="hidden sm:inline">${t('label_elrc_desktop') || '🔮 Enhanced LRC (Wort-Sync)'}</span><span class="sm:hidden">${t('label_elrc_mobile') || '🔮 ELRC'}</span>`;
                 } else {
-                    syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-blue-500/20 text-blue-400 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
-                    syncBadge.innerHTML = `<span class="hidden sm:inline">Lyrics:&nbsp;</span><span>${t('label_synced') || t('lyrics_synced_label') || 'Synced'}</span>`;
+                    syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
+                    syncBadge.innerHTML = `<span class="hidden sm:inline">${t('label_lrc_desktop') || '⚡ Synced (LRC)'}</span><span class="sm:hidden">${t('label_lrc_mobile') || '⚡ LRC'}</span>`;
                 }
             }
             
@@ -27563,11 +27591,12 @@ window.setLyricsStyle = function(style) {
             const needsCharSplit = !isLowEnd && CHAR_LEVEL_STYLES.has(currentLyricsStyle);
             lyricsDomHasCharSplit = needsCharSplit;
 
+            const lyricsFormatLabel = hasWordSync ? 'ELRC (Word-Sync)' : 'LRC (Line-Sync)';
             let footerHtml = '';
             if (currentLyricsProvider || currentLyricsWriter) {
                 footerHtml = `<div class="mt-20 border-t border-white/10 pt-6 pb-20 w-full text-left">
                     ${currentLyricsWriter ? `<p class="text-[10px] xxs:text-xs sm:text-sm text-white/40 font-medium mb-1.5">Written by: ${escapeHTML(currentLyricsWriter)}</p>` : ''}
-                    ${currentLyricsProvider ? `<p class="text-[8px] xxs:text-[10px] sm:text-xs text-blue-400/80 font-black uppercase tracking-widest">Provided by ${escapeHTML(currentLyricsProvider)}</p>` : ''}
+                    ${currentLyricsProvider ? `<p class="text-[8px] xxs:text-[10px] sm:text-xs text-blue-400/80 font-black uppercase tracking-widest">Provided by ${escapeHTML(currentLyricsProvider)} · ${lyricsFormatLabel}</p>` : ''}
                 </div>`;
             }
             
