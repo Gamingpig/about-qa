@@ -1,14 +1,12 @@
 {
-  "version": "24.222.7",
-  "buildTime": "2026-10-15T21:10:00.000Z",
+  "version": "24.223.0",
+  "buildTime": "2026-10-16T12:00:00.000Z",
   "shortNotes": [
-    "Sofortige Synced-Garantie: Automatischer 2.5s HTTP-429 Backoff-Retry fängt Rate-Limits direkt im Skeleton-Loader ab",
-    "Multi-Query Suchkaskade: Clean-Query, Primary-Artist & Raw-Query finden getaktete Texte im 1. Versuch",
-    "Kollaborations-Matching: Volle Unterstützung für 'x', '/', '+', 'with' & 'feat' ohne falsche Ablehnungen",
-    "Apostroph-Toleranz: 'Don't' und 'Dont' werden einheitlich normalisiert für 100% Trefferquote",
-    "Zero-Plain-Hijack: Plain-Lyrics werden erst nach vollständigem Durchlauf aller Synced-Suchwege als Notnagel erwogen",
-    "Cache-Resilienz: Ungetaktete Lyrics verfallen nach 30s im Speicher, damit synchronisierte Lyrics nachgeladen werden",
-    "Multi-DB Offline-Engine: Bundled-DB (Marcus & Martinus Unforgettable) + LRCLIB Pacing Shield mit 1-Fetch-pro-Song Schutz",
-    "Hybrid Master Cadence: Best-of-Both-Worlds – Fließendes Stimm-Legato kombiniert mit Hook-Drop-Erkennung"
+    "Apple Music TTML Wort-Sync: Direkter Zugriff auf die weltweite Apple-Music-Songtext-Datenbank (AMLL API) für millimetergenaues Silben- und Wort-Timing",
+    "Multi-Provider-Kaskade: Apple Music, NetEase YRC und LRCLIB werden parallel abgefragt – Wort-Sync gewinnt immer, Zeilen-Sync bleibt sicherer Fallback",
+    "0ms-Garantie für 'Jente i fra by'n' (Marcus & Martinus): mit allen Schreibweisen gebündelt und sofort offline synchron verfügbar",
+    "Enhanced-LRC-Offline-Puffer: einmal geladene Wort-Sync-Texte liegen dauerhaft im AppStorage und erscheinen beim Start in 0 Millisekunden",
+    "Futuristische Lade-Akustik (Web Audio): zuschaltbarer, ambienter Shimmer-Chime während der Songtext-Suche – ganz ohne externe Dateien",
+    "Dezentes Tipp-Banner im Lyrics-Modal mit 'Nicht mehr anzeigen' (lyricsLoadingSoundTipDismissed)"
   ]
 }

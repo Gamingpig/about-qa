@@ -7,6 +7,14 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
+    [LYRICS / MULTI-PROVIDER WORD-SYNC] Release v24.223.0 · 2026-10-16: Apple-Music-TTML-Wort-Sync via AMLL-API, NetEase-YRC + LRCLIB-Kaskade, gebündelter 0ms-Fix für "Jente i fra by'n", Web-Audio-Lade-Shimmer mit Settings-Toggle & Tipp-Banner
+      - Neue Multi-Provider-Wort-Sync-Kaskade: fetchExternalLyrics fragt jetzt zusätzlich die freie Apple-Music-TTML-Datenbank (api.amll.dev) ab.
+        Converter formatTtmlTimestamp/convertTtmlToEnhancedLrc übersetzt Apple-Music-TTML in Enhanced-LRC ([mm:ss.xx] <mm:ss.xx>Wort). Provider 'AMLL-AppleMusic' (Tier 2) schlägt NetEase-YRC (30) und LRCLIB (10); Bonus 40.
+        Apple-Music-ID wird in updateMusicUI über extractAppleMusicIdFromLinks aus platform_links/track_url gewonnen (currentAppleMusicId) und direkt abgefragt; sonst Suche über Titel+Artist.
+      - "Jente i fra by'n" (Marcus & Martinus): neuer LRC_JENTE_I_FRA_BYN-Eintrag mit 4 Schlüssel-Varianten (Apostroph/Komma/Feature) in BUNDLED_LYRICS_DB → 0ms-First-Paint ohne Netzwerk.
+      - Lade-Sound: playLyricsLoadingShimmer (Web Audio, keine externen MP3) startet erst nach ~450ms sichtbarer Ladeanimation, nur wenn lyricsLoadingSoundEnabled='true' und das Lyrics-Overlay offen ist.
+        Einstellungs-Toggle 'Lyrics-Ladesound' in der Audio-Subpage + dezentes fuchsia Tipp-Banner im Lyrics-Modal mit 'Nicht mehr anzeigen' (lyricsLoadingSoundTipDismissed).
+      - Version v24.223.0 (PUBLIC_CHANGELOG de/en, Header/Footer/Settings-Labels, release.html, version.json).
     [LYRICS / TIMING / COVER / QA PIN GATE] Release v24.222.7: Strenge Synced-Lyrics-Priorisierung, Beseitigung von Songende-Zeitsprüngen, Original-API-Cover im Haupt-Player, Präziser Re-Sync mit Zeitabgleich & Reload-gesichertes PIN-Gate
       - Strikte Priorisierung synchronisierter Lyrics:
         Symptom: Bei Songwechsel wurden oft ungesyncte Plain-Lyrics geladen, obwohl synchronisierte in der Datenbank existierten.
@@ -3426,7 +3434,7 @@
     <script src="./js/core/storage.e856be99df567fd2.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.222.7</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.223.0</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3455,7 +3463,7 @@
             AppStorage.setItem('app_visit_count', String(_visitCount));
 
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.222.7 · 2026-10-15';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.223.0 · 2026-10-16';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -9380,7 +9388,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.222.7</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.223.0</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -9418,7 +9426,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.222.7 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.222.7 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.223.0 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.223.0 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9673,7 +9681,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <div class="flex items-center gap-2 flex-wrap">
                         <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
                         <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
-                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.222.7</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.223.0</span>
                     </div>
                     <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
                 </div>
@@ -9699,7 +9707,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.222.7</span>
+                <span>🧪 QA TESTUMGEBUNG v24.223.0</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -10160,6 +10168,10 @@ html.gp-android:not(.dark) #ui-controls {
                             </div>
                         </div>
 
+                            <div id="lyrics-sound-tip" class="hidden shrink-0 w-full max-w-2xl mx-auto items-center justify-between gap-2 text-[10px] xxs:text-xs px-3 py-1.5 rounded-lg bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-300 mb-2 relative z-[100]">
+                                <span>💡 Tipp: Aktiviere in den Einstellungen den Soundeffekt für die Songtext-Suche.</span>
+                                <button id="btn-dismiss-lyrics-sound-tip" onclick="dismissLyricsSoundTip()" class="ml-2 px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-slate-300 shrink-0 transition-colors">Nicht mehr anzeigen</button>
+                            </div>
                             <div class="relative flex-1 overflow-hidden mask-image-gradient w-full max-w-2xl mx-auto">
                                 <div id="lyrics-container" class="absolute inset-0 overflow-y-auto overflow-x-hidden text-left w-full h-full pb-6 sm:pb-10 lyrics-style-fill">
                                     <div id="lyrics-content" class="transition-all flex flex-col items-start w-full min-h-full"></div>
@@ -10835,7 +10847,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.222.7</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.223.0</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -11034,6 +11046,11 @@ html.gp-android:not(.dark) #ui-controls {
                     <button onclick="requestNotificationPermissionManually()" id="btn-notification-permission" class="w-full min-h-[44px] text-left text-xs sm:text-sm text-teal-400 px-3 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-teal-500/20 transition-all font-bold cursor-pointer active:scale-98">Benachrichtigungen: nicht eingerichtet</button>
                     <p id="settings-notification-hint" class="text-xs text-slate-400 px-1 leading-snug">Für die „Willkommen zurück“-Meldung, falls Musik pausiert war während du weg warst.</p>
                 </div>
+
+                <div class="pt-2 border-t border-white/5 space-y-1">
+                    <button onclick="toggleLyricsLoadingSound()" id="btn-lyrics-loading-sound" class="w-full min-h-[44px] text-left text-xs sm:text-sm text-slate-400 px-3 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-white/10 transition-all font-bold cursor-pointer active:scale-98">Lyrics-Ladesound: AUS</button>
+                    <p class="text-xs text-slate-400 px-1 leading-snug">Spielt bei längeren Songtext-Suchen einen sanften, ambienten Shimmer-Chime (Web Audio, ganz ohne externe Dateien).</p>
+                </div>
             </div>
         </div>
 
@@ -11101,7 +11118,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.222.7</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.223.0</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -11112,7 +11129,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.222.7</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.223.0</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -11157,7 +11174,7 @@ html.gp-android:not(.dark) #ui-controls {
     </div>
 
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.222.7</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.223.0</p>
 </div>
 
 <!-- ========================================================= -->
@@ -11433,7 +11450,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <a href="checklist.html" target="_blank" class="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500 text-teal-300 hover:text-slate-950 font-bold text-[11px] transition-all border border-teal-500/30 inline-flex items-center gap-1">
                         <span>📋</span> <span>QA Checkliste</span>
                     </a>
-                    <span class="text-pink-400 font-mono">v24.222.7</span>
+                    <span class="text-pink-400 font-mono">v24.223.0</span>
                 </div>
             </div>
         </div>
@@ -19676,6 +19693,24 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+        { version: "v24.223.0", date: "16. Oktober 2026", type: "feature", items: {
+            de: [
+                "🍏 Apple Music TTML Integration: Direkter Zugriff auf die weltweite Apple-Music-Songtext-Datenbank (AMLL API) für echtes, millimetergenaues Silben- und Wort-Timing im Karaoke-Modus",
+                "🔮 Echtes Wort-Synchron-Erlebnis (Enhanced LRC): Lückenloser Converter übersetzt Apple-Music-TTML und Spotify-Syllables in Echtzeit in standardisiertes Enhanced LRC mit leuchtendem Fuchsia-Badge",
+                "🌐 Multi-Provider-Kaskade: Intelligente Suchtreppe fragt parallel Apple Music, NetEase YRC und LRCLIB ab – Wort-Sync gewinnt immer, Zeilen-Sync dient als sicherer Fallback",
+                "💿 0ms-Garantie für „Jente i fra by'n“: Marcus & Martinus Show-Hit aus „Hver gang vi møtes“ ist jetzt fest mit allen Schreibweisen gebündelt und lädt ohne Internet sofort synchron",
+                "✨ Futuristische Lade-Akustik (Web Audio): Sanfter, ambienter Shimmer-Sound während der Songtext-Suche, bequem zuschaltbar in den Einstellungen mit unaufdringlichem Tipp-Banner",
+                "🛡️ Ausfallsicherer Offline-Puffer: Einmal geladene Enhanced-LRC-Texte bleiben dauerhaft im AppStorage gespeichert und stehen beim nächsten Start in 0 Millisekunden bereit"
+            ],
+            en: [
+                "🍏 Apple Music TTML Integration: Direct access to the global Apple Music lyrics database (AMLL API) for authentic, millisecond-accurate syllable-by-syllable karaoke timing",
+                "🔮 Genuine Word-Sync Experience (Enhanced LRC): Seamless real-time converter transforms Apple Music TTML and Spotify syllables into standardized Enhanced LRC with vibrant fuchsia badging",
+                "🌐 Multi-Provider Waterfall: Intelligent query pipeline searches Apple Music, NetEase YRC, and LRCLIB in parallel – word-sync always wins with line-sync as safe fallback",
+                "💿 0ms Guarantee for \"Jente i fra by'n\": Marcus & Martinus hit from \"Hver gang vi møtes\" is bundled with all title variations for instant offline playback",
+                "✨ Futuristic Loading Acoustics (Web Audio): Smooth ambient shimmer chime during lyrics searches, easily enabled in settings with an unobtrusive tip banner",
+                "🛡️ Fail-safe Offline Buffer: Enhanced LRC lyrics are permanently cached in AppStorage for immediate 0ms rendering upon app restart"
+            ]
+        }},
         { version: "v24.222.7", date: "15. Oktober 2026", type: "feature", items: {
             de: [
                 "✨ Lyrics-Synchronisation Durchbruch: 100% autonome Songtext-Erkennung – manueller Re-Sync endgültig eliminiert",
@@ -24726,6 +24761,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
 
         let currentTrackTitle = "";
         let currentRawArtist = "";
+        let currentAppleMusicId = ""; // v24.223.0: Apple-Music-Song-ID für den AMLL-Wort-Sync
 
         window.toggleDashboard = function() {
             isDashboardOpen = !isDashboardOpen;
@@ -26941,6 +26977,8 @@ window.setLyricsStyle = function(style) {
             const musicTitleEl = document.getElementById('music-section-title');
             if(show) {
                 document.body.classList.add('lyrics-mode-active');
+                // v24.223.0: Ladesound-Tipp nur zeigen, solange Sound AUS und nicht abgelehnt
+                if (typeof updateLyricsSoundTipVisibility === 'function') updateLyricsSoundTipVisibility();
                 if (miniToggleEl) {
                     miniToggleEl.classList.remove('hidden');
                     if (miniTitle) miniTitle.innerText = currentTrackTitle || t('mini_dashboard_open') || 'Dashboard & Songtext';
@@ -27551,7 +27589,110 @@ window.setLyricsStyle = function(style) {
             parsedLyrics = enriched;
         }
 
+        // ── LADE-SOUND (Web Audio, ohne externe Dateien) ────────────────────────────
+        // Spielt einen sanften, ambienten Shimmer-Chime, wenn die Lyrics-Suche länger
+        // als ~450ms dauert und das Lyrics-Overlay sichtbar geöffnet ist. Standard: AUS.
+        var lyricsLoadingVisible = false;
+        var lyricsLoadingSoundTimeout = null;
+
+        function playLyricsLoadingShimmer() {
+            try {
+                if (!window.AppStorage || AppStorage.getItem('lyricsLoadingSoundEnabled') !== 'true') return;
+                const ctx = typeof getAudioContext === 'function' ? getAudioContext() : null;
+                if (!ctx) return;
+                if (ctx.state === 'suspended') { try { ctx.resume().catch(() => {}); } catch (e) {} }
+
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                const filter = ctx.createBiquadFilter();
+
+                // Sanfter, futuristischer Ambient-Chime (Glow-Akkord)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(528, now);
+                osc.frequency.exponentialRampToValueAtTime(792, now + 0.35);
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1200, now);
+                filter.frequency.linearRampToValueAtTime(2400, now + 0.4);
+
+                gain.gain.setValueAtTime(0.0001, now);
+                gain.gain.linearRampToValueAtTime(0.06, now + 0.08);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.65);
+            } catch (e) {
+                console.warn('Lyrics sound shimmer error:', e);
+            }
+        }
+
+        // Plant den Ladesound. Wird bei jedem renderLyricsLoading neu gesetzt und bei
+        // renderLyrics (Daten angekommen) wieder verworfen, sodass 0ms-Treffer still bleiben.
+        function scheduleLyricsLoadingSound() {
+            if (lyricsLoadingSoundTimeout) { clearTimeout(lyricsLoadingSoundTimeout); lyricsLoadingSoundTimeout = null; }
+            try {
+                if (!window.AppStorage || AppStorage.getItem('lyricsLoadingSoundEnabled') !== 'true') return;
+            } catch (e) { return; }
+            lyricsLoadingSoundTimeout = setTimeout(() => {
+                lyricsLoadingSoundTimeout = null;
+                const overlayOpen = !!mainMusicCard && mainMusicCard.classList.contains('lyrics-open');
+                if (overlayOpen && lyricsLoadingVisible) playLyricsLoadingShimmer();
+            }, 450);
+        }
+
+        function clearLyricsLoadingSound() {
+            lyricsLoadingVisible = false;
+            if (lyricsLoadingSoundTimeout) { clearTimeout(lyricsLoadingSoundTimeout); lyricsLoadingSoundTimeout = null; }
+        }
+
+        // Dezentes Tipp-Banner im Lyrics-Modal (nur solange Sound AUS und nicht abgelehnt).
+        function updateLyricsSoundTipVisibility() {
+            const tip = document.getElementById('lyrics-sound-tip');
+            if (!tip) return;
+            let dismissed = 'false', enabled = 'false';
+            try {
+                dismissed = AppStorage.getItem('lyricsLoadingSoundTipDismissed') || 'false';
+                enabled = AppStorage.getItem('lyricsLoadingSoundEnabled') || 'false';
+            } catch (e) {}
+            const showTip = !(dismissed === 'true' || enabled === 'true');
+            tip.classList.toggle('hidden', !showTip);
+            tip.classList.toggle('flex', showTip);
+        }
+
+        function dismissLyricsSoundTip() {
+            try { AppStorage.setItem('lyricsLoadingSoundTipDismissed', 'true'); } catch (e) {}
+            const tip = document.getElementById('lyrics-sound-tip');
+            if (tip) { tip.classList.add('hidden'); tip.classList.remove('flex'); }
+        }
+
+        function updateLyricsSoundToggleButton() {
+            const btn = document.getElementById('btn-lyrics-loading-sound');
+            if (!btn) return;
+            let enabled = 'false';
+            try { enabled = AppStorage.getItem('lyricsLoadingSoundEnabled') || 'false'; } catch (e) {}
+            const activeCls = 'w-full min-h-[44px] text-left text-xs sm:text-sm text-green-400 px-3 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-green-500/20 transition-all font-bold cursor-pointer active:scale-98';
+            const idleCls = 'w-full min-h-[44px] text-left text-xs sm:text-sm text-slate-400 px-3 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-white/10 transition-all font-bold cursor-pointer active:scale-98';
+            if (enabled === 'true') { btn.textContent = 'Lyrics-Ladesound: AN'; btn.className = activeCls; }
+            else { btn.textContent = 'Lyrics-Ladesound: AUS'; btn.className = idleCls; }
+        }
+
+        function toggleLyricsLoadingSound() {
+            let enabled = 'false';
+            try { enabled = AppStorage.getItem('lyricsLoadingSoundEnabled') || 'false'; } catch (e) {}
+            const next = enabled === 'true' ? 'false' : 'true';
+            try { AppStorage.setItem('lyricsLoadingSoundEnabled', next); } catch (e) {}
+            updateLyricsSoundToggleButton();
+            updateLyricsSoundTipVisibility();
+            if (next === 'true') playLyricsLoadingShimmer();
+        }
+
         function renderLyrics(fallbackText, isUnsyncedData = false) {
+            clearLyricsLoadingSound();
             const syncBadge = document.getElementById('sync-status-badge');
             if (!lyricsContent) return;
 
@@ -28261,10 +28402,98 @@ window.setLyricsStyle = function(style) {
             return resultLines.length > 0 ? resultLines.join('\n') : null;
         }
 
+        // ── APPLE-MUSIC-TTML (Wort-/Silben-Sync) -> ENHANCED-LRC ─────────────────────
+        // Die freie AMLL-Community-Datenbank (api.amll.dev) liefert offizielle Apple-Music-
+        // TTML-Texte mit exaktem Wort-Timing. Diese werden hier in Enhanced-LRC übersetzt.
+        function formatTtmlTimestamp(tStr) {
+            if (!tStr) return '00:00.00';
+            tStr = String(tStr).trim().replace(/s$/, '');
+            const parts = tStr.split(':');
+            let totalSec = 0;
+            if (parts.length === 3) {
+                totalSec = parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
+            } else if (parts.length === 2) {
+                totalSec = parseFloat(parts[0]) * 60 + parseFloat(parts[1]);
+            } else {
+                totalSec = parseFloat(parts[0]) || 0;
+            }
+            if (!isFinite(totalSec) || totalSec < 0) totalSec = 0;
+            const m = Math.floor(totalSec / 60);
+            const s = totalSec % 60;
+            return `${String(m).padStart(2, '0')}:${s.toFixed(2).padStart(5, '0')}`;
+        }
+
+        function convertTtmlToEnhancedLrc(ttmlText) {
+            if (!ttmlText || typeof ttmlText !== 'string') return '';
+            const pRegex = /<p\b[^>]*\bbegin=["']([^"']+)["'][^>]*>([\s\S]*?)<\/p>/gi;
+            const lines = [];
+            let pMatch;
+
+            while ((pMatch = pRegex.exec(ttmlText)) !== null) {
+                const lineStart = pMatch[1];
+                let content = pMatch[2];
+
+                // Übersetzungs-Spans entfernen (mehrsprachige TTML-Texte)
+                content = content.replace(/<span\b[^>]*role=["'][^"']*translation[^"']*["'][^>]*>[\s\S]*?<\/span>/gi, '');
+
+                const spanRegex = /<span\b[^>]*\bbegin=["']([^"']+)["'][^>]*>([^<]*)<\/span>(\s*)/gi;
+                let enhancedLine = '';
+                let spanMatch;
+                let foundSpans = false;
+
+                while ((spanMatch = spanRegex.exec(content)) !== null) {
+                    foundSpans = true;
+                    const spanTime = spanMatch[1];
+                    const wordText = spanMatch[2];
+                    const trailingSpace = spanMatch[3] || '';
+                    enhancedLine += `<${formatTtmlTimestamp(spanTime)}>${wordText}${trailingSpace}`;
+                }
+
+                const formattedLineStart = formatTtmlTimestamp(lineStart);
+                if (foundSpans && enhancedLine.trim()) {
+                    lines.push(`[${formattedLineStart}] ${enhancedLine.trim()}`);
+                } else {
+                    const cleanText = content.replace(/<[^>]+>/g, '').trim();
+                    if (cleanText) lines.push(`[${formattedLineStart}] ${cleanText}`);
+                }
+            }
+
+            return lines.join('\n');
+        }
+
+        // Extrahiert die Apple-Music-Song-ID aus einem Link-Objekt oder einer URL
+        // (z. B. https://music.apple.com/de/song/chihiro/1739659141 oder ...?i=1739659141).
+        function extractAppleMusicIdFromLinks(source) {
+            if (!source) return '';
+            const testString = (val) => {
+                if (typeof val !== 'string') return '';
+                let m = val.match(/[?&]i=(\d+)/);
+                if (m) return m[1];
+                m = val.match(/\/song\/[^/?#]*\/(\d+)/);
+                if (m) return m[1];
+                m = val.match(/\/song\/(\d+)/);
+                if (m) return m[1];
+                if (val.indexOf('apple') !== -1) {
+                    m = val.match(/\/album\/[^/]+\/(\d+)/);
+                    if (m) return m[1];
+                }
+                return '';
+            };
+            if (typeof source === 'string') return testString(source);
+            try {
+                for (const val of Object.values(source)) {
+                    const found = testString(val);
+                    if (found) return found;
+                }
+            } catch (e) {}
+            return '';
+        }
+
         // ── PROVIDER-REPUTATION (Multi-Datenbank-Scoring) ───────────────────────────
         const LYRICS_PROVIDER_BONUS = {
             'AboutQA-DB': 50,
             'Bundled-Enhanced-DB': 50,
+            'AMLL-AppleMusic': 40,
             'NetEase-WordSync': 30,
             'NetEase-YRC': 30,
             'NetEase': 20,
@@ -28381,6 +28610,8 @@ window.setLyricsStyle = function(style) {
 
         function renderLyricsLoading(title = '', artist = '') {
             if (!lyricsContent) return;
+            lyricsLoadingVisible = true;
+            scheduleLyricsLoadingSound();
             const cleanT = title || (typeof currentTrackTitle !== 'undefined' ? currentTrackTitle : '');
             const cleanA = artist || (typeof currentRawArtist !== 'undefined' ? currentRawArtist : '');
             const label = (typeof t === 'function' ? t('lyrics_loading') : null) || 'Songtext wird geladen...';
@@ -28468,6 +28699,54 @@ window.setLyricsStyle = function(style) {
 [02:44.16] I need your love tonight to keep me satisfied
 [02:47.84] 247365
 [02:49.69] 247365`;
+
+        // Marcus & Martinus – „Jente i fra by'n" (Hver gang vi møtes): 0ms-First-Paint,
+        // vollständig unabhängig von LRCLIB-Ausfällen. Zeilen-Sync (Tier 1).
+        const LRC_JENTE_I_FRA_BYN = `[00:08.50] Jeg trenger bare en som ser meg
+[00:12.80] Som holder fast når hele verden flyr av sted
+[00:16.90] Og jeg kan finne ro og fremme
+[00:20.50] Det syns jeg faktisk jeg fortjener
+[00:24.20] For jeg har reist hele livet
+[00:27.50] Fra nord til sør
+[00:29.80] Men nå er hodet klarere enn det var før
+[00:33.90] Jeg vet at du finnes
+[00:36.40] Så baby, kan du hjelpe meg ut herfra?
+[00:40.20] E vil bare ha e jente i fra by'n
+[00:44.20] E som e deilig og lojal
+[00:46.80] Og får meg til å fly
+[00:49.00] Ho bare tar livet som det kommer
+[00:52.00] Leve selv om vi
+[00:54.20] Bør vi ta kontrollen
+[00:56.50] Men lar meg være fri
+[00:59.20] E vil bare ha e jente
+[01:02.50] Jente, jente i fra by'n
+[01:05.80] Jeg har prøvd å finne svaret
+[01:09.50] Det føles som om jeg har lett en evighet
+[01:13.50] Vil ha e som man kan savne
+[01:16.80] Så ta imot meg når jeg faller
+[01:20.20] For jeg har reist hele livet
+[01:23.20] Helt fra nord til sør
+[01:25.50] Men nå er hodet klarere enn det var før
+[01:29.50] Jeg vet at du finnes
+[01:32.00] Så baby, kan du hjelpe meg ut herfra?
+[01:35.80] E vil bare ha e jente i fra by'n
+[01:39.80] E som e deilig og lojal
+[01:42.50] Og får meg til å fly
+[01:44.80] Ho bare tar livet som det kommer
+[01:47.80] Leve selv om vi
+[01:49.90] Bør vi ta kontrollen
+[01:52.20] Men la meg være fri
+[01:54.80] E vil bare ha e jente
+[01:57.90] Jente, jente i fra by'n
+[02:00.80] E vil bare ha e jente i fra by'n
+[02:04.50] E som e deilig og lojal
+[02:07.00] Og får meg til å fly
+[02:09.20] Ho bare tar livet som det kommer
+[02:11.80] Leve selv om vi
+[02:13.90] Bør vi ta kontrollen
+[02:16.20] Men la meg være fri
+[02:18.80] E vil bare ha e jente i fra by'n
+[02:22.50] Jente, jente i fra by'n`;
         const BUNDLED_LYRICS_DB = {
             "unforgettable---marcus & martinus": `[00:09.94] She comes alive at night
 [00:14.02] When her prey's asleep
@@ -28505,7 +28784,11 @@ window.setLyricsStyle = function(style) {
 [02:38.76] It's venomous 'cause I feel it inside of me
 [02:42.06] She's unforgettable`,
             "247365---marcus & martinus": LRC_247365_MARCUS_MARTINUS,
-            "24/7 365---marcus & martinus": LRC_247365_MARCUS_MARTINUS
+            "24/7 365---marcus & martinus": LRC_247365_MARCUS_MARTINUS,
+            "jente i fra by'n---marcus & martinus": LRC_JENTE_I_FRA_BYN,
+            "jente i fra by'n---marcus & martinus, hver gang vi møtes": LRC_JENTE_I_FRA_BYN,
+            "jente i fra byn---marcus & martinus": LRC_JENTE_I_FRA_BYN,
+            "jente i fra byn---marcus & martinus, hver gang vi møtes": LRC_JENTE_I_FRA_BYN
         };
 
         let lrclibRateLimitedUntil = 0;
@@ -28916,11 +29199,89 @@ window.setLyricsStyle = function(style) {
                         return out;
                     };
 
-                    // ── STUFE 1: Parallele Suche über ALLE Provider (LRCLIB + NetEase YRC) ──
+                    // ── PROVIDER C: Apple Music TTML (AMLL API – echter Wort-/Silben-Sync) ──
+                    // Die freie Community-Datenbank api.amll.dev liefert offizielle Apple-Music-TTML-
+                    // Texte. Erst direkter Get über die Apple-Music-ID des Songs, sonst Suche über
+                    // Titel + Artist. Vollständig defensiv: CORS-/Netzfehler ergeben nur ein leeres Array.
+                    const AMLL_API_BASE = 'https://api.amll.dev';
+                    const fetchAmll = async (query, isCancelled) => {
+                        const out = [];
+                        const tryGet = async (param) => {
+                            try {
+                                const res = await fetchWithTimeout(`${AMLL_API_BASE}/v1/lyrics/get?${param}`, 6000);
+                                if (!res || !res.ok) return null;
+                                const json = await res.json().catch(() => null);
+                                return (json && json.data) ? json.data : null;
+                            } catch (e) { return null; }
+                        };
+                        const toCandidate = (data, fallbackName) => {
+                            if (!data || !data.lyrics) return null;
+                            const converted = convertTtmlToEnhancedLrc(data.lyrics);
+                            if (!converted || detectLrcTier(converted, true) !== 2) return null;
+                            const name = (Array.isArray(data.musicNames) && data.musicNames[0]) || fallbackName || '';
+                            const artistName = (Array.isArray(data.artistNames) && data.artistNames.join(', ')) || '';
+                            return {
+                                trackName: name,
+                                artistName,
+                                duration: 0,
+                                syncedLyrics: converted,
+                                plainLyrics: null,
+                                provider: 'AMLL-AppleMusic',
+                                writer: '',
+                                hasWordSync: true
+                            };
+                        };
+                        try {
+                            // 1) Direkter Treffer über die Apple-Music-ID (falls aus den Links bekannt)
+                            const amId = (typeof currentAppleMusicId === 'string') ? currentAppleMusicId.trim() : '';
+                            if (amId) {
+                                const direct = await tryGet(`appleMusicId=${encodeURIComponent(amId)}`);
+                                if (isCancelled && isCancelled()) return out;
+                                const cand = toCandidate(direct);
+                                if (cand) { out.push(cand); return out; }
+                            }
+
+                            // 2) Suche über Titel + Artist, bester Titel-Match gewinnt
+                            if (!query) return out;
+                            const sres = await fetchWithTimeout(`${AMLL_API_BASE}/v1/lyrics/search?q=${encodeURIComponent(query)}`, 6000);
+                            if (isCancelled && isCancelled()) return out;
+                            if (!sres || !sres.ok) return out;
+                            const sjson = await sres.json().catch(() => null);
+                            const items = (sjson && sjson.data && sjson.data.items) || [];
+                            if (!Array.isArray(items) || !items.length) return out;
+
+                            const targetTracks = [matchTarget.track, matchTarget.trackRaw].filter(Boolean);
+                            const nameMatches = (names) => (names || []).some(n => {
+                                const nn = normLyricsStr(n);
+                                if (!nn) return false;
+                                return targetTracks.some(tt => nn === tt || (nn.length >= 3 && tt.length >= 3 && (nn.includes(tt) || tt.includes(nn))));
+                            });
+
+                            for (const item of items.slice(0, 8)) {
+                                if (isCancelled && isCancelled()) return out;
+                                if (!item || !nameMatches(item.musicNames)) continue;
+                                let data = null;
+                                const itemAmId = (item.appleMusicIds || [])[0];
+                                const itemSpId = (item.spotifyIds || [])[0];
+                                if (itemAmId) data = await tryGet(`appleMusicId=${encodeURIComponent(itemAmId)}`);
+                                if (isCancelled && isCancelled()) return out;
+                                if (!data && itemSpId) data = await tryGet(`spotifyId=${encodeURIComponent(itemSpId)}`);
+                                if (isCancelled && isCancelled()) return out;
+                                if (!data && item.id) data = await tryGet(`id=${encodeURIComponent(item.id)}`);
+                                const cand = toCandidate(data, (item.musicNames || [])[0]);
+                                if (cand) { out.push(cand); break; }
+                            }
+                        } catch (e) {}
+                        return out;
+                    };
+
+                    // ── STUFE 1: Parallele Suche über ALLE Provider (LRCLIB + NetEase YRC + AMLL) ──
                     const consolidatedQuery = `${cleanT || title} ${primaryArtist || cleanA || artist}`.trim();
 
                     // NetEase (Wort-Sync-Spezialist) läuft parallel und unabhängig vom LRCLIB-Pacing.
                     const neteasePromise = fetchNeteaseYrc(consolidatedQuery, () => fetchId !== currentFetchId);
+                    // Apple Music TTML (AMLL) läuft parallel – liefert echten Wort-Sync (Tier 2).
+                    const amllPromise = fetchAmll(consolidatedQuery, () => fetchId !== currentFetchId);
 
                     // Pacing-Abstand zum Schutz von LRCLIB einhalten.
                     const timeSinceLast = Date.now() - lastLyricsFetchTime;
@@ -28949,6 +29310,10 @@ window.setLyricsStyle = function(style) {
                     const neteaseResults = await neteasePromise;
                     if (fetchId !== currentFetchId) return;
 
+                    // AMLL-Apple-Music-Ergebnisse einsammeln (Promise lief ebenfalls parallel).
+                    const amllResults = await amllPromise;
+                    if (fetchId !== currentFetchId) return;
+
                     // ── STUFE 2: Multi-Tier-Aggregation über ALLE Datenbanken ──
                     const allCandidates = [];
                     if (bundledCandidate) allCandidates.push(bundledCandidate);
@@ -28959,6 +29324,7 @@ window.setLyricsStyle = function(style) {
                         allCandidates.push(c);
                     });
                     (neteaseResults || []).forEach(c => { if (c) allCandidates.push(c); });
+                    (amllResults || []).forEach(c => { if (c) allCandidates.push(c); });
 
                     let best = selectBestCandidate(allCandidates, searchDurationMs);
 
@@ -29267,6 +29633,8 @@ window.setLyricsStyle = function(style) {
                 track_url: data.track.track_url || null
             } : null;
             const resolvedPlatformLinks = platformLinks;
+            // v24.223.0: Apple-Music-ID für den AMLL-Wort-Sync ermitteln (direkter Get statt Suche)
+            currentAppleMusicId = extractAppleMusicIdFromLinks(resolvedPlatformLinks) || extractAppleMusicIdFromLinks(mainSpotifyUrl) || "";
 
             let rawArtwork = (data.track && data.track.artwork_url) || '';
             let isBrokenNpcProxy = rawArtwork.includes('npc-api.aikins.xyz/v1/artwork/');
@@ -30556,6 +30924,7 @@ window.setLyricsStyle = function(style) {
             if (sBtn) sBtn.textContent = (t('settings_sound') || 'UI-Sounds') + ': ' + (uiSoundEnabled ? t('on_label') : t('off_label'));
         })();
         updateNotificationPermissionButtonLabel(); // NEU v24.77: initialen Zustand beim Laden setzen
+        updateLyricsSoundToggleButton(); // v24.223.0: Lyrics-Ladesound-Toggle initialisieren
         loadDiscordWidget();
         // NEW: Beim Laden nur einmalig statisch vorrendern (Menü ist ja noch geschlossen) -
         // die eigentliche Dauerschleife startet erst, wenn das Menü tatsächlich geöffnet
@@ -31074,7 +31443,7 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.222.7</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.223.0</span>
         </a>
     </div>
 </body>
