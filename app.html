@@ -31,7 +31,7 @@
       - Reload-gesichertes QA PIN-Gate:
         Symptom: Nach einmaliger PIN-Eingabe wurde die Testumgebung bei Neuladen der Seite ohne PIN geöffnet.
         Ursache: sessionStorage persistierte den Freischalt-Status über Reloads hinweg.
-        Fix: Persistenz entfernt; jeder Reload fordert den PIN (2957) erneut an.
+        Fix: Persistenz entfernt; jeder Reload fordert den Tester-PIN erneut an.
     [LIQUID GLASS / TRANSPARENCY UNIFICATION] Release v24.213.0: Vollständige Harmonisierung aller Glaskarten-Transparenzen & Beseitigung von Opazitäts-Sprüngen im Liquid Glass Modus
       - Einheitliche Hintergrund-Transparenzen aller Karten:
         Symptom: Im Liquid Glass Modus wiesen Karten stark abweichende Transparenz- und Hintergrundwerte auf (#main-music-card 40%, #footer-bubble 44%, #footer-expandable-menu 52%, #back-to-top 44%, normale Karten 82-90%).
@@ -6046,14 +6046,33 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         }
 
         @keyframes dotBeatPop {
-            0% { transform: scale(0.92); }
-            40% { transform: scale(1.48); }
-            100% { transform: scale(1.22); }
+            /* Apple-Music-Feeling: federndes Anschwellen, langes Halten, butterweiches Einfedern.
+               Die Gesamtdauer wird dynamisch über --dot-beat-speed an das Songtempo gekoppelt:
+               langsame Songs (~1200ms) = majestätisch, schnelle Songs (~450ms) = knackig. */
+            0% {
+                transform: scale(0.90);
+                opacity: 0.35;
+            }
+            35% {
+                transform: scale(1.52);
+                opacity: 1;
+                box-shadow: 0 0 18px currentColor, 0 0 32px currentColor;
+            }
+            75% {
+                transform: scale(1.42);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.22);
+                opacity: 1;
+            }
         }
 
         @keyframes dotReadyPulse {
-            0% { transform: scale(1.22); filter: brightness(1); }
-            100% { transform: scale(1.44); filter: brightness(1.35); }
+            /* Takt 4 vor dem Gesangseinsatz: alle 3 Punkte holen synchron „Luft“ ein
+               und federn sanft wieder auf – das visuelle Atmen kurz vor der ersten Zeile. */
+            0% { transform: scale(1.15); filter: brightness(1.05); box-shadow: 0 0 16px currentColor, 0 0 30px currentColor; }
+            100% { transform: scale(1.35); filter: brightness(1.4); }
         }
         /* Style-spezifische Taktpunkt-Farben */
         .lyrics-style-neon .beat-dot.countdown-lit { background-color: #06b6d4 !important; box-shadow: 0 0 16px #06b6d4, 0 0 32px rgba(6, 182, 212, 0.65) !important; }
