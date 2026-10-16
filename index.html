@@ -6036,43 +6036,49 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             opacity: 1 !important;
             transform: scale(1.22);
         }
-        /* Aktueller Taktschlag: Anschwellen passend zur Beat-Geschwindigkeit */
+        /* Aktueller Taktschlag: jeder der 3 Punkte blüht mit EIGENER, organischer Easing-Kurve auf.
+           Die Gesamtdauer koppelt über --dot-beat-speed an das Songtempo: langsame Songs (~1200ms)
+           atmen getragen und verweilen lange auf voller Größe, schnelle (~450ms) poppen knackig. */
         .lyric-line.lyric-instrumental.active .beat-dot.current-beat {
-            animation: dotBeatPop var(--dot-beat-speed, 0.45s) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation-duration: var(--dot-beat-speed, 0.45s);
+            animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+            will-change: transform, filter;
         }
-        /* Reaktionszeit: Alle 3 Punkte pulsieren synchron kurz vor dem Gesangseinsatz (Atemzug / Bereit!) */
+        .lyric-line.lyric-instrumental.active .beat-dot.dot-1.current-beat { animation-name: dotBeatPop1; }
+        .lyric-line.lyric-instrumental.active .beat-dot.dot-2.current-beat { animation-name: dotBeatPop2; }
+        .lyric-line.lyric-instrumental.active .beat-dot.dot-3.current-beat { animation-name: dotBeatPop3; }
+
+        /* Punkt 1 – ruhiges, getragenes Aufblühen mit langer Verweildauer */
+        @keyframes dotBeatPop1 {
+            0%   { transform: scale(0.88); opacity: 0.30; filter: blur(0px); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+            32%  { transform: scale(1.50); opacity: 1; filter: blur(0.35px) drop-shadow(0 0 7px currentColor); animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 0.95); }
+            74%  { transform: scale(1.45); opacity: 1; filter: blur(0.45px) drop-shadow(0 0 9px currentColor); animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+            100% { transform: scale(1.22); opacity: 1; filter: blur(0px) drop-shadow(0 0 4px currentColor); }
+        }
+        /* Punkt 2 – etwas flotteres, federndes Aufpoppen */
+        @keyframes dotBeatPop2 {
+            0%   { transform: scale(0.86); opacity: 0.28; filter: blur(0px); animation-timing-function: cubic-bezier(0.18, 1.2, 0.4, 1); }
+            26%  { transform: scale(1.58); opacity: 1; filter: blur(0.40px) drop-shadow(0 0 8px currentColor); animation-timing-function: cubic-bezier(0.5, 0, 0.55, 1); }
+            68%  { transform: scale(1.48); opacity: 1; filter: blur(0.50px) drop-shadow(0 0 10px currentColor); animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+            100% { transform: scale(1.22); opacity: 1; filter: blur(0px) drop-shadow(0 0 4px currentColor); }
+        }
+        /* Punkt 3 – bewusst langsam & getragen, leitet den Gesangseinsatz ein */
+        @keyframes dotBeatPop3 {
+            0%   { transform: scale(0.90); opacity: 0.34; filter: blur(0px); animation-timing-function: cubic-bezier(0.25, 0.9, 0.35, 1); }
+            36%  { transform: scale(1.46); opacity: 1; filter: blur(0.30px) drop-shadow(0 0 7px currentColor); animation-timing-function: cubic-bezier(0.4, 0.05, 0.6, 1); }
+            80%  { transform: scale(1.44); opacity: 1; filter: blur(0.50px) drop-shadow(0 0 9px currentColor); animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+            100% { transform: scale(1.22); opacity: 1; filter: blur(0px) drop-shadow(0 0 4px currentColor); }
+        }
+
+        /* Reaktionszeit (Takt 4): Alle 3 Punkte holen synchron „Luft“ ein und federn sanft auf */
         .lyric-line.lyric-instrumental.active .beat-dots-container.ready-to-sing .beat-dot.countdown-lit {
-            animation: dotReadyPulse var(--dot-ready-speed, 0.45s) ease-in-out infinite alternate !important;
+            animation: dotReadyPulse var(--dot-ready-speed, 0.45s) cubic-bezier(0.34, 1.56, 0.64, 1) infinite alternate !important;
         }
-
-        @keyframes dotBeatPop {
-            /* Apple-Music-Feeling: federndes Anschwellen, langes Halten, butterweiches Einfedern.
-               Die Gesamtdauer wird dynamisch über --dot-beat-speed an das Songtempo gekoppelt:
-               langsame Songs (~1200ms) = majestätisch, schnelle Songs (~450ms) = knackig. */
-            0% {
-                transform: scale(0.90);
-                opacity: 0.35;
-            }
-            35% {
-                transform: scale(1.52);
-                opacity: 1;
-                box-shadow: 0 0 18px currentColor, 0 0 32px currentColor;
-            }
-            75% {
-                transform: scale(1.42);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1.22);
-                opacity: 1;
-            }
-        }
-
         @keyframes dotReadyPulse {
-            /* Takt 4 vor dem Gesangseinsatz: alle 3 Punkte holen synchron „Luft“ ein
-               und federn sanft wieder auf – das visuelle Atmen kurz vor der ersten Zeile. */
-            0% { transform: scale(1.15); filter: brightness(1.05); box-shadow: 0 0 16px currentColor, 0 0 30px currentColor; }
-            100% { transform: scale(1.35); filter: brightness(1.4); }
+            0% { transform: scale(1.15); filter: brightness(1.05) blur(0.20px); box-shadow: 0 0 16px currentColor, 0 0 30px currentColor; }
+            100% { transform: scale(1.35); filter: brightness(1.4) blur(0.40px); }
         }
         /* Style-spezifische Taktpunkt-Farben */
         .lyrics-style-neon .beat-dot.countdown-lit { background-color: #06b6d4 !important; box-shadow: 0 0 16px #06b6d4, 0 0 32px rgba(6, 182, 212, 0.65) !important; }
@@ -19613,7 +19619,7 @@ let shareCardLoading;
                 "🌐 Multi-DB Architektur: Vorbereitung für zusätzliche Songtext- und Metadaten-Datenbanken mit optimierter LRCLIB-Engine",
                 "🔍 Zweistufige Titelsuche + dauerhafter Songtext-Cache (AppStorage): Gespeicherte Lyrics erscheinen sofort in 0ms, Fallback-Suche nur mit dem Titel findet Songs mit abweichender Artist-Schreibweise",
                 "🎞️ Neue Lyrics-Ladeanimation: dezente Apple-Music-Ästhetik mit zarten Sound-Bars, schlichtem Label „Songtext wird geladen…“ und seidigen, mattierten Shimmer-Zeilen statt bunten Neon-Skeletts",
-                "🎯 Instrumental-Pausen: Dynamisches Taktmaß über die gesamte Pausendauer – die 3 Beat-Punkte atmen sofort mit, keine tote, eingefrorene Zeit mehr bei langen Intros oder Soli",
+                "🎯 Instrumental-Pausen wie bei Apple Music: Dynamisches Taktmaß über die gesamte Pause – die 3 Beat-Punkte blühen mit eigener, organischer Easing-Kurve auf, verweilen länger groß und atmen weich ein/aus, ganz ohne tote Standbilder",
                 "🔒 Datenschutz (DSGVO): Vollständig anonymisierte Songtext-Abfragen ohne Nutzerkonten, Tracking oder Cookies",
                 "🧱 Neues Arcade-Minispiel: Neon Cyber Breakout ersetzt Piggy Cyber Dash – Cyberpunk Brick-Breaker mit Multiball, Laser & breiterem Paddle"
             ],
@@ -19624,7 +19630,7 @@ let shareCardLoading;
                 "🌐 Multi-DB Architecture: Scalable infrastructure for secondary lyrics and metadata databases with tuned LRCLIB engine",
                 "🔍 Two-stage title search + persistent lyrics cache (AppStorage): Cached lyrics appear instantly in 0 ms, and a title-only fallback finds songs whose artist name is spelled differently",
                 "🎞️ New lyrics loading animation: clean Apple Music aesthetic with subtle sound bars, a plain \"Loading lyrics…\" label and silky frosted-glass shimmer lines instead of a colorful neon skeleton",
-                "🎯 Instrumental breaks: dynamic beat timing across the whole pause – the 3 beat dots breathe right from the start, no more dead frozen time on long intros or solos",
+                "🎯 Apple Music–style instrumental breaks: dynamic beat timing across the whole pause – each of the 3 beat dots blooms with its own organic easing curve, lingers large and breathes softly in and out, with no dead frozen frames",
                 "🔒 Privacy Policy (GDPR): Fully anonymized metadata queries without user accounts, tracking, or cookies",
                 "🧱 New arcade minigame: Neon Cyber Breakout replaces Piggy Cyber Dash – cyberpunk brick-breaker with multiball, laser & wider paddle"
             ]
@@ -27720,13 +27726,13 @@ window.setLyricsStyle = function(style) {
                     const d2 = instEl.querySelector('.dot-2');
                     const d3 = instEl.querySelector('.dot-3');
                     if (d1 && d2 && d3) {
-                        // 4-Takt-Struktur: 3 Taktschläge für Punkte 1, 2, 3 + 1 Taktschlag Reaktions-Atemzug.
-                        // NEU (v24.222.7): Dynamisches Taktmaß über die GESAMTE Pausendauer – die starre
-                        // 3,5s-Begrenzung ist entfernt. Die 3 Punkte starten direkt zu Beginn der Pause
-                        // und atmen harmonisch-langsamer über die volle Länge mit (sanftes Min 350ms / Max 3000ms).
-                        // Dadurch gibt es bei langen Instrumental-Soli intro/outro keine tote, eingefrorene Zeit mehr.
-                        let beatTime = totalBreak / 4;
-                        beatTime = Math.max(350, Math.min(3000, beatTime));
+                        // 4-Takt-Struktur: 3 Taktschläge für Punkte 1, 2, 3 + 1 Taktschlag Reaktions-Atemzug,
+                        // dynamisch über die GESAMTE Pausendauer. KEINE starre Obergrenze mehr: die Punkte
+                        // setzen sofort zu Pausenbeginn ein und atmen bei langen Soli/Intros getragen weiter,
+                        // wodurch keine toten Standbilder entstehen. Nur ein sanftes Minimum von 350ms
+                        // verhindert hektisches Flackern bei sehr kurzen Pausen.
+                        // Jeder der 3 Punkte hat zusätzlich eine eigene, organische Easing-Kurve (siehe CSS).
+                        let beatTime = Math.max(350, totalBreak / 4);
 
                         const reactionMargin = beatTime; // 1 voller Takt Reaktionszeit / Vorbereitung
                         const countdownWindow = beatTime * 4; // 3 Countdown-Takte + 1 Reaktions-Takt
