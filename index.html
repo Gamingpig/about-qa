@@ -7000,7 +7000,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             100% { filter: hue-rotate(360deg); }
         }
 
-        #arcade-canvas-wrap {
+        #breakout-canvas-wrap {
             touch-action: none;
         }
 
@@ -11090,17 +11090,17 @@ html.gp-android:not(.dark) #ui-controls {
         <div class="p-4 sm:p-6 overflow-y-auto space-y-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
 
-                <!-- 1. Piggy Cyber Dash -->
+                <!-- 1. Neon Cyber Breakout -->
                 <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-cyan-500/30 hover:border-cyan-400 transition-all flex flex-col justify-between group">
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-2xl">🕹️</span>
-                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">RETRO GAME</span>
+                            <span class="text-2xl">🧱</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">ARCADE GAME</span>
                         </div>
-                        <h4 class="font-bold text-white text-xs sm:text-sm">Piggy Cyber Dash</h4>
-                        <p class="text-[11px] text-slate-400 mt-1">Retro 8-Bit Jump &amp; Run mit Laser-Säulen, Sternen &amp; Highscore.</p>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Neon Cyber Breakout</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Cyberpunk Brick Breaker mit Power-Ups, Neon-Partikeln &amp; Highscore.</p>
                     </div>
-                    <button onclick="closeArcadeVault(true); openPiggyArcade();" class="mt-3 w-full py-2 px-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
+                    <button onclick="closeArcadeVault(true); openNeonBreakout();" class="mt-3 w-full py-2 px-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 font-bold text-xs transition-all active:scale-95 text-center cursor-pointer">
                         Starten ▶
                     </button>
                 </div>
@@ -11347,39 +11347,39 @@ html.gp-android:not(.dark) #ui-controls {
 </div>
 
 <!-- ========================================================= -->
-<!-- 🕹️ RETRO PIGGY CYBER DASH - ARCADE MINI-GAME MODAL (v24.221.0) -->
+<!-- 🧱 NEON CYBER BREAKOUT - ARCADE MINI-GAME MODAL (v24.222.7) -->
 <!-- ========================================================= -->
-<div id="piggy-arcade-modal" class="fixed inset-0 z-[10005] bg-black/90 backdrop-blur-2xl hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300">
+<div id="neon-breakout-modal" class="fixed inset-0 z-[10005] bg-black/90 backdrop-blur-2xl flex flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300 hidden">
     <div class="w-full max-w-lg rounded-3xl bg-slate-950/95 border border-cyan-500/40 text-white relative flex flex-col items-center shadow-[0_0_50px_rgba(6,182,212,0.25)] overflow-hidden">
         <!-- Header -->
         <div class="w-full px-5 py-3.5 bg-slate-900/90 border-b border-cyan-500/20 flex items-center justify-between z-10">
             <div class="flex items-center gap-2.5">
-                <span class="text-2xl animate-bounce">🕹️</span>
+                <span class="text-2xl animate-bounce">🧱</span>
                 <div>
-                    <h3 class="text-sm font-black tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-400 to-amber-300">Piggy Cyber Dash</h3>
-                    <span class="text-[10px] text-cyan-400 font-mono">RETRO ARCADE 8-BIT</span>
+                    <h3 class="text-sm font-black tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-400 to-amber-300">Neon Cyber Breakout</h3>
+                    <span class="text-[10px] text-cyan-400 font-mono">CYBERPUNK BRICK BREAKER</span>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <span id="arcade-best-badge" class="px-2.5 py-1 rounded-lg bg-white/10 text-[10px] font-mono font-bold text-amber-300 border border-amber-400/30">BEST: 0</span>
-                <button onclick="closePiggyArcade()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-rose-500 text-white flex items-center justify-center text-sm transition-colors cursor-pointer" aria-label="Schließen">✕</button>
+                <span id="breakout-best-badge" class="px-2.5 py-1 rounded-lg bg-white/10 text-[10px] font-mono font-bold text-amber-300 border border-amber-400/30">BEST: 0</span>
+                <button onclick="closeNeonBreakout()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-rose-500 text-white flex items-center justify-center text-sm transition-colors cursor-pointer" aria-label="Schließen">✕</button>
             </div>
         </div>
 
         <!-- Canvas Wrap -->
-        <div class="relative w-full aspect-[4/3] max-h-[380px] bg-[#050814] flex items-center justify-center overflow-hidden select-none cursor-pointer" id="arcade-canvas-wrap" onpointerdown="if (arcadeGameRunning) { event.preventDefault(); arcadeJump(); }">
-            <canvas id="arcade-canvas" onpointerdown="if (arcadeGameRunning) { event.preventDefault(); arcadeJump(); }" width="480" height="320" class="w-full h-full object-contain"></canvas>
-            
+        <div class="relative w-full aspect-[4/3] max-h-[380px] bg-[#050814] flex items-center justify-center overflow-hidden select-none cursor-crosshair" id="breakout-canvas-wrap">
+            <canvas id="breakout-canvas" width="480" height="320" class="w-full h-full object-contain touch-none"></canvas>
+
             <!-- Start / Game Over Screen Overlay -->
-            <div id="arcade-overlay-start" class="absolute inset-0 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20">
-                <div class="text-4xl sm:text-5xl mb-2 animate-pulse">🐷🚀</div>
-                <h4 id="arcade-overlay-title" class="text-lg sm:text-xl font-black text-white">CYBER PIGGY DASH</h4>
-                <p id="arcade-overlay-desc" class="text-xs text-slate-300 mt-1 max-w-xs">Weiche den Laser-Säulen aus, sammle Sterne ⭐ und Controller 🎮!</p>
-                <div id="arcade-final-score-wrap" class="hidden my-3">
+            <div id="breakout-overlay" class="absolute inset-0 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20">
+                <div class="text-4xl sm:text-5xl mb-2 animate-pulse">🧱⚡</div>
+                <h4 id="breakout-overlay-title" class="text-lg sm:text-xl font-black text-white">NEON CYBER BREAKOUT</h4>
+                <p id="breakout-overlay-desc" class="text-xs text-slate-300 mt-1 max-w-xs">Zerstöre alle Neon-Blöcke, fange Power-Ups und überlebe mit 3 Leben!</p>
+                <div id="breakout-final-score-wrap" class="hidden my-3">
                     <span class="text-xs text-slate-400 block">Dein Punktestand:</span>
-                    <span id="arcade-final-score" class="text-2xl font-black text-amber-400 font-mono">0</span>
+                    <span id="breakout-final-score" class="text-2xl font-black text-amber-400 font-mono">0</span>
                 </div>
-                <button onclick="startArcadeGame(event)" class="mt-3 px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 font-bold text-sm text-white shadow-lg shadow-cyan-500/30 active:scale-95 transition-all cursor-pointer">
+                <button onclick="startBreakoutGame(event)" class="mt-3 px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 font-bold text-sm text-white shadow-lg shadow-cyan-500/30 active:scale-95 transition-all cursor-pointer">
                     STARTEN ⚡
                 </button>
             </div>
@@ -11387,8 +11387,8 @@ html.gp-android:not(.dark) #ui-controls {
 
         <!-- Footer Bar -->
         <div class="w-full px-5 py-2.5 bg-slate-900/90 border-t border-cyan-500/20 flex items-center justify-between text-xs text-slate-400 z-10">
-            <span class="truncate">Steuerung: <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-[10px]">Leertaste</kbd> / Tap / Klick</span>
-            <button onclick="toggleArcadeSound()" id="arcade-sound-btn" class="text-cyan-400 hover:text-white font-mono text-xs cursor-pointer shrink-0">🔊 Sound: AN</button>
+            <span class="truncate">Steuerung: <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-[10px]">◀ ▶ / A D</kbd> · Maus · Touch · <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white font-mono text-[10px]">Leertaste</kbd></span>
+            <button onclick="toggleBreakoutSound()" id="breakout-sound-btn" class="text-cyan-400 hover:text-white font-mono text-xs cursor-pointer shrink-0">🔊 Sound: AN</button>
         </div>
     </div>
 </div>
@@ -11720,7 +11720,7 @@ html.gp-android:not(.dark) #ui-controls {
                 <span id="quest-status-music" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg bg-slate-800 text-slate-400 border border-white/5 shrink-0">Offen</span>
             </div>
 
-            <div id="quest-item-minigame" class="flex items-center justify-between p-2 rounded-xl bg-white/5 border border-white/10 transition-all cursor-pointer hover:bg-white/10" onclick="openPiggyArcade(); haptic(20);">
+            <div id="quest-item-minigame" class="flex items-center justify-between p-2 rounded-xl bg-white/5 border border-white/10 transition-all cursor-pointer hover:bg-white/10" onclick="openNeonBreakout(); haptic(20);">
                 <div class="flex items-center gap-2 min-w-0">
                     <span class="text-sm shrink-0">🕹️</span>
                     <div class="min-w-0">
@@ -12001,7 +12001,7 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step8_title: 'Psst... 🤫 Ein Geheimnis',
                 t_step8_text: 'Diese Seite hat viele versteckte Easter Eggs! Tipp: Probier den klassischen Konami-Code (↑↑↓↓←→←→BA auf der Tastatur), tippe 5x auf das Schweinchen-Logo 🐷 im Header oder auf die Versionsnummer im Footer für geheime Modi. In der Musikkarte findest du den neuen 💽 Scratch-Button, und per Tastatur oder Spotlight-Suche (⌘K-Button) lösen Wörter wie oink, forza, fokus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet tolle Überraschungen aus. Viel Spaß beim Entdecken!',
                 t_step9_title: '🕹️ Retro Arcade & Minispiele',
-                t_step9_text: 'Neu in v24.221: Spiele "Piggy Cyber Dash" oder "Neon Cyber Snake", teste das 9-Pad SFX Soundboard oder das Hacker-Terminal! Alle Minispiele lassen sich direkt über Spotlight (⌘K) oder geheime Wörter starten.',
+                t_step9_text: 'Neu in v24.221: Spiele "Neon Cyber Breakout" oder "Neon Cyber Snake", teste das 9-Pad SFX Soundboard oder das Hacker-Terminal! Alle Minispiele lassen sich direkt über Spotlight (⌘K) oder geheime Wörter starten.',
                 toast_install_ios: '📲 Tippe unten auf "Teilen" ⬆️ und dann auf "Zum Home-Bildschirm"',
                 toast_install_android_menu: '📲 Tippe oben rechts auf die drei Punkte ⋮ und wähle "App installieren" bzw. "Zum Startbildschirm hinzufügen"',
                 toast_install_desktop: '📲 Klicke oben rechts in der Adressleiste auf das Installieren-Symbol, oder öffne das Menü ⋮ → "Gamingpig installieren..."',
@@ -12238,7 +12238,7 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step8_title: "Psst... 🤫 a secret",
                 t_step8_text: "This site has many hidden easter eggs! Hint: try the classic Konami Code (↑↑↓↓←→←→BA on your keyboard), tap the piggy mascot 🐷 in the header or the version number in the footer 5x for secret modes. In the music card you'll find the new 💽 Scratch button, and typing words like oink, forza, focus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet on keyboard or in Spotlight search (⌘K button) triggers awesome surprises. Enjoy!",
                 t_step9_title: "🕹️ Retro Arcade & Minigames",
-                t_step9_text: "New in v24.221: Play 'Piggy Cyber Dash' or 'Neon Cyber Snake', test the 9-pad SFX soundboard or the hacker matrix terminal! All games launch instantly via Spotlight search (⌘K) or secret words.",
+                t_step9_text: "New in v24.221: Play 'Neon Cyber Breakout' or 'Neon Cyber Snake', test the 9-pad SFX soundboard or the hacker matrix terminal! All games launch instantly via Spotlight search (⌘K) or secret words.",
                 toast_install_ios: '📲 Tap "Share" ⬆️ below, then "Add to Home Screen"',
                 toast_install_android_menu: '📲 Tap the three dots ⋮ top right and choose "Install app" / "Add to Home screen"',
                 toast_install_desktop: '📲 Click the install icon in the address bar, or open the ⋮ menu → "Install Gamingpig..."',
@@ -12502,7 +12502,7 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step8_title: 'Psst... 🤫 un secreto',
                 t_step8_text: '¡Esta página tiene muchos easter eggs escondidos! Pista: prueba el clásico Código Konami (↑↑↓↓←→←→BA), pulsa 5 veces la mascota 🐷 en la cabecera o el número de versión en el pie de página para modos secretos. En la tarjeta de música tienes el nuevo botón 💽 Scratch, y escribiendo palabras como oink, forza, foco, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet en el teclado o buscador Spotlight (botón ⌘K) activarás increíbles sorpresas.',
                 t_step9_title: '🕹️ Retro Arcade y Minijuegos',
-                t_step9_text: 'Nuevo en v24.221: ¡Juega a "Piggy Cyber Dash" o "Neon Cyber Snake", prueba la mesa de sonido SFX de 9 pads o el terminal hacker! Todos los juegos se inician desde la búsqueda Spotlight (⌘K) o palabras secretas.',
+                t_step9_text: 'Nuevo en v24.221: ¡Juega a "Neon Cyber Breakout" o "Neon Cyber Snake", prueba la mesa de sonido SFX de 9 pads o el terminal hacker! Todos los juegos se inician desde la búsqueda Spotlight (⌘K) o palabras secretas.',
                 toast_install_ios: '📲 Toca "Compartir" ⬆️ abajo y luego "Añadir a pantalla de inicio"',
                 toast_install_android_menu: '📲 Toca los tres puntos ⋮ arriba a la derecha y elige "Instalar app" o "Añadir a pantalla de inicio"',
                 toast_install_desktop: '📲 Haz clic en el icono de instalar en la barra de direcciones, o abre el menú ⋮ → "Instalar Gamingpig..."',
@@ -12749,7 +12749,7 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step8_title: 'Psst... 🤫 un secret',
                 t_step8_text: "Ce site cache de nombreux easter eggs ! Astuce : essaie le classique Code Konami (↑↑↓↓←→←→BA au clavier), tape 5 fois sur la mascotte 🐷 dans l'en-tête ou sur le numéro de version en bas de page pour des modes secrets. Dans la carte musicale, découvre le nouveau bouton 💽 Scratch, et tape des mots comme oink, forza, focus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet au clavier ou dans la recherche Spotlight (bouton ⌘K) pour déclencher de superbes surprises.",
                 t_step9_title: '🕹️ Arcade Rétro & Mini-jeux',
-                t_step9_text: 'Nouveau dans v24.221 : Joue à "Piggy Cyber Dash" ou "Neon Cyber Snake", teste la boîte à sons SFX à 9 pads ou le terminal hacker ! Tous les jeux se lancent directement via Spotlight (⌘K) ou des mots secrets.',
+                t_step9_text: 'Nouveau dans v24.221 : Joue à "Neon Cyber Breakout" ou "Neon Cyber Snake", teste la boîte à sons SFX à 9 pads ou le terminal hacker ! Tous les jeux se lancent directement via Spotlight (⌘K) ou des mots secrets.',
                 toast_install_ios: '📲 Appuie sur "Partager" ⬆️ en bas, puis "Sur l\'écran d\'accueil"',
                 toast_install_android_menu: '📲 Appuie sur les trois points ⋮ en haut à droite et choisis "Installer l\'appli" / "Ajouter à l\'écran d\'accueil"',
                 toast_install_desktop: '📲 Clique sur l\'icône d\'installation dans la barre d\'adresse, ou ouvre le menu ⋮ → "Installer Gamingpig..."',
@@ -12957,7 +12957,7 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step8_title: 'Psst... 🤫 um segredo',
                 t_step8_text: 'Esta página tem muitos easter eggs escondidos! Dica: experimente o clássico Código Konami (↑↑↓↓←→←→BA), toque 5 vezes na mascote 🐷 no cabeçalho ou no número da versão no rodapé para modos secretos. No cartão de música há o novo botão 💽 Scratch, e digitando palavras como oink, forza, foco, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet no teclado ou na busca Spotlight (botão ⌘K) você ativará surpresas incríveis.',
                 t_step9_title: '🕹️ Retro Arcade & Minijogos',
-                t_step9_text: 'Novo na v24.221: Jogue "Piggy Cyber Dash" ou "Neon Cyber Snake", teste a mesa de som SFX com 9 pads ou o terminal hacker! Todos os jogos abrem direto pela busca Spotlight (⌘K) ou palavras secretas.',
+                t_step9_text: 'Novo na v24.221: Jogue "Neon Cyber Breakout" ou "Neon Cyber Snake", teste a mesa de som SFX com 9 pads ou o terminal hacker! Todos os jogos abrem direto pela busca Spotlight (⌘K) ou palavras secretas.',
                 toast_install_ios: '📲 Toque em Compartilhar ⬆️ e depois em "Adicionar à Tela de Início"',
                 toast_install_android_menu: '📲 Toque nos três pontos ⋮ e escolha "Instalar aplicativo"',
                 toast_install_desktop: '📲 Instale o app pela barra de endereços',
@@ -13165,7 +13165,7 @@ html.gp-android:not(.dark) #ui-controls {
                 t_step8_title: 'Şşşt... 🤫 bir sır',
                 t_step8_text: 'Bu sitede birçok gizli sürpriz var! İpucu: Klavyede klasik Konami Kodunu (↑↑↓↓←→←→BA) deneyin, başlıktaki domuzcuk maskotuna 🐷 veya alt kısımdaki sürüm numarasına 5 kez dokunarak gizli modları açın. Müzik kartında yeni 💽 Scratch butonu sizi bekliyor; ayrıca klavyeden veya Spotlight aramasından (⌘K) oink, forza, fokus, matrix, arcade, snake, soundboard, hack, synth, party, fps, zerog, crt, star, roll, pet yazarak harika sürprizleri tetikleyebilirsiniz!',
                 t_step9_title: '🕹️ Retro Arcade & Minioyunlar',
-                t_step9_text: 'v24.221 sürümünde yeni: "Piggy Cyber Dash" veya "Neon Cyber Snake" oyna, 9 pedli SFX ses panosunu veya hacker terminalini dene! Tüm oyunlar Spotlight araması (⌘K) veya gizli kelimelerle açılır.',
+                t_step9_text: 'v24.221 sürümünde yeni: "Neon Cyber Breakout" veya "Neon Cyber Snake" oyna, 9 pedli SFX ses panosunu veya hacker terminalini dene! Tüm oyunlar Spotlight araması (⌘K) veya gizli kelimelerle açılır.',
                 toast_install_ios: '📲 Aşağıdaki Paylaş ⬆️ butonuna ve ardından "Ana Ekrana Ekle"ye dokun',
                 toast_install_android_menu: '📲 Sağ üstteki üç noktaya ⋮ dokun ve "Uygulamayı yükle"yi seç',
                 toast_install_desktop: '📲 Adres çubuğundaki yükle simgesine tıkla',
@@ -18166,7 +18166,7 @@ let shareCardLoading;
         // 🤫 GEHEIME EASTER EGGS: Nicht in der Standardliste sichtbar - nur bei gezielter Suche nach Geheimnissen!
         function getSecretEasterEggActions() {
             return [
-                { icon: '🕹️', label: 'Retro Piggy Arcade (Minispiel)', keywords: 'arcade minigame minispiel spiel game jump piggy retro play dash 8bit vault geheim secret', action: () => openPiggyArcade() },
+                { icon: '🧱', label: 'Neon Cyber Breakout (Minispiel)', keywords: 'breakout arcade brick breaker minigame minispiel spiel game retro play vault geheim secret', action: () => openNeonBreakout() },
                 { icon: '🟢', label: 'Matrix Code-Regen (Digital Rain)', keywords: 'matrix rain code regen hacker effect visual geheim secret hack neo', action: () => launchMatrixRain(9000) },
                 { icon: '🏎️', label: 'Forza Supercar Drive-By', keywords: 'forza car auto rennen drive drift speed sportwagen v8 geheim secret', action: () => triggerForzaCar() },
                 { icon: '🎯', label: 'Hyperfokus Focus Mode', keywords: 'fokus hyperfokus spotlight vignette focus dunkel zoom geheim secret', action: () => triggerHyperfokus() },
@@ -19576,14 +19576,16 @@ let shareCardLoading;
                 "🛡️ HTTP 429 Shield & Selbstheilung: Automatischer 2.5s Exponential-Backoff Retry verhindert falsche Fehlermeldungen",
                 "⚡ Non-Aborting Pipeline: Kein Abbrechen laufender Hintergrundabfragen beim Öffnen der Lyrics-Ansicht oder im Standby",
                 "🌐 Multi-DB Architektur: Vorbereitung für zusätzliche Songtext- und Metadaten-Datenbanken mit optimierter LRCLIB-Engine",
-                "🔒 Datenschutz (DSGVO): Vollständig anonymisierte Songtext-Abfragen ohne Nutzerkonten, Tracking oder Cookies"
+                "🔒 Datenschutz (DSGVO): Vollständig anonymisierte Songtext-Abfragen ohne Nutzerkonten, Tracking oder Cookies",
+                "🧱 Neues Arcade-Minispiel: Neon Cyber Breakout ersetzt Piggy Cyber Dash – Cyberpunk Brick-Breaker mit Multiball, Laser & breiterem Paddle"
             ],
             en: [
                 "✨ Lyrics Synchronization Breakthrough: 100% autonomous detection – manual 'Re-Sync' clicking is completely eliminated",
                 "🛡️ HTTP 429 Shield: Automatic 2.5s exponential backoff scheduler reliably prevents false 'no lyrics' screens",
                 "⚡ Non-Aborting Pipeline: Opening the lyrics overlay or switching to standby mode never aborts active background fetches",
                 "🌐 Multi-DB Architecture: Scalable infrastructure for secondary lyrics and metadata databases with tuned LRCLIB engine",
-                "🔒 Privacy Policy (GDPR): Fully anonymized metadata queries without user accounts, tracking, or cookies"
+                "🔒 Privacy Policy (GDPR): Fully anonymized metadata queries without user accounts, tracking, or cookies",
+                "🧱 New arcade minigame: Neon Cyber Breakout replaces Piggy Cyber Dash – cyberpunk brick-breaker with multiball, laser & wider paddle"
             ]
         }},
     { version: "v24.221.0", date: "15. Oktober 2026", type: "fix", items: {
@@ -19608,7 +19610,7 @@ let shareCardLoading;
     }},
     { version: "v24.221.0", date: "14. Oktober 2026", type: "feature", items: {
         de: [
-            "🕹️ Retro Piggy Cyber Dash Arcade: 8-Bit Jump & Dodge Minigame mit Web-Audio Soundeffekten, Sternen & Highscore",
+            "🧱 Neon Cyber Breakout: Cyberpunk Brick-Breaker mit Power-Ups (Multiball, Laser, breiteres Paddle), Neon-Partikeln & Highscore",
             "🐍 Neon Cyber Snake: Tron-inspiriertes Schlangen-Minispiel mit Canvas-Rendering, Richtungs-Steuerung und Highscore",
             "🎛️ Cyber SFX Soundboard: 9 interaktive Echtzeit-Synthesizer-Pads (Coin, Laser, Fanfare, Explosion, Piggy Snort, V8, Warp, 808 Drop)",
             "💻 Hacker Matrix Terminal: Interaktive Root-Konsole ('help', 'stats', 'eastereggs', 'matrix', 'sudo', 'clear') mit CRT-Optik",
@@ -19619,7 +19621,7 @@ let shareCardLoading;
             "🐷 Piggy Pet Desktop-Buddy: Interaktives animiertes Begleiter-Maskottchen mit Klick-Sounds und Dialogblasen ('pet')"
         ],
         en: [
-            "🕹️ Retro Piggy Cyber Dash Arcade: 8-bit jump & dodge minigame with Web Audio SFX, stars, and local high score",
+            "🧱 Neon Cyber Breakout: Cyberpunk brick-breaker with power-ups (multiball, laser, wider paddle), neon particles & high score",
             "🐍 Neon Cyber Snake: Tron-inspired snake minigame with canvas rendering, D-Pad controls, and high score tracking",
             "🎛️ Cyber SFX Soundboard: 9 interactive real-time synthesized audio pads (Coin, Blaster, Fanfare, Explosion, Pig, V8, Warp, 808)",
             "💻 Hacker Matrix Terminal: Interactive root mainframe console ('help', 'stats', 'eastereggs', 'matrix', 'sudo', 'clear')",
@@ -22490,7 +22492,7 @@ let shareCardLoading;
             // Modale schließen, damit der Nutzer den Regen direkt sieht
             if (typeof closeHackerTerminal === 'function') closeHackerTerminal();
             if (typeof closeArcadeVault === 'function') closeArcadeVault();
-            if (typeof closePiggyArcade === 'function') closePiggyArcade();
+            if (typeof closeNeonBreakout === 'function') closeNeonBreakout();
             if (typeof closeStandaloneSettings === 'function') closeStandaloneSettings();
 
             if (window.ActiveEasterEggManager) {
@@ -22581,8 +22583,8 @@ let shareCardLoading;
                 onEggTriggered();
                 return true;
             }
-            if (buffer.endsWith('arcade') || buffer.endsWith('game') || buffer.endsWith('piggy') || buffer.endsWith('retro')) {
-                openPiggyArcade();
+            if (buffer.endsWith('arcade') || buffer.endsWith('breakout') || buffer.endsWith('brick') || buffer.endsWith('game') || buffer.endsWith('retro')) {
+                openNeonBreakout();
                 onEggTriggered();
                 return true;
             }
@@ -22778,24 +22780,48 @@ let shareCardLoading;
         };
 
         // ========================================================= //
-        // 🕹️ RETRO PIGGY CYBER DASH - 8-BIT ARCADE MINI-GAME (v24.221.0)
+        // 🧱 NEON CYBER BREAKOUT - CYBERPUNK BRICK BREAKER (v24.222.7)
         // ========================================================= //
-        let arcadeGameRunning = false;
-        let arcadeAnimFrame = null;
-        let arcadeScore = 0;
-        let arcadeHighScore = parseInt(AppStorage.getItem('gp_arcade_highscore') || '0', 10);
-        let arcadeSoundEnabled = true;
-        let arcadeLives = 3;
-        let arcadeInvulnUntil = 0;
-        let arcadePig = { x: 70, y: 150, vy: 0, r: 16 };
-        let arcadePillars = [];
-        let arcadeStars = [];
-        let arcadeParticles = [];
-        let arcadeLastSpawn = 0;
-        let arcadeLastFrameTime = performance.now();
+        const BREAKOUT_W = 480;
+        const BREAKOUT_H = 320;
+        const BREAKOUT_COLS = 8;
+        const BREAKOUT_ROWS = 5;
+        const BREAKOUT_BRICK_TOP = 46;
+        const BREAKOUT_BRICK_H = 18;
+        const BREAKOUT_BRICK_GAP = 4;
+        const BREAKOUT_BRICK_PADX = 10;
+        const BREAKOUT_ROW_COLORS = ['#22d3ee', '#f472b6', '#fbbf24', '#a855f7', '#34d399'];
+        const BREAKOUT_ROW_POINTS = [70, 60, 50, 40, 30];
 
-        function playArcadeSound(type) {
-            if (!arcadeSoundEnabled) return;
+        let breakoutGameRunning = false;
+        let breakoutAnimFrame = null;
+        let breakoutScore = 0;
+        let breakoutHighScore = parseInt(AppStorage.getItem('gp_breakout_highscore') || '0', 10);
+        let breakoutSoundEnabled = true;
+        let breakoutLives = 3;
+        let breakoutLevel = 1;
+        let breakoutLastTime = performance.now();
+        let breakoutPaddle = { x: BREAKOUT_W / 2 - 42, y: 296, w: 84, baseW: 84, h: 12 };
+        let breakoutBalls = [];
+        let breakoutBricks = [];
+        let breakoutParticles = [];
+        let breakoutPowerups = [];
+        let breakoutLasers = [];
+        let breakoutPaddleWideUntil = 0;
+        let breakoutLaserUntil = 0;
+        let breakoutLaserCooldown = 0;
+        let breakoutPointerX = null;
+        let breakoutKeyLeft = false;
+        let breakoutKeyRight = false;
+        let breakoutHudMsg = '';
+        let breakoutHudMsgUntil = 0;
+
+        function breakoutSpeed() {
+            return 235 + (breakoutLevel - 1) * 28;
+        }
+
+        function playBreakoutSound(type) {
+            if (!breakoutSoundEnabled) return;
             try {
                 const ctx = getAudioContext();
                 if (!ctx) return;
@@ -22806,44 +22832,78 @@ let shareCardLoading;
                 gain.connect(ctx.destination);
                 osc.onended = () => { osc.disconnect(); gain.disconnect(); };
 
-                if (type === 'jump') {
+                if (type === 'paddle') {
                     osc.type = 'square';
-                    osc.frequency.setValueAtTime(220, now);
-                    osc.frequency.exponentialRampToValueAtTime(580, now + 0.12);
-                    gain.gain.setValueAtTime(0.08, now);
+                    osc.frequency.setValueAtTime(320, now);
+                    osc.frequency.exponentialRampToValueAtTime(520, now + 0.07);
+                    gain.gain.setValueAtTime(0.06, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'brick') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(660, now);
+                    osc.frequency.exponentialRampToValueAtTime(990, now + 0.06);
+                    gain.gain.setValueAtTime(0.07, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.09);
+                    osc.start(now);
+                    osc.stop(now + 0.09);
+                } else if (type === 'wall') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(240, now);
+                    gain.gain.setValueAtTime(0.045, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'power') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(783.99, now + 0.07);
+                    osc.frequency.setValueAtTime(1046.5, now + 0.14);
+                    gain.gain.setValueAtTime(0.09, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.24);
+                    osc.start(now);
+                    osc.stop(now + 0.24);
+                } else if (type === 'laser') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(1200, now);
+                    osc.frequency.exponentialRampToValueAtTime(320, now + 0.12);
+                    gain.gain.setValueAtTime(0.05, now);
                     gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
                     osc.start(now);
                     osc.stop(now + 0.12);
-                } else if (type === 'coin') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(587.33, now);
-                    osc.frequency.setValueAtTime(880, now + 0.08);
-                    gain.gain.setValueAtTime(0.1, now);
-                    gain.gain.linearRampToValueAtTime(0.001, now + 0.22);
-                    osc.start(now);
-                    osc.stop(now + 0.22);
-                } else if (type === 'hit') {
+                } else if (type === 'lose') {
                     osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(140, now);
-                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.18);
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.exponentialRampToValueAtTime(60, now + 0.28);
                     gain.gain.setValueAtTime(0.12, now);
-                    gain.gain.linearRampToValueAtTime(0.001, now + 0.18);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.3);
                     osc.start(now);
-                    osc.stop(now + 0.18);
+                    osc.stop(now + 0.3);
+                } else if (type === 'level') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.setValueAtTime(660, now + 0.09);
+                    osc.frequency.setValueAtTime(880, now + 0.18);
+                    osc.frequency.setValueAtTime(1320, now + 0.27);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.36);
+                    osc.start(now);
+                    osc.stop(now + 0.36);
                 } else if (type === 'over') {
                     osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(320, now);
-                    osc.frequency.linearRampToValueAtTime(110, now + 0.45);
-                    gain.gain.setValueAtTime(0.15, now);
-                    gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+                    osc.frequency.setValueAtTime(360, now);
+                    osc.frequency.linearRampToValueAtTime(110, now + 0.5);
+                    gain.gain.setValueAtTime(0.14, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.5);
                     osc.start(now);
-                    osc.stop(now + 0.45);
+                    osc.stop(now + 0.5);
                 }
             } catch (e) {}
         }
 
-        window.openPiggyArcade = function() {
-            const modal = document.getElementById('piggy-arcade-modal');
+        window.openNeonBreakout = function() {
+            const modal = document.getElementById('neon-breakout-modal');
             if (!modal) return;
             haptic(15);
             if (typeof triggerTutorialEvent === 'function') triggerTutorialEvent('minigame_tested');
@@ -22852,28 +22912,33 @@ let shareCardLoading;
             requestAnimationFrame(() => {
                 modal.classList.remove('opacity-0');
             });
-            updateArcadeBestBadge();
-            const overlay = document.getElementById('arcade-overlay-start');
+            updateBreakoutBestBadge();
+            const overlay = document.getElementById('breakout-overlay');
             if (overlay) overlay.classList.remove('hidden');
-            const scoreWrap = document.getElementById('arcade-final-score-wrap');
+            const scoreWrap = document.getElementById('breakout-final-score-wrap');
             if (scoreWrap) scoreWrap.classList.add('hidden');
-            const titleEl = document.getElementById('arcade-overlay-title');
-            if (titleEl) titleEl.innerText = 'CYBER PIGGY DASH';
-            resetArcadeGame();
-            renderArcadeFrame();
+            const titleEl = document.getElementById('breakout-overlay-title');
+            if (titleEl) titleEl.innerText = 'NEON CYBER BREAKOUT';
+            const descEl = document.getElementById('breakout-overlay-desc');
+            if (descEl) descEl.innerText = 'Zerstöre alle Neon-Blöcke, fange Power-Ups und überlebe mit 3 Leben!';
+            resetBreakoutGame();
+            renderBreakoutFrame(performance.now());
             if (window.ActiveEasterEggManager) {
-                window.ActiveEasterEggManager.register('arcade', 'Piggy Cyber Dash', '🕹️', window.closePiggyArcade);
+                window.ActiveEasterEggManager.register('breakout', 'Neon Cyber Breakout', '🧱', window.closeNeonBreakout);
             }
         };
 
-        window.closePiggyArcade = function() {
-            const modal = document.getElementById('piggy-arcade-modal');
+        window.closeNeonBreakout = function() {
+            const modal = document.getElementById('neon-breakout-modal');
             if (!modal) return;
+            // Idempotenz: verhindert Doppel-Schließen (z.B. Escape trifft sowohl den
+            // globalen Easter-Egg-Manager als auch diesen Handler) inkl. doppeltem history.back().
+            if (modal.classList.contains('hidden') || modal.classList.contains('opacity-0')) return;
             haptic(10);
-            arcadeGameRunning = false;
-            if (arcadeAnimFrame) {
-                cancelAnimationFrame(arcadeAnimFrame);
-                arcadeAnimFrame = null;
+            breakoutGameRunning = false;
+            if (breakoutAnimFrame) {
+                cancelAnimationFrame(breakoutAnimFrame);
+                breakoutAnimFrame = null;
             }
             modal.classList.add('opacity-0');
             setTimeout(() => {
@@ -22881,311 +22946,563 @@ let shareCardLoading;
             }, 300);
             popOverlayHistory();
             if (window.ActiveEasterEggManager) {
-                window.ActiveEasterEggManager.unregister('arcade');
+                window.ActiveEasterEggManager.unregister('breakout');
             }
         };
 
-        window.toggleArcadeSound = function() {
-            arcadeSoundEnabled = !arcadeSoundEnabled;
-            const btn = document.getElementById('arcade-sound-btn');
-            if (btn) btn.innerText = arcadeSoundEnabled ? '🔊 Sound: AN' : '🔇 Sound: AUS';
+        window.toggleBreakoutSound = function() {
+            breakoutSoundEnabled = !breakoutSoundEnabled;
+            const btn = document.getElementById('breakout-sound-btn');
+            if (btn) btn.innerText = breakoutSoundEnabled ? '🔊 Sound: AN' : '🔇 Sound: AUS';
             haptic(10);
         };
 
-        function updateArcadeBestBadge() {
-            const badge = document.getElementById('arcade-best-badge');
-            if (badge) badge.innerText = 'BEST: ' + arcadeHighScore;
+        function updateBreakoutBestBadge() {
+            const badge = document.getElementById('breakout-best-badge');
+            if (badge) badge.innerText = 'BEST: ' + breakoutHighScore;
         }
 
-        function resetArcadeGame() {
-            arcadeScore = 0;
-            arcadeLives = 3;
-            arcadeInvulnUntil = 0;
-            arcadePig = { x: 70, y: 150, vy: 0, r: 16 };
-            arcadePillars = [];
-            arcadeStars = [];
-            arcadeParticles = [];
-            arcadeLastSpawn = Date.now();
+        function breakoutShowHudMsg(msg) {
+            breakoutHudMsg = msg;
+            breakoutHudMsgUntil = performance.now() + 1400;
         }
 
-        function arcadeJump() {
-            if (!arcadeGameRunning) return;
-            arcadePig.vy = -6.4;
-            playArcadeSound('jump');
-            haptic(10);
-            for (let i = 0; i < 4; i++) {
-                arcadeParticles.push({
-                    x: arcadePig.x - 12,
-                    y: arcadePig.y + 6,
-                    vx: -2 - Math.random() * 2,
-                    vy: (Math.random() - 0.5) * 2,
-                    life: 1.0,
-                    color: Math.random() > 0.5 ? '#06b6d4' : '#f43f5e',
-                    size: 3 + Math.random() * 3
-                });
+        function buildBreakoutBricks() {
+            breakoutBricks = [];
+            const gap = BREAKOUT_BRICK_GAP;
+            const bw = (BREAKOUT_W - BREAKOUT_BRICK_PADX * 2 - (BREAKOUT_COLS - 1) * gap) / BREAKOUT_COLS;
+            for (let r = 0; r < BREAKOUT_ROWS; r++) {
+                for (let col = 0; col < BREAKOUT_COLS; col++) {
+                    breakoutBricks.push({
+                        x: BREAKOUT_BRICK_PADX + col * (bw + gap),
+                        y: BREAKOUT_BRICK_TOP + r * (BREAKOUT_BRICK_H + gap),
+                        w: bw,
+                        h: BREAKOUT_BRICK_H,
+                        color: BREAKOUT_ROW_COLORS[r % BREAKOUT_ROW_COLORS.length],
+                        points: BREAKOUT_ROW_POINTS[r % BREAKOUT_ROW_POINTS.length],
+                        alive: true
+                    });
+                }
             }
         }
 
-        window.startArcadeGame = function(e) {
+        function spawnBreakoutBall(stuck) {
+            return {
+                x: breakoutPaddle.x + breakoutPaddle.w / 2,
+                y: breakoutPaddle.y - 8,
+                vx: 0,
+                vy: 0,
+                r: 6,
+                stuck: !!stuck
+            };
+        }
+
+        function resetBreakoutGame() {
+            breakoutScore = 0;
+            breakoutLives = 3;
+            breakoutLevel = 1;
+            breakoutPaddle.w = breakoutPaddle.baseW;
+            breakoutPaddleWideUntil = 0;
+            breakoutLaserUntil = 0;
+            breakoutLaserCooldown = 0;
+            breakoutPointerX = null;
+            breakoutKeyLeft = false;
+            breakoutKeyRight = false;
+            breakoutParticles = [];
+            breakoutPowerups = [];
+            breakoutLasers = [];
+            breakoutHudMsg = '';
+            buildBreakoutBricks();
+            breakoutPaddle.x = BREAKOUT_W / 2 - breakoutPaddle.w / 2;
+            breakoutBalls = [spawnBreakoutBall(true)];
+        }
+
+        function launchBreakoutBall() {
+            let launched = false;
+            for (const b of breakoutBalls) {
+                if (b.stuck) {
+                    const speed = breakoutSpeed();
+                    const angle = (-Math.PI / 2) + (Math.random() - 0.5) * 0.6;
+                    b.vx = Math.cos(angle) * speed;
+                    b.vy = Math.sin(angle) * speed;
+                    b.stuck = false;
+                    launched = true;
+                }
+            }
+            if (launched) playBreakoutSound('paddle');
+            return launched;
+        }
+
+        window.startBreakoutGame = function(e) {
             if (e) e.stopPropagation();
-            const overlay = document.getElementById('arcade-overlay-start');
+            const overlay = document.getElementById('breakout-overlay');
             if (overlay) overlay.classList.add('hidden');
-            resetArcadeGame();
-            arcadeGameRunning = true;
-            arcadeJump();
-            arcadeLastFrameTime = performance.now();
-            if (arcadeAnimFrame) cancelAnimationFrame(arcadeAnimFrame);
-            arcadeAnimFrame = requestAnimationFrame(arcadeGameLoop);
+            resetBreakoutGame();
+            breakoutGameRunning = true;
+            launchBreakoutBall();
+            breakoutLastTime = performance.now();
+            if (breakoutAnimFrame) cancelAnimationFrame(breakoutAnimFrame);
+            breakoutAnimFrame = requestAnimationFrame(breakoutLoop);
         };
 
-        function arcadeGameOver() {
-            arcadeGameRunning = false;
-            playArcadeSound('over');
+        function breakoutGameOver() {
+            breakoutGameRunning = false;
+            playBreakoutSound('over');
             haptic(30);
-            if (arcadeScore > arcadeHighScore) {
-                arcadeHighScore = arcadeScore;
-                AppStorage.setItem('gp_arcade_highscore', arcadeHighScore.toString());
-                updateArcadeBestBadge();
+            if (breakoutScore > breakoutHighScore) {
+                breakoutHighScore = breakoutScore;
+                AppStorage.setItem('gp_breakout_highscore', breakoutHighScore.toString());
+                updateBreakoutBestBadge();
                 launchConfetti();
-                showToast('🎉 NEUER HIGH-SCORE: ' + arcadeHighScore + ' PUNKTE!', 'success');
+                showToast('🎉 NEUER HIGH-SCORE: ' + breakoutHighScore + ' PUNKTE!', 'success');
             }
-            const overlay = document.getElementById('arcade-overlay-start');
-            const scoreWrap = document.getElementById('arcade-final-score-wrap');
-            const finalScoreEl = document.getElementById('arcade-final-score');
-            const titleEl = document.getElementById('arcade-overlay-title');
+            const overlay = document.getElementById('breakout-overlay');
+            const scoreWrap = document.getElementById('breakout-final-score-wrap');
+            const finalScoreEl = document.getElementById('breakout-final-score');
+            const titleEl = document.getElementById('breakout-overlay-title');
+            const descEl = document.getElementById('breakout-overlay-desc');
             if (titleEl) titleEl.innerText = 'GAME OVER';
-            if (finalScoreEl) finalScoreEl.innerText = arcadeScore;
+            if (descEl) descEl.innerText = 'Level ' + breakoutLevel + ' · Alle Blöcke neu starten?';
+            if (finalScoreEl) finalScoreEl.innerText = breakoutScore;
             if (scoreWrap) scoreWrap.classList.remove('hidden');
             if (overlay) overlay.classList.remove('hidden');
         }
 
-        function arcadeGameLoop(now) {
-            if (!arcadeGameRunning) return;
-            const dt = Math.min((now - arcadeLastFrameTime) / 1000, 0.1);
-            arcadeLastFrameTime = now;
+        function breakoutNextLevel() {
+            breakoutLevel++;
+            breakoutPaddleWideUntil = 0;
+            breakoutLaserUntil = 0;
+            breakoutLaserCooldown = 0;
+            breakoutPaddle.w = breakoutPaddle.baseW;
+            buildBreakoutBricks();
+            breakoutParticles = [];
+            breakoutPowerups = [];
+            breakoutLasers = [];
+            breakoutBalls = [spawnBreakoutBall(true)];
+            breakoutShowHudMsg('LEVEL ' + breakoutLevel);
+            playBreakoutSound('level');
+            haptic(20);
+        }
 
-            arcadePig.vy += 18.5 * dt;
-            arcadePig.y += arcadePig.vy;
-
-            if (arcadePig.y < arcadePig.r) {
-                arcadePig.y = arcadePig.r;
-                arcadePig.vy = 0;
-            }
-            if (arcadePig.y > 320 - arcadePig.r) {
-                arcadeGameOver();
-                return;
-            }
-
-            if (now - arcadeLastSpawn > 1650) {
-                arcadeLastSpawn = now;
-                const gapH = 105;
-                const minTop = 35;
-                const maxTop = 320 - gapH - 35;
-                const topH = Math.floor(minTop + Math.random() * (maxTop - minTop));
-                arcadePillars.push({
-                    x: 480,
-                    topH: topH,
-                    botY: topH + gapH,
-                    w: 38,
-                    passed: false
-                });
-
-                arcadeStars.push({
-                    x: 480 + 19,
-                    y: topH + gapH / 2,
-                    r: 9,
-                    type: Math.random() > 0.3 ? 'star' : 'controller',
-                    collected: false
+        function spawnBreakoutParticles(x, y, color, count) {
+            for (let i = 0; i < count; i++) {
+                breakoutParticles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 260,
+                    vy: (Math.random() - 0.5) * 260,
+                    life: 1,
+                    size: 2 + Math.random() * 3,
+                    color: color
                 });
             }
+        }
 
-            const speed = 145 * dt;
-            for (let i = arcadePillars.length - 1; i >= 0; i--) {
-                const p = arcadePillars[i];
-                p.x -= speed;
+        function maybeSpawnBreakoutPowerup(brick) {
+            if (Math.random() > 0.16) return;
+            const types = ['multi', 'wide', 'laser'];
+            breakoutPowerups.push({
+                x: brick.x + brick.w / 2,
+                y: brick.y + brick.h / 2,
+                vy: 92,
+                type: types[Math.floor(Math.random() * types.length)],
+                w: 26,
+                h: 14
+            });
+        }
 
-                if (!p.passed && p.x + p.w < arcadePig.x) {
-                    p.passed = true;
-                    arcadeScore += 10;
+        function applyBreakoutPowerup(type) {
+            const now = performance.now();
+            if (type === 'multi') {
+                const base = breakoutBalls.find(b => !b.stuck) || breakoutBalls[0];
+                const sx = base ? base.x : BREAKOUT_W / 2;
+                const sy = base ? base.y : BREAKOUT_H - 40;
+                const speed = breakoutSpeed();
+                for (const a of [-0.5, 0, 0.5]) {
+                    breakoutBalls.push({
+                        x: sx,
+                        y: sy,
+                        vx: Math.cos(-Math.PI / 2 + a) * speed,
+                        vy: Math.sin(-Math.PI / 2 + a) * speed,
+                        r: 6,
+                        stuck: false
+                    });
                 }
+                breakoutShowHudMsg('MULTIBALL ×3');
+            } else if (type === 'wide') {
+                breakoutPaddle.w = Math.min(150, breakoutPaddle.baseW * 1.7);
+                breakoutPaddleWideUntil = now + 12000;
+                breakoutShowHudMsg('BREITERES PADDLE');
+            } else if (type === 'laser') {
+                breakoutLaserUntil = now + 9000;
+                breakoutLaserCooldown = 0;
+                breakoutShowHudMsg('LASER AKTIV');
+            }
+            playBreakoutSound('power');
+            haptic(15);
+        }
 
-                const isInvuln = now < arcadeInvulnUntil;
-                if (!isInvuln) {
-                    if (arcadePig.x + arcadePig.r > p.x && arcadePig.x - arcadePig.r < p.x + p.w) {
-                        if (arcadePig.y - arcadePig.r < p.topH || arcadePig.y + arcadePig.r > p.botY) {
-                            arcadeLives--;
-                            arcadeInvulnUntil = now + 1200;
-                            playArcadeSound('hit');
-                            haptic(25);
-                            if (arcadeLives <= 0) {
-                                arcadeGameOver();
-                                return;
-                            }
+        function breakoutPaddleCollide(ball) {
+            const p = breakoutPaddle;
+            if (ball.vy <= 0) return false;
+            if (ball.y + ball.r < p.y || ball.y - ball.r > p.y + p.h) return false;
+            if (ball.x + ball.r < p.x || ball.x - ball.r > p.x + p.w) return false;
+            const speed = breakoutSpeed();
+            const rel = Math.max(-1, Math.min(1, (ball.x - (p.x + p.w / 2)) / (p.w / 2)));
+            const angle = rel * (Math.PI / 3);
+            ball.vx = Math.sin(angle) * speed;
+            ball.vy = -Math.cos(angle) * speed;
+            ball.y = p.y - ball.r - 0.5;
+            playBreakoutSound('paddle');
+            haptic(6);
+            return true;
+        }
+
+        function breakoutDestroyBrick(br) {
+            br.alive = false;
+            breakoutScore += br.points;
+            spawnBreakoutParticles(br.x + br.w / 2, br.y + br.h / 2, br.color, 10);
+            maybeSpawnBreakoutPowerup(br);
+            playBreakoutSound('brick');
+            haptic(8);
+        }
+
+        function breakoutLoop(now) {
+            if (!breakoutGameRunning) return;
+            let dt = (now - breakoutLastTime) / 1000;
+            breakoutLastTime = now;
+            if (dt > 0.033) dt = 0.033;
+
+            const p = breakoutPaddle;
+
+            // Breites Paddle läuft nach 12s ab
+            if (breakoutPaddleWideUntil && now > breakoutPaddleWideUntil) {
+                const center = p.x + p.w / 2;
+                p.w = p.baseW;
+                p.x = Math.max(0, Math.min(BREAKOUT_W - p.w, center - p.w / 2));
+                breakoutPaddleWideUntil = 0;
+            }
+
+            // Paddle-Steuerung: Pfeiltasten / A-D
+            const paddleSpeed = 430;
+            if (breakoutKeyLeft) p.x -= paddleSpeed * dt;
+            if (breakoutKeyRight) p.x += paddleSpeed * dt;
+            // Paddle-Steuerung: Maus / Touch-Drag
+            if (breakoutPointerX !== null) {
+                const target = breakoutPointerX - p.w / 2;
+                p.x += (target - p.x) * Math.min(1, dt * 20);
+            }
+            p.x = Math.max(0, Math.min(BREAKOUT_W - p.w, p.x));
+
+            // Laser Auto-Feuer während Power-Up aktiv
+            if (breakoutLaserUntil && now < breakoutLaserUntil) {
+                breakoutLaserCooldown -= dt;
+                if (breakoutLaserCooldown <= 0) {
+                    breakoutLaserCooldown = 0.4;
+                    breakoutLasers.push({ x: p.x + 8, y: p.y, vy: -520 });
+                    breakoutLasers.push({ x: p.x + p.w - 8, y: p.y, vy: -520 });
+                    playBreakoutSound('laser');
+                }
+            }
+
+            // Ball-Physik mit Sub-Steps gegen Tunneling
+            for (let i = breakoutBalls.length - 1; i >= 0; i--) {
+                const b = breakoutBalls[i];
+                if (b.stuck) {
+                    b.x = p.x + p.w / 2;
+                    b.y = p.y - b.r - 2;
+                    continue;
+                }
+                const steps = Math.max(1, Math.ceil((Math.abs(b.vx) + Math.abs(b.vy)) * dt / 6));
+                const sdt = dt / steps;
+                for (let s = 0; s < steps; s++) {
+                    b.x += b.vx * sdt;
+                    b.y += b.vy * sdt;
+
+                    if (b.x - b.r < 0) { b.x = b.r; b.vx = Math.abs(b.vx); playBreakoutSound('wall'); }
+                    else if (b.x + b.r > BREAKOUT_W) { b.x = BREAKOUT_W - b.r; b.vx = -Math.abs(b.vx); playBreakoutSound('wall'); }
+                    if (b.y - b.r < 0) { b.y = b.r; b.vy = Math.abs(b.vy); playBreakoutSound('wall'); }
+
+                    breakoutPaddleCollide(b);
+
+                    for (const br of breakoutBricks) {
+                        if (!br.alive) continue;
+                        if (b.x + b.r <= br.x || b.x - b.r >= br.x + br.w || b.y + b.r <= br.y || b.y - b.r >= br.y + br.h) continue;
+                        const overlapX = Math.min(b.x + b.r - br.x, br.x + br.w - (b.x - b.r));
+                        const overlapY = Math.min(b.y + b.r - br.y, br.y + br.h - (b.y - b.r));
+                        if (overlapX < overlapY) b.vx = -b.vx; else b.vy = -b.vy;
+                        breakoutDestroyBrick(br);
+                        break;
+                    }
+                }
+                if (b.y - b.r > BREAKOUT_H) {
+                    breakoutBalls.splice(i, 1);
+                }
+            }
+
+            // Laser-Projektile
+            for (let i = breakoutLasers.length - 1; i >= 0; i--) {
+                const l = breakoutLasers[i];
+                l.y += l.vy * dt;
+                let removed = l.y < 0;
+                if (!removed) {
+                    for (const br of breakoutBricks) {
+                        if (!br.alive) continue;
+                        if (l.x >= br.x && l.x <= br.x + br.w && l.y >= br.y && l.y <= br.y + br.h) {
+                            breakoutDestroyBrick(br);
+                            removed = true;
+                            break;
                         }
                     }
                 }
+                if (removed) breakoutLasers.splice(i, 1);
+            }
 
-                if (p.x < -p.w) {
-                    arcadePillars.splice(i, 1);
+            // Fallende Power-Ups
+            for (let i = breakoutPowerups.length - 1; i >= 0; i--) {
+                const pu = breakoutPowerups[i];
+                pu.y += pu.vy * dt;
+                if (pu.y - pu.h / 2 > BREAKOUT_H) {
+                    breakoutPowerups.splice(i, 1);
+                    continue;
+                }
+                if (pu.y + pu.h / 2 >= p.y && pu.y - pu.h / 2 <= p.y + p.h && pu.x >= p.x - 6 && pu.x <= p.x + p.w + 6) {
+                    applyBreakoutPowerup(pu.type);
+                    breakoutPowerups.splice(i, 1);
                 }
             }
 
-            for (let i = arcadeStars.length - 1; i >= 0; i--) {
-                const s = arcadeStars[i];
-                s.x -= speed;
-
-                const dx = arcadePig.x - s.x;
-                const dy = arcadePig.y - s.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-
-                if (!s.collected && dist < arcadePig.r + s.r) {
-                    s.collected = true;
-                    const pts = s.type === 'controller' ? 50 : 25;
-                    arcadeScore += pts;
-                    playArcadeSound('coin');
-                    haptic(10);
-                    for (let k = 0; k < 6; k++) {
-                        arcadeParticles.push({
-                            x: s.x,
-                            y: s.y,
-                            vx: (Math.random() - 0.5) * 4,
-                            vy: (Math.random() - 0.5) * 4,
-                            life: 1.0,
-                            color: s.type === 'controller' ? '#a855f7' : '#fbbf24',
-                            size: 3 + Math.random() * 2
-                        });
-                    }
-                }
-
-                if (s.x < -30 || s.collected) {
-                    arcadeStars.splice(i, 1);
-                }
+            // Partikel
+            for (let i = breakoutParticles.length - 1; i >= 0; i--) {
+                const pt = breakoutParticles[i];
+                pt.x += pt.vx * dt;
+                pt.y += pt.vy * dt;
+                pt.vy += 220 * dt;
+                pt.life -= dt * 2.0;
+                if (pt.life <= 0) breakoutParticles.splice(i, 1);
             }
 
-            for (let i = arcadeParticles.length - 1; i >= 0; i--) {
-                const pt = arcadeParticles[i];
-                pt.x += pt.vx;
-                pt.y += pt.vy;
-                pt.life -= dt * 2.2;
-                if (pt.life <= 0) arcadeParticles.splice(i, 1);
+            // Leben verloren, wenn kein Ball mehr im Spiel ist
+            if (breakoutBalls.length === 0) {
+                breakoutLives--;
+                playBreakoutSound('lose');
+                haptic(25);
+                breakoutPaddleWideUntil = 0;
+                breakoutLaserUntil = 0;
+                p.w = p.baseW;
+                p.x = Math.max(0, Math.min(BREAKOUT_W - p.w, p.x));
+                if (breakoutLives <= 0) {
+                    breakoutGameOver();
+                    return;
+                }
+                breakoutBalls = [spawnBreakoutBall(true)];
             }
 
-            renderArcadeFrame(now);
-            arcadeAnimFrame = requestAnimationFrame(arcadeGameLoop);
+            // Level geschafft
+            if (!breakoutBricks.some(br => br.alive)) {
+                breakoutNextLevel();
+            }
+
+            renderBreakoutFrame(now);
+            breakoutAnimFrame = requestAnimationFrame(breakoutLoop);
         }
 
-        function renderArcadeFrame(now = performance.now()) {
-            const canvas = document.getElementById('arcade-canvas');
+        function renderBreakoutFrame(now = performance.now()) {
+            const canvas = document.getElementById('breakout-canvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
+            const W = BREAKOUT_W;
+            const H = BREAKOUT_H;
 
-            ctx.fillStyle = '#060a17';
-            ctx.fillRect(0, 0, 480, 320);
+            ctx.fillStyle = '#050814';
+            ctx.fillRect(0, 0, W, H);
 
-            ctx.strokeStyle = 'rgba(6, 182, 212, 0.08)';
+            // Neon-Grid Hintergrund
+            ctx.strokeStyle = 'rgba(34, 211, 238, 0.08)';
             ctx.lineWidth = 1;
-            for (let x = 0; x < 480; x += 30) {
-                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 320); ctx.stroke();
+            for (let x = 0; x < W; x += 30) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
             }
-            for (let y = 0; y < 320; y += 30) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(480, y); ctx.stroke();
+            for (let y = 0; y < H; y += 30) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
             }
 
-            for (const p of arcadePillars) {
-                const gradTop = ctx.createLinearGradient(p.x, 0, p.x + p.w, 0);
-                gradTop.addColorStop(0, '#06b6d4');
-                gradTop.addColorStop(1, '#3b82f6');
-                ctx.fillStyle = gradTop;
-                ctx.shadowColor = '#06b6d4';
+            // Blöcke
+            for (const br of breakoutBricks) {
+                if (!br.alive) continue;
+                ctx.save();
+                ctx.shadowColor = br.color;
                 ctx.shadowBlur = 10;
-                ctx.fillRect(p.x, 0, p.w, p.topH);
-
-                ctx.fillStyle = '#a5f3fc';
-                ctx.fillRect(p.x - 2, p.topH - 5, p.w + 4, 5);
-
-                ctx.fillStyle = gradTop;
-                ctx.fillRect(p.x, p.botY, p.w, 320 - p.botY);
-                ctx.fillStyle = '#a5f3fc';
-                ctx.fillRect(p.x - 2, p.botY, p.w + 4, 5);
-                ctx.shadowBlur = 0;
+                ctx.globalAlpha = 0.92;
+                ctx.fillStyle = br.color;
+                ctx.fillRect(br.x, br.y, br.w, br.h);
+                ctx.globalAlpha = 1;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+                ctx.fillRect(br.x + 2, br.y + 2, Math.max(0, br.w - 4), 3);
+                ctx.restore();
             }
 
-            for (const s of arcadeStars) {
-                ctx.font = '16px sans-serif';
+            // Power-Ups
+            const puColors = { multi: '#22d3ee', wide: '#34d399', laser: '#f472b6' };
+            const puLabels = { multi: '×3', wide: 'W', laser: 'L' };
+            for (const pu of breakoutPowerups) {
+                ctx.save();
+                ctx.shadowColor = puColors[pu.type] || '#ffffff';
+                ctx.shadowBlur = 12;
+                ctx.fillStyle = puColors[pu.type] || '#ffffff';
+                ctx.fillRect(pu.x - pu.w / 2, pu.y - pu.h / 2, pu.w, pu.h);
+                ctx.restore();
+                ctx.fillStyle = '#050814';
+                ctx.font = 'bold 10px "JetBrains Mono", monospace';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                const pulse = Math.sin(now * 0.008) * 2;
-                ctx.fillText(s.type === 'controller' ? '🎮' : '⭐', s.x, s.y + pulse);
+                ctx.fillText(puLabels[pu.type] || '?', pu.x, pu.y + 0.5);
             }
 
-            for (const pt of arcadeParticles) {
+            // Laser
+            if (breakoutLasers.length) {
+                ctx.save();
+                ctx.shadowColor = '#f472b6';
+                ctx.shadowBlur = 12;
+                ctx.strokeStyle = '#f472b6';
+                ctx.lineWidth = 3;
+                for (const l of breakoutLasers) {
+                    ctx.beginPath();
+                    ctx.moveTo(l.x, l.y);
+                    ctx.lineTo(l.x, l.y - 12);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            // Paddle
+            const p = breakoutPaddle;
+            const laserActive = now < breakoutLaserUntil;
+            const grad = ctx.createLinearGradient(p.x, 0, p.x + p.w, 0);
+            grad.addColorStop(0, '#06b6d4');
+            grad.addColorStop(0.5, laserActive ? '#f472b6' : '#38bdf8');
+            grad.addColorStop(1, '#a855f7');
+            ctx.save();
+            ctx.shadowColor = laserActive ? '#f472b6' : '#06b6d4';
+            ctx.shadowBlur = 16;
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            if (typeof ctx.roundRect === 'function') {
+                ctx.roundRect(p.x, p.y, p.w, p.h, 6);
+            } else {
+                ctx.rect(p.x, p.y, p.w, p.h);
+            }
+            ctx.fill();
+            ctx.restore();
+
+            // Plasmaball
+            for (const b of breakoutBalls) {
+                ctx.save();
+                ctx.shadowColor = '#67e8f9';
+                ctx.shadowBlur = 18;
+                ctx.fillStyle = '#e0f2fe';
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // Partikel
+            for (const pt of breakoutParticles) {
                 ctx.fillStyle = pt.color;
                 ctx.globalAlpha = Math.max(0, pt.life);
                 ctx.beginPath();
                 ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.globalAlpha = 1.0;
+                ctx.globalAlpha = 1;
             }
 
-            const isInvuln = now < arcadeInvulnUntil;
-            if (!isInvuln || Math.floor(now / 80) % 2 === 0) {
-                ctx.save();
-                ctx.translate(arcadePig.x, arcadePig.y);
-                const tilt = Math.max(-0.4, Math.min(0.5, arcadePig.vy * 0.05));
-                ctx.rotate(tilt);
-                ctx.font = '26px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('🐷', 0, 0);
-                if (arcadeGameRunning) {
-                    ctx.fillStyle = '#f43f5e';
-                    ctx.beginPath();
-                    ctx.arc(-14, 4, 4 + Math.random() * 2, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.restore();
-            }
-
+            // HUD: Score / Level / Leben
+            ctx.textBaseline = 'alphabetic';
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 16px "JetBrains Mono", monospace';
+            ctx.font = 'bold 15px "JetBrains Mono", monospace';
             ctx.textAlign = 'left';
-            ctx.fillText('SCORE: ' + arcadeScore, 14, 26);
+            ctx.fillText('SCORE: ' + breakoutScore, 12, 24);
+
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = 'bold 11px "JetBrains Mono", monospace';
+            ctx.fillText('LEVEL ' + breakoutLevel, W / 2, 20);
 
             let hearts = '';
-            for (let l = 0; l < arcadeLives; l++) hearts += '❤️ ';
-            ctx.font = '14px sans-serif';
+            for (let l = 0; l < breakoutLives; l++) hearts += '❤️';
             ctx.textAlign = 'right';
-            ctx.fillText(hearts, 466, 26);
+            ctx.font = '13px sans-serif';
+            ctx.fillText(hearts, W - 12, 22);
+
+            if (breakoutHudMsg && now < breakoutHudMsgUntil) {
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#fbbf24';
+                ctx.font = 'bold 16px "JetBrains Mono", monospace';
+                ctx.fillText(breakoutHudMsg, W / 2, H / 2 + 40);
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            const canvasWrap = document.getElementById('arcade-canvas-wrap');
-            if (canvasWrap) {
-                canvasWrap.addEventListener('pointerdown', (e) => {
-                    if (arcadeGameRunning) {
-                        e.preventDefault();
-                        arcadeJump();
-                    }
-                });
-            }
+            const wrap = document.getElementById('breakout-canvas-wrap');
+            const canvas = document.getElementById('breakout-canvas');
+            if (!wrap || !canvas) return;
+
+            const pointerToX = (clientX) => {
+                const rect = canvas.getBoundingClientRect();
+                if (!rect.width) return null;
+                return ((clientX - rect.left) / rect.width) * BREAKOUT_W;
+            };
+
+            const applyPointer = (clientX) => {
+                if (!breakoutGameRunning) return;
+                const x = pointerToX(clientX);
+                if (x !== null) breakoutPointerX = Math.max(0, Math.min(BREAKOUT_W, x));
+            };
+
+            wrap.addEventListener('pointerdown', (e) => {
+                if (!breakoutGameRunning) return;
+                e.preventDefault();
+                applyPointer(e.clientX);
+                launchBreakoutBall();
+            });
+            wrap.addEventListener('pointermove', (e) => applyPointer(e.clientX));
+            wrap.addEventListener('pointerleave', () => { breakoutPointerX = null; });
+            wrap.addEventListener('touchmove', (e) => {
+                if (!breakoutGameRunning) return;
+                if (e.touches && e.touches[0]) applyPointer(e.touches[0].clientX);
+            }, { passive: true });
         });
 
         window.addEventListener('keydown', (e) => {
-            const modal = document.getElementById('piggy-arcade-modal');
+            const modal = document.getElementById('neon-breakout-modal');
             const isOpen = modal && !modal.classList.contains('hidden');
             if (!isOpen) return;
 
-            if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
                 e.preventDefault();
-                if (!arcadeGameRunning) {
-                    startArcadeGame();
+                breakoutPointerX = null;
+                breakoutKeyLeft = true;
+            } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                e.preventDefault();
+                breakoutPointerX = null;
+                breakoutKeyRight = true;
+            } else if (e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                if (!breakoutGameRunning) {
+                    startBreakoutGame();
                 } else {
-                    arcadeJump();
+                    launchBreakoutBall();
                 }
             } else if (e.key === 'Escape') {
-                closePiggyArcade();
+                closeNeonBreakout();
             }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') breakoutKeyLeft = false;
+            else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') breakoutKeyRight = false;
         });
 
         // ========================================================= //
@@ -23891,7 +24208,8 @@ let shareCardLoading;
 
             if (c === 'help') {
                 resp.innerHTML = `Verfügbare Befehle:<br>
-• <b class="text-white">vault</b> / <b class="text-white">arcade</b>: Öffnet den Cyber Arcade Vault (Alle 16 Spiele)<br>
+• <b class="text-white">vault</b>: Öffnet den Cyber Arcade Vault (Alle 16 Spiele)<br>
+• <b class="text-white">breakout</b> / <b class="text-white">arcade</b>: Startet Neon Cyber Breakout<br>
 • <b class="text-white">fps</b> / <b class="text-white">hud</b>: Schaltet Live FPS & Performance HUD an/aus<br>
 • <b class="text-white">matrix</b>: Startet Matrix Code-Regen (schließt Terminal automatisch)<br>
 • <b class="text-white">party</b> / <b class="text-white">rave</b>: Startet Cyber Disco Rave Party<br>
@@ -23916,7 +24234,7 @@ let shareCardLoading;
                 resp.innerHTML = `🎮 GEHEIME CODES & TRIGGER:<br>
 Alle 16 Minispiele können direkt über den 🕹️ Arcade Vault geöffnet werden!<br>
 Oder im Spotlight-Suchfeld (⌘K) tippen:<br>
-• <span class="text-amber-300">arcade</span>, <span class="text-amber-300">snake</span>, <span class="text-amber-300">soundboard</span>, <span class="text-amber-300">hack</span><br>
+• <span class="text-amber-300">breakout</span>, <span class="text-amber-300">snake</span>, <span class="text-amber-300">soundboard</span>, <span class="text-amber-300">hack</span><br>
 • <span class="text-amber-300">matrix</span>, <span class="text-amber-300">party</span>, <span class="text-amber-300">synth</span>, <span class="text-amber-300">fps</span><br>
 • <span class="text-amber-300">zerog</span>, <span class="text-amber-300">crt</span>, <span class="text-amber-300">star</span>, <span class="text-amber-300">roll</span><br>
 • <span class="text-amber-300">pet</span>, <span class="text-amber-300">forza</span>, <span class="text-amber-300">oink</span>, <span class="text-amber-300">fokus</span>`;
@@ -23928,7 +24246,7 @@ CPU Load: 4.2% [OK]<br>
 Memory: 412MB / 4096MB [OK]<br>
 Piggy Core Temp: 37.2°C (Optimal)<br>
 Firewall: ACTIVE • Stealth Mode ON<br>
-Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
+Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
             } else if (c === 'clear') {
                 output.innerHTML = '';
                 return;
@@ -23943,9 +24261,9 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
                 closeHackerTerminal();
                 launchPartyMode();
                 return;
-            } else if (c === 'arcade') {
+            } else if (c === 'arcade' || c === 'breakout' || c === 'brick') {
                 closeHackerTerminal();
-                openPiggyArcade();
+                openNeonBreakout();
                 return;
             } else if (c === 'snake') {
                 closeHackerTerminal();
@@ -24137,7 +24455,7 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
         };
 
         const piggyPetQuotes = [
-            'Oink! 🎮 Bereit für eine Runde Cyber Dash?',
+            'Oink! 🎮 Bereit für eine Runde Neon Breakout?',
             'Tippe mal "snake" oder "matrix" ein! ✨',
             'Hast du das geheime Soundboard gefunden? 🎛️',
             'Schwerelosigkeit aktiviert man mit "zerog"! 🌌',
@@ -24864,37 +25182,37 @@ Highscores: Arcade: ${arcadeHighScore} | Snake: ${snakeHighScoreVal}`;
                 },
                 highlights: {
                     de: [
-                        '🕹️ Vollwertiges 8-Bit "Piggy Cyber Dash" Arcade-Minispiel mit Highscore & Web-Audio SFX',
+                        '🧱 Neon Cyber Breakout: Cyberpunk Brick-Breaker mit Power-Ups (Multiball, Laser), Neon-Partikeln & Highscore',
                         '🐍 Neon Cyber Snake: Retro Tron Schlangen-Minispiel mit Touch D-Pad Steuerung',
                         '🎛️ Cyber SFX Soundboard: 9-Pad Web Audio Synthesizer (Coin, Blaster, Fanfare, V8, 808 Drop)',
                         '💻 Hacker Matrix Terminal: Interaktive CRT Root-Konsole mit Cheatcodes & Telemetrie'
                     ],
                     en: [
-                        '🕹️ Full 8-bit "Piggy Cyber Dash" arcade minigame with high score & Web Audio SFX',
+                        '🧱 Neon Cyber Breakout: Cyberpunk brick-breaker with power-ups (multiball, laser), neon particles & high score',
                         '🐍 Neon Cyber Snake: Retro Tron snake minigame with touch D-Pad controls',
                         '🎛️ Cyber SFX Soundboard: 9-pad Web Audio synthesizer (Coin, Blaster, Fanfare, V8, 808 Drop)',
                         '💻 Hacker Matrix Terminal: Interactive CRT root console with cheatcodes & telemetry'
                     ],
                     es: [
-                        '🕹️ Minijuego arcade retro "Piggy Cyber Dash" con efectos de sonido y puntuación',
+                        '🧱 Neon Cyber Breakout: Brick-breaker cyberpunk con power-ups, partículas y puntuación',
                         '⚡ Monitor HUD de FPS y rendimiento cyberpunk en vivo',
                         '🎹 Sintetizador chiptune de 8 bits con banner visualizador dinámico',
                         '⚙️ Centro de ajustes completamente renovado con búsqueda rápida'
                     ],
                     fr: [
-                        '🕹️ Mini-jeu d\'arcade 8-bit « Piggy Cyber Dash » avec effets sonores Web Audio',
+                        '🧱 Neon Cyber Breakout : brick-breaker cyberpunk avec power-ups, particules et score',
                         '⚡ HUD de diagnostic de performances et FPS cyberpunk en direct',
                         '🎹 Synthétiseur chiptune 8-bit avec visualiseur audio dynamique',
                         '⚙️ Centre de paramètres entièrement repensé avec recherche rapide'
                     ],
                     pt: [
-                        '🕹️ Minijogo retrô "Piggy Cyber Dash" com efeitos sonoros e pontuação recorde',
+                        '🧱 Neon Cyber Breakout: brick-breaker cyberpunk com power-ups, partículas e recorde',
                         '⚡ Monitor HUD de FPS e desempenho cibernético em tempo real',
                         '🎹 Sintetizador chiptune de 8 bits com banner de visualizador dinâmico',
                         '⚙️ Centro de configurações reformulado com pesquisa rápida'
                     ],
                     tr: [
-                        '🕹️ Web Audio SFX ve yüksek skorlu 8-bit "Piggy Cyber Dash" atari mini oyunu',
+                        '🧱 Neon Cyber Breakout: power-up\'lı, neon partiküllü cyberpunk tuğla kırma oyunu',
                         '⚡ Canlı siber FPS ve performans HUD monitörü (60/120 Hz)',
                         '🎹 Dinamik görselleştirici afişli 8-bit chiptune sentezleyici',
                         '⚙️ Hızlı arama özellikli yenilenmiş Ayarlar Merkezi'
@@ -29170,8 +29488,8 @@ window.setLyricsStyle = function(style) {
 
         const triggerArcadeWarp = () => {
             if (typeof haptic === 'function') haptic(60);
-            if (typeof openPiggyArcade === 'function') {
-                openPiggyArcade();
+            if (typeof openNeonBreakout === 'function') {
+                openNeonBreakout();
             } else if (typeof openArcadeVault === 'function') {
                 openArcadeVault();
             }
