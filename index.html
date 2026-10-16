@@ -5975,6 +5975,59 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
            dazu, bei jedem 120Hz-Scroll-Frame Dutzende Offscreen-Textur-Shader auszuführen, was massive
            Überhitzung und Scroll-Ruckeln verursachte. Saubere Opazitäts- & Skalierungs-Staffelung liefert
            dieselbe edle Tiefenwirkung bei 0% Shader-Overhead. */
+        /* ===== NEON LYRICS-LOADING (Cyberpunk / Apple-Music Glas) — v24.222.7 ===== */
+        .gp-lyrics-loading .gp-eq-bar {
+            transform-origin: bottom center;
+            animation: gpEqBounce 1.1s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.35);
+        }
+        .gp-lyrics-loading .gp-eq-bar:nth-child(1) { animation-delay: 0s; }
+        .gp-lyrics-loading .gp-eq-bar:nth-child(2) { animation-delay: 0.12s; }
+        .gp-lyrics-loading .gp-eq-bar:nth-child(3) { animation-delay: 0.24s; }
+        .gp-lyrics-loading .gp-eq-bar:nth-child(4) { animation-delay: 0.36s; }
+        .gp-lyrics-loading .gp-eq-bar:nth-child(5) { animation-delay: 0.48s; }
+        @keyframes gpEqBounce {
+            0%, 100% { transform: scaleY(0.35); opacity: 0.55; }
+            50% { transform: scaleY(1); opacity: 1; }
+        }
+        .gp-lyrics-loading .gp-load-badge {
+            animation: gpGlowPulse 1.8s ease-in-out infinite;
+        }
+        @keyframes gpGlowPulse {
+            0%, 100% { box-shadow: 0 0 0 rgba(34, 211, 238, 0); opacity: 0.85; }
+            50% { box-shadow: 0 0 22px rgba(34, 211, 238, 0.45); opacity: 1; }
+        }
+        .gp-lyrics-loading .gp-shimmer {
+            background-image: linear-gradient(100deg,
+                rgba(255, 255, 255, 0.04) 0%,
+                rgba(255, 255, 255, 0.04) 32%,
+                rgba(255, 255, 255, 0.22) 50%,
+                rgba(255, 255, 255, 0.04) 68%,
+                rgba(255, 255, 255, 0.04) 100%);
+            background-size: 220% 100%;
+            background-repeat: no-repeat;
+            animation: gpShimmerWave 2.1s linear infinite;
+        }
+        @keyframes gpShimmerWave {
+            0% { background-position: 140% 0; }
+            100% { background-position: -140% 0; }
+        }
+        .gp-lyrics-loading .gp-card-sheen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.14) 50%, transparent 68%);
+            background-size: 220% 100%;
+            animation: gpShimmerWave 2.6s linear infinite;
+            pointer-events: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .gp-lyrics-loading .gp-eq-bar,
+            .gp-lyrics-loading .gp-load-badge,
+            .gp-lyrics-loading .gp-shimmer,
+            .gp-lyrics-loading .gp-card-sheen::after { animation: none; }
+        }
         /* --- INSTRUMENTAL BREAK BEAT DOTS (Clean Apple Music Style) --- */
         .lyric-line.lyric-instrumental {
             display: flex;
@@ -12119,7 +12172,7 @@ html.gp-android:not(.dark) #ui-controls {
                 secret_5: '💙 Danke fürs Neugierig-Sein und Herumklicken!',
                                 music_section_title: 'Was bei mir gerade läuft',
                 music_sync_note: '*Hinweis: Der Time-Sync ist auf -400ms optimiert.',
-                lyrics_loading: 'Songtext wird geladen...',
+                lyrics_loading: 'Synchronisiere Songtext...',
                 lyrics_placeholder_title: 'Titel',
                 lyrics_placeholder_artist: 'Artist',
                 lyrics_synced_label: 'Synced',
@@ -12354,7 +12407,7 @@ html.gp-android:not(.dark) #ui-controls {
                 secret_5: '💙 Thanks for being curious and clicking around!',
                                 music_section_title: 'What I\'m currently listening to',
                 music_sync_note: '*Note: Time sync is optimized for -400ms.',
-                lyrics_loading: 'Loading lyrics...',
+                lyrics_loading: 'Syncing lyrics...',
                 lyrics_placeholder_title: 'Title',
                 lyrics_placeholder_artist: 'Artist',
                 lyrics_synced_label: 'Synced',
@@ -12618,7 +12671,7 @@ html.gp-android:not(.dark) #ui-controls {
                 secret_5: '💙 ¡Gracias por ser curioso y andar haciendo clic por todos lados!',
                                 music_section_title: 'Lo que estoy escuchando ahora',
                 music_sync_note: '*Nota: La sincronización está optimizada para -400ms.',
-                lyrics_loading: 'Cargando letra...',
+                lyrics_loading: 'Sincronizando letra...',
                 lyrics_placeholder_title: 'Título',
                 lyrics_placeholder_artist: 'Artista',
                 lyrics_synced_label: 'Letra: Sincronizada',
@@ -19573,17 +19626,23 @@ let shareCardLoading;
         { version: "v24.222.7", date: "15. Oktober 2026", type: "feature", items: {
             de: [
                 "✨ Lyrics-Synchronisation Durchbruch: 100% autonome Songtext-Erkennung – manueller Re-Sync endgültig eliminiert",
-                "🛡️ HTTP 429 Shield & Selbstheilung: Automatischer 2.5s Exponential-Backoff Retry verhindert falsche Fehlermeldungen",
+                "🛡️ HTTP 429/503 Shield & Selbstheilung: Automatische Retries (429 → 2s, 503 ServerOverloaded → 2×1s) und sicherer AbortController-Timeout verhindern falsche Fehlermeldungen",
                 "⚡ Non-Aborting Pipeline: Kein Abbrechen laufender Hintergrundabfragen beim Öffnen der Lyrics-Ansicht oder im Standby",
                 "🌐 Multi-DB Architektur: Vorbereitung für zusätzliche Songtext- und Metadaten-Datenbanken mit optimierter LRCLIB-Engine",
+                "🔍 Zweistufige Titelsuche + dauerhafter Songtext-Cache (AppStorage): Gespeicherte Lyrics erscheinen sofort in 0ms, Fallback-Suche nur mit dem Titel findet Songs mit abweichender Artist-Schreibweise",
+                "🎞️ Neue Cyberpunk-Ladeanimation: Neon-Equalizer, pulsierendes Status-Badge „Synchronisiere Songtext…“ und flüssige Glas-Shimmer-Reflexion statt langweiligem Skeleton",
+                "🎯 Instrumental-Pausen: Dynamisches Taktmaß über die gesamte Pausendauer – die 3 Beat-Punkte atmen sofort mit, keine tote, eingefrorene Zeit mehr bei langen Intros oder Soli",
                 "🔒 Datenschutz (DSGVO): Vollständig anonymisierte Songtext-Abfragen ohne Nutzerkonten, Tracking oder Cookies",
                 "🧱 Neues Arcade-Minispiel: Neon Cyber Breakout ersetzt Piggy Cyber Dash – Cyberpunk Brick-Breaker mit Multiball, Laser & breiterem Paddle"
             ],
             en: [
                 "✨ Lyrics Synchronization Breakthrough: 100% autonomous detection – manual 'Re-Sync' clicking is completely eliminated",
-                "🛡️ HTTP 429 Shield: Automatic 2.5s exponential backoff scheduler reliably prevents false 'no lyrics' screens",
+                "🛡️ HTTP 429/503 Shield: Automatic retries (429 → 2s, 503 ServerOverloaded → 2×1s) and a safe AbortController timeout reliably prevent false 'no lyrics' screens",
                 "⚡ Non-Aborting Pipeline: Opening the lyrics overlay or switching to standby mode never aborts active background fetches",
                 "🌐 Multi-DB Architecture: Scalable infrastructure for secondary lyrics and metadata databases with tuned LRCLIB engine",
+                "🔍 Two-stage title search + persistent lyrics cache (AppStorage): Cached lyrics appear instantly in 0 ms, and a title-only fallback finds songs whose artist name is spelled differently",
+                "🎞️ New cyberpunk loading animation: neon equalizer, pulsing \"Syncing lyrics…\" status badge and flowing glass shimmer instead of a boring skeleton",
+                "🎯 Instrumental breaks: dynamic beat timing across the whole pause – the 3 beat dots breathe right from the start, no more dead frozen time on long intros or solos",
                 "🔒 Privacy Policy (GDPR): Fully anonymized metadata queries without user accounts, tracking, or cookies",
                 "🧱 New arcade minigame: Neon Cyber Breakout replaces Piggy Cyber Dash – cyberpunk brick-breaker with multiball, laser & wider paddle"
             ]
@@ -27679,16 +27738,13 @@ window.setLyricsStyle = function(style) {
                     const d2 = instEl.querySelector('.dot-2');
                     const d3 = instEl.querySelector('.dot-3');
                     if (d1 && d2 && d3) {
-                        // 4-Takt-Struktur: 3 Taktschläge für Punkte 1, 2, 3 + 1 Taktschlag Reaktions-Atemzug
-                        let beatTime;
-                        if (totalBreak <= 3500) {
-                            // Pausen bis 3.5s: exakt 4 Takte, um die gesamte Pause harmonisch auszufüllen
-                            beatTime = totalBreak / 4;
-                        } else {
-                            // Längere Pausen / Soli: Taktmaß aus Songkadenz (Ballade ~720ms, Pop ~520ms)
-                            beatTime = isCurrentSongBallad ? 720 : 520;
-                        }
-                        beatTime = Math.max(220, Math.min(900, beatTime));
+                        // 4-Takt-Struktur: 3 Taktschläge für Punkte 1, 2, 3 + 1 Taktschlag Reaktions-Atemzug.
+                        // NEU (v24.222.7): Dynamisches Taktmaß über die GESAMTE Pausendauer – die starre
+                        // 3,5s-Begrenzung ist entfernt. Die 3 Punkte starten direkt zu Beginn der Pause
+                        // und atmen harmonisch-langsamer über die volle Länge mit (sanftes Min 350ms / Max 3000ms).
+                        // Dadurch gibt es bei langen Instrumental-Soli intro/outro keine tote, eingefrorene Zeit mehr.
+                        let beatTime = totalBreak / 4;
+                        beatTime = Math.max(350, Math.min(3000, beatTime));
 
                         const reactionMargin = beatTime; // 1 voller Takt Reaktionszeit / Vorbereitung
                         const countdownWindow = beatTime * 4; // 3 Countdown-Takte + 1 Reaktions-Takt
@@ -27993,11 +28049,26 @@ window.setLyricsStyle = function(style) {
         function isDummyLyrics(text) {
             if (!text) return true;
             const lower = text.toLowerCase();
-            return lower.includes("this song has no") || 
-                   lower.includes("lyrics not available") || 
-                   lower.includes("instrumental") ||
-                   lower.includes("we don't have lyrics") ||
-                   lower.includes("kein text");
+            // Bekannte "keine Lyrics vorhanden"-Antworten der Anbieter:
+            if (lower.includes("this song has no") ||
+                lower.includes("lyrics not available") ||
+                lower.includes("we don't have lyrics") ||
+                lower.includes("kein text")) {
+                return true;
+            }
+            // WICHTIG (v24.222.7): Echte Instrumentals werden NIE mehr pauschal wegen des Wortes
+            // "instrumental" verworfen. Ob es ein Dummy ist, entscheidet allein die Heuristik unten.
+            // LRC-Timestamps, [Instrumental]/[Verse]-Tags etc. werden für die Auswertung entfernt.
+            const lines = text.split(/\r?\n/)
+                .map(l => l
+                    .replace(/\[\d{1,2}:\d{2}(?:[.:]\d{1,3})?\]/g, '')  // [00:12.34]
+                    .replace(/\[[^\]]*\]/g, '')                          // [Instrumental], [Chorus] ...
+                    .trim())
+                .filter(l => l.length > 0);
+            // Dummy nur, wenn der gesamte Text weniger als 3 inhaltliche Zeilen hat
+            // ODER ausschließlich aus Platzhaltern (♪, ♫, –, Punkte) besteht.
+            if (lines.length < 3) return true;
+            return lines.every(l => /^[♪♫🎵🎶\-–—.\s]+$/.test(l));
         }
 
         function cleanStringForAPI(str) {
@@ -28008,6 +28079,9 @@ window.setLyricsStyle = function(style) {
                       .replace(/\b(?:feat|ft|prod)\.?\s+.*$/gi, '')
                       .replace(/\((?:official|music|video|audio|lyric|visualizer)[^)]*\)/gi, '')
                       .replace(/\[(?:official|music|video|audio|lyric|visualizer)[^\]]*\]/gi, '')
+                      // NEU (v24.222.7): verbliebene Bindestriche, Schrägstriche oder Kommas am Ende entfernen.
+                      // Sonst interpretiert LRCLIB das '-' als NOT-Ausschlussfilter und findet nichts.
+                      .replace(/\s*(?:[-–—/\\,]\s*)+$/g, '')
                       .trim();
         }
 
@@ -28060,28 +28134,31 @@ window.setLyricsStyle = function(style) {
             if (!lyricsContent) return;
             const cleanT = title || (typeof currentTrackTitle !== 'undefined' ? currentTrackTitle : '');
             const cleanA = artist || (typeof currentRawArtist !== 'undefined' ? currentRawArtist : '');
-            const label = (typeof t === 'function' ? t('lyrics_loading') : null) || 'Songtext wird geladen...';
+            const label = (typeof t === 'function' ? t('lyrics_loading') : null) || 'Synchronisiere Songtext...';
 
             lyricsContent.innerHTML = `
-                <div class="w-full flex-1 flex flex-col justify-center min-h-[50vh] py-12 px-3 sm:px-6 md:px-10 max-w-2xl">
-                    <div class="flex items-center gap-2.5 mb-5">
-                        <div class="flex items-center gap-1 h-4">
-                            <span class="w-1.5 h-3 bg-blue-400 rounded-full animate-pulse" style="animation-duration: 0.6s"></span>
-                            <span class="w-1.5 h-4.5 bg-blue-300 rounded-full animate-pulse" style="animation-duration: 0.8s; animation-delay: 0.15s"></span>
-                            <span class="w-1.5 h-3.5 bg-blue-400 rounded-full animate-pulse" style="animation-duration: 0.7s; animation-delay: 0.3s"></span>
+                <div class="gp-lyrics-loading w-full flex-1 flex flex-col justify-center min-h-[50vh] py-12 px-3 sm:px-6 md:px-10 max-w-2xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="flex items-end gap-1 h-7">
+                            <span class="gp-eq-bar w-1.5 h-[18px] rounded-full bg-gradient-to-t from-cyan-400 via-cyan-300 to-pink-300"></span>
+                            <span class="gp-eq-bar w-1.5 h-6 rounded-full bg-gradient-to-t from-cyan-400 via-purple-300 to-pink-400"></span>
+                            <span class="gp-eq-bar w-1.5 h-7 rounded-full bg-gradient-to-t from-pink-400 via-purple-400 to-purple-300"></span>
+                            <span class="gp-eq-bar w-1.5 h-[22px] rounded-full bg-gradient-to-t from-purple-400 via-pink-400 to-amber-300"></span>
+                            <span class="gp-eq-bar w-1.5 h-4 rounded-full bg-gradient-to-t from-cyan-400 via-pink-400 to-purple-400"></span>
                         </div>
-                        <span class="text-xs sm:text-sm font-bold uppercase tracking-wider text-blue-400/90">${escapeHTML(label)}</span>
+                        <span class="gp-load-badge inline-flex items-center px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider text-cyan-100 bg-cyan-500/10 border border-cyan-400/30 backdrop-blur">${escapeHTML(label)}</span>
                     </div>
-                    ${cleanT ? `
-                    <div class="mb-8">
-                        <h3 class="text-xl sm:text-2xl font-black text-white/90 tracking-tight leading-snug">${escapeHTML(cleanT)}</h3>
+                    ${(cleanT || cleanA) ? `
+                    <div class="gp-card-sheen relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl px-5 py-4 mb-8 shadow-[0_0_30px_rgba(34,211,238,0.10)]">
+                        ${cleanT ? `<h3 class="text-xl sm:text-2xl font-black text-white/95 tracking-tight leading-snug">${escapeHTML(cleanT)}</h3>` : ''}
                         ${cleanA ? `<p class="text-xs sm:text-sm font-semibold text-white/50 mt-1">${escapeHTML(cleanA)}</p>` : ''}
                     </div>` : ''}
                     <div class="flex flex-col gap-3.5 w-full">
-                        <div class="h-6 sm:h-7 rounded-xl bg-gradient-to-r from-white/10 via-white/20 to-white/10 w-4/5 animate-pulse" style="animation-duration: 1.4s; animation-delay: 0.05s;"></div>
-                        <div class="h-6 sm:h-7 rounded-xl bg-gradient-to-r from-white/10 via-white/20 to-white/10 w-3/5 animate-pulse" style="animation-duration: 1.4s; animation-delay: 0.2s;"></div>
-                        <div class="h-6 sm:h-7 rounded-xl bg-gradient-to-r from-white/10 via-white/20 to-white/10 w-5/6 animate-pulse" style="animation-duration: 1.4s; animation-delay: 0.35s;"></div>
-                        <div class="h-6 sm:h-7 rounded-xl bg-gradient-to-r from-white/10 via-white/20 to-white/10 w-2/3 animate-pulse" style="animation-duration: 1.4s; animation-delay: 0.5s;"></div>
+                        <div class="gp-shimmer h-5 sm:h-6 rounded-lg bg-white/[0.05] w-3/4"></div>
+                        <div class="gp-shimmer h-5 sm:h-6 rounded-lg bg-white/[0.05] w-[90%]"></div>
+                        <div class="gp-shimmer h-5 sm:h-6 rounded-lg bg-white/[0.05] w-3/5"></div>
+                        <div class="gp-shimmer h-5 sm:h-6 rounded-lg bg-white/[0.05] w-[85%]"></div>
+                        <div class="gp-shimmer h-5 sm:h-6 rounded-lg bg-white/[0.05] w-1/2"></div>
                     </div>
                 </div>`;
         }
@@ -28129,6 +28206,48 @@ window.setLyricsStyle = function(style) {
         let lrclibRateLimitedUntil = 0;
         let lrclibAutoRetryTimeout = null;
         let lastLyricsFetchTime = 0;
+
+        // ── PERSISTENTER LYRICS-CACHE (AppStorage) ──────────────────────────────────
+        // Gefundene Synced-Lyrics werden dauerhaft (über Reloads/App-Neustarts hinweg) in AppStorage
+        // gespeichert. Vor jedem Netzwerk-Request wird der Songtext damit sofort in 0ms angezeigt.
+        const LYRICS_STORE_PREFIX = 'gp_lyrics_cache_';
+        const LYRICS_STORE_MAX_ENTRIES = 60;
+
+        function readPersistedLyrics(cacheKey) {
+            try {
+                if (!window.AppStorage) return null;
+                const raw = AppStorage.getItem(LYRICS_STORE_PREFIX + cacheKey);
+                if (!raw) return null;
+                const obj = JSON.parse(raw);
+                if (obj && obj.syncedLyrics && !isDummyLyrics(obj.syncedLyrics)) return obj;
+            } catch (e) {}
+            return null;
+        }
+
+        function persistLyrics(cacheKey, synced, plain, provider, writer) {
+            if (!synced || isDummyLyrics(synced) || !window.AppStorage) return;
+            const payload = JSON.stringify({
+                syncedLyrics: synced,
+                plainLyrics: plain || null,
+                provider: provider || 'LRCLIB',
+                writer: writer || '',
+                cachedAt: Date.now()
+            });
+            try {
+                AppStorage.setItem(LYRICS_STORE_PREFIX + cacheKey, payload);
+            } catch (e) {
+                // Quota überschritten? Einmal älteste Lyrics-Einträge verwerfen und erneut versuchen.
+                try {
+                    if (typeof AppStorage.keys === 'function') {
+                        AppStorage.keys()
+                            .filter(k => k.indexOf(LYRICS_STORE_PREFIX) === 0)
+                            .slice(0, LYRICS_STORE_MAX_ENTRIES)
+                            .forEach(k => AppStorage.removeItem(k));
+                    }
+                    AppStorage.setItem(LYRICS_STORE_PREFIX + cacheKey, payload);
+                } catch (e2) {}
+            }
+        }
 
         async function fetchExternalLyrics(title, artist, searchDurationMs = 0, force = false) {
             if (!title) return;
@@ -28190,6 +28309,20 @@ window.setLyricsStyle = function(style) {
                 }
             }
 
+            // Persistenter Cache (AppStorage): Songtext sofort in 0ms anzeigen – ganz ohne Netzwerk-Request.
+            if (!force) {
+                const persisted = readPersistedLyrics(cacheKey);
+                if (persisted) {
+                    lyricsMemoryCache.set(cacheKey, { syncedLyrics: persisted.syncedLyrics, plainLyrics: persisted.plainLyrics || null, provider: persisted.provider || 'LRCLIB', writer: persisted.writer || '', isPlainOnly: false, cachedAt: persisted.cachedAt || Date.now() });
+                    currentLyricsProvider = persisted.provider || 'LRCLIB';
+                    currentLyricsWriter = persisted.writer || '';
+                    parseLrc(persisted.syncedLyrics);
+                    renderLyrics();
+                    syncLyricsUI(true);
+                    return;
+                }
+            }
+
             const fetchId = ++currentFetchId;
             inFlightLyricsKey = cacheKey;
 
@@ -28213,6 +28346,7 @@ window.setLyricsStyle = function(style) {
                         currentLyricsWriter = writer;
                         if (synced && !isDummyLyrics(synced)) {
                             lyricsMemoryCache.set(cacheKey, { syncedLyrics: synced, plainLyrics: plain, provider, writer, isPlainOnly: false, cachedAt: Date.now() });
+                            persistLyrics(cacheKey, synced, plain, provider, writer);
                             parseLrc(synced);
                             renderLyrics();
                             syncLyricsUI(true);
@@ -28314,34 +28448,88 @@ window.setLyricsStyle = function(style) {
                         'Accept': 'application/json'
                     };
 
+                    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+                    // Sicherer Timeout: Standard-AbortController + setTimeout statt AbortSignal.timeout().
+                    // Verhindert stille, sofortige Abbrüche auf mobilen Browsern (Safari/WebKit) und
+                    // lässt den Lade-Skeleton währenddessen ungestört weiterlaufen.
+                    const fetchWithTimeout = async (url, timeoutMs) => {
+                        const controller = new AbortController();
+                        const timer = setTimeout(() => { try { controller.abort(); } catch (e) {} }, timeoutMs);
+                        try {
+                            return await fetch(url, { headers: lrclibHeaders, signal: controller.signal });
+                        } finally {
+                            clearTimeout(timer);
+                        }
+                    };
+
                     const fetchLrclib = async (url, timeoutMs = 6000) => {
                         try {
                             const now = Date.now();
                             if (now < lrclibRateLimitedUntil) {
                                 const waitMs = Math.min(lrclibRateLimitedUntil - now, 3500);
-                                await new Promise(r => setTimeout(r, waitMs));
+                                await sleep(waitMs);
                                 if (fetchId !== currentFetchId) return null;
                             }
-                            let res = await fetch(url, { headers: lrclibHeaders, signal: AbortSignal.timeout(timeoutMs) });
-                            if (res.status === 429) {
-                                wasRateLimited = true;
-                                const retryHeader = res.headers.get('retry-after');
-                                const retrySec = retryHeader ? parseInt(retryHeader, 10) : 2;
-                                const waitMs = Math.max((isNaN(retrySec) ? 2 : retrySec) * 1000 + 500, 2500);
-                                lrclibRateLimitedUntil = Date.now() + waitMs;
-                                // Automatischer Backoff-Retry: Skeleton luft whrenddessen weiter
-                                await new Promise(r => setTimeout(r, waitMs));
+
+                            let busyRetries = 0;      // 502/503/504 (ServerOverloaded) – bis zu 2x
+                            let rateLimitRetries = 0; // 429 – genau 1x
+
+                            while (true) {
+                                let res = null;
+                                try {
+                                    res = await fetchWithTimeout(url, timeoutMs);
+                                } catch (e) {
+                                    res = null; // Netzwerkfehler / Timeout -> wie Status 0 behandeln
+                                }
                                 if (fetchId !== currentFetchId) return null;
-                                res = await fetch(url, { headers: lrclibHeaders, signal: AbortSignal.timeout(timeoutMs) });
-                                if (res.status === 429) {
+
+                                if (res && res.ok) {
+                                    wasRateLimited = false;
+                                    return await res.json();
+                                }
+
+                                const status = res ? res.status : 0;
+
+                                // 503 ServerOverloaded (häufig bei LRCLIB!) / 502 / 504: NICHT abbrechen.
+                                // Nach 1000ms automatisch erneut versuchen, während der Skeleton weiterläuft.
+                                if (status === 503 || status === 502 || status === 504) {
+                                    if (busyRetries < 2) {
+                                        busyRetries++;
+                                        await sleep(1000);
+                                        if (fetchId !== currentFetchId) return null;
+                                        continue;
+                                    }
+                                    return null;
+                                }
+
+                                // 429 Rate-Limit: 2000ms warten und den Request genau 1x wiederholen.
+                                if (status === 429) {
                                     wasRateLimited = true;
+                                    const retryHeader = res.headers.get('retry-after');
+                                    const retrySec = retryHeader ? parseInt(retryHeader, 10) : 2;
+                                    const waitMs = Math.max((isNaN(retrySec) ? 2 : retrySec) * 1000 + 500, 2000);
+                                    lrclibRateLimitedUntil = Date.now() + waitMs;
+                                    if (rateLimitRetries < 1) {
+                                        rateLimitRetries++;
+                                        await sleep(waitMs);
+                                        if (fetchId !== currentFetchId) return null;
+                                        continue;
+                                    }
                                     lrclibRateLimitedUntil = Date.now() + 15000;
                                     return null;
                                 }
-                            }
-                            if (res.ok) {
-                                wasRateLimited = false;
-                                return await res.json();
+
+                                // Netzwerkfehler/Timeout (Status 0): einmaliger leichter Retry
+                                if (status === 0 && busyRetries < 2) {
+                                    busyRetries++;
+                                    await sleep(1000);
+                                    if (fetchId !== currentFetchId) return null;
+                                    continue;
+                                }
+
+                                // Alle übrigen Fehler (z.B. 404) -> kein Retry.
+                                return null;
                             }
                         } catch (e) {}
                         return null;
@@ -28358,13 +28546,26 @@ window.setLyricsStyle = function(style) {
                     let bestSynced = null;
                     let bestPlain = null;
 
-                    // 1. GENAU EIN konsolidierter LRCLIB-Search-Request (keine Query-/Request-Kaskade -> kein 429 mehr).
+                    // 1. Stufe 1: GENAU EIN konsolidierter LRCLIB-Search-Request (Titel + primärer Artist).
+                    // Keine Query-/Request-Kaskade -> verhindert 429-Rate-Limits.
                     const consolidatedQuery = `${cleanT || title} ${primaryArtist || cleanA || artist}`.trim();
-                    const searchData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(consolidatedQuery));
+                    let searchData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(consolidatedQuery));
                     if (fetchId !== currentFetchId) return;
 
                     // Bis zu 20 Treffer im Speicher auswerten und synchronisierte Lyrics bevorzugen.
-                    const searchResults = Array.isArray(searchData) ? searchData.slice(0, 20) : [];
+                    let searchResults = Array.isArray(searchData) ? searchData.slice(0, 20) : [];
+
+                    // 1b. Stufe 2 (v24.222.7): Fallback-Suche NUR mit dem Titel, wenn Stufe 1 keine Treffer
+                    // liefert. Der Song ist oft unter dem Titel hinterlegt, aber der Artist leicht anders
+                    // geschrieben. pickBestMatch filtert danach weiterhin streng nach Artist/Titel.
+                    if (searchResults.length === 0) {
+                        const titleOnlyQuery = `${cleanT || title}`.trim();
+                        if (titleOnlyQuery && titleOnlyQuery.toLowerCase() !== consolidatedQuery.toLowerCase()) {
+                            searchData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(titleOnlyQuery));
+                            if (fetchId !== currentFetchId) return;
+                            searchResults = Array.isArray(searchData) ? searchData.slice(0, 20) : [];
+                        }
+                    }
                     if (searchResults.length > 0) {
                         const best = pickBestMatch(searchResults, searchDurationMs);
                         if (best) {
