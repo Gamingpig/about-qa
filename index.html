@@ -5975,58 +5975,22 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
            dazu, bei jedem 120Hz-Scroll-Frame Dutzende Offscreen-Textur-Shader auszuführen, was massive
            Überhitzung und Scroll-Ruckeln verursachte. Saubere Opazitäts- & Skalierungs-Staffelung liefert
            dieselbe edle Tiefenwirkung bei 0% Shader-Overhead. */
-        /* ===== NEON LYRICS-LOADING (Cyberpunk / Apple-Music Glas) — v24.222.7 ===== */
-        .gp-lyrics-loading .gp-eq-bar {
-            transform-origin: bottom center;
-            animation: gpEqBounce 1.1s ease-in-out infinite;
-            box-shadow: 0 0 10px rgba(34, 211, 238, 0.35);
-        }
-        .gp-lyrics-loading .gp-eq-bar:nth-child(1) { animation-delay: 0s; }
-        .gp-lyrics-loading .gp-eq-bar:nth-child(2) { animation-delay: 0.12s; }
-        .gp-lyrics-loading .gp-eq-bar:nth-child(3) { animation-delay: 0.24s; }
-        .gp-lyrics-loading .gp-eq-bar:nth-child(4) { animation-delay: 0.36s; }
-        .gp-lyrics-loading .gp-eq-bar:nth-child(5) { animation-delay: 0.48s; }
-        @keyframes gpEqBounce {
-            0%, 100% { transform: scaleY(0.35); opacity: 0.55; }
-            50% { transform: scaleY(1); opacity: 1; }
-        }
-        .gp-lyrics-loading .gp-load-badge {
-            animation: gpGlowPulse 1.8s ease-in-out infinite;
-        }
-        @keyframes gpGlowPulse {
-            0%, 100% { box-shadow: 0 0 0 rgba(34, 211, 238, 0); opacity: 0.85; }
-            50% { box-shadow: 0 0 22px rgba(34, 211, 238, 0.45); opacity: 1; }
-        }
-        .gp-lyrics-loading .gp-shimmer {
+        /* ===== SEIDIGES LYRICS-LOADING (Apple-Music-Ästhetik) — v24.222.7 ===== */
+        .gp-load-shimmer {
             background-image: linear-gradient(100deg,
-                rgba(255, 255, 255, 0.04) 0%,
-                rgba(255, 255, 255, 0.04) 32%,
-                rgba(255, 255, 255, 0.22) 50%,
-                rgba(255, 255, 255, 0.04) 68%,
-                rgba(255, 255, 255, 0.04) 100%);
-            background-size: 220% 100%;
+                rgba(255, 255, 255, 0) 30%,
+                rgba(255, 255, 255, 0.10) 50%,
+                rgba(255, 255, 255, 0) 70%);
+            background-size: 200% 100%;
             background-repeat: no-repeat;
-            animation: gpShimmerWave 2.1s linear infinite;
+            animation: gpLoadShimmer 2.2s ease-in-out infinite;
         }
-        @keyframes gpShimmerWave {
-            0% { background-position: 140% 0; }
-            100% { background-position: -140% 0; }
-        }
-        .gp-lyrics-loading .gp-card-sheen::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.14) 50%, transparent 68%);
-            background-size: 220% 100%;
-            animation: gpShimmerWave 2.6s linear infinite;
-            pointer-events: none;
+        @keyframes gpLoadShimmer {
+            0% { background-position: 150% 0; }
+            100% { background-position: -150% 0; }
         }
         @media (prefers-reduced-motion: reduce) {
-            .gp-lyrics-loading .gp-eq-bar,
-            .gp-lyrics-loading .gp-load-badge,
-            .gp-lyrics-loading .gp-shimmer,
-            .gp-lyrics-loading .gp-card-sheen::after { animation: none; }
+            .gp-load-shimmer { animation: none; }
         }
         /* --- INSTRUMENTAL BREAK BEAT DOTS (Clean Apple Music Style) --- */
         .lyric-line.lyric-instrumental {
@@ -12172,7 +12136,7 @@ html.gp-android:not(.dark) #ui-controls {
                 secret_5: '💙 Danke fürs Neugierig-Sein und Herumklicken!',
                                 music_section_title: 'Was bei mir gerade läuft',
                 music_sync_note: '*Hinweis: Der Time-Sync ist auf -400ms optimiert.',
-                lyrics_loading: 'Synchronisiere Songtext...',
+                lyrics_loading: 'Songtext wird geladen...',
                 lyrics_placeholder_title: 'Titel',
                 lyrics_placeholder_artist: 'Artist',
                 lyrics_synced_label: 'Synced',
@@ -12407,7 +12371,7 @@ html.gp-android:not(.dark) #ui-controls {
                 secret_5: '💙 Thanks for being curious and clicking around!',
                                 music_section_title: 'What I\'m currently listening to',
                 music_sync_note: '*Note: Time sync is optimized for -400ms.',
-                lyrics_loading: 'Syncing lyrics...',
+                lyrics_loading: 'Loading lyrics...',
                 lyrics_placeholder_title: 'Title',
                 lyrics_placeholder_artist: 'Artist',
                 lyrics_synced_label: 'Synced',
@@ -12671,7 +12635,7 @@ html.gp-android:not(.dark) #ui-controls {
                 secret_5: '💙 ¡Gracias por ser curioso y andar haciendo clic por todos lados!',
                                 music_section_title: 'Lo que estoy escuchando ahora',
                 music_sync_note: '*Nota: La sincronización está optimizada para -400ms.',
-                lyrics_loading: 'Sincronizando letra...',
+                lyrics_loading: 'Cargando letra...',
                 lyrics_placeholder_title: 'Título',
                 lyrics_placeholder_artist: 'Artista',
                 lyrics_synced_label: 'Letra: Sincronizada',
@@ -19630,7 +19594,7 @@ let shareCardLoading;
                 "⚡ Non-Aborting Pipeline: Kein Abbrechen laufender Hintergrundabfragen beim Öffnen der Lyrics-Ansicht oder im Standby",
                 "🌐 Multi-DB Architektur: Vorbereitung für zusätzliche Songtext- und Metadaten-Datenbanken mit optimierter LRCLIB-Engine",
                 "🔍 Zweistufige Titelsuche + dauerhafter Songtext-Cache (AppStorage): Gespeicherte Lyrics erscheinen sofort in 0ms, Fallback-Suche nur mit dem Titel findet Songs mit abweichender Artist-Schreibweise",
-                "🎞️ Neue Cyberpunk-Ladeanimation: Neon-Equalizer, pulsierendes Status-Badge „Synchronisiere Songtext…“ und flüssige Glas-Shimmer-Reflexion statt langweiligem Skeleton",
+                "🎞️ Neue Lyrics-Ladeanimation: dezente Apple-Music-Ästhetik mit zarten Sound-Bars, schlichtem Label „Songtext wird geladen…“ und seidigen, mattierten Shimmer-Zeilen statt bunten Neon-Skeletts",
                 "🎯 Instrumental-Pausen: Dynamisches Taktmaß über die gesamte Pausendauer – die 3 Beat-Punkte atmen sofort mit, keine tote, eingefrorene Zeit mehr bei langen Intros oder Soli",
                 "🔒 Datenschutz (DSGVO): Vollständig anonymisierte Songtext-Abfragen ohne Nutzerkonten, Tracking oder Cookies",
                 "🧱 Neues Arcade-Minispiel: Neon Cyber Breakout ersetzt Piggy Cyber Dash – Cyberpunk Brick-Breaker mit Multiball, Laser & breiterem Paddle"
@@ -19641,7 +19605,7 @@ let shareCardLoading;
                 "⚡ Non-Aborting Pipeline: Opening the lyrics overlay or switching to standby mode never aborts active background fetches",
                 "🌐 Multi-DB Architecture: Scalable infrastructure for secondary lyrics and metadata databases with tuned LRCLIB engine",
                 "🔍 Two-stage title search + persistent lyrics cache (AppStorage): Cached lyrics appear instantly in 0 ms, and a title-only fallback finds songs whose artist name is spelled differently",
-                "🎞️ New cyberpunk loading animation: neon equalizer, pulsing \"Syncing lyrics…\" status badge and flowing glass shimmer instead of a boring skeleton",
+                "🎞️ New lyrics loading animation: clean Apple Music aesthetic with subtle sound bars, a plain \"Loading lyrics…\" label and silky frosted-glass shimmer lines instead of a colorful neon skeleton",
                 "🎯 Instrumental breaks: dynamic beat timing across the whole pause – the 3 beat dots breathe right from the start, no more dead frozen time on long intros or solos",
                 "🔒 Privacy Policy (GDPR): Fully anonymized metadata queries without user accounts, tracking, or cookies",
                 "🧱 New arcade minigame: Neon Cyber Breakout replaces Piggy Cyber Dash – cyberpunk brick-breaker with multiball, laser & wider paddle"
@@ -28134,31 +28098,29 @@ window.setLyricsStyle = function(style) {
             if (!lyricsContent) return;
             const cleanT = title || (typeof currentTrackTitle !== 'undefined' ? currentTrackTitle : '');
             const cleanA = artist || (typeof currentRawArtist !== 'undefined' ? currentRawArtist : '');
-            const label = (typeof t === 'function' ? t('lyrics_loading') : null) || 'Synchronisiere Songtext...';
+            const label = (typeof t === 'function' ? t('lyrics_loading') : null) || 'Songtext wird geladen...';
 
             lyricsContent.innerHTML = `
-                <div class="gp-lyrics-loading w-full flex-1 flex flex-col justify-center min-h-[50vh] py-12 px-3 sm:px-6 md:px-10 max-w-2xl">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="flex items-end gap-1 h-7">
-                            <span class="gp-eq-bar w-1.5 h-[18px] rounded-full bg-gradient-to-t from-cyan-400 via-cyan-300 to-pink-300"></span>
-                            <span class="gp-eq-bar w-1.5 h-6 rounded-full bg-gradient-to-t from-cyan-400 via-purple-300 to-pink-400"></span>
-                            <span class="gp-eq-bar w-1.5 h-7 rounded-full bg-gradient-to-t from-pink-400 via-purple-400 to-purple-300"></span>
-                            <span class="gp-eq-bar w-1.5 h-[22px] rounded-full bg-gradient-to-t from-purple-400 via-pink-400 to-amber-300"></span>
-                            <span class="gp-eq-bar w-1.5 h-4 rounded-full bg-gradient-to-t from-cyan-400 via-pink-400 to-purple-400"></span>
+                <div class="w-full flex-1 flex flex-col justify-center min-h-[50vh] py-12 px-3 sm:px-6 md:px-10 max-w-2xl">
+                    <div class="flex items-center gap-2.5 mb-5">
+                        <div class="flex items-center gap-1 h-4">
+                            <span class="w-1 h-3 rounded-full bg-blue-400/90 animate-pulse" style="animation-duration: 1.1s"></span>
+                            <span class="w-1 h-4 rounded-full bg-blue-400/70 animate-pulse" style="animation-duration: 1.1s; animation-delay: 0.15s"></span>
+                            <span class="w-1 h-3.5 rounded-full bg-blue-400/90 animate-pulse" style="animation-duration: 1.1s; animation-delay: 0.3s"></span>
                         </div>
-                        <span class="gp-load-badge inline-flex items-center px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider text-cyan-100 bg-cyan-500/10 border border-cyan-400/30 backdrop-blur">${escapeHTML(label)}</span>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-400/90">${escapeHTML(label)}</span>
                     </div>
                     ${(cleanT || cleanA) ? `
-                    <div class="gp-card-sheen relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl px-5 py-4 mb-8 shadow-[0_0_30px_rgba(34,211,238,0.10)]">
-                        ${cleanT ? `<h3 class="text-xl sm:text-2xl font-black text-white/95 tracking-tight leading-snug">${escapeHTML(cleanT)}</h3>` : ''}
-                        ${cleanA ? `<p class="text-xs sm:text-sm font-semibold text-white/50 mt-1">${escapeHTML(cleanA)}</p>` : ''}
+                    <div class="mb-8">
+                        ${cleanT ? `<h3 class="text-xl sm:text-2xl font-bold text-white/90 tracking-tight leading-snug">${escapeHTML(cleanT)}</h3>` : ''}
+                        ${cleanA ? `<p class="text-xs sm:text-sm font-medium text-white/40 mt-1">${escapeHTML(cleanA)}</p>` : ''}
                     </div>` : ''}
                     <div class="flex flex-col gap-3.5 w-full">
-                        <div class="gp-shimmer h-5 sm:h-6 rounded-lg bg-white/[0.05] w-3/4"></div>
-                        <div class="gp-shimmer h-5 sm:h-6 rounded-lg bg-white/[0.05] w-[90%]"></div>
-                        <div class="gp-shimmer h-5 sm:h-6 rounded-lg bg-white/[0.05] w-3/5"></div>
-                        <div class="gp-shimmer h-5 sm:h-6 rounded-lg bg-white/[0.05] w-[85%]"></div>
-                        <div class="gp-shimmer h-5 sm:h-6 rounded-lg bg-white/[0.05] w-1/2"></div>
+                        <div class="gp-load-shimmer bg-white/[0.06] rounded-xl h-6 sm:h-7 w-[72%]"></div>
+                        <div class="gp-load-shimmer bg-white/[0.06] rounded-xl h-6 sm:h-7 w-[88%]"></div>
+                        <div class="gp-load-shimmer bg-white/[0.06] rounded-xl h-6 sm:h-7 w-[58%]"></div>
+                        <div class="gp-load-shimmer bg-white/[0.06] rounded-xl h-6 sm:h-7 w-[82%]"></div>
+                        <div class="gp-load-shimmer bg-white/[0.06] rounded-xl h-6 sm:h-7 w-[48%]"></div>
                     </div>
                 </div>`;
         }
