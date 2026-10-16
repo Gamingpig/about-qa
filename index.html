@@ -25615,7 +25615,7 @@ window.setLyricsStyle = function(style) {
                     let msStr = match[3];
                     const ms = msStr.length === 2 ? parseInt(msStr) * 10 : parseInt(msStr);
                     const lineTime = (m * 60000) + (s * 1000) + ms;
-                    const rawText = match[4];
+                    const rawText = match[4].replace(/[\uFFFC\uFFFD\uFEFF]/g, '');
                     let tokens = [];
                     let hasWordTimings = false;
                     if (/<(\d{2}):(\d{2})\.(\d{2,3})>/.test(rawText)) {
@@ -25940,9 +25940,12 @@ window.setLyricsStyle = function(style) {
                 if (hasWordSync) {
                     syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
                     syncBadge.innerHTML = `<span class="hidden sm:inline">${t('label_elrc_desktop') || '🔮 Enhanced LRC (Studio-Sync)'}</span><span class="sm:hidden">${t('label_elrc_mobile') || '🔮 ELRC'}</span>`;
+                } else if (hasInterpolatedWords) {
+                    syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
+                    syncBadge.innerHTML = `<span class="hidden sm:inline">⚡ Synced (Smart Word-Sync)</span><span class="sm:hidden">⚡ Word-Sync</span>`;
                 } else {
                     syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
-                    syncBadge.innerHTML = `<span class="hidden sm:inline">${t('label_lrc_desktop') || '⚡ Synced (Smart Word-Sync)'}</span><span class="sm:hidden">${t('label_lrc_mobile') || '⚡ LRC'}</span>`;
+                    syncBadge.innerHTML = `<span class="hidden sm:inline">${t('label_lrc_desktop') || '⚡ Synced (LRC)'}</span><span class="sm:hidden">${t('label_lrc_mobile') || '⚡ LRC'}</span>`;
                 }
             }
             const isLowEnd = document.body.classList.contains('low-end');
@@ -27203,7 +27206,7 @@ window.setLyricsStyle = function(style) {
                                 syncedLyrics: bundledLrc,
                                 plainLyrics: null,
                                 provider: 'AboutQA-DB',
-                                writer: 'Marcus & Martinus',
+                                writer: (bArtist && bArtist.length > 2) ? bArtist.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : (artist || ''),
                                 hasWordSync: false
                             };
                             break;
