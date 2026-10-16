@@ -6,7 +6,7 @@
     "Multi-Provider-Kaskade: Apple Music, NetEase YRC und LRCLIB werden parallel abgefragt – Wort-Sync gewinnt immer, Zeilen-Sync bleibt sicherer Fallback",
     "0ms-Garantie für 'Jente i fra by'n' (Marcus & Martinus): mit allen Schreibweisen gebündelt und sofort offline synchron verfügbar",
     "Enhanced-LRC-Offline-Puffer: einmal geladene Wort-Sync-Texte liegen dauerhaft im AppStorage und erscheinen beim Start in 0 Millisekunden",
-    "Futuristische Lade-Akustik (Web Audio): zuschaltbarer, ambienter Shimmer-Chime während der Songtext-Suche – ganz ohne externe Dateien",
-    "Dezentes Tipp-Banner im Lyrics-Modal mit 'Nicht mehr anzeigen' (lyricsLoadingSoundTipDismissed)"
+    "Pure Apple Music Minimal Lade-Animation: seidig kaskadierender Lese-Shimmer und organische 3-Soundbar-Equalizer ohne störende Nebengeräusche",
+    "Zero-Dependency Karaoke-Engine: 100% autarke Browser-Verarbeitung mit hoher Energie- und Lade-Effizienz"
   ]
 }
