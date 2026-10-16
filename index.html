@@ -27895,11 +27895,11 @@ window.setLyricsStyle = function(style) {
             lastSeenProgressMs = currentApiProgress;
             let apiProgress = currentApiProgress;
             if (isPlaying) {
-                // Präziser Zeit-Sync: Keine künstliche Server-Wanduhr-Differenz (Date.now() - timestamp)
-                // aufaddieren! Externe APIs (wie NPC) haben oft 2-3s Server-Cache oder Uhrzeit-Drift,
-                // was den Fortschritt fälschlicherweise nach vorne warf (Lyrics 1 Zeile zu schnell).
-                // Wie bei stats.fm wird progress_ms direkt übernommen und lediglich um die gemessene
-                // reale HTTP-Netzwerklaufzeit (dynamicLatency = RTT/2) kompensiert.
+                // Präziser Zeit-Sync: Falls die API (z.B. NPC) ein Server-internes Snapshot-Alter
+                // via HTTP Date-Header übermittelt hat, dieses skew-frei anwenden
+                if (data.serverElapsed && data.serverElapsed > 0 && data.serverElapsed < (trackDuration || 600000)) {
+                    apiProgress += data.serverElapsed;
+                }
                 apiProgress += dynamicLatency;
             }
             const trackDuration = (data.track && data.track.duration_ms) || data.duration_ms || 0;
@@ -28127,33 +28127,23 @@ window.setLyricsStyle = function(style) {
                             // Am Ende (totalMs) fixiert bleiben und geordnet nach dem neuen Song suchen.
                             currentMs = totalMs;
                             isHuntingForNextTrack = true;
-                        } else if (data.source === 'statsfm') {
-                            // stats.fm pollt Spotify mit ca. 10-15s Verzögerung. Wenn stats.fm hinter
-                            // unserer stetigen lokalen Zeitmessung zurückhängt (bis zu -15s), ziehen wir den
-                            // Song NIEMALS ruckartig zurück!
-                            const isSameSnapshot = (typeof lastSeenStatsFmProgressMs !== 'undefined' && currentApiProgress === lastSeenStatsFmProgressMs);
-                            if (isSameSnapshot && drift < 0 && drift > -15000) {
-                                // Lokale Zeitmessung läuft ungestört und butterweich weiter
-                            } else if (absDrift > 15000 || (!isSameSnapshot && absDrift > 2500)) {
-                                // Echter großer Seek oder Skip durch Nutzer -> harter Re-Sync
-                                serverBaseProgress = apiProgress + addedDelay;
-                                localStartTime = performance.now();
-                                currentMs = serverBaseProgress;
-                                syncLyricsUI(true, true);
-                            } else if (drift > 1500) {
-                                // stats.fm liegt vor uns -> sanft annähern ohne Ruckler
-                                serverBaseProgress = expectedLocalProgress + drift * 0.25;
-                                localStartTime = performance.now();
-                            }
-                            lastSeenStatsFmProgressMs = currentApiProgress;
                         } else {
-                            if (absDrift > 1200) {
+                            // Selbstheilende Zeitmessung für ALLE Datenquellen (stats.fm & NPC):
+                            // 1. Wenn der Server-Snapshot hinter unserem lokalen Timer liegt (drift < 0),
+                            //    darf der Song NIEMALS zurückgezogen werden! Der lokale Monotonie-Timer
+                            //    läuft ungestört, stetig und butterweich weiter.
+                            // 2. Große Seeks/Skips durch den Nutzer (>3.5s) lösen sofortigen Re-Sync aus.
+                            // 3. Kleine Vorauseil-Abweichungen (drift > 1200ms) werden sanft (25%) eingeholt.
+                            const isSameSnapshot = (currentApiProgress === lastSeenProgressMs);
+                            if (drift < 0 && drift > -25000) {
+                                // Lokale Zeitmessung läuft ungestört und millimetergenau weiter
+                            } else if (absDrift > 15000 || (!isSameSnapshot && absDrift > 3500)) {
                                 serverBaseProgress = apiProgress + addedDelay;
                                 localStartTime = performance.now();
                                 currentMs = serverBaseProgress;
                                 syncLyricsUI(true, true);
-                            } else if (absDrift > 120) {
-                                serverBaseProgress = expectedLocalProgress + drift * 0.35;
+                            } else if (drift > 1200) {
+                                serverBaseProgress = expectedLocalProgress + drift * 0.25;
                                 localStartTime = performance.now();
                             }
                         }
@@ -28254,47 +28244,79 @@ window.setLyricsStyle = function(style) {
         }
         async function fetchMusicData() {
             let pStart = performance.now();
-            let npcError = null;
-            try {
-                // Cache-Busting & no-store: verhindert, dass Browser alte Track-Daten cachen
-                const cacheBuster = Date.now();
-                const response = await fetch(`https://npc-api.aikins.xyz/v1/users/gamingpig/now?_t=${cacheBuster}`, {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache'
-                    },
-                    signal: AbortSignal.timeout(2500)
-                });
-                if (!response.ok && response.status !== 204) throw new Error('NPC fetch failed with status ' + response.status);
-                if (response.status === 200) {
-                    const text = await response.text();
-                    const data = text ? JSON.parse(text) : null;
-                    const hasPlayingTrack = data && data.status === 'playing' && data.track && (data.track.title || data.track.name);
-                    if (hasPlayingTrack) {
-                        recordFetchLatency((performance.now() - pStart) / 2);
-                        updateMusicUI(data, getSmoothedLatency());
-                        if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
-                        if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
-                        return;
+            let npcData = null;
+            let npcServerDate = null;
+            let statsFmData = null;
+
+            // Paralleler Dual-Fetch: Sowohl NPC (Metadaten, Apple-Links, Canvas) als auch stats.fm (Live-Spotify-Progress)
+            const [npcResult, statsResult] = await Promise.allSettled([
+                (async () => {
+                    const cacheBuster = Date.now();
+                    const res = await fetch(`https://npc-api.aikins.xyz/v1/users/gamingpig/now?_t=${cacheBuster}`, {
+                        cache: 'no-store',
+                        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' },
+                        signal: AbortSignal.timeout(2500)
+                    });
+                    if (res.status === 200) {
+                        const srvDate = res.headers.get('date');
+                        const text = await res.text();
+                        const json = text ? JSON.parse(text) : null;
+                        return { data: json, srvDate };
+                    }
+                    return null;
+                })(),
+                fetchStatsFmMusicFallback()
+            ]);
+
+            if (npcResult.status === 'fulfilled' && npcResult.value) {
+                npcData = npcResult.value.data;
+                npcServerDate = npcResult.value.srvDate;
+            }
+            if (statsResult.status === 'fulfilled' && statsResult.value && !statsResult.value.isRateLimited) {
+                statsFmData = statsResult.value;
+            }
+
+            // DUAL-LOGIK HARMONISIERUNG:
+            // 1. Wenn stats.fm live spielt, haben wir den millimetergenauen Spotify-Cloud-Fortschritt!
+            //    Wir reichern stats.fm mit den reichen Metadaten von NPC an (Apple Music Links, Canvas Video, etc.).
+            // 2. Wenn stats.fm nicht verfügbar ist (429 oder offline), nutzen wir NPC mit server-zeitbereinigtem Snapshot-Alter.
+            // 3. Wenn NPC offline ist, nutzen wir stats.fm direkt.
+            if (statsFmData && statsFmData.status === 'playing') {
+                const merged = { ...statsFmData };
+                if (npcData && npcData.track) {
+                    if (npcData.track.platform_links) merged.track.platform_links = npcData.track.platform_links;
+                    if (npcData.track.track_url) merged.track.track_url = npcData.track.track_url;
+                    if (npcData.track.canvas_url || npcData.track.canvasUrl) merged.track.canvas_url = npcData.track.canvas_url || npcData.track.canvasUrl;
+                    if (npcData.track.artwork_url && !npcData.track.artwork_url.includes('npc-api.aikins.xyz/v1/artwork/')) {
+                        merged.track.artwork_url = npcData.track.artwork_url;
                     }
                 }
-                npcError = new Error('NPC returned no active track (status ' + response.status + ')');
-            } catch (error) {
-                npcError = error;
-            }
-            try {
-                const fallbackData = await fetchStatsFmMusicFallback();
-                if (fallbackData && fallbackData.isRateLimited) {
-                    if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
-                    return;
-                }
-                updateMusicUI(fallbackData, 0);
+                updateMusicUI(merged, 0);
                 if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
                 if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
-            } catch (fallbackError) {
-                if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures++;
-                console.error(`Musikdaten-Abruf fehlgeschlagen (${typeof consecutiveFetchFailures !== 'undefined' ? consecutiveFetchFailures : 1}. Fehlversuch in Folge):`, npcError, fallbackError);
+                return;
+            } else if (npcData && npcData.status === 'playing' && npcData.track && (npcData.track.title || npcData.track.name)) {
+                const merged = { ...npcData, source: 'npc' };
+                if (npcData.timestamp && npcServerDate) {
+                    const srvNow = new Date(npcServerDate).getTime();
+                    const snapTime = new Date(npcData.timestamp).getTime();
+                    merged.serverElapsed = Math.max(0, srvNow - snapTime);
+                }
+                recordFetchLatency((performance.now() - pStart) / 2);
+                updateMusicUI(merged, getSmoothedLatency());
+                if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
+                if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
+                return;
+            } else if (statsFmData && statsFmData.status !== 'rate_limited') {
+                updateMusicUI(statsFmData, 0);
+                if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
+                if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
+                return;
+            } else if (npcData) {
+                updateMusicUI(npcData, 0);
+                if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
+                if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
+                return;
             }
         }
         // FIX v24.68 (KRITISCH - HITZE): fetchMusicData() und die beiden Watchdogs darunter
