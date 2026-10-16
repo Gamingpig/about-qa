@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎬 Lyrics-Loading Previews (12 Optionen) · Gamingpig</title>
+<title>🎬 Lyrics-Loading Previews (16 Optionen) · Gamingpig</title>
 <!--
     lyrics-loading-preview.html  ·  about-qa
     Eigenständige, lokale Vorschau-Seite (keine externen Abhängigkeiten).
-    12 Lade-Animationen für Songtexte – von dezent bis spektakulär – per Klick umschaltbar.
+    16 Lade-Animationen für Songtexte – von dezent bis spektakulär – per Klick umschaltbar.
     Song-Umschalter + „Animation neu starten“. Gewünschte Option im Chat nennen: „Nimm Option X“.
 -->
 <style>
@@ -289,6 +289,64 @@
     @keyframes typoStream{0%{background-position:160% 0}100%{background-position:-160% 0}}
     @keyframes typoFloat{0%,100%{transform:translateX(0);opacity:.72}50%{transform:translateX(9px);opacity:1}}
 
+    /* ═══ [13] Cosmic Particle Nebula ═════════════════════════ */
+    .nebula{position:relative;height:150px;margin-bottom:22px;border-radius:16px;overflow:hidden;
+        background:
+            radial-gradient(120% 130% at 50% 42%, rgba(99,102,241,.20), transparent 60%),
+            radial-gradient(95% 95% at 72% 72%, rgba(34,211,238,.13), transparent 65%),
+            #05070f}
+    .nebula::before{content:"";position:absolute;left:50%;top:45%;width:220px;height:150px;margin:-75px 0 0 -110px;
+        background:radial-gradient(closest-side, rgba(129,140,248,.28), transparent 70%);
+        filter:blur(18px);mix-blend-mode:screen;animation:nebCore 6s ease-in-out infinite}
+    .nebula .dust{position:absolute;border-radius:50%;background:#e0e7ff;
+        box-shadow:0 0 6px rgba(191,219,254,.9);
+        animation:nebTwinkle 3s ease-in-out infinite, nebFloat 8s ease-in-out infinite}
+    @keyframes nebCore{0%,100%{opacity:.4;transform:scale(.92)}50%{opacity:.95;transform:scale(1.1)}}
+    @keyframes nebTwinkle{0%,100%{opacity:.15}50%{opacity:.95}}
+    @keyframes nebFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(var(--fx,8px),var(--fy,-12px))}}
+
+    /* ═══ [14] Liquid Siri / Sound Wave ═══════════════════════ */
+    .siri-stage{position:relative;height:150px;margin-bottom:22px;border-radius:16px;overflow:hidden;
+        background:radial-gradient(120% 130% at 50% 50%, rgba(99,102,241,.14), transparent 65%), #04060d}
+    .siri-wave{position:absolute;inset:0;width:100%;height:100%;
+        filter:drop-shadow(0 0 10px rgba(129,140,248,.55))}
+    .siri-wave path{stroke-linecap:round;stroke-linejoin:round}
+
+    /* ═══ [15] Cyber Audio Horizon ════════════════════════════ */
+    .horizon{position:relative;height:150px;margin-bottom:22px;border-radius:16px;overflow:hidden;
+        background:linear-gradient(180deg,#04070f 0%,#071a2f 58%,#020509 100%)}
+    .horizon .needles{position:absolute;left:0;right:0;bottom:0;height:100%;
+        display:flex;align-items:flex-end;justify-content:center;gap:2px;padding:0 6px}
+    .horizon .needles i{flex:0 0 auto;width:2px;border-radius:2px 2px 0 0;
+        background:linear-gradient(180deg,#a5f3fc,#22d3ee 42%,rgba(34,211,238,0));
+        box-shadow:0 0 8px rgba(34,211,238,.75);transform-origin:bottom center;
+        animation:needlePulse 1.4s ease-in-out infinite}
+    .horizon .hl{position:absolute;left:0;right:0;bottom:42%;height:1px;
+        background:linear-gradient(90deg,transparent,rgba(103,232,249,.95),transparent);
+        box-shadow:0 0 20px rgba(34,211,238,.85);animation:hlPulse 3s ease-in-out infinite}
+    @keyframes needlePulse{0%,100%{transform:scaleY(.22);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+    @keyframes hlPulse{0%,100%{opacity:.55}50%{opacity:1}}
+
+    /* ═══ [16] Apple Glass Aurora ═════════════════════════════ */
+    .glass-aurora{position:relative;height:150px;margin-bottom:22px;border-radius:18px;overflow:hidden;
+        background:
+            radial-gradient(120% 120% at 20% 20%, rgba(56,189,248,.35), transparent 55%),
+            radial-gradient(120% 120% at 80% 30%, rgba(168,85,247,.30), transparent 55%),
+            radial-gradient(120% 140% at 50% 100%, rgba(244,114,182,.28), transparent 60%),
+            #060912}
+    .glass-aurora .sheen{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(26px);
+        background:conic-gradient(from 0deg, rgba(255,255,255,0), rgba(255,255,255,.20) 12%, rgba(56,189,248,.20) 34%, rgba(255,255,255,0) 52%, rgba(168,85,247,.22) 74%, rgba(255,255,255,0) 92%);
+        animation:auroraSpin 18s linear infinite}
+    .glass-aurora .caustic{position:absolute;inset:0;mix-blend-mode:screen;filter:blur(14px);
+        background:
+            radial-gradient(50% 40% at 30% 35%, rgba(255,255,255,.22), transparent 70%),
+            radial-gradient(45% 35% at 70% 62%, rgba(191,219,254,.18), transparent 70%);
+        animation:causticDrift 9s ease-in-out infinite}
+    .glass-aurora .refraction{position:absolute;inset:0;
+        backdrop-filter:blur(6px) saturate(1.4);-webkit-backdrop-filter:blur(6px) saturate(1.4)}
+    @keyframes auroraSpin{to{transform:rotate(360deg)}}
+    @keyframes causticDrift{0%,100%{transform:translate(0,0) scale(1);opacity:.7}50%{transform:translate(18px,-12px) scale(1.12);opacity:1}}
+
     /* ── Footer ─────────────────────────────────────────────── */
     footer.bottom{max-width:960px;margin:26px auto 0;text-align:center;color:rgba(255,255,255,.28);font-size:11px;letter-spacing:.06em}
 
@@ -298,7 +356,8 @@
     @media (prefers-reduced-motion: reduce){
         .bars i,.sk::after,.glass,.eq i,.holo-vinyl,.outrun .sun,.outrun .grid,.aurora .blob,.aurora .aura-glow,
         .matrix i,.radar span,.radar .core,.laser-beam,.orb .orb-core,.orb .orb-rotor,.orb .orb-rotor i,
-        .ripple span,.ripple .core,.typo-lines span{animation:none !important}
+        .ripple span,.ripple .core,.typo-lines span,
+        .nebula::before,.nebula .dust,.horizon .needles i,.horizon .hl,.glass-aurora .sheen,.glass-aurora .caustic{animation:none !important}
     }
 </style>
 </head>
@@ -307,7 +366,7 @@
     <header class="top">
         <span class="kicker">🎬 Gamingpig · Lyrics Loading Lab</span>
         <h1>Songtext-Lade-Animationen</h1>
-        <p>12 Varianten · dezent bis spektakulär · Klick auf einen Tab schaltet die Vorschau live um</p>
+        <p>16 Varianten · dezent bis spektakulär · Klick auf einen Tab schaltet die Vorschau live um</p>
     </header>
 
     <div id="info-badge">
@@ -338,6 +397,10 @@
         <button type="button" class="tab" data-opt="10" data-name="Quantum Particle Orb" data-desc="Kreisende leuchtende Funken um einen pulsierenden Musikkern."><b>[10]</b> Quantum Particle Orb</button>
         <button type="button" class="tab" data-opt="11" data-name="Apple Music Spatial Ripple" data-desc="Sanfte konzentrische Ringe, die sich wie Tropfen im Wasser ausbreiten."><b>[11]</b> Apple Music Spatial Ripple</button>
         <button type="button" class="tab" data-opt="12" data-name="Typo Motion Stream" data-desc="Schwebende Text-Silhouetten mit Shimmer-Glanz und weichen Unschärfen."><b>[12]</b> Typo Motion Stream</button>
+        <button type="button" class="tab" data-opt="13" data-name="Cosmic Particle Nebula" data-desc="Feine, schwebende Sternenpartikel driften sanft wie kosmischer Nebel um den Songtitel."><b>[13]</b> Cosmic Particle Nebula</button>
+        <button type="button" class="tab" data-opt="14" data-name="Liquid Siri / Sound Wave" data-desc="Lebendige, geschmeidig morphende Sinus-Wellen wie bei Siri &amp; modernen Sprach-Assistenten."><b>[14]</b> Liquid Siri / Sound Wave</button>
+        <button type="button" class="tab" data-opt="15" data-name="Cyber Audio Horizon" data-desc="Futuristischer Audio-Horizont aus feinen Frequenz-Nadeln mit neonblauem Pulsieren."><b>[15]</b> Cyber Audio Horizon</button>
+        <button type="button" class="tab" data-opt="16" data-name="Apple Glass Aurora" data-desc="Dreidimensionaler Liquid-Glass-Look mit wandernden Lichtbrechungen und weichen Farbspiegelungen."><b>[16]</b> Apple Glass Aurora</button>
     </nav>
 
     <main class="stage" id="stage">
@@ -532,6 +595,85 @@
             </div>
         </section>
 
+        <!-- [13] Cosmic Particle Nebula -->
+        <section class="opt-panel" data-opt="13">
+            <div class="lp">
+                <div class="nebula" id="nebula" aria-hidden="true"></div>
+                <div class="lp-head"><span class="lp-label" style="color:rgba(165,180,252,.9)">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [14] Liquid Siri / Sound Wave -->
+        <section class="opt-panel" data-opt="14">
+            <div class="lp">
+                <div class="siri-stage" aria-hidden="true">
+                    <svg class="siri-wave" viewBox="0 0 600 160" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="siriGrad" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stop-color="#22d3ee"/>
+                                <stop offset="50%" stop-color="#818cf8"/>
+                                <stop offset="100%" stop-color="#f472b6"/>
+                            </linearGradient>
+                        </defs>
+                        <path id="siri-path2" d="" fill="none" stroke="url(#siriGrad)" stroke-width="3" opacity=".32"/>
+                        <path id="siri-path" d="" fill="none" stroke="url(#siriGrad)" stroke-width="3.5"/>
+                    </svg>
+                </div>
+                <div class="lp-head"><span class="lp-label" style="color:rgba(129,140,248,.95)">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [15] Cyber Audio Horizon -->
+        <section class="opt-panel" data-opt="15">
+            <div class="lp">
+                <div class="horizon" aria-hidden="true">
+                    <div class="hl"></div>
+                    <div class="needles" id="horizon-needles"></div>
+                </div>
+                <div class="lp-head"><span class="lp-label" style="color:rgba(103,232,249,.92)">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [16] Apple Glass Aurora -->
+        <section class="opt-panel" data-opt="16">
+            <div class="lp">
+                <div class="glass-aurora" aria-hidden="true">
+                    <div class="sheen"></div>
+                    <div class="caustic"></div>
+                    <div class="refraction"></div>
+                </div>
+                <div class="lp-head"><span class="lp-label" style="color:rgba(216,180,254,.95)">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <footer class="bottom">about-qa · lyrics-loading-preview · lokal &amp; ohne externe Abhängigkeiten</footer>
@@ -593,6 +735,80 @@
                     spark.style.setProperty('--a', (p * 30) + 'deg');
                     spark.style.animationDelay = (p * 0.11).toFixed(2) + 's';
                     rotor.appendChild(spark);
+                }
+            }
+
+            // [13] Cosmic-Particle-Nebula (feiner, schwebender Sternenstaub)
+            var nebula = document.getElementById('nebula');
+            if (nebula && nebula.childElementCount === 0) {
+                for (var n = 0; n < 46; n++) {
+                    var dust = document.createElement('i');
+                    dust.className = 'dust';
+                    var dSize = (1 + Math.random() * 2.4).toFixed(1);
+                    dust.style.width = dSize + 'px';
+                    dust.style.height = dSize + 'px';
+                    dust.style.left = (Math.random() * 100).toFixed(1) + '%';
+                    dust.style.top = (8 + Math.random() * 84).toFixed(1) + '%';
+                    dust.style.setProperty('--fx', ((Math.random() * 2 - 1) * 16).toFixed(1) + 'px');
+                    dust.style.setProperty('--fy', ((Math.random() * 2 - 1) * 20).toFixed(1) + 'px');
+                    dust.style.animationDuration = (2.2 + Math.random() * 2.4).toFixed(2) + 's, ' + (6 + Math.random() * 5).toFixed(2) + 's';
+                    dust.style.animationDelay = (-Math.random() * 4).toFixed(2) + 's, ' + (-Math.random() * 6).toFixed(2) + 's';
+                    nebula.appendChild(dust);
+                }
+            }
+
+            // [15] Cyber-Audio-Horizon (feine Frequenz-Nadeln)
+            var needles = document.getElementById('horizon-needles');
+            if (needles && needles.childElementCount === 0) {
+                var NEEDLE_COUNT = 56;
+                for (var k = 0; k < NEEDLE_COUNT; k++) {
+                    var needle = document.createElement('i');
+                    var nHeight = 26 + Math.sin(k * 0.5) * 12 + Math.random() * 26;
+                    needle.style.height = nHeight.toFixed(0) + 'px';
+                    needle.style.animationDuration = (0.9 + Math.random() * 0.9).toFixed(2) + 's';
+                    needle.style.animationDelay = (-Math.random() * 1.4).toFixed(2) + 's';
+                    needles.appendChild(needle);
+                }
+            }
+
+            // [14] Liquid-Siri-Wave: rAF-gemorphte Sinus-Wellen (nur wenn Option 14 sichtbar)
+            var siriPath = document.getElementById('siri-path');
+            var siriPath2 = document.getElementById('siri-path2');
+            var siriPanel = document.querySelector('.opt-panel[data-opt="14"]');
+            var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (siriPath) {
+                var SW = 600, SH = 160;
+                var buildSiri = function (t, ampScale) {
+                    var N = 52, d = '';
+                    var breath = 0.72 + 0.28 * Math.sin(t * 0.9);
+                    for (var i = 0; i <= N; i++) {
+                        var x = (i / N) * SW;
+                        var u = i / N;
+                        var env = Math.sin(u * Math.PI); // ruhig auslaufende Enden
+                        var y = SH / 2
+                            + Math.sin(u * 6.0 + t * 2.2) * 16 * ampScale * env * breath
+                            + Math.sin(u * 11.0 - t * 3.1) * 9 * ampScale * env * breath
+                            + Math.sin(u * 3.0 + t * 1.4) * 20 * ampScale * env * breath;
+                        d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+                    }
+                    return d.trim();
+                };
+                // Sofort einen gültigen Startpfad setzen (auch wenn der Tab gerade nicht sichtbar ist
+                // und requestAnimationFrame pausiert) – die Welle ist damit nie leer.
+                siriPath.setAttribute('d', buildSiri(0, 1));
+                if (siriPath2) siriPath2.setAttribute('d', buildSiri(1.3, 1.5));
+
+                if (!reduceMotion) {
+                    var siriStart = performance.now();
+                    var siriLoop = function (now) {
+                        if (!siriPanel || siriPanel.classList.contains('active')) {
+                            var st = (now - siriStart) / 1000;
+                            siriPath.setAttribute('d', buildSiri(st, 1));
+                            if (siriPath2) siriPath2.setAttribute('d', buildSiri(st * 0.8 + 1.3, 1.5));
+                        }
+                        requestAnimationFrame(siriLoop);
+                    };
+                    requestAnimationFrame(siriLoop);
                 }
             }
 
