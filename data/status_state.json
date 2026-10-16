@@ -1,5 +1,11 @@
 {
-  "lastFailures": [],
-  "lastChecked": 1792114784071,
-  "lastStatus": "operational"
+  "lastFailures": [
+    {
+      "id": "apple_cdn",
+      "name": "Apple CDN",
+      "errorType": "Offline"
+    }
+  ],
+  "lastChecked": 1792131775241,
+  "lastStatus": "degraded"
 }
