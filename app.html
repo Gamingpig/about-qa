@@ -12165,6 +12165,7 @@ html.gp-android:not(.dark) #ui-controls {
                 lyrics_placeholder_artist: 'Artist',
                 lyrics_synced_label: 'Synced',
                 label_synced: 'Synced',
+                label_wordsync: 'Wort-synchronisiert',
                 label_unsynced: 'Nicht synchronisiert',
                 aria_lyrics_settings: 'Lyrics Einstellungen',
                 label_animation_style: 'Animation Style',
@@ -12400,6 +12401,7 @@ html.gp-android:not(.dark) #ui-controls {
                 lyrics_placeholder_artist: 'Artist',
                 lyrics_synced_label: 'Synced',
                 label_synced: 'Synced',
+                label_wordsync: 'Enhanced Sync',
                 aria_lyrics_settings: 'Lyrics settings',
                 label_animation_style: 'Animation Style',
                 label_overkill_shaders: 'Overkill Shaders',
@@ -19616,7 +19618,8 @@ let shareCardLoading;
                 "✨ Lyrics-Synchronisation Durchbruch: 100% autonome Songtext-Erkennung – manueller Re-Sync endgültig eliminiert",
                 "🛡️ HTTP 429/503 Shield & Selbstheilung: Automatische Retries (429 → 2s, 503 ServerOverloaded → 2×1s) und sicherer AbortController-Timeout verhindern falsche Fehlermeldungen",
                 "⚡ Non-Aborting Pipeline: Kein Abbrechen laufender Hintergrundabfragen beim Öffnen der Lyrics-Ansicht oder im Standby",
-                "🌐 Multi-DB Architektur: Vorbereitung für zusätzliche Songtext- und Metadaten-Datenbanken mit optimierter LRCLIB-Engine",
+                "🌐 Echte Multi-Datenbank-Suche: LRCLIB + NetEase-Wort-Sync werden parallel abgefragt und objektiv nach Tier, Titel, Künstler, Dauer & Provider-Reputation bewertet",
+                "🎤 Enhanced-LRC zuerst: Wort- und silbengenaue Apple-Music-Songtexte (Tier 2) schlagen Zeilen-Sync IMMER – inklusive automatischem YRC→Enhanced-LRC-Konverter und eigenem „Wort-synchronisiert“-Badge",
                 "🔍 Zweistufige Titelsuche + dauerhafter Songtext-Cache (AppStorage): Gespeicherte Lyrics erscheinen sofort in 0ms, Fallback-Suche nur mit dem Titel findet Songs mit abweichender Artist-Schreibweise",
                 "🎞️ Neue Lyrics-Ladeanimation: dezente Apple-Music-Ästhetik mit zarten Sound-Bars, schlichtem Label „Songtext wird geladen…“ und seidigen, mattierten Shimmer-Zeilen statt bunten Neon-Skeletts",
                 "🎯 Instrumental-Pausen wie bei Apple Music: Dynamisches Taktmaß über die gesamte Pause – die 3 Beat-Punkte blühen mit eigener, organischer Easing-Kurve auf, verweilen länger groß und atmen weich ein/aus, ganz ohne tote Standbilder",
@@ -19627,7 +19630,8 @@ let shareCardLoading;
                 "✨ Lyrics Synchronization Breakthrough: 100% autonomous detection – manual 'Re-Sync' clicking is completely eliminated",
                 "🛡️ HTTP 429/503 Shield: Automatic retries (429 → 2s, 503 ServerOverloaded → 2×1s) and a safe AbortController timeout reliably prevent false 'no lyrics' screens",
                 "⚡ Non-Aborting Pipeline: Opening the lyrics overlay or switching to standby mode never aborts active background fetches",
-                "🌐 Multi-DB Architecture: Scalable infrastructure for secondary lyrics and metadata databases with tuned LRCLIB engine",
+                "🌐 True multi-database search: LRCLIB + NetEase word-sync are queried in parallel and objectively ranked by tier, title, artist, duration & provider reputation",
+                "🎤 Enhanced LRC first: word- and syllable-accurate Apple Music–style lyrics (tier 2) always beat line-sync – including an automatic YRC→Enhanced-LRC converter and a dedicated \"Enhanced Sync\" badge",
                 "🔍 Two-stage title search + persistent lyrics cache (AppStorage): Cached lyrics appear instantly in 0 ms, and a title-only fallback finds songs whose artist name is spelled differently",
                 "🎞️ New lyrics loading animation: clean Apple Music aesthetic with subtle sound bars, a plain \"Loading lyrics…\" label and silky frosted-glass shimmer lines instead of a colorful neon skeleton",
                 "🎯 Apple Music–style instrumental breaks: dynamic beat timing across the whole pause – each of the 3 beat dots blooms with its own organic easing curve, lingers large and breathes softly in and out, with no dead frozen frames",
@@ -27491,8 +27495,15 @@ window.setLyricsStyle = function(style) {
             
             if (syncBadge) {
                 syncBadge.style.display = 'inline-flex';
-                syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-blue-500/20 text-blue-400 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
-                syncBadge.innerHTML = `<span class="hidden sm:inline">Lyrics:&nbsp;</span><span>${t('label_synced') || t('lyrics_synced_label') || 'Synced'}</span>`;
+                // Enhanced LRC (Wort-/Silben-Sync) bekommt ein eigenes, herausstechenes Badge.
+                const hasWordSync = parsedLyrics.some(l => l && l.hasWordTimings);
+                if (hasWordSync) {
+                    syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-fuchsia-500/20 text-fuchsia-300 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
+                    syncBadge.innerHTML = `<span class="hidden sm:inline">Lyrics:&nbsp;</span><span>${t('label_wordsync') || 'Enhanced Sync'}</span>`;
+                } else {
+                    syncBadge.className = "px-1.5 xxs:px-2 py-0.5 mr-1 xxs:mr-1.5 bg-blue-500/20 text-blue-400 text-[8px] xxs:text-[9px] sm:text-[10px] rounded-full font-bold shrink-0 whitespace-nowrap items-center";
+                    syncBadge.innerHTML = `<span class="hidden sm:inline">Lyrics:&nbsp;</span><span>${t('label_synced') || t('lyrics_synced_label') || 'Synced'}</span>`;
+                }
             }
             
             const isLowEnd = document.body.classList.contains('low-end');
@@ -28073,6 +28084,155 @@ window.setLyricsStyle = function(style) {
                       .trim();
         }
 
+        // ── ENHANCED-LRC (WORT-SYNC) ERKENNUNG & TIER-BEWERTUNG ─────────────────────
+        // 2 = Enhanced LRC (wort-/silbengenau, Apple-Music-Standard)
+        // 1 = Standard-Zeilen-Synchronisation
+        // 0 = Plain / ungesynct
+        function detectLrcTier(syncedLyrics, hasWordSyncFlag = false) {
+            if (!syncedLyrics || typeof syncedLyrics !== 'string') return 0;
+            if (hasWordSyncFlag === true || /<(\d{1,2}):(\d{2})[.:](\d{2,3})>/.test(syncedLyrics)) {
+                return 2;
+            }
+            if (/\[(\d{1,2}):(\d{2})[.:](\d{2,3})\]/.test(syncedLyrics)) {
+                return 1;
+            }
+            return 0;
+        }
+
+        // Konverter: NetEase-YRC (zeilen- UND wortgenau) -> Standard-Enhanced-LRC.
+        // YRC:      [lineStartMs,lineDurationMs](wordOffMs,wordDurMs,0)Wort ( ... )Wort
+        // Enhanced: [mm:ss.xx]<mm:ss.xx>Wort <mm:ss.xx>Wort
+        function convertYrcToEnhancedLrc(yrcText) {
+            if (!yrcText || typeof yrcText !== 'string') return null;
+            const lines = yrcText.split('\n');
+            const resultLines = [];
+
+            const formatMs = (ms) => {
+                const totalSec = Math.floor(ms / 1000);
+                const m = Math.floor(totalSec / 60);
+                const s = totalSec % 60;
+                const hundredths = Math.floor((ms % 1000) / 10);
+                return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(hundredths).padStart(2, '0')}`;
+            };
+
+            for (let rawLine of lines) {
+                rawLine = rawLine.trim();
+                if (!rawLine) continue;
+
+                // Metadaten-Zeilen überspringen
+                if (/^\[(?:ti|ar|al|by|offset|length):/i.test(rawLine)) continue;
+
+                // YRC Zeilen-Header: [lineStartMs,lineDurationMs]
+                const headerMatch = rawLine.match(/^\[(\d+),(\d+)\](.*)/);
+                if (!headerMatch) {
+                    // Falls bereits LRC-Format vorliegt:
+                    if (/^\[\d{2}:\d{2}\.\d{2,3}\]/.test(rawLine)) {
+                        resultLines.push(rawLine);
+                    }
+                    continue;
+                }
+
+                const lineStartMs = parseInt(headerMatch[1], 10);
+                const rest = headerMatch[3];
+                const lineTimestamp = `[${formatMs(lineStartMs)}]`;
+
+                // YRC Wort-Format: (wordOffsetMs,wordDurationMs,0)Word
+                const wordRegex = /\((\d+),(\d+),\d+\)([^(]*)/g;
+                let enhancedWords = '';
+                let match;
+                let hasWords = false;
+
+                while ((match = wordRegex.exec(rest)) !== null) {
+                    hasWords = true;
+                    const wordOffsetMs = parseInt(match[1], 10);
+                    const wordText = match[3];
+                    const wordAbsTimeMs = lineStartMs + wordOffsetMs;
+                    enhancedWords += `<${formatMs(wordAbsTimeMs)}>${wordText}`;
+                }
+
+                if (hasWords) {
+                    resultLines.push(`${lineTimestamp} ${enhancedWords.trim()}`);
+                } else if (rest.trim()) {
+                    resultLines.push(`${lineTimestamp} ${rest.trim()}`);
+                }
+            }
+
+            return resultLines.length > 0 ? resultLines.join('\n') : null;
+        }
+
+        // ── PROVIDER-REPUTATION (Multi-Datenbank-Scoring) ───────────────────────────
+        const LYRICS_PROVIDER_BONUS = {
+            'AboutQA-DB': 50,
+            'Bundled-Enhanced-DB': 50,
+            'NetEase-WordSync': 30,
+            'NetEase-YRC': 30,
+            'NetEase': 20,
+            'LRCLIB': 10
+        };
+
+        // Gemeinsame Normalisierung für Titel-/Künstler-Vergleiche über alle Datenbanken.
+        function normLyricsStr(s) {
+            return (s || '').toLowerCase()
+                .replace(/['’`]/g, '')
+                .replace(/\s*-\s*(?:remaster(?:ed)?(?:\s*\d{4})?|live(?:\s*at[^)]*)?|radio\s*edit|single\s*version|original\s*mix|extended(?:\s*mix)?|club(?:\s*mix)?|deluxe(?:\s*edition)?|bonus\s*track|anniversary(?:\s*edition)?|mono|stereo|album\s*version|acoustic(?:\s*version)?|eurovision(?:\s*\d{4})?|official\s*(?:audio|video|music\s*video|lyric\s*video)|lyric\s*video|from\s+.*).*$/i, '')
+                .replace(/\s*\(.*?\)/g, '')
+                .replace(/\s*\[.*?\]/g, '')
+                .replace(/[^\w\s]/gi, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        // Einheitliche, datenbankübergreifende Bewertung eines Lyrics-Kandidaten.
+        // Tier 2 (Enhanced LRC) schlägt IMMER Tier 1 (Zeilen-Sync) und Tier 0 (Plain),
+        // da die Tier-Basis (500/150/0) alle Titel-/Künstler-/Dauer-Deltas übersteigt.
+        function scoreLyricsCandidate(c, target, searchDurationMs = 0) {
+            if (!c || !target) return -1;
+
+            const synced = (c.syncedLyrics && !isDummyLyrics(c.syncedLyrics)) ? c.syncedLyrics : null;
+            const plain = (c.plainLyrics && !isDummyLyrics(c.plainLyrics)) ? c.plainLyrics : null;
+            if (!synced && !plain) return -1;
+
+            const tier = synced ? detectLrcTier(synced, c.hasWordSync === true) : 0;
+            let score = tier === 2 ? 500 : tier === 1 ? 150 : 0;
+
+            const cTrack = normLyricsStr(c.trackName);
+            const cArtist = normLyricsStr(c.artistName);
+
+            // Titel-Übereinstimmung (Pflicht): +100 exakt / +60 fuzzy
+            if (cTrack && (cTrack === target.track || cTrack === target.trackRaw)) {
+                score += 100;
+            } else if (cTrack && target.track && (cTrack.includes(target.track) || target.track.includes(cTrack))) {
+                score += 60;
+            } else {
+                return -1;
+            }
+
+            // Künstler-Übereinstimmung: +50 exakt / +30 fuzzy
+            if (!target.artist) {
+                score += 20;
+            } else if (cArtist && (cArtist === target.artist || cArtist === target.artistRaw)) {
+                score += 50;
+            } else if (cArtist && (cArtist.includes(target.artist) || target.artist.includes(cArtist))) {
+                score += 30;
+            } else if (cTrack && target.artist && cTrack.includes(target.artist)) {
+                score += 35; // Künstlername ist im Track-Titel enthalten ("Artist - Song")
+            } else {
+                const matchAny = (target.artists || []).some(a => a && ((cArtist && (cArtist.includes(a) || a.includes(cArtist))) || (cTrack && cTrack.includes(a))));
+                if (matchAny) score += 20; else return -1;
+            }
+
+            // Dauer-Abgleich: bis zu -40 Punkte Abzug bei starker Abweichung von der Songdauer
+            if (searchDurationMs > 0 && c.duration > 0) {
+                const diffSec = Math.abs((c.duration * 1000) - searchDurationMs) / 1000;
+                score -= Math.min(diffSec, 40);
+            }
+
+            // Provider-Reputation
+            score += (LYRICS_PROVIDER_BONUS[c.provider] || 0);
+
+            return score;
+        }
+
         function isStrictMatch(apiTrack, apiArtist, apiDurationSec, searchTrack, searchArtist, searchDurationMs) {
             if (!apiTrack || !searchTrack) return false;
 
@@ -28212,6 +28372,10 @@ window.setLyricsStyle = function(style) {
 
         function persistLyrics(cacheKey, synced, plain, provider, writer) {
             if (!synced || isDummyLyrics(synced) || !window.AppStorage) return;
+            // Bundled-Lyrics werden NICHT persistiert: Sie sind ohnehin sofort offline verfügbar.
+            // So bleibt der Netzwerk-Suchpfad bei jedem Laden aktiv und kann jederzeit auf einen
+            // echten Enhanced-LRC (Tier 2) aufwerten, statt dauerhaft auf Zeilen-Sync zu sitzen.
+            if (provider === 'AboutQA-DB' || provider === 'Bundled-Enhanced-DB') return;
             const payload = JSON.stringify({
                 syncedLyrics: synced,
                 plainLyrics: plain || null,
@@ -28347,85 +28511,62 @@ window.setLyricsStyle = function(style) {
                         return false;
                     };
 
-                    // 0. VORAB-PRÜFUNG: Lokale Bundled-Datenbank (Instant & immun gegen 429 Rate-Limits)
+                    // ── STUFE 0: Lokale Bundled-DB (Instant-First-Paint, immun gegen Rate-Limits) ──
                     const cleanTNorm = (cleanT || title || '').toLowerCase().trim();
                     const cleanANorm = (cleanA || artist || '').toLowerCase().trim();
+                    let bundledCandidate = null;
                     for (const [bundledKey, bundledLrc] of Object.entries(BUNDLED_LYRICS_DB)) {
                         const [bTitle, bArtist] = bundledKey.split('---');
-                        if ((cleanTNorm.includes(bTitle) || bTitle.includes(cleanTNorm)) && 
+                        if ((cleanTNorm.includes(bTitle) || bTitle.includes(cleanTNorm)) &&
                             (!bArtist || cleanANorm.includes(bArtist) || bArtist.includes(cleanANorm))) {
-                            if (saveAndRender(bundledLrc, null, "AboutQA-DB", "Marcus & Martinus")) {
-                                return;
-                            }
+                            bundledCandidate = {
+                                trackName: bTitle,
+                                artistName: bArtist || '',
+                                duration: 0,
+                                syncedLyrics: bundledLrc,
+                                plainLyrics: null,
+                                provider: 'AboutQA-DB',
+                                writer: 'Marcus & Martinus',
+                                hasWordSync: false
+                            };
+                            break;
                         }
                     }
+                    let bundledTier = 0;
+                    if (bundledCandidate) {
+                        bundledTier = detectLrcTier(bundledCandidate.syncedLyrics, bundledCandidate.hasWordSync);
+                        // Sofort rendern (0ms). Ist der Bundled-Text bereits Enhanced (Tier 2), sind wir fertig –
+                        // andernfalls läuft die Multi-Datenbank-Suche weiter und kann auf Enhanced-LRC aufwerten.
+                        saveAndRender(bundledCandidate.syncedLyrics, null, bundledCandidate.provider, bundledCandidate.writer);
+                        if (bundledTier >= 2) return;
+                    }
 
-                    const pickBestMatch = (candidates, searchDurMs) => {
-                        if (!Array.isArray(candidates) || !candidates.length) return null;
-                        const searchSec = searchDurMs > 0 ? searchDurMs / 1000 : 0;
-                        const normStr = (s) => (s || '').toLowerCase()
-                            .replace(/['’`]/g, '')
-                            .replace(/\s*-\s*(?:remaster(?:ed)?(?:\s*\d{4})?|live(?:\s*at[^)]*)?|radio\s*edit|single\s*version|original\s*mix|extended(?:\s*mix)?|club(?:\s*mix)?|deluxe(?:\s*edition)?|bonus\s*track|anniversary(?:\s*edition)?|mono|stereo|album\s*version|acoustic(?:\s*version)?|eurovision(?:\s*\d{4})?|official\s*(?:audio|video|music\s*video|lyric\s*video)|lyric\s*video|from\s+.*).*$/i, '')
-                            .replace(/\s*\(.*?\)/g, '')
-                            .replace(/\s*\[.*?\]/g, '')
-                            .replace(/[^\w\s]/gi, ' ')
-                            .replace(/\s+/g, ' ')
-                            .trim();
+                    // Einheitliches Ziel-Objekt für die datenbankübergreifende Bewertung
+                    const matchTarget = {
+                        track: normLyricsStr(cleanT || title),
+                        trackRaw: normLyricsStr(title),
+                        artist: normLyricsStr(cleanA || artist),
+                        artistRaw: normLyricsStr(artist),
+                        artists: (artist || '').toLowerCase().replace(/['’`]/g, '')
+                            .split(/\s*,\s*|\s*&\s*|\s+feat\.?\s+|\s+ft\.?\s+|\s+with\s+|\s+x\s+|\s*\/\s*|\s*\+\s*/i)
+                            .map(a => a.trim())
+                            .filter(Boolean)
+                    };
 
-                        const cleanTargetT = normStr(cleanT || title);
-                        const rawTargetT = normStr(title);
-                        const cleanTargetA = normStr(cleanA || artist);
-                        const rawTargetA = normStr(artist);
-
-                        const scoreCandidate = (c) => {
-                            if (!c) return -1;
-                            const cTrack = normStr(c.trackName);
-                            const cArtist = normStr(c.artistName);
-                            let score = 0;
-                            if (cTrack && (cTrack === cleanTargetT || cTrack === rawTargetT)) {
-                                score += 100;
-                            } else if (cTrack && cleanTargetT && (cTrack.includes(cleanTargetT) || cleanTargetT.includes(cTrack))) {
-                                score += 60;
-                            } else {
-                                return -1;
-                            }
-                            if (!cleanTargetA) {
-                                score += 20;
-                            } else if (cArtist === cleanTargetA || cArtist === rawTargetA) {
-                                score += 50;
-                            } else if (cArtist && (cArtist.includes(cleanTargetA) || cleanTargetA.includes(cArtist))) {
-                                score += 30;
-                            } else if (cTrack && (cTrack.includes(cleanTargetA) || cTrack.includes(rawTargetA))) {
-                                score += 35; // Wenn Knstlername im Track-Titel enthalten ist (z.B. 'Artist - Song')
-                            } else {
-                                const allArtists = (artist || '').toLowerCase().replace(/['’`]/g, '').split(/\s*,\s*|\s*&\s*|\s+feat\.?\s+|\s+ft\.?\s+|\s+with\s+|\s+x\s+|\s*\/\s*|\s*\+\s*/i);
-                                const matchAny = allArtists.some(a => a.trim() && (cArtist.includes(a.trim()) || a.trim().includes(cArtist) || cTrack.includes(a.trim())));
-                                if (matchAny) score += 20; else return -1;
-                            }
-                            if (searchSec > 0 && c.duration > 0) {
-                                const diff = Math.abs(c.duration - searchSec);
-                                score -= Math.min(diff, 40);
-                            }
-                            return score;
-                        };
-
-                        const syncedCandidates = candidates.filter(c => c && c.syncedLyrics && !isDummyLyrics(c.syncedLyrics));
-                        if (syncedCandidates.length > 0) {
-                            const scoredSynced = syncedCandidates
-                                .map(c => ({ c, score: scoreCandidate(c) }))
-                                .filter(item => item.score > 0)
-                                .sort((a, b) => b.score - a.score);
-                            if (scoredSynced.length > 0) return scoredSynced[0].c;
-                        }
-                        const plainCandidates = candidates.filter(c => c && c.plainLyrics && !isDummyLyrics(c.plainLyrics));
-                        if (plainCandidates.length > 0) {
-                            const scoredPlain = plainCandidates
-                                .map(c => ({ c, score: scoreCandidate(c) }))
-                                .filter(item => item.score > 0)
-                                .sort((a, b) => b.score - a.score);
-                            if (scoredPlain.length > 0) return scoredPlain[0].c;
-                        }
-                        return null;
+                    // Wählt aus einem Kandidaten-Pool den höchstbewerteten Gewinner (Multi-Tier).
+                    // Synchronisierte Kandidaten (Tier >= 1) werden strikt allen Plain-Texten vorgezogen.
+                    const selectBestCandidate = (pool, searchDurMs) => {
+                        if (!Array.isArray(pool) || !pool.length) return null;
+                        const syncedPool = pool.filter(c => c && c.syncedLyrics && !isDummyLyrics(c.syncedLyrics));
+                        const usePool = syncedPool.length
+                            ? syncedPool
+                            : pool.filter(c => c && c.plainLyrics && !isDummyLyrics(c.plainLyrics));
+                        if (!usePool.length) return null;
+                        const scored = usePool
+                            .map(c => ({ c, score: scoreLyricsCandidate(c, matchTarget, searchDurMs) }))
+                            .filter(item => item.score > 0)
+                            .sort((a, b) => b.score - a.score);
+                        return scored.length ? scored[0].c : null;
                     };
 
                     // Hinweis: KEIN benutzerdefinierter 'Lrclib-Client'-Header (vermeidet CORS OPTIONS-Preflights).
@@ -28521,7 +28662,75 @@ window.setLyricsStyle = function(style) {
                         return null;
                     };
 
-                    // Pacing-Abstand einhalten
+                    // ── PROVIDER B: NetEase YRC (Wort-Sync-Spezialist) ─────────────────
+                    // Sucht über den öffentlichen NetEase-Mirror, lädt Detail-Lyrics und konvertiert
+                    // YRC -> Enhanced-LRC. Vollständig defensiv: CORS-/Netzfehler ergeben nur ein leeres Array.
+                    const NETEASE_API_BASE = 'https://music.xianqiao.wang/neteaseapiv2';
+                    const fetchNeteaseYrc = async (query, isCancelled) => {
+                        const out = [];
+                        if (!query) return out;
+                        try {
+                            const searchRes = await fetchWithTimeout(`${NETEASE_API_BASE}/search?keywords=${encodeURIComponent(query)}&limit=5`, 6000);
+                            if (!searchRes || !searchRes.ok) return out;
+                            const searchJson = await searchRes.json().catch(() => null);
+                            if (!searchJson) return out;
+                            const songs = (searchJson.result && searchJson.result.songs) || searchJson.songs || [];
+                            if (!Array.isArray(songs) || !songs.length) return out;
+
+                            // Maximal 3 Detail-Abrufe, um den Mirror zu schonen.
+                            for (const s of songs.slice(0, 3)) {
+                                if (isCancelled && isCancelled()) return out;
+                                const id = s && (s.id || s.songId);
+                                if (!id) continue;
+
+                                let lyricJson = null;
+                                try {
+                                    const lyricRes = await fetchWithTimeout(`${NETEASE_API_BASE}/lyric?id=${encodeURIComponent(id)}`, 6000);
+                                    if (lyricRes && lyricRes.ok) lyricJson = await lyricRes.json().catch(() => null);
+                                } catch (e) { lyricJson = null; }
+                                if (!lyricJson) continue;
+
+                                const yrcRaw = (lyricJson.yrc && lyricJson.yrc.lyric) || null;
+                                const lrcRaw = (lyricJson.lrc && lyricJson.lrc.lyric) || null;
+
+                                let synced = null;
+                                let hasWordSync = false;
+                                // YRC -> Enhanced-LRC (nur akzeptieren, wenn wirklich Tier 2 entsteht)
+                                if (yrcRaw && typeof yrcRaw === 'string' && yrcRaw.indexOf('(') !== -1) {
+                                    const converted = convertYrcToEnhancedLrc(yrcRaw);
+                                    if (converted && detectLrcTier(converted, true) === 2) {
+                                        synced = converted;
+                                        hasWordSync = true;
+                                    }
+                                }
+                                if (!synced && lrcRaw && typeof lrcRaw === 'string' && detectLrcTier(lrcRaw, false) >= 1) {
+                                    synced = lrcRaw;
+                                }
+                                if (!synced) continue;
+
+                                const artistList = s.artists || s.ar || [];
+                                out.push({
+                                    trackName: s.name || s.songName || '',
+                                    artistName: Array.isArray(artistList) ? artistList.map(a => a && a.name).filter(Boolean).join(', ') : '',
+                                    duration: s.duration ? s.duration / 1000 : 0,
+                                    syncedLyrics: synced,
+                                    plainLyrics: null,
+                                    provider: hasWordSync ? 'NetEase-WordSync' : 'NetEase',
+                                    writer: '',
+                                    hasWordSync
+                                });
+                            }
+                        } catch (e) {}
+                        return out;
+                    };
+
+                    // ── STUFE 1: Parallele Suche über ALLE Provider (LRCLIB + NetEase YRC) ──
+                    const consolidatedQuery = `${cleanT || title} ${primaryArtist || cleanA || artist}`.trim();
+
+                    // NetEase (Wort-Sync-Spezialist) läuft parallel und unabhängig vom LRCLIB-Pacing.
+                    const neteasePromise = fetchNeteaseYrc(consolidatedQuery, () => fetchId !== currentFetchId);
+
+                    // Pacing-Abstand zum Schutz von LRCLIB einhalten.
                     const timeSinceLast = Date.now() - lastLyricsFetchTime;
                     if (timeSinceLast < 800) {
                         await new Promise(r => setTimeout(r, 800 - timeSinceLast));
@@ -28529,21 +28738,12 @@ window.setLyricsStyle = function(style) {
                     }
                     lastLyricsFetchTime = Date.now();
 
-                    let bestSynced = null;
-                    let bestPlain = null;
-
-                    // 1. Stufe 1: GENAU EIN konsolidierter LRCLIB-Search-Request (Titel + primärer Artist).
-                    // Keine Query-/Request-Kaskade -> verhindert 429-Rate-Limits.
-                    const consolidatedQuery = `${cleanT || title} ${primaryArtist || cleanA || artist}`.trim();
+                    // GENAU EIN konsolidierter LRCLIB-Search-Request (Titel + primärer Artist).
                     let searchData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(consolidatedQuery));
                     if (fetchId !== currentFetchId) return;
-
-                    // Bis zu 20 Treffer im Speicher auswerten und synchronisierte Lyrics bevorzugen.
                     let searchResults = Array.isArray(searchData) ? searchData.slice(0, 20) : [];
 
-                    // 1b. Stufe 2 (v24.222.7): Fallback-Suche NUR mit dem Titel, wenn Stufe 1 keine Treffer
-                    // liefert. Der Song ist oft unter dem Titel hinterlegt, aber der Artist leicht anders
-                    // geschrieben. pickBestMatch filtert danach weiterhin streng nach Artist/Titel.
+                    // Titel-only-Fallback, wenn die konsolidierte Suche 0 Treffer liefert.
                     if (searchResults.length === 0) {
                         const titleOnlyQuery = `${cleanT || title}`.trim();
                         if (titleOnlyQuery && titleOnlyQuery.toLowerCase() !== consolidatedQuery.toLowerCase()) {
@@ -28552,24 +28752,26 @@ window.setLyricsStyle = function(style) {
                             searchResults = Array.isArray(searchData) ? searchData.slice(0, 20) : [];
                         }
                     }
-                    if (searchResults.length > 0) {
-                        const best = pickBestMatch(searchResults, searchDurationMs);
-                        if (best) {
-                            if (best.syncedLyrics && !isDummyLyrics(best.syncedLyrics)) {
-                                bestSynced = best;
-                            } else if (best.plainLyrics && !isDummyLyrics(best.plainLyrics)) {
-                                bestPlain = best;
-                            }
-                        }
-                    }
 
-                    // Sofort rendern und beenden wenn synchronisiert gefunden!
-                    if (bestSynced) {
-                        if (saveAndRender(bestSynced.syncedLyrics, bestSynced.plainLyrics, "LRCLIB")) return;
-                    }
+                    // NetEase-Ergebnisse einsammeln (Promise lief bereits parallel).
+                    const neteaseResults = await neteasePromise;
+                    if (fetchId !== currentFetchId) return;
 
-                    // 2. Fallback: NUR wenn die Suche 0 Treffer lieferte -> nach mind. 1,5s EIN einzelner direkter /api/get-Call
-                    if (!bestSynced && searchResults.length === 0 && !wasRateLimited && Date.now() >= lrclibRateLimitedUntil) {
+                    // ── STUFE 2: Multi-Tier-Aggregation über ALLE Datenbanken ──
+                    const allCandidates = [];
+                    if (bundledCandidate) allCandidates.push(bundledCandidate);
+                    searchResults.forEach(c => {
+                        if (!c) return;
+                        c.provider = 'LRCLIB';
+                        c.hasWordSync = c.hasWordSync === true;
+                        allCandidates.push(c);
+                    });
+                    (neteaseResults || []).forEach(c => { if (c) allCandidates.push(c); });
+
+                    let best = selectBestCandidate(allCandidates, searchDurationMs);
+
+                    // Direkter /api/get-Fallback: nur wenn die Suche 0 Treffer lieferte und noch kein Kandidat gefunden wurde.
+                    if (!best && searchResults.length === 0 && !wasRateLimited && Date.now() >= lrclibRateLimitedUntil) {
                         await new Promise(r => setTimeout(r, 1500));
                         if (fetchId !== currentFetchId) return;
 
@@ -28583,19 +28785,32 @@ window.setLyricsStyle = function(style) {
                         const directData = await fetchLrclib(`https://lrclib.net/api/get?` + getParams);
                         if (fetchId !== currentFetchId) return;
                         if (directData) {
-                            if (directData.syncedLyrics && !isDummyLyrics(directData.syncedLyrics)) {
-                                bestSynced = directData;
-                                if (saveAndRender(directData.syncedLyrics, directData.plainLyrics, "LRCLIB")) return;
-                            } else if (directData.plainLyrics && !isDummyLyrics(directData.plainLyrics)) {
-                                bestPlain = directData;
+                            directData.provider = 'LRCLIB';
+                            directData.hasWordSync = directData.hasWordSync === true;
+                            best = selectBestCandidate([directData], searchDurationMs);
+                        }
+                    }
+
+                    // ── STUFE 3: Sieger speichern & rendern (Enhanced-LRC bevorzugt) ──
+                    if (best) {
+                        const bestSynced = (best.syncedLyrics && !isDummyLyrics(best.syncedLyrics)) ? best.syncedLyrics : null;
+                        const bestTier = bestSynced ? detectLrcTier(bestSynced, best.hasWordSync === true) : 0;
+
+                        // Nur aufwerten, wenn noch nichts gerendert wurde ODER ein echt verbesserter
+                        // Enhanced-LRC (Tier 2) gefunden wurde. So bleibt die 0ms-Bundled-Anzeige stabil,
+                        // aber ein Wort-Sync-Treffer setzt sich IMMER durch.
+                        const shouldRender = !bundledCandidate || (bestTier >= 2 && bestTier > bundledTier);
+                        if (shouldRender) {
+                            if (bestSynced) {
+                                if (saveAndRender(bestSynced, best.plainLyrics, best.provider || 'LRCLIB', best.writer || '')) return;
+                            } else if (best.plainLyrics && !isDummyLyrics(best.plainLyrics)) {
+                                if (saveAndRender(null, best.plainLyrics, best.provider || 'LRCLIB', best.writer || '')) return;
                             }
                         }
                     }
 
-                    // 3. Fallback auf gefundene Plain-Lyrics (NUR wenn absolut keine synchronisierten Lyrics in der gesamten Datenbank existieren!)
-                    if (bestPlain && bestPlain.plainLyrics && !isDummyLyrics(bestPlain.plainLyrics)) {
-                        if (saveAndRender(null, bestPlain.plainLyrics, "LRCLIB")) return;
-                    }
+                    // Wurde bereits etwas gerendert (z.B. Bundled-First-Paint), hier sauber beenden.
+                    if (parsedLyrics && parsedLyrics.length > 0) return;
 
                     if (fetchId !== currentFetchId) return;
 
