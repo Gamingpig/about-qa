@@ -27626,10 +27626,6 @@ window.setLyricsStyle = function(style) {
                 if (newTrack || playbackChanged || (progress !== null && progress !== previous.progress && !songEndedLocally) || isLegitRepeat) {
                     let target = progress ?? (newTrack ? 0 : expected);
                     if (playing && progress !== null) {
-                        const timestamp = data.timestamp || data.updated_at || data.fetched_at || track?.timestamp;
-                        const stamp = typeof timestamp === 'number' ? (timestamp < 20000000000 ? timestamp * 1000 : timestamp) : Date.parse(timestamp);
-                        const age = getTrueDateNow() - stamp;
-                        if (age >= 0 && age <= (totalMs || 600000)) target += age;
                         target += dynamicLatency;
                     }
                     target = Math.max(0, totalMs > 0 ? Math.min(target, totalMs) : target);
@@ -27899,24 +27895,12 @@ window.setLyricsStyle = function(style) {
             lastSeenProgressMs = currentApiProgress;
             let apiProgress = currentApiProgress;
             if (isPlaying) {
-                let dataAge = 0;
-                let serverTimestamp = data.timestamp || data.updated_at || data.fetched_at || (data.track && data.track.timestamp);
-                if (serverTimestamp) {
-                    let st = typeof serverTimestamp === 'number'
-                        ? (serverTimestamp < 20000000000 ? serverTimestamp * 1000 : serverTimestamp)
-                        : new Date(serverTimestamp).getTime();
-                    let trueNow = getTrueDateNow();
-                    let rawAge = trueNow - st;
-                    let maxAllowedAge = (data.track && data.track.duration_ms) ? data.track.duration_ms : 600000;
-                    if (rawAge >= 0 && rawAge <= maxAllowedAge) {
-                        dataAge = rawAge;
-                    } else {
-                        dataAge = 0;
-                    }
-                } else {
-                    dataAge = 0;
-                }
-                apiProgress += dataAge + dynamicLatency;
+                // Präziser Zeit-Sync: Keine künstliche Server-Wanduhr-Differenz (Date.now() - timestamp)
+                // aufaddieren! Externe APIs (wie NPC) haben oft 2-3s Server-Cache oder Uhrzeit-Drift,
+                // was den Fortschritt fälschlicherweise nach vorne warf (Lyrics 1 Zeile zu schnell).
+                // Wie bei stats.fm wird progress_ms direkt übernommen und lediglich um die gemessene
+                // reale HTTP-Netzwerklaufzeit (dynamicLatency = RTT/2) kompensiert.
+                apiProgress += dynamicLatency;
             }
             const trackDuration = (data.track && data.track.duration_ms) || data.duration_ms || 0;
             if (trackDuration && apiProgress > trackDuration) {
