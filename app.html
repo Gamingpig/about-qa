@@ -27990,9 +27990,10 @@ window.setLyricsStyle = function(style) {
                         return null;
                     };
 
+                    // Hinweis: KEIN benutzerdefinierter 'Lrclib-Client'-Header (vermeidet CORS OPTIONS-Preflights).
+                    // Einfacher Accept-Header genügt für die JSON-API.
                     const lrclibHeaders = {
-                        'Accept': 'application/json',
-                        'Lrclib-Client': 'AboutQA/2.2 (https://github.com/Gamingpig/about-qa; contact@gamingpig.de)'
+                        'Accept': 'application/json'
                     };
 
                     const fetchLrclib = async (url, timeoutMs = 6000) => {
@@ -28039,30 +28040,20 @@ window.setLyricsStyle = function(style) {
                     let bestSynced = null;
                     let bestPlain = null;
 
-                    // 1. Primre Suche ber LRCLIB Search API (SEARCH-FIRST fr 100% Synced-Prioritt)
-                    const searchQueries = [
-                        `${cleanT || title} ${cleanA || artist}`.trim()
-                    ];
-                    if (primaryArtist && primaryArtist !== (cleanA || artist)) {
-                        searchQueries.push(`${cleanT || title} ${primaryArtist}`.trim());
-                    }
-                    if ((cleanT && cleanT !== title) || (cleanA && cleanA !== artist)) {
-                        searchQueries.push(`${title} ${artist}`.trim());
-                    }
+                    // 1. GENAU EIN konsolidierter LRCLIB-Search-Request (keine Query-/Request-Kaskade -> kein 429 mehr).
+                    const consolidatedQuery = `${cleanT || title} ${primaryArtist || cleanA || artist}`.trim();
+                    const searchData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(consolidatedQuery));
+                    if (fetchId !== currentFetchId) return;
 
-                    for (const qStr of searchQueries) {
-                        if (bestSynced || wasRateLimited || Date.now() < lrclibRateLimitedUntil) break;
-                        const searchData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(qStr));
-                        if (fetchId !== currentFetchId) return;
-                        if (Array.isArray(searchData) && searchData.length > 0) {
-                            const best = pickBestMatch(searchData, searchDurationMs);
-                            if (best) {
-                                if (best.syncedLyrics && !isDummyLyrics(best.syncedLyrics)) {
-                                    bestSynced = best;
-                                    break;
-                                } else if (!bestPlain && best.plainLyrics && !isDummyLyrics(best.plainLyrics)) {
-                                    bestPlain = best;
-                                }
+                    // Bis zu 20 Treffer im Speicher auswerten und synchronisierte Lyrics bevorzugen.
+                    const searchResults = Array.isArray(searchData) ? searchData.slice(0, 20) : [];
+                    if (searchResults.length > 0) {
+                        const best = pickBestMatch(searchResults, searchDurationMs);
+                        if (best) {
+                            if (best.syncedLyrics && !isDummyLyrics(best.syncedLyrics)) {
+                                bestSynced = best;
+                            } else if (best.plainLyrics && !isDummyLyrics(best.plainLyrics)) {
+                                bestPlain = best;
                             }
                         }
                     }
@@ -28072,30 +28063,26 @@ window.setLyricsStyle = function(style) {
                         if (saveAndRender(bestSynced.syncedLyrics, bestSynced.plainLyrics, "LRCLIB")) return;
                     }
 
-                    // 2. Fallback: LRCLIB Direct GET mit exakter Dauer (nur wenn Search noch keine synchronisierten Lyrics fand)
-                    if (!bestSynced && !wasRateLimited && Date.now() >= lrclibRateLimitedUntil) {
-                        const getParamSets = [
-                            { track_name: cleanT || title, artist_name: cleanA || artist }
-                        ];
-                        if (primaryArtist && primaryArtist !== (cleanA || artist)) {
-                            getParamSets.push({ track_name: cleanT || title, artist_name: primaryArtist });
-                        }
+                    // 2. Fallback: NUR wenn die Suche 0 Treffer lieferte -> nach mind. 1,5s EIN einzelner direkter /api/get-Call
+                    if (!bestSynced && searchResults.length === 0 && !wasRateLimited && Date.now() >= lrclibRateLimitedUntil) {
+                        await new Promise(r => setTimeout(r, 1500));
+                        if (fetchId !== currentFetchId) return;
 
-                        for (const pSet of getParamSets) {
-                            if (bestSynced) break;
-                            const getParams = new URLSearchParams(pSet);
-                            const durSec = searchDurationMs > 0 ? Math.round(searchDurationMs / 1000) : 0;
-                            if (durSec > 0) getParams.append('duration', durSec);
+                        const getParams = new URLSearchParams({
+                            track_name: cleanT || title,
+                            artist_name: primaryArtist || cleanA || artist
+                        });
+                        const durSec = searchDurationMs > 0 ? Math.round(searchDurationMs / 1000) : 0;
+                        if (durSec > 0) getParams.append('duration', durSec);
 
-                            const directData = await fetchLrclib(`https://lrclib.net/api/get?` + getParams);
-                            if (fetchId !== currentFetchId) return;
-                            if (directData) {
-                                if (directData.syncedLyrics && !isDummyLyrics(directData.syncedLyrics)) {
-                                    bestSynced = directData;
-                                    if (saveAndRender(directData.syncedLyrics, directData.plainLyrics, "LRCLIB")) return;
-                                } else if (!bestPlain && directData.plainLyrics && !isDummyLyrics(directData.plainLyrics)) {
-                                    bestPlain = directData;
-                                }
+                        const directData = await fetchLrclib(`https://lrclib.net/api/get?` + getParams);
+                        if (fetchId !== currentFetchId) return;
+                        if (directData) {
+                            if (directData.syncedLyrics && !isDummyLyrics(directData.syncedLyrics)) {
+                                bestSynced = directData;
+                                if (saveAndRender(directData.syncedLyrics, directData.plainLyrics, "LRCLIB")) return;
+                            } else if (directData.plainLyrics && !isDummyLyrics(directData.plainLyrics)) {
+                                bestPlain = directData;
                             }
                         }
                     }
