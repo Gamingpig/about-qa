@@ -26678,6 +26678,12 @@ window.setLyricsStyle = function(style) {
             if (!synced && !plain) return -1;
             const tier = synced ? detectLrcTier(synced, c.hasWordSync === true) : 0;
             let score = tier === 2 ? 500 : tier === 1 ? 150 : 0;
+            if (c.isDirectIdMatch === true) {
+                // Direkter Treffer über verifizierte Spotify- oder Apple-Music-ID -> 100% echte Identität
+                score += 150;
+                score += (LYRICS_PROVIDER_BONUS[c.provider] || 0);
+                return score;
+            }
             const cTrack = normLyricsStr(c.trackName);
             const cArtist = normLyricsStr(c.artistName);
             // Titel-Übereinstimmung (Pflicht): +100 exakt / +60 fuzzy
@@ -27490,7 +27496,7 @@ window.setLyricsStyle = function(style) {
                                 const directSp = await tryGet(`spotifyId=${encodeURIComponent(spId)}`);
                                 if (isCancelled && isCancelled()) return out;
                                 const candSp = toCandidate(directSp);
-                                if (candSp) { out.push(candSp); return out; }
+                                if (candSp) { candSp.isDirectIdMatch = true; out.push(candSp); return out; }
                             }
                             // 2) Direkter Treffer über die Apple-Music-ID (falls aus den Links bekannt)
                             const amId = (typeof currentAppleMusicId === 'string') ? currentAppleMusicId.trim() : '';
@@ -27498,7 +27504,7 @@ window.setLyricsStyle = function(style) {
                                 const directAm = await tryGet(`appleMusicId=${encodeURIComponent(amId)}`);
                                 if (isCancelled && isCancelled()) return out;
                                 const candAm = toCandidate(directAm);
-                                if (candAm) { out.push(candAm); return out; }
+                                if (candAm) { candAm.isDirectIdMatch = true; out.push(candAm); return out; }
                             }
                             // 2) Suche über Titel + Artist, bester Titel-Match gewinnt
                             if (!query) return out;
@@ -27729,6 +27735,8 @@ window.setLyricsStyle = function(style) {
                     currentRawArtist = cleanA;
                     currentTrackId = title + "-" + cleanA;
                     totalMs = Number(track?.duration_ms || data?.duration_ms) || 0;
+                    currentAppleMusicId = (track && track.appleMusicId) || extractAppleMusicIdFromLinks(track) || extractAppleMusicIdFromLinks(data) || "";
+                    currentSpotifyTrackId = (track && (track.spotifyId || (track.id && !String(track.id).includes('|') ? String(track.id) : ''))) || extractSpotifyIdFromLinks(track) || extractSpotifyIdFromLinks(data) || "";
                     parsedLyrics = [];
                     currentLyricIndex = -1;
                     fetchExternalLyrics(title, cleanA, totalMs, false);
