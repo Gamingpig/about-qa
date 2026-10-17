@@ -23299,6 +23299,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
         let currentTrackTitle = "";
         let currentRawArtist = "";
         let currentAppleMusicId = ""; // v24.223.0: Apple-Music-Song-ID für den AMLL-Wort-Sync
+        let currentSpotifyTrackId = ""; // v24.223.1: Spotify-Track-ID für den direkten AMLL-Wort-Sync
         window.toggleDashboard = function() {
             isDashboardOpen = !isDashboardOpen;
             document.body.classList.toggle('dashboard-open', isDashboardOpen);
@@ -26559,6 +26560,14 @@ window.setLyricsStyle = function(style) {
         }
         function convertTtmlToEnhancedLrc(ttmlText) {
             if (!ttmlText || typeof ttmlText !== 'string') return '';
+            const decodeXml = (s) => (s || '')
+                .replace(/&apos;/g, "'")
+                .replace(/&#39;/g, "'")
+                .replace(/&quot;/g, '"')
+                .replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/[\uFFFC\uFFFD\uFEFF]/g, '');
             const pRegex = /<p\b[^>]*\bbegin=["']([^"']+)["'][^>]*>([\s\S]*?)<\/p>/gi;
             const lines = [];
             let pMatch;
@@ -26574,7 +26583,7 @@ window.setLyricsStyle = function(style) {
                 while ((spanMatch = spanRegex.exec(content)) !== null) {
                     foundSpans = true;
                     const spanTime = spanMatch[1];
-                    const wordText = spanMatch[2];
+                    const wordText = decodeXml(spanMatch[2]);
                     const trailingSpace = spanMatch[3] || '';
                     enhancedLine += `<${formatTtmlTimestamp(spanTime)}>${wordText}${trailingSpace}`;
                 }
@@ -26582,7 +26591,7 @@ window.setLyricsStyle = function(style) {
                 if (foundSpans && enhancedLine.trim()) {
                     lines.push(`[${formattedLineStart}] ${enhancedLine.trim()}`);
                 } else {
-                    const cleanText = content.replace(/<[^>]+>/g, '').trim();
+                    const cleanText = decodeXml(content.replace(/<[^>]+>/g, '').trim());
                     if (cleanText) lines.push(`[${formattedLineStart}] ${cleanText}`);
                 }
             }
@@ -26608,6 +26617,29 @@ window.setLyricsStyle = function(style) {
             };
             if (typeof source === 'string') return testString(source);
             try {
+                for (const val of Object.values(source)) {
+                    const found = testString(val);
+                    if (found) return found;
+                }
+            } catch (e) {}
+            return '';
+        }
+        // Extrahiert die Spotify-Track-ID aus einem Link, einer URI oder einem Objekt
+        function extractSpotifyIdFromLinks(source) {
+            if (!source) return '';
+            const testString = (val) => {
+                if (typeof val !== 'string') return '';
+                let m = val.match(/spotify:track:([a-zA-Z0-9]+)/);
+                if (m) return m[1];
+                m = val.match(/\/track\/([a-zA-Z0-9]+)/);
+                if (m) return m[1];
+                if (/^[a-zA-Z0-9]{22}$/.test(val.trim())) return val.trim();
+                return '';
+            };
+            if (typeof source === 'string') return testString(source);
+            try {
+                if (source.spotifyId) return String(source.spotifyId);
+                if (source.id && !String(source.id).includes('|') && /^[a-zA-Z0-9]{22}$/.test(String(source.id).trim())) return String(source.id).trim();
                 for (const val of Object.values(source)) {
                     const found = testString(val);
                     if (found) return found;
@@ -27097,14 +27129,17 @@ window.setLyricsStyle = function(style) {
             // Strikter Cache-Check:
             if (!force && lyricsMemoryCache.has(cacheKey)) {
                 const cached = lyricsMemoryCache.get(cacheKey);
-                // Synchronisierte Lyrics sind dauerhaft gültig:
+                // Synchronisierte Lyrics:
                 if (cached.syncedLyrics && !isDummyLyrics(cached.syncedLyrics)) {
+                    const cachedTier = detectLrcTier(cached.syncedLyrics, cached.hasWordSync === true);
                     currentLyricsProvider = cached.provider || "LRCLIB";
                     currentLyricsWriter = cached.writer || "";
                     parseLrc(cached.syncedLyrics);
                     renderLyrics();
                     syncLyricsUI(true);
-                    return;
+                    // Tier 2 (Studio Word-Sync) ist bereits die Königsklasse -> sofort fertig!
+                    // Tier 1 (Line-Sync) -> sofort anzeigen (0ms), aber Hintergrund-Suche nach Tier 2 (AMLL) läuft weiter!
+                    if (cachedTier >= 2) return;
                 } else if (cached.isPlainOnly && cached.plainLyrics && !isDummyLyrics(cached.plainLyrics)) {
                     // Plain-Lyrics nur temporär für 30s im Cache halten, damit bei Verfügbarkeit auf Synced aufgerüstet wird
                     if (Date.now() - (cached.cachedAt || 0) < 30000) {
@@ -27147,13 +27182,16 @@ window.setLyricsStyle = function(style) {
             if (!force) {
                 const persisted = readPersistedLyrics(cacheKey);
                 if (persisted) {
+                    const persistedTier = detectLrcTier(persisted.syncedLyrics, persisted.hasWordSync === true);
                     lyricsMemoryCache.set(cacheKey, { syncedLyrics: persisted.syncedLyrics, plainLyrics: persisted.plainLyrics || null, provider: persisted.provider || 'LRCLIB', writer: persisted.writer || '', isPlainOnly: false, cachedAt: persisted.cachedAt || Date.now() });
                     currentLyricsProvider = persisted.provider || 'LRCLIB';
                     currentLyricsWriter = persisted.writer || '';
                     parseLrc(persisted.syncedLyrics);
                     renderLyrics();
                     syncLyricsUI(true);
-                    return;
+                    // Tier 2 (Studio Word-Sync) -> sofort fertig!
+                    // Tier 1 (Line-Sync) -> sofort anzeigen (0ms), aber Hintergrund-Suche nach Tier 2 (AMLL) läuft weiter!
+                    if (persistedTier >= 2) return;
                 }
             }
             const fetchId = ++currentFetchId;
@@ -27162,17 +27200,23 @@ window.setLyricsStyle = function(style) {
                 let wasRateLimited = false;
                 let wasServerBusy = false; // 503/502/504/Netzwerkfehler: NICHT als „kein Text" negativ cachen
                 try {
-                    renderLyricsLoading(title, artist);
-                    parsedLyrics = [];
-                    currentLyricIndex = -1;
-                    currentLyricsProvider = "";
-                    currentLyricsWriter = "";
+                    const hasExistingVisuals = parsedLyrics && parsedLyrics.length > 0;
+                    if (!hasExistingVisuals) {
+                        renderLyricsLoading(title, artist);
+                        parsedLyrics = [];
+                        currentLyricIndex = -1;
+                        currentLyricsProvider = "";
+                        currentLyricsWriter = "";
+                    }
                     const cleanT = cleanStringForAPI(title);
                     const cleanA = cleanStringForAPI(artist);
                     const primaryArtist = (cleanA || artist || '').split(/\s*,\s*|\s*\/\s*|\s+feat\.?\s+|\s+ft\.?\s+|\s+with\s+/i)[0].trim();
                     const saveAndRender = (synced, plain, provider = "LRCLIB", writer = "") => {
                         if (fetchId !== currentFetchId) return false;
                         if (!synced && parsedLyrics && parsedLyrics.length > 0) return false;
+                        const newTier = synced ? detectLrcTier(synced) : 0;
+                        const currentTier = parsedLyrics && parsedLyrics.length ? (parsedLyrics.some(l => l && l.hasWordTimings) ? 2 : 1) : 0;
+                        if (hasExistingVisuals && newTier <= currentTier && currentTier >= 1) return false;
                         currentLyricsProvider = provider;
                         currentLyricsWriter = writer;
                         if (synced && !isDummyLyrics(synced)) {
@@ -27183,6 +27227,7 @@ window.setLyricsStyle = function(style) {
                             syncLyricsUI(true);
                             return true;
                         } else if (plain && !isDummyLyrics(plain)) {
+                            if (hasExistingVisuals) return false;
                             lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: plain, provider, writer, isPlainOnly: true, cachedAt: Date.now() });
                             parsedLyrics = [];
                             currentLyricIndex = -1;
@@ -27439,13 +27484,21 @@ window.setLyricsStyle = function(style) {
                             };
                         };
                         try {
-                            // 1) Direkter Treffer über die Apple-Music-ID (falls aus den Links bekannt)
+                            // 1) Direkter Treffer über die Spotify-Track-ID (höchste Trefferquote für Spotify-Wiedergabe!)
+                            const spId = (typeof currentSpotifyTrackId === 'string') ? currentSpotifyTrackId.trim() : '';
+                            if (spId) {
+                                const directSp = await tryGet(`spotifyId=${encodeURIComponent(spId)}`);
+                                if (isCancelled && isCancelled()) return out;
+                                const candSp = toCandidate(directSp);
+                                if (candSp) { out.push(candSp); return out; }
+                            }
+                            // 2) Direkter Treffer über die Apple-Music-ID (falls aus den Links bekannt)
                             const amId = (typeof currentAppleMusicId === 'string') ? currentAppleMusicId.trim() : '';
                             if (amId) {
-                                const direct = await tryGet(`appleMusicId=${encodeURIComponent(amId)}`);
+                                const directAm = await tryGet(`appleMusicId=${encodeURIComponent(amId)}`);
                                 if (isCancelled && isCancelled()) return out;
-                                const cand = toCandidate(direct);
-                                if (cand) { out.push(cand); return out; }
+                                const candAm = toCandidate(directAm);
+                                if (candAm) { out.push(candAm); return out; }
                             }
                             // 2) Suche über Titel + Artist, bester Titel-Match gewinnt
                             if (!query) return out;
@@ -27806,8 +27859,13 @@ window.setLyricsStyle = function(style) {
                 track_url: data.track.track_url || null
             } : null;
             const resolvedPlatformLinks = platformLinks;
-            // v24.223.0: Apple-Music-ID für den AMLL-Wort-Sync ermitteln (direkter Get statt Suche)
-            currentAppleMusicId = extractAppleMusicIdFromLinks(resolvedPlatformLinks) || extractAppleMusicIdFromLinks(mainSpotifyUrl) || "";
+            // v24.223.1: Apple-Music-ID & Spotify-Track-ID für den AMLL-Wort-Sync ermitteln
+            currentAppleMusicId = (data.track && data.track.appleMusicId) ||
+                                  extractAppleMusicIdFromLinks(resolvedPlatformLinks) ||
+                                  extractAppleMusicIdFromLinks(mainSpotifyUrl) || "";
+            currentSpotifyTrackId = (data.track && (data.track.spotifyId || (data.track.id && !String(data.track.id).includes('|') ? String(data.track.id) : ''))) ||
+                                    extractSpotifyIdFromLinks(mainSpotifyUrl) ||
+                                    extractSpotifyIdFromLinks(data.track) || "";
             let rawArtwork = (data.track && data.track.artwork_url) || '';
             let isBrokenNpcProxy = rawArtwork.includes('npc-api.aikins.xyz/v1/artwork/');
             const hasValidRawCover = Boolean(rawArtwork && rawArtwork.startsWith('http') && !isBrokenNpcProxy);
@@ -28207,6 +28265,7 @@ window.setLyricsStyle = function(style) {
             const artists = Array.isArray(track.artists) ? track.artists.map(a => a && a.name).filter(Boolean) : [];
             const album = Array.isArray(track.albums) ? track.albums[0] : null;
             const spotifyId = track.externalIds && Array.isArray(track.externalIds.spotify) ? track.externalIds.spotify[0] : null;
+            const appleMusicId = track.externalIds && Array.isArray(track.externalIds.appleMusic) ? track.externalIds.appleMusic[0] : null;
             return {
                 status: item.isPlaying ? 'playing' : 'stopped',
                 provider: item.platform ? String(item.platform).toLowerCase() : 'spotify',
@@ -28215,13 +28274,19 @@ window.setLyricsStyle = function(style) {
                 source: 'statsfm',
                 track: {
                     id: spotifyId || track.id || '',
+                    spotifyId: spotifyId || '',
+                    appleMusicId: appleMusicId || '',
                     title: track.name || '',
                     artist: artists.join(', ') || 'Unknown',
                     album: album && album.name ? album.name : '',
                     duration_ms: Number(track.durationMs) || 0,
                     artwork_url: (album && album.image) || (track.images && track.images[0]) || '',
                     uri: spotifyId ? `spotify:track:${spotifyId}` : '',
-                    external_urls: spotifyId ? { spotify: `https://open.spotify.com/track/${spotifyId}` } : {}
+                    external_urls: spotifyId ? { spotify: `https://open.spotify.com/track/${spotifyId}` } : {},
+                    platform_links: {
+                        spotify: spotifyId ? `https://open.spotify.com/track/${spotifyId}` : null,
+                        appleMusic: appleMusicId ? `https://music.apple.com/song/${appleMusicId}` : null
+                    }
                 }
             };
         }
