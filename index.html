@@ -25616,7 +25616,7 @@ window.setLyricsStyle = function(style) {
                     let msStr = match[3];
                     const ms = msStr.length === 2 ? parseInt(msStr) * 10 : parseInt(msStr);
                     const lineTime = (m * 60000) + (s * 1000) + ms;
-                    const rawText = match[4].replace(/[\uFFFC\uFFFD\uFEFF]/g, '');
+                    const rawText = match[4].replace(/[\uFFFC\uFFFD\uFEFF]/g, '').replace(/\[\d{2}:\d{2}\.\d{2,3}\]/g, '');
                     let tokens = [];
                     let hasWordTimings = false;
                     if (/<(\d{2}):(\d{2})\.(\d{2,3})>/.test(rawText)) {
@@ -25738,6 +25738,10 @@ window.setLyricsStyle = function(style) {
                     if (isDropLine) {
                         // Gesang endet natürlich getaktet auf den Beat – der Rest des Fensters ist der Instrumental-Drop
                         targetSingingTime = Math.min(timeToNextLine, Math.max(1100, line.totalSyllables * 280 + 360));
+                    } else if (isRapMode) {
+                        // Rap/Tempo-Kadenz: Wörter gleichmäßig über die volle Zeilendauer bis kurz vor die Folgezeile
+                        // takten, damit sie im Takt des Beats bleiben und nicht davoneilen (schnelle Rap-Tracks).
+                        targetSingingTime = Math.max(250, timeToNextLine - 60);
                     } else {
                         // STÄRKE DES ALTEN ALGORITHMUS: Sanfte, menschliche Atempause (80-220ms) statt künstlicher 1-Sekunden-Löcher!
                         // Der Gesang füllt den Takt harmonisch aus, genau wie der Künstler ihn singt.
@@ -27023,7 +27027,26 @@ window.setLyricsStyle = function(style) {
 [02:03.17] In a street race competition
 [02:07.62] Oh, yeah, crashing stars or collision
 [02:11.96] You make me, oh, oh, you make me`;
+        // Synne Vo / Marcus & Martinus – „Nonchalant" (Hver gang vi møtes): 0ms-First-Paint, Zeilen-Sync (Tier 1).
+        // Die Zahl "03" in der vierten Zeile ist die Uhrzeit im Lied und bleibt bewusst erhalten.
+        const LRC_NONCHALANT = `[00:00.00] ♪ ♪ ♪
+[00:08.20] Og æ skjønner ikke når det skjer
+[00:12.10] Vi ender opp på samme sted
+[00:15.80] Så enkelt etter klokka er slått 03
+[00:20.10] Du tar hånda mi i regnet
+[00:23.90] Og du vet godt hva du gjør
+[00:27.80] Du kler av me samme måte som du gjorde helga før
+[00:35.40] Hvorfor later du som ingenting?
+[00:39.20] Som om du ikke vet hva du gjør med meg
+[00:43.10] Du er så nonchalant
+[00:47.00] Så nonchalant
+[00:51.00] Og du vet godt hva du gjør
+[00:54.80] Du kler av me samme måte som du gjorde helga før`;
         const BUNDLED_LYRICS_DB = {
+            "nonchalant---marcus & martinus": LRC_NONCHALANT,
+            "nonchalant---marcus & martinus, synne vo": LRC_NONCHALANT,
+            "nonchalant---synne vo": LRC_NONCHALANT,
+            "nonchalant---synne vo, marcus & martinus": LRC_NONCHALANT,
             "make you believe in love---marcus & martinus": LRC_MAKE_YOU_BELIEVE_IN_LOVE,
             "make you believe in love---marcus & martinus, aronchupa": LRC_MAKE_YOU_BELIEVE_IN_LOVE,
             "make you believe in love---marcus and martinus": LRC_MAKE_YOU_BELIEVE_IN_LOVE,
@@ -28204,7 +28227,7 @@ window.setLyricsStyle = function(style) {
                             //    darf der Song NIEMALS zurückgezogen werden! Der lokale Monotonie-Timer
                             //    läuft ungestört, stetig und butterweich weiter.
                             // 2. Große Seeks/Skips durch den Nutzer (>3s) lösen sofortigen Re-Sync aus.
-                            // 3. Kleine Vorauseil-Abweichungen werden ganz weich (5%) ausgeglichen.
+                            // 3. Kleine Vorauseil-Abweichungen (drift > 200ms) werden dynamisch und weich (25%) aufgeholt.
                             const isSameSnapshot = (currentApiProgress === lastSeenProgressMs);
                             if (drift < 0 && drift > -25000) {
                                 // Reiner Selbstheilungs-Monotonietimer: Läuft stetig, butterweich und millimetergenau weiter
@@ -28213,9 +28236,9 @@ window.setLyricsStyle = function(style) {
                                 localStartTime = performance.now();
                                 currentMs = serverBaseProgress;
                                 syncLyricsUI(true, true);
-                            } else if (drift > 1500) {
-                                // Sanftes, unhörbares Einschwingen (5%) statt aggressiver 25%-Ruckler
-                                serverBaseProgress = expectedLocalProgress + drift * 0.05;
+                            } else if (drift > 200) {
+                                // Dynamisches, weiches Aufholen (25%): holt Verzögerungen in ~2s unhörbar und ruckelfrei auf
+                                serverBaseProgress = expectedLocalProgress + drift * 0.25;
                                 localStartTime = performance.now();
                             }
                         }
@@ -28277,10 +28300,16 @@ window.setLyricsStyle = function(style) {
             const album = Array.isArray(track.albums) ? track.albums[0] : null;
             const spotifyId = track.externalIds && Array.isArray(track.externalIds.spotify) ? track.externalIds.spotify[0] : null;
             const appleMusicId = track.externalIds && Array.isArray(track.externalIds.appleMusic) ? track.externalIds.appleMusic[0] : null;
+            // Geräte-Uhr-Drift eliminieren: stats.fm liefert in item.date den exakten UTC-Zeitstempel
+            // des Spotify-Snapshots. Das Alter dieses Snapshots (serverElapsed) wird von updateMusicUI
+            // skew-frei auf progress_ms aufgeschlagen – exakt wie bei NPC über den HTTP-Date-Header.
+            const itemDate = item && item.date ? new Date(item.date).getTime() : Date.now();
+            const snapAge = Math.max(0, Math.min(15000, Date.now() - itemDate));
             return {
                 status: item.isPlaying ? 'playing' : 'stopped',
                 provider: item.platform ? String(item.platform).toLowerCase() : 'spotify',
                 progress_ms: Number(item.progressMs) || 0,
+                serverElapsed: snapAge,
                 timestamp: Date.now(),
                 source: 'statsfm',
                 track: {
