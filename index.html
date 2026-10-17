@@ -25733,7 +25733,7 @@ window.setLyricsStyle = function(style) {
                     const isLineBallad = isBalladSong || (lineDensity < 1.75);
                     const isRapMode = lineDensity > 3.6;
                     // STÄRKE DES NEUEN ALGORITHMUS: Echte Hook-Drops & EDM-Pausen (z.B. "She's unforgettable" gefolgt von Beat-Drop)
-                    const isDropLine = (timeToNextLine >= 3600 && line.totalSyllables <= 9);
+                    const isDropLine = (timeToNextLine >= 5000 && line.totalSyllables <= 4);
                     let targetSingingTime;
                     if (isDropLine) {
                         // Gesang endet natürlich getaktet auf den Beat – der Rest des Fensters ist der Instrumental-Drop
@@ -27969,7 +27969,9 @@ window.setLyricsStyle = function(style) {
                 if (data.serverElapsed && data.serverElapsed > 0 && data.serverElapsed < (trackDuration || 600000)) {
                     apiProgress += data.serverElapsed;
                 }
-                apiProgress += dynamicLatency;
+                // Kabel-optimierte Latenz: stats.fm liefert bereits echte Echtzeit (0ms Aufschlag)
+                const safeLatency = (data.source === 'statsfm') ? 0 : Math.min(80, Math.max(0, dynamicLatency || 0));
+                apiProgress += safeLatency;
             }
             const trackDuration = (data.track && data.track.duration_ms) || data.duration_ms || 0;
             if (trackDuration && apiProgress > trackDuration) {
@@ -28201,18 +28203,19 @@ window.setLyricsStyle = function(style) {
                             // 1. Wenn der Server-Snapshot hinter unserem lokalen Timer liegt (drift < 0),
                             //    darf der Song NIEMALS zurückgezogen werden! Der lokale Monotonie-Timer
                             //    läuft ungestört, stetig und butterweich weiter.
-                            // 2. Große Seeks/Skips durch den Nutzer (>3.5s) lösen sofortigen Re-Sync aus.
-                            // 3. Kleine Vorauseil-Abweichungen (drift > 1200ms) werden sanft (25%) eingeholt.
+                            // 2. Große Seeks/Skips durch den Nutzer (>3s) lösen sofortigen Re-Sync aus.
+                            // 3. Kleine Vorauseil-Abweichungen werden ganz weich (5%) ausgeglichen.
                             const isSameSnapshot = (currentApiProgress === lastSeenProgressMs);
                             if (drift < 0 && drift > -25000) {
-                                // Lokale Zeitmessung läuft ungestört und millimetergenau weiter
-                            } else if (absDrift > 15000 || (!isSameSnapshot && absDrift > 3500)) {
+                                // Reiner Selbstheilungs-Monotonietimer: Läuft stetig, butterweich und millimetergenau weiter
+                            } else if (absDrift > 15000 || (!isSameSnapshot && absDrift > 3000)) {
                                 serverBaseProgress = apiProgress + addedDelay;
                                 localStartTime = performance.now();
                                 currentMs = serverBaseProgress;
                                 syncLyricsUI(true, true);
-                            } else if (drift > 1200) {
-                                serverBaseProgress = expectedLocalProgress + drift * 0.25;
+                            } else if (drift > 1500) {
+                                // Sanftes, unhörbares Einschwingen (5%) statt aggressiver 25%-Ruckler
+                                serverBaseProgress = expectedLocalProgress + drift * 0.05;
                                 localStartTime = performance.now();
                             }
                         }
