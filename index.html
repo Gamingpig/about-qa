@@ -17452,12 +17452,17 @@ let shareCardLoading;
                 for (const media of standbyPausedMedia) media.play().catch(() => {});
                 standbyPausedMedia.clear();
                 if (standbyPausedSpeech) { standbyPausedSpeech = false; window.speechSynthesis?.resume(); }
-                if (standbyPendingMusic) {
-                    const pending = standbyPendingMusic;
-                    standbyPendingMusic = null;
+                const pendingMusicToRestore = standbyPendingMusic ? standbyPendingMusic.data : lastKnownMusicData;
+                const pendingLatencyToRestore = standbyPendingMusic ? standbyPendingMusic.latency : 0;
+                standbyPendingMusic = null;
+                if (pendingMusicToRestore) {
                     lastSeenProgressMs = -1;
                     lastSeenStatsFmProgressMs = -1;
-                    updateMusicUI(pending.data, pending.latency);
+                    try {
+                        updateMusicUI(pendingMusicToRestore, pendingLatencyToRestore);
+                    } catch (e) {
+                        console.error('Error updating music UI on standby exit:', e);
+                    }
                 }
                 releaseStandbyWakeLock();
                 clearInterval(standByInterval);
@@ -17477,9 +17482,14 @@ let shareCardLoading;
                 // NEW: Vollbildmodus wieder verlassen + Scrollbar wieder zulassen
                 document.documentElement.classList.remove('standby-fullscreen-lock');
                 releaseStandbyWakeLock();
-                if (document.fullscreenElement || document.webkitFullscreenElement) {
-                    const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
-                    if (exitFs) exitFs.call(document).catch(() => {});
+                if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+                    const exitFs = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+                    if (exitFs) {
+                        try {
+                            const res = exitFs.call(document);
+                            if (res && typeof res.catch === 'function') res.catch(() => {});
+                        } catch (e) {}
+                    }
                 }
                 // NEU v24.48: Video-Hintergrund wieder fortsetzen, falls er wegen StandBy
                 // pausiert wurde (und nicht aus einem anderen Grund, z.B. weil der Nutzer
@@ -27985,6 +27995,7 @@ window.setLyricsStyle = function(style) {
                 return;
             }
             lastSeenProgressMs = currentApiProgress;
+            const trackDuration = (data.track && data.track.duration_ms) || data.duration_ms || 0;
             let apiProgress = currentApiProgress;
             if (isPlaying) {
                 // Präziser Zeit-Sync: Falls die API (z.B. NPC) ein Server-internes Snapshot-Alter
@@ -27996,7 +28007,6 @@ window.setLyricsStyle = function(style) {
                 const safeLatency = (data.source === 'statsfm') ? 0 : Math.min(80, Math.max(0, dynamicLatency || 0));
                 apiProgress += safeLatency;
             }
-            const trackDuration = (data.track && data.track.duration_ms) || data.duration_ms || 0;
             if (trackDuration && apiProgress > trackDuration) {
                 apiProgress = trackDuration;
             }
