@@ -25748,10 +25748,6 @@ window.setLyricsStyle = function(style) {
                     if (isDropLine) {
                         // Gesang endet natürlich getaktet auf den Beat – der Rest des Fensters ist der Instrumental-Drop
                         targetSingingTime = Math.min(timeToNextLine, Math.max(1100, line.totalSyllables * 280 + 360));
-                    } else if (isRapMode) {
-                        // Rap/Tempo-Kadenz: Wörter gleichmäßig über die volle Zeilendauer bis kurz vor die Folgezeile
-                        // takten, damit sie im Takt des Beats bleiben und nicht davoneilen (schnelle Rap-Tracks).
-                        targetSingingTime = Math.max(250, timeToNextLine - 60);
                     } else {
                         // STÄRKE DES ALTEN ALGORITHMUS: Sanfte, menschliche Atempause (80-220ms) statt künstlicher 1-Sekunden-Löcher!
                         // Der Gesang füllt den Takt harmonisch aus, genau wie der Künstler ihn singt.
@@ -28003,8 +27999,11 @@ window.setLyricsStyle = function(style) {
                 if (data.serverElapsed && data.serverElapsed > 0 && data.serverElapsed < (trackDuration || 600000)) {
                     apiProgress += data.serverElapsed;
                 }
-                // Kabel-optimierte Latenz: stats.fm liefert bereits echte Echtzeit (0ms Aufschlag)
-                const safeLatency = (data.source === 'statsfm') ? 0 : Math.min(80, Math.max(0, dynamicLatency || 0));
+                // Präzise Latenzkompensation: gemessene One-Way-Netzwerklatenz + Spotify Cloud Reporting Delay (~120ms)
+                // Garantiert exakt lippensynchronen Songtext-Vorlauf auf Kopfhörern (Kabel/BT) und Lautsprechern
+                const measuredTransit = Math.min(250, Math.max(25, dynamicLatency || 50));
+                const spotifyCloudBuffer = 120;
+                const safeLatency = measuredTransit + spotifyCloudBuffer;
                 apiProgress += safeLatency;
             }
             if (trackDuration && apiProgress > trackDuration) {
@@ -28246,9 +28245,9 @@ window.setLyricsStyle = function(style) {
                                 localStartTime = performance.now();
                                 currentMs = serverBaseProgress;
                                 syncLyricsUI(true, true);
-                            } else if (drift > 200) {
-                                // Dynamisches, weiches Aufholen (25%): holt Verzögerungen in ~2s unhörbar und ruckelfrei auf
-                                serverBaseProgress = expectedLocalProgress + drift * 0.25;
+                            } else if (drift > 1500) {
+                                // Sanftes, unhörbares Einschwingen (5%) statt aggressiver Ruckler
+                                serverBaseProgress = expectedLocalProgress + drift * 0.05;
                                 localStartTime = performance.now();
                             }
                         }
@@ -28310,16 +28309,10 @@ window.setLyricsStyle = function(style) {
             const album = Array.isArray(track.albums) ? track.albums[0] : null;
             const spotifyId = track.externalIds && Array.isArray(track.externalIds.spotify) ? track.externalIds.spotify[0] : null;
             const appleMusicId = track.externalIds && Array.isArray(track.externalIds.appleMusic) ? track.externalIds.appleMusic[0] : null;
-            // Geräte-Uhr-Drift eliminieren: stats.fm liefert in item.date den exakten UTC-Zeitstempel
-            // des Spotify-Snapshots. Das Alter dieses Snapshots (serverElapsed) wird von updateMusicUI
-            // skew-frei auf progress_ms aufgeschlagen – exakt wie bei NPC über den HTTP-Date-Header.
-            const itemDate = item && item.date ? new Date(item.date).getTime() : Date.now();
-            const snapAge = Math.max(0, Math.min(15000, Date.now() - itemDate));
             return {
                 status: item.isPlaying ? 'playing' : 'stopped',
                 provider: item.platform ? String(item.platform).toLowerCase() : 'spotify',
                 progress_ms: Number(item.progressMs) || 0,
-                serverElapsed: snapAge,
                 timestamp: Date.now(),
                 source: 'statsfm',
                 track: {
@@ -28395,43 +28388,68 @@ window.setLyricsStyle = function(style) {
             }
 
             // DUAL-LOGIK HARMONISIERUNG:
-            // 1. Wenn stats.fm live spielt, haben wir den millimetergenauen Spotify-Cloud-Fortschritt!
-            //    Wir reichern stats.fm mit den reichen Metadaten von NPC an (Apple Music Links, Canvas Video, etc.).
-            // 2. Wenn stats.fm nicht verfügbar ist (429 oder offline), nutzen wir NPC mit server-zeitbereinigtem Snapshot-Alter.
-            // 3. Wenn NPC offline ist, nutzen wir stats.fm direkt.
-            if (statsFmData && statsFmData.status === 'playing') {
-                const merged = { ...statsFmData };
-                if (npcData && npcData.track) {
+            // 1. Wenn beide Quellen aktiv spielen und denselben Track melden:
+            //    Wir nutzen den Spotify-Cloud-Fortschritt und reichern ihn mit NPC-Metadaten (Canvas, Apple Music, Links) an.
+            // 2. Wenn nur NPC spielt oder NPC bereits den neuen Song meldet (stats.fm hängt 15-30s nach):
+            //    NPC direkt verwenden mit server-zeitbereinigtem Snapshot-Alter.
+            // 3. Wenn nur stats.fm spielt (oder NPC offline ist):
+            //    stats.fm direkt verwenden.
+            recordFetchLatency((performance.now() - pStart) / 2);
+            const latency = getSmoothedLatency();
+
+            const npcPlaying = Boolean(npcData && npcData.status === 'playing' && npcData.track && (npcData.track.title || npcData.track.name));
+            const statsPlaying = Boolean(statsFmData && statsFmData.status === 'playing' && statsFmData.track && (statsFmData.track.title || statsFmData.track.name));
+
+            if (npcPlaying && statsPlaying) {
+                const npcTitle = (npcData.track.title || npcData.track.name || '').toLowerCase().trim();
+                const statsTitle = (statsFmData.track.title || statsFmData.track.name || '').toLowerCase().trim();
+                const sameTrack = (npcTitle === statsTitle) || (npcData.track.id && statsFmData.track.id && String(npcData.track.id) === String(statsFmData.track.id));
+
+                if (sameTrack) {
+                    const merged = { ...statsFmData };
                     if (npcData.track.platform_links) merged.track.platform_links = npcData.track.platform_links;
                     if (npcData.track.track_url) merged.track.track_url = npcData.track.track_url;
                     if (npcData.track.canvas_url || npcData.track.canvasUrl) merged.track.canvas_url = npcData.track.canvas_url || npcData.track.canvasUrl;
                     if (npcData.track.artwork_url && !npcData.track.artwork_url.includes('npc-api.aikins.xyz/v1/artwork/')) {
                         merged.track.artwork_url = npcData.track.artwork_url;
                     }
+                    updateMusicUI(merged, latency);
+                } else {
+                    // Songwechsel: NPC meldet den neuen Song bereits live, während stats.fm noch nachhängt
+                    const merged = { ...npcData, source: 'npc' };
+                    if (npcData.timestamp && npcServerDate) {
+                        const srvNow = new Date(npcServerDate).getTime();
+                        const snapTime = new Date(npcData.timestamp).getTime();
+                        merged.serverElapsed = Math.max(0, srvNow - snapTime);
+                    }
+                    updateMusicUI(merged, latency);
                 }
-                updateMusicUI(merged, 0);
                 if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
                 if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
                 return;
-            } else if (npcData && npcData.status === 'playing' && npcData.track && (npcData.track.title || npcData.track.name)) {
+            } else if (npcPlaying) {
                 const merged = { ...npcData, source: 'npc' };
                 if (npcData.timestamp && npcServerDate) {
                     const srvNow = new Date(npcServerDate).getTime();
                     const snapTime = new Date(npcData.timestamp).getTime();
                     merged.serverElapsed = Math.max(0, srvNow - snapTime);
                 }
-                recordFetchLatency((performance.now() - pStart) / 2);
-                updateMusicUI(merged, getSmoothedLatency());
+                updateMusicUI(merged, latency);
+                if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
+                if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
+                return;
+            } else if (statsPlaying) {
+                updateMusicUI(statsFmData, latency);
                 if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
                 if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
                 return;
             } else if (statsFmData && statsFmData.status !== 'rate_limited') {
-                updateMusicUI(statsFmData, 0);
+                updateMusicUI(statsFmData, latency);
                 if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
                 if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
                 return;
             } else if (npcData) {
-                updateMusicUI(npcData, 0);
+                updateMusicUI(npcData, latency);
                 if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
                 if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
                 return;
