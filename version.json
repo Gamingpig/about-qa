@@ -1,9 +1,9 @@
 {
-  "version": "24.224.1",
-  "buildTime": "2026-10-27T12:55:57.662Z",
+  "version": "24.224.2",
+  "buildTime": "2026-10-27T13:12:57.361Z",
   "shortNotes": [
-    "Echtes Spotify Canvas Video-Loop direkt im Album-Cover & Karten-Hintergrund",
-    "Leistungsoptimierungen & Standby-Pause fuer minimale Akkulast erhalten",
-    "PWA Cache-Invalidierung fuer nahtloses v24.224.1 Update"
+    "Sofort-Fix fuer Timeline- und Songtext-Freeze (ReferenceError: activeCanvasUrl behoben)",
+    "Ausfallsicheres Cover-Rendering: Artwork bleibt jederzeit sichtbar waehrend Canvas laedt",
+    "Symmetrische Canvas-Steuerung im Cover und Karten-Hintergrund"
   ]
 }
