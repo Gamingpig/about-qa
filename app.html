@@ -27137,20 +27137,16 @@ window.setLyricsStyle = function(style) {
                     </div>
                 </div>`;
         }
-        // ── MULTI-DATENBANK-ARCHITEKTUR & BUNDLED LYRICS ────────────────────────────
-        // 1. Lokale Bundled-Datenbank für unzerstörbare Zuverlässigkeit (0ms Latenz, immun gegen 429 Rate-Limits)
-        // Marcus & Martinus – „247365": Enhanced-First-Paint, immun gegen LRCLIB 503/ServerOverload.
-        // Zeilen-Sync (Tier 1), damit die Netzwerk-Suche weiterhin auf Enhanced-LRC (Tier 2) aufwerten kann.
-        // BUNDLED_LYRICS_DB deaktiviert: Es gibt keine fest einkodierte Datenbank mehr.
+        // ── DYNAMISCHE LIVE-LYRICS-ARCHITEKTUR ──────────────────────────────────────
         // Alle Songtexte werden vollständig und live über externe APIs (LRCLIB, NetEase, Musixmatch, AMLL) geladen.
-        const BUNDLED_LYRICS_DB = {};
+        // Keine manuell hardcodierten oder gebündelten Songtexte mehr.
         let lrclibRateLimitedUntil = 0;
         let lrclibAutoRetryTimeout = null;
         let lastLyricsFetchTime = 0;
         // ── FLÜCHTIGER LYRICS-CACHE (nur In-Memory) ─────────────────────────────────
         // Songtexte werden NICHT mehr dauerhaft in AppStorage abgelegt. Für die aktive
         // Wiedergabe genügt der flüchtige lyricsMemoryCache; bei jedem Start/Songwechsel
-        // werden die Texte frisch aus den APIs bzw. der BUNDLED_LYRICS_DB geladen und
+        // werden die Texte frisch aus den APIs geladen und
         // durch den aktuellen Parser geschickt. So können alte/fehlerhafte Texte nie
         // wieder aus einem persistenten Cache auftauchen.
         const LYRICS_STORE_PREFIX = 'gp_lyrics_cache_';
@@ -27240,7 +27236,7 @@ window.setLyricsStyle = function(style) {
                 }
             }
             // Persistente Songtexte sind deaktiviert: Es gibt keinen AppStorage-Lyrics-Cache mehr.
-            // Jeder Song wird frisch aus den APIs bzw. der BUNDLED_LYRICS_DB geladen.
+            // Jeder Song wird frisch aus den APIs geladen.
             const fetchId = ++currentFetchId;
             inFlightLyricsKey = cacheKey;
             const doFetch = async () => {
