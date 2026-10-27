@@ -5773,6 +5773,29 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         .lyric-line.active { will-change: opacity, transform; }
         .lyrics-open .lyric-line { opacity: 0.28; transform: scale(0.96) translate3d(0,0,0); }
         .lyrics-open .lyric-line.active { opacity: 1; transform: scale(1.05) translate3d(0,0,0); }
+        /* GLOW-LEAD-IN (v24.230): Sanftes Vorglühen & leichtes Anschwellen ~250–350ms vor Gesangseinsatz */
+        .lyrics-open .lyric-line.lyric-lead-in {
+            opacity: 0.65 !important;
+            transform: scale(0.99) translate3d(0, 0, 0) !important;
+            text-shadow: 0 0 16px rgba(255, 255, 255, 0.45);
+            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), text-shadow 0.3s ease;
+        }
+        /* AD-LIBS & BACKING VOCALS: Subtiler, kursiv und dezenter gehalten */
+        .lyric-adlib {
+            font-size: 0.9em !important;
+            font-style: italic;
+            opacity: 0.72;
+        }
+        .lyric-adlib.word-active {
+            opacity: 0.95;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.65);
+        }
+        .lyric-adlib.word-passed {
+            opacity: 0.6;
+        }
+        .lyric-line.lyric-adlib-line {
+            font-style: italic;
+        }
         /* PERF-FIX v24.12 (radikal): will-change stand hier bisher auf der BASIS-Regel, betraf
            also AUSNAHMSLOS JEDES Wort im gesamten Songtext (nicht nur das aktive) - bei einem
            Song mit z.B. 300 Wörtern erzeugt das 300 permanente, einzelne GPU-Kompositions-
@@ -5783,7 +5806,14 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
            gesetzt - dort ist es tatsächlich nötig (max. 1 Wort gleichzeitig aktiv). */
         .lyric-word { position: relative; display: inline-block; margin-right: 0; white-space: nowrap; font-size: 14px; font-size: clamp(0.75rem, 4vw, 2.2rem); font-weight: 800; letter-spacing: -0.02em; transition: color 0.1s linear, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), text-shadow 0.1s linear, filter 0.1s linear, opacity 0.1s linear; }
         .lyric-word.word-active { will-change: transform, opacity, color; }
-        .lyrics-style-fill .lyric-word { background: linear-gradient(to right, #ffffff var(--fill-percent, 0%), rgba(255,255,255,0.2) var(--fill-percent, 0%)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .lyrics-style-fill .lyric-word { background: linear-gradient(90deg, #ffffff 0%, #ffffff var(--fill-percent, 0%), rgba(255, 255, 255, 0.75) calc(var(--fill-percent, 0%) + 4%), rgba(255, 255, 255, 0.22) calc(var(--fill-percent, 0%) + 10%)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        body.low-end .lyrics-style-applemusic .lyric-word,
+        body.low-end .lyrics-style-applemusicpro .lyric-word {
+            background: linear-gradient(90deg, #ffffff 0%, #ffffff var(--fill-percent, 0%), rgba(255, 255, 255, 0.75) calc(var(--fill-percent, 0%) + 4%), rgba(255, 255, 255, 0.28) calc(var(--fill-percent, 0%) + 10%));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         .lyrics-style-bounce .lyric-word { color: rgba(255, 255, 255, 0.3); } .lyrics-style-bounce .lyric-word.word-passed { color: rgba(255, 255, 255, 0.7); } .lyrics-style-bounce .lyric-word.word-active { color: #ffffff; transform: scale(1.15) translate3d(0,-4px,0); text-shadow: 0 4px 15px rgba(255, 255, 255, 0.6); z-index: 10; }
         .lyrics-style-fade .lyric-word { color: rgba(255, 255, 255, 0.2); } .lyrics-style-fade .lyric-word.word-passed, .lyrics-style-fade .lyric-word.word-active { color: #ffffff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.4); }
         .lyrics-style-blur .lyric-word { color: rgba(255, 255, 255, 0.15); filter: blur(4px); } .lyrics-style-blur .lyric-word.word-passed { color: rgba(255, 255, 255, 0.6); filter: blur(0px); text-shadow: none; } .lyrics-style-blur .lyric-word.word-active { color: #ffffff; filter: blur(0px); text-shadow: 0 0 12px rgba(255,255,255,0.8); transform: scale(1.02); }
@@ -14137,6 +14167,7 @@ html.gp-android:not(.dark) #ui-controls {
         let currentTrackId = "";
         let parsedLyrics = [];
         let currentLyricIndex = -1;
+        let currentLeadInIndex = -1;
         let currentLyricsProvider = "";
         let currentLyricsWriter = "";
         let localStartTime = 0;
@@ -25666,18 +25697,24 @@ window.setLyricsStyle = function(style) {
                 }
             });
             parsedLyrics.sort((a, b) => a.timeMs - b.timeMs);
-            // 1. Vorab-Analyse: Silben, Phrasen-Enden und Gewichte
+            // 1. Vorab-Analyse: Silben, Phrasen-Enden, Ad-Libs und Gewichte
             for (let i = 0; i < parsedLyrics.length; i++) {
                 let line = parsedLyrics[i];
                 let lineWeight = 0;
                 let totalSyllables = 0;
+                let inParen = false;
+                line.isAdLib = /^\s*[\(\[].*[\)\]]\s*$/.test(line.text.trim());
                 line.tokens.forEach((tok, idx) => {
                     tok.cleanText = tok.text.replace(/\s+$/, '');
                     tok.trailingSpace = tok.text.slice(tok.cleanText.length);
+                    const tTrim = tok.cleanText.trim();
+                    if (tTrim.startsWith('(') || tTrim.startsWith('[')) inParen = true;
+                    tok.isAdLib = line.isAdLib || inParen || /[\(\)[\]]/.test(tTrim);
+                    if (tTrim.endsWith(')') || tTrim.endsWith(']')) inParen = false;
                     tok.syllableCount = countSyllables(tok.cleanText);
                     tok.endingType = classifyWordEnding(tok.cleanText);
                     totalSyllables += tok.syllableCount;
-                    let pureText = tok.cleanText.replace(/[.,!?]/g, '');
+                    let pureText = tok.cleanText.replace(/[.,!?()[\]]/g, '');
                     tok.rawWeight = 0;
                     tok.isPhraseEnd = /[.,!?]$/.test(tok.cleanText) || (idx === line.tokens.length - 1);
                     for (let c of pureText) {
@@ -25907,6 +25944,7 @@ window.setLyricsStyle = function(style) {
             if (!lyricsContent) return;
             lineAnimCache = null;
             currentLineAnimCache = null;
+            currentLeadInIndex = -1;
             if (parsedLyrics.length === 0) {
                 const displayMsg = fallbackText || currentNoLyricsMessage;
                 const isCustomFallback = fallbackMessages.includes(displayMsg);
@@ -26001,20 +26039,23 @@ window.setLyricsStyle = function(style) {
                         </div>
                     </div>`;
                 }
+                const lineAdLibClass = line.isAdLib ? ' lyric-adlib-line' : '';
                 if (!needsCharSplit) {
-                    return `<div id="lyric-line-${idx}" class="lyric-line">` +
+                    return `<div id="lyric-line-${idx}" class="lyric-line${lineAdLibClass}">` +
                         line.tokens.map((tok, wIdx) => {
-                            return `<span id="word-${idx}-${wIdx}" class="lyric-word">${escapeHTML(tok.cleanText)}</span>${tok.trailingSpace}`;
+                            const adLibClass = (tok.isAdLib || line.isAdLib) ? ' lyric-adlib' : '';
+                            return `<span id="word-${idx}-${wIdx}" class="lyric-word${adLibClass}">${escapeHTML(tok.cleanText)}</span>${tok.trailingSpace}`;
                         }).join('') +
                     `</div>`;
                 }
-                return `<div id="lyric-line-${idx}" class="lyric-line">` +
+                return `<div id="lyric-line-${idx}" class="lyric-line${lineAdLibClass}">` +
                     line.tokens.map((tok, wIdx) => {
+                        const adLibClass = (tok.isAdLib || line.isAdLib) ? ' lyric-adlib' : '';
                         const chars = tok.cleanText.split('').map((c, cIdx) => {
                             if (c === ' ') return ' ';
                             return `<span id="char-${idx}-${wIdx}-${cIdx}" class="lyric-char">${escapeHTML(c)}</span>`;
                         }).join('');
-                        return `<span id="word-${idx}-${wIdx}" class="lyric-word">${chars}</span>${tok.trailingSpace}`;
+                        return `<span id="word-${idx}-${wIdx}" class="lyric-word${adLibClass}">${chars}</span>${tok.trailingSpace}`;
                     }).join('') +
                 `</div>`;
             }).join('') + footerHtml + '</div>';
@@ -26074,7 +26115,7 @@ window.setLyricsStyle = function(style) {
                 const wSpan = document.getElementById(`word-${idx}-${wIdx}`);
                 const tokLen = tok.cleanText.length;
                 let currentTokWeightPassed = 0;
-                let pureText = tok.cleanText.replace(/[.,!?]/g, '');
+                let pureText = tok.cleanText.replace(/[.,!?()[\]]/g, '');
                 let totalWordWeight = 0;
                 for (let c of pureText) {
                     totalWordWeight += getCharWeight(c, tok.isPhraseEnd, /[aeiouyäöü]/i.test(c));
@@ -26165,6 +26206,7 @@ window.setLyricsStyle = function(style) {
                     if (activeIndex >= 0) {
                         const currEl = document.getElementById(`lyric-line-${activeIndex}`);
                         if (currEl) {
+                            currEl.classList.remove('lyric-lead-in');
                             currEl.classList.add('active');
                         }
                     }
@@ -26177,6 +26219,30 @@ window.setLyricsStyle = function(style) {
                         scrollToLyricElement(activeEl);
                     }
                 }
+            }
+            // ── GLOW-LEAD-IN (v24.230): Sanftes Vorglühen & leichtes Anschwellen ~250–350ms vor Gesangseinsatz
+            const upcomingIdx = activeIndex + 1;
+            let leadInTarget = -1;
+            if (upcomingIdx >= 0 && upcomingIdx < parsedLyrics.length) {
+                const upLine = parsedLyrics[upcomingIdx];
+                if (!upLine.isInstrumental) {
+                    const upStart = (typeof upLine.startMs === 'number') ? upLine.startMs : upLine.timeMs;
+                    const timeToUpcoming = upStart - adjustedMs;
+                    if (timeToUpcoming > 0 && timeToUpcoming <= 350) {
+                        leadInTarget = upcomingIdx;
+                    }
+                }
+            }
+            if (leadInTarget !== currentLeadInIndex) {
+                if (currentLeadInIndex >= 0) {
+                    const oldLeadIn = document.getElementById(`lyric-line-${currentLeadInIndex}`);
+                    if (oldLeadIn) oldLeadIn.classList.remove('lyric-lead-in');
+                }
+                if (leadInTarget >= 0) {
+                    const newLeadIn = document.getElementById(`lyric-line-${leadInTarget}`);
+                    if (newLeadIn) newLeadIn.classList.add('lyric-lead-in');
+                }
+                currentLeadInIndex = leadInTarget;
             }
             if (currentLineAnimCache && currentLineAnimCache.words) {
                 renderActiveLineWordVisuals(adjustedMs);
@@ -26817,310 +26883,9 @@ window.setLyricsStyle = function(style) {
         // 1. Lokale Bundled-Datenbank für unzerstörbare Zuverlässigkeit (0ms Latenz, immun gegen 429 Rate-Limits)
         // Marcus & Martinus – „247365": Enhanced-First-Paint, immun gegen LRCLIB 503/ServerOverload.
         // Zeilen-Sync (Tier 1), damit die Netzwerk-Suche weiterhin auf Enhanced-LRC (Tier 2) aufwerten kann.
-        const LRC_247365_MARCUS_MARTINUS = `[00:00.16] La-la-la-la, boom-boom-bao
-[00:02.20] You're goin' round and round like
-[00:04.09] La-la-la-la, boom-boom-bao
-[00:06.46] If you wanna stay the night, you can stay here in my arms
-[00:10.38] Wanna hold you close and tight until the break of dawn
-[00:14.37] All the things that we could do if we stay true to me and you
-[00:18.12] Are we just for the night? Are we just for the night?
-[00:22.52] And I'm like, "Ooh, you know my mind is set on you
-[00:27.37] Ooh, and it ain't nothing but the truth
-[00:31.76] You, yeah, you been stuck inside my mind
-[00:34.84] So I know where to find you
-[00:37.37] (24, 24, 24, 24)
-[00:39.12] 247365, you're goin' round and round like-
-[00:43.16] 24-7 on my mind, thank God I finally found ya
-[00:47.18] I need your love tonight to keep me satisfied
-[00:50.86] 247365 (you're goin' round and round like)
-[00:54.65] La-la-la-la, boom-boom-bao
-[00:56.83] You're goin' round and round like-
-[00:58.54] La-la-la-la, boom-boom-bao
-[01:00.90] Until I lose my ground now
-[01:02.78] I need your love tonight to keep me satisfied
-[01:06.25] 247365
-[01:08.80] Pull me closer to your lips, I don't ever wanna stop
-[01:12.54] You're the only one I miss, we can make it to the top
-[01:16.68] Pull my body next to yours, yeah, it's all I wanna do
-[01:20.51] 'Cause, all I want is you, yeah, all I want is you
-[01:25.26] And I'm like, "Ooh, baby, you're always on my mind
-[01:29.35] I always know where I can find you
-[01:31.96] (24, 24, 24, 24)
-[01:33.82] 247365, you're goin' round and round like-
-[01:37.55] 24-7 on my mind, thank God I finally found ya
-[01:41.53] I need your love tonight to keep me satisfied
-[01:45.42] 247365 (you're goin' round and round like)
-[01:49.44] La-la-la-la, boom-boom-bao
-[01:51.50] You're goin' round and round like-
-[01:53.20] La-la-la-la, boom-boom-bao
-[01:55.41] Until I lose my ground now
-[01:57.32] I need your love tonight to keep me satisfied
-[02:00.83] 247365, I need your love tonight
-[02:04.89] La-la-la-la, boom-boom-bao
-[02:07.28] Na-na-na-na, na-na-na
-[02:09.07] La-la-la-la, boom-boom-bao (24, 24, 24, 24)
-[02:12.95] La-la-la-la, boom-boom-bao (24, 24, 24, 24)
-[02:16.50] La-la-la-la, boom-boom-bao
-[02:18.53] 247365
-[02:22.44] Need your love tonight
-[02:25.26] I need your-
-[02:26.89] I-I need your love
-[02:34.08] 247365
-[02:36.11] 247365, you're goin' round and round like
-[02:39.89] 24-7 on my mind thank God I finally found ya
-[02:44.16] I need your love tonight to keep me satisfied
-[02:47.84] 247365
-[02:49.69] 247365`;
-        // Marcus & Martinus – „Jente i fra by'n" (Hver gang vi møtes): 0ms-First-Paint,
-        // vollständig unabhängig von LRCLIB-Ausfällen. Zeilen-Sync (Tier 1).
-        const LRC_JENTE_I_FRA_BYN = `[00:08.50] Jeg trenger bare en som ser meg
-[00:12.80] Som holder fast når hele verden flyr av sted
-[00:16.90] Og jeg kan finne ro og fremme
-[00:20.50] Det syns jeg faktisk jeg fortjener
-[00:24.20] For jeg har reist hele livet
-[00:27.50] Fra nord til sør
-[00:29.80] Men nå er hodet klarere enn det var før
-[00:33.90] Jeg vet at du finnes
-[00:36.40] Så baby, kan du hjelpe meg ut herfra?
-[00:40.20] E vil bare ha e jente i fra by'n
-[00:44.20] E som e deilig og lojal
-[00:46.80] Og får meg til å fly
-[00:49.00] Ho bare tar livet som det kommer
-[00:52.00] Leve selv om vi
-[00:54.20] Bør vi ta kontrollen
-[00:56.50] Men lar meg være fri
-[00:59.20] E vil bare ha e jente
-[01:02.50] Jente, jente i fra by'n
-[01:05.80] Jeg har prøvd å finne svaret
-[01:09.50] Det føles som om jeg har lett en evighet
-[01:13.50] Vil ha e som man kan savne
-[01:16.80] Så ta imot meg når jeg faller
-[01:20.20] For jeg har reist hele livet
-[01:23.20] Helt fra nord til sør
-[01:25.50] Men nå er hodet klarere enn det var før
-[01:29.50] Jeg vet at du finnes
-[01:32.00] Så baby, kan du hjelpe meg ut herfra?
-[01:35.80] E vil bare ha e jente i fra by'n
-[01:39.80] E som e deilig og lojal
-[01:42.50] Og får meg til å fly
-[01:44.80] Ho bare tar livet som det kommer
-[01:47.80] Leve selv om vi
-[01:49.90] Bør vi ta kontrollen
-[01:52.20] Men la meg være fri
-[01:54.80] E vil bare ha e jente
-[01:57.90] Jente, jente i fra by'n
-[02:00.80] E vil bare ha e jente i fra by'n
-[02:04.50] E som e deilig og lojal
-[02:07.00] Og får meg til å fly
-[02:09.20] Ho bare tar livet som det kommer
-[02:11.80] Leve selv om vi
-[02:13.90] Bør vi ta kontrollen
-[02:16.20] Men la meg være fri
-[02:18.80] E vil bare ha e jente i fra by'n
-[02:22.50] Jente, jente i fra by'n`;
-        const LRC_MAKE_YOU_BELIEVE_IN_LOVE = `[00:05.45] Pay no attention
-[00:08.41] No
-[00:10.18] Pay no attention
-[00:12.31] To the feeling of the doubt
-[00:13.76] Block them haters all around
-[00:15.58] They won't bother us
-[00:18.19] They won't bother
-[00:19.87] Pay no attention
-[00:21.90] 'Cause I know that you've been hurt
-[00:23.33] And I know how to get you good
-[00:25.21] They won't bother us
-[00:27.61] They won't bother
-[00:29.58] They won't bother us
-[00:30.70] Na na na na, na na na na
-[00:33.05] Put your skin
-[00:33.95] Put your skin to mine (oh)
-[00:35.55] Na na na na, na na na na
-[00:38.15] Put your skin to mine
-[00:39.68] Baby when you feel like this
-[00:41.32] When you feel like this
-[00:42.32] Tell me, do you believe in love?
-[00:44.43] Baby when it's real like this
-[00:46.18] You and me like this
-[00:47.33] Does it make you believe in love?
-[00:49.40] I'll make you a believer
-[00:52.42] We can call it love
-[00:54.03] Baby when it's real like this
-[00:55.78] You and me like this
-[00:56.97] Does it make you believe in love?
-[00:58.95] Baby when you feel like this
-[01:00.39] When you feel like this
-[01:01.54] Tell me, do you believe in love?
-[01:03.77] Baby when it's real like this
-[01:05.16] You and me like this
-[01:06.55] Does it make you believe in love?
-[01:08.73] I'll make you a believer
-[01:11.55] We can call it love
-[01:13.44] Baby when you feel like this
-[01:14.80] When you feel like this
-[01:16.06] Does it make you believe in love?
-[01:18.47] Yeah
-[01:19.81] Let me protect you
-[01:22.08] From the crazy and the pain
-[01:23.45] You don't got to go insane
-[01:25.41] They won't bother us
-[01:27.43] They won't bother
-[01:29.41] Baby I get ya
-[01:31.77] Haters alway gonna hate
-[01:33.09] We still gonna kill the game
-[01:35.09] They won't bother us
-[01:37.19] They won't bother us
-[01:39.12] They won't bother
-[01:40.33] Na na na na, na na na na
-[01:43.18] Put your skin
-[01:43.85] Put your skin to mine (oh)
-[01:45.14] Na na na na, na na na na
-[01:47.80] Put your skin to mine
-[01:49.40] Baby when you feel like this
-[01:50.83] When you feel like this
-[01:52.08] Tell me, do you believe in love?
-[01:54.16] Baby when it's real like this
-[01:55.63] You and me like this
-[01:56.91] Does it make you believe in love?
-[01:58.93] I'll make you a believer
-[02:01.10] We can call it love
-[02:03.77] Baby when you feel like this
-[02:05.26] When you feel like this
-[02:06.64] Does it make you believe in love?
-[02:07.81] Yeah
-[02:09.55] Na na na na na, na na na na na
-[02:14.21] Na na na na na, na na na na na
-[02:18.08] I make you a believer
-[02:20.97] We can call it love
-[02:22.88] Baby when you feel like this
-[02:24.45] When you feel like this
-[02:25.48] Does it make you believe in love?
-[02:27.82] Make you belive in love (in love)
-[02:32.45] Oh yeah (oh yeah)
-[02:34.66] With you (with you)
-[02:36.61] Pay no attention
-[02:38.85] To the fear and all the doubt
-[02:40.46] Block them haters all around
-[02:42.03] They won't bother us
-[02:44.48] They won't bother
-[02:46.14] Yeah
-[02:47.09] Baby when you feel like this
-[02:48.42] When you feel like this
-[02:49.64] Tell me, do you believe in love?
-[02:51.68] Baby when it's real like this
-[02:53.25] You and me like this
-[02:54.33] Does it make you believe in love?
-[02:56.53] I'll make you a believer
-[02:59.58] We can call it love
-[03:01.35] Baby when you feel like this
-[03:02.76] When you feel like this
-[03:04.07] Does it make you believe in love?
-[03:06.82] Na na na na na, na na na na na
-[03:12.11] Na na na na na, na na na na na
-[03:15.61] I'll make you a believer
-[03:18.84] We can call it love
-[03:20.46] Baby when you feel like this
-[03:22.02] When you feel like this
-[03:23.22] Does it make you believe in love`;
-        // Marcus & Martinus – „You Make Me": 0ms-First-Paint gebündelt
-        const LRC_YOU_MAKE_ME = `[00:02.43] Love is high and low, so complicated
-[00:07.02] Memories, it's all that's on my mind
-[00:11.61] Lost you in the world that we created
-[00:15.74] Turning the pages on and on
-[00:17.97] Would it be wrong to let you know?
-[00:20.42] Let's talk about it, I just can't hide it
-[00:27.12] Like a butterfly on a mission
-[00:31.63] In a street race competition
-[00:36.21] Oh, yeah, crashing stars or collision
-[00:40.48] You make me, whoa, ooh, you make me
-[00:46.53] Na-na-na-na, na-na, na-na
-[00:51.03] Na-na-na-na, na-na, na-na (ooh)
-[00:54.24] Kept turning sirens into silence
-[00:59.09] Getting burned in the summer fever
-[01:01.45] Dragging me up when you pull me deeper
-[01:03.70] Is it just words, or is it violence?
-[01:08.24] Turning the pages on and on
-[01:10.50] Feels like I'm driving on my own
-[01:12.87] Like a butterfly on a mission
-[01:17.48] In a street race competition
-[01:21.88] Oh, yeah, crashing stars or collision
-[01:26.20] You make me (you make me), whoa, ooh
-[01:31.03] Like a butterfly on a mission (on a mission)
-[01:35.68] In a street race competition (yeah-yeah-yeah)
-[01:40.26] Oh, yeah, crashing stars or collision (yeah-yeah, yeah)
-[01:44.57] You make me, whoa (you make me), ooh, you make me
-[01:50.51] Na-na-na-na, na-na, na-na (you make me, yeah, yeah, yeah)
-[01:55.04] Na-na-na-na, na-na, na-na (ooh)
-[01:58.43] Like a butterfly on a mission
-[02:03.17] In a street race competition
-[02:07.62] Oh, yeah, crashing stars or collision
-[02:11.96] You make me, oh, oh, you make me`;
-        // Synne Vo / Marcus & Martinus – „Nonchalant" (Hver gang vi møtes): 0ms-First-Paint, Zeilen-Sync (Tier 1).
-        // Die Zahl "03" in der vierten Zeile ist die Uhrzeit im Lied und bleibt bewusst erhalten.
-        const LRC_NONCHALANT = `[00:00.00] ♪ ♪ ♪
-[00:08.20] Og æ skjønner ikke når det skjer
-[00:12.10] Vi ender opp på samme sted
-[00:15.80] Så enkelt etter klokka er slått 03
-[00:20.10] Du tar hånda mi i regnet
-[00:23.90] Og du vet godt hva du gjør
-[00:27.80] Du kler av me samme måte som du gjorde helga før
-[00:35.40] Hvorfor later du som ingenting?
-[00:39.20] Som om du ikke vet hva du gjør med meg
-[00:43.10] Du er så nonchalant
-[00:47.00] Så nonchalant
-[00:51.00] Og du vet godt hva du gjør
-[00:54.80] Du kler av me samme måte som du gjorde helga før`;
-        const BUNDLED_LYRICS_DB = {
-            "nonchalant---marcus & martinus": LRC_NONCHALANT,
-            "nonchalant---marcus & martinus, synne vo": LRC_NONCHALANT,
-            "nonchalant---synne vo": LRC_NONCHALANT,
-            "nonchalant---synne vo, marcus & martinus": LRC_NONCHALANT,
-            "make you believe in love---marcus & martinus": LRC_MAKE_YOU_BELIEVE_IN_LOVE,
-            "make you believe in love---marcus & martinus, aronchupa": LRC_MAKE_YOU_BELIEVE_IN_LOVE,
-            "make you believe in love---marcus and martinus": LRC_MAKE_YOU_BELIEVE_IN_LOVE,
-            "you make me---marcus & martinus": LRC_YOU_MAKE_ME,
-            "you make me---marcus and martinus": LRC_YOU_MAKE_ME,
-            "unforgettable---marcus & martinus": `[00:09.94] She comes alive at night
-[00:14.02] When her prey's asleep
-[00:18.17] Make your eyes go blind
-[00:22.18] And now you are in too deep
-[00:26.30] She gon' chew you up and leave you empty, hollow
-[00:30.34] Then she'll spit you out, anyway, I follow
-[00:34.50] She gon' hurt you bad, but it feels so good
-[00:38.67] I don't care, no, I don't care
-[00:42.06] You better know she's dangerous
-[00:46.37] She is unforgettable (unforgettable)
-[00:50.57] And it feels so good, it hurts
-[00:54.43] She is unforgettable (whoa-oh-oh-oh)
-[00:59.70] She's unforgettable
-[01:07.83] She's unforgettable
-[01:15.90] She's unforgettable
-[01:19.42] Her love is venomous
-[01:23.43] It's getting serious (it's getting serious)
-[01:27.84] She gon' chew you up and leave you empty, hollow
-[01:31.95] Then she'll spit you out, anyway, I follow
-[01:35.91] She gon' hurt you bad, but it feels so good
-[01:40.17] I don't care, no, I don't care
-[01:43.58] You better know she's dangerous
-[01:47.96] She is unforgettable (unforgettable)
-[01:52.09] And it feels so good, it hurts
-[01:55.97] She is unforgettable (whoa-oh-oh-oh)
-[02:01.25] She's unforgettable
-[02:09.48] She's unforgettable
-[02:17.44] She's unforgettable
-[02:23.52] Oh
-[02:27.93] Her love is dangerous and I know it
-[02:30.58] It's venomous 'cause I feel it inside of me
-[02:33.87] She's unforgettable
-[02:36.05] Her love is dangerous and I know it
-[02:38.76] It's venomous 'cause I feel it inside of me
-[02:42.06] She's unforgettable`,
-            "247365---marcus & martinus": LRC_247365_MARCUS_MARTINUS,
-            "24/7 365---marcus & martinus": LRC_247365_MARCUS_MARTINUS,
-            "jente i fra by'n---marcus & martinus": LRC_JENTE_I_FRA_BYN,
-            "jente i fra by'n---marcus & martinus, hver gang vi møtes": LRC_JENTE_I_FRA_BYN,
-            "jente i fra byn---marcus & martinus": LRC_JENTE_I_FRA_BYN,
-            "jente i fra byn---marcus & martinus, hver gang vi møtes": LRC_JENTE_I_FRA_BYN
-        };
+        // BUNDLED_LYRICS_DB deaktiviert: Es gibt keine fest einkodierte Datenbank mehr.
+        // Alle Songtexte werden vollständig und live über externe APIs (LRCLIB, NetEase, Musixmatch, AMLL) geladen.
+        const BUNDLED_LYRICS_DB = {};
         let lrclibRateLimitedUntil = 0;
         let lrclibAutoRetryTimeout = null;
         let lastLyricsFetchTime = 0;
@@ -27259,35 +27024,9 @@ window.setLyricsStyle = function(style) {
                         }
                         return false;
                     };
-                    // ── STUFE 0: Lokale Bundled-DB (Instant-First-Paint, immun gegen Rate-Limits) ──
-                    const cleanTNorm = (cleanT || title || '').toLowerCase().trim();
-                    const cleanANorm = (cleanA || artist || '').toLowerCase().trim();
-                    let bundledCandidate = null;
-                    for (const [bundledKey, bundledLrc] of Object.entries(BUNDLED_LYRICS_DB)) {
-                        const [bTitle, bArtist] = bundledKey.split('---');
-                        if ((cleanTNorm.includes(bTitle) || bTitle.includes(cleanTNorm)) &&
-                            (!bArtist || cleanANorm.includes(bArtist) || bArtist.includes(cleanANorm))) {
-                            bundledCandidate = {
-                                trackName: bTitle,
-                                artistName: bArtist || '',
-                                duration: 0,
-                                syncedLyrics: bundledLrc,
-                                plainLyrics: null,
-                                provider: 'AboutQA-DB',
-                                writer: (bArtist && bArtist.length > 2) ? bArtist.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : (artist || ''),
-                                hasWordSync: false
-                            };
-                            break;
-                        }
-                    }
-                    let bundledTier = 0;
-                    if (bundledCandidate) {
-                        bundledTier = detectLrcTier(bundledCandidate.syncedLyrics, bundledCandidate.hasWordSync);
-                        // Sofort rendern (0ms). Ist der Bundled-Text bereits Enhanced (Tier 2), sind wir fertig –
-                        // andernfalls läuft die Multi-Datenbank-Suche weiter und kann auf Enhanced-LRC aufwerten.
-                        saveAndRender(bundledCandidate.syncedLyrics, null, bundledCandidate.provider, bundledCandidate.writer);
-                        if (bundledTier >= 2) return;
-                    }
+                    // ── LIVE-ABFRAGE EXTERNER APIS ──────────────────────────────────────────────
+                    // Keine statische Bundled-DB mehr: Alle Songtexte werden direkt und in voller Länge
+                    // live aus den externen Providern bezogen.
                     // Einheitliches Ziel-Objekt für die datenbankübergreifende Bewertung
                     const matchTarget = {
                         track: normLyricsStr(cleanT || title),
