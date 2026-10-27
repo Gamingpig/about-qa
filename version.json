@@ -1,9 +1,9 @@
 {
-  "version": "24.224.0",
-  "buildTime": "2026-10-27T10:58:47.216Z",
+  "version": "24.224.1",
+  "buildTime": "2026-10-27T12:55:57.662Z",
   "shortNotes": [
-    "Beseitigung des Songtext-Freezes: getrennte Schutzbereiche fuer Fortschrittsanzeige und Lyrics-Renderloop",
-    "Hoehere Animations-Stabilitaet bei Karaoke und synchronisiertem Text",
-    "Robuste Versionspruefung: Updates werden nur noch bei echt hoeherer Versionsnummer angeboten"
+    "Echtes Spotify Canvas Video-Loop direkt im Album-Cover & Karten-Hintergrund",
+    "Leistungsoptimierungen & Standby-Pause fuer minimale Akkulast erhalten",
+    "PWA Cache-Invalidierung fuer nahtloses v24.224.1 Update"
   ]
 }
