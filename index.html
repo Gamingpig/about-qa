@@ -13445,9 +13445,13 @@ html.gp-android:not(.dark) #ui-controls {
             if (typeof ambientColorEnabled !== 'undefined' && typeof applyAmbientColorMode === 'function') applyAmbientColorMode(ambientColorEnabled);
             if (typeof colorFrameEnabled !== 'undefined' && typeof applyColorFrameMode === 'function') applyColorFrameMode(colorFrameEnabled);
             if (typeof tiltEnabled !== 'undefined' && typeof applyTiltMode === 'function') applyTiltMode(tiltEnabled);
-            const btnCanvasEl = document.getElementById('btn-toggle-canvas');
-            if (btnCanvasEl && typeof canvasEnabled !== 'undefined') {
-                btnCanvasEl.innerText = t('settings_canvas') + ': ' + (canvasEnabled ? t('on_label') : t('off_label'));
+            if (typeof updateCanvasButtonUI === 'function') {
+                updateCanvasButtonUI();
+            } else {
+                const btnCanvasEl = document.getElementById('btn-toggle-canvas');
+                if (btnCanvasEl && typeof canvasEnabled !== 'undefined') {
+                    btnCanvasEl.innerText = t('settings_canvas') + ': ' + (canvasEnabled ? t('on_label') : t('off_label'));
+                }
             }
             // Buttons: aria-label / title
             const setAria = (id, label, title) => {
@@ -14149,6 +14153,9 @@ html.gp-android:not(.dark) #ui-controls {
         // deutlich günstigere Variante ohne Dauer-Videodekodierung.
         let canvasEnabled = AppStorage.getItem('canvasEnabled') === 'true';
         let currentCanvasUrl = null;
+        const trackCanvasMemoryCache = new Map();
+        const trackCanvasNegativeCache = new Set();
+        let inFlightCanvasKey = "";
         // NEW: Falls der Nutzer schon mal manuell per Ohr nachjustiert hat, diesen
         // gespeicherten Wert verwenden statt immer wieder beim Standardwert zu starten.
         const savedUserSyncOffset = AppStorage.getItem('userSyncOffset');
@@ -25330,23 +25337,139 @@ window.setLyricsStyle = function(style) {
             }
             syncLyricsUI(false, true);
         };
+        function updateCanvasButtonUI() {
+            const btn = document.getElementById('btn-toggle-canvas');
+            if (!btn) return;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            if (canvasEnabled) {
+                btn.innerText = t('settings_canvas') + ': ' + t('on_label');
+                btn.classList.add('text-green-400');
+                btn.classList.remove('text-slate-400');
+            } else {
+                btn.innerText = t('settings_canvas') + ': ' + t('off_label');
+                btn.classList.add('text-slate-400');
+                btn.classList.remove('text-green-400');
+            }
+        }
+        function applyResolvedCanvas(url, forSpotifyId) {
+            if (!url || typeof url !== 'string' || !url.startsWith('http')) return;
+            const currentSpId = (typeof currentSpotifyTrackId === 'string' ? currentSpotifyTrackId : '').replace(/^spotify:track:/, '').trim();
+            if (forSpotifyId && currentSpId && forSpotifyId !== currentSpId) return;
+            currentCanvasUrl = url;
+            if (canvasVideo) {
+                if (canvasVideo.src !== url) {
+                    canvasVideo.src = url;
+                    canvasVideo.load();
+                }
+                if (canvasEnabled && trackIsPlaying) {
+                    canvasVideo.classList.remove('opacity-0');
+                    canvasVideo.play().catch(()=>{});
+                }
+            }
+            updateCanvasButtonUI();
+        }
+        async function resolveSpotifyCanvas(spotifyId, trackTitle, rawArtist) {
+            if (!spotifyId || typeof spotifyId !== 'string') return null;
+            const cleanId = spotifyId.replace(/^spotify:track:/, '').trim();
+            if (!cleanId || cleanId.includes('|')) return null;
+            if (trackCanvasMemoryCache.has(cleanId)) {
+                const cached = trackCanvasMemoryCache.get(cleanId);
+                applyResolvedCanvas(cached, cleanId);
+                return cached;
+            }
+            if (trackCanvasNegativeCache.has(cleanId) || inFlightCanvasKey === cleanId) return null;
+            inFlightCanvasKey = cleanId;
+            let resolvedUrl = null;
+            try {
+                // 1. Benutzerdefinierter Canvas-Proxy (falls hinterlegt)
+                const customProxy = (typeof AppStorage !== 'undefined' ? AppStorage.getItem('spotify_canvas_proxy') : null);
+                if (customProxy && typeof customProxy === 'string' && customProxy.startsWith('http')) {
+                    try {
+                        const targetUrl = customProxy.replace(/\/+$/, '') + `/api/canvas?trackId=${encodeURIComponent(cleanId)}`;
+                        const res = await fetch(targetUrl, { signal: AbortSignal.timeout(3500) });
+                        if (res.ok) {
+                            const json = await res.json();
+                            const url = json?.data?.canvasesList?.[0]?.canvasUrl || json?.canvasUrl || json?.url;
+                            if (url && typeof url === 'string' && url.startsWith('http')) resolvedUrl = url;
+                        }
+                    } catch(e) {}
+                }
+                // 2. Öffentlicher Spotify Canvas API Resolver
+                if (!resolvedUrl) {
+                    try {
+                        const res = await fetch(`https://spotify-canva.vercel.app/api/canvas?trackId=${encodeURIComponent(cleanId)}`, {
+                            signal: AbortSignal.timeout(3500)
+                        });
+                        if (res.ok) {
+                            const json = await res.json();
+                            const url = json?.data?.canvasesList?.[0]?.canvasUrl || json?.canvasUrl || json?.url;
+                            if (url && typeof url === 'string' && url.startsWith('http')) resolvedUrl = url;
+                        }
+                    } catch(e) {}
+                }
+            } catch(err) {
+                console.warn('[Canvas] Resolution error for', cleanId, err);
+            } finally {
+                inFlightCanvasKey = "";
+            }
+            if (resolvedUrl) {
+                trackCanvasMemoryCache.set(cleanId, resolvedUrl);
+                applyResolvedCanvas(resolvedUrl, cleanId);
+                return resolvedUrl;
+            } else {
+                trackCanvasNegativeCache.add(cleanId);
+                return null;
+            }
+        }
         window.toggleCanvasVideo = function() {
             haptic(10);
-            if (!currentCanvasUrl) return;
             canvasEnabled = !canvasEnabled;
             AppStorage.setItem('canvasEnabled', canvasEnabled);
-            if (!btnToggleCanvas || !canvasVideo) return;
+            updateCanvasButtonUI();
             if (canvasEnabled) {
-                canvasVideo.classList.remove('opacity-0');
-                canvasVideo.play().catch(()=>{});
-                btnToggleCanvas.innerText = t('settings_canvas') + ': ' + t('on_label');
-                btnToggleCanvas.classList.add('text-green-400');
-                btnToggleCanvas.classList.remove('text-slate-400');
+                if (typeof showToast === 'function') {
+                    showToast('🎬 ' + t('settings_canvas') + ': ' + t('on_label'), 'info');
+                }
+                if (currentCanvasUrl) {
+                    if (canvasVideo) {
+                        if (canvasVideo.src !== currentCanvasUrl) {
+                            canvasVideo.src = currentCanvasUrl;
+                            canvasVideo.load();
+                        }
+                        if (trackIsPlaying) {
+                            canvasVideo.classList.remove('opacity-0');
+                            canvasVideo.play().catch(()=>{});
+                        }
+                    }
+                } else {
+                    const spId = (typeof currentSpotifyTrackId === 'string' ? currentSpotifyTrackId : '').replace(/^spotify:track:/, '').trim();
+                    if (spId) resolveSpotifyCanvas(spId, currentTrackTitle, currentRawArtist);
+                }
             } else {
-                canvasVideo.classList.add('opacity-0');
-                btnToggleCanvas.innerText = t('settings_canvas') + ': ' + t('off_label');
-                btnToggleCanvas.classList.add('text-slate-400');
-                btnToggleCanvas.classList.remove('text-green-400');
+                if (typeof showToast === 'function') {
+                    showToast('🎬 ' + t('settings_canvas') + ': ' + t('off_label'), 'info');
+                }
+                if (canvasVideo) {
+                    canvasVideo.classList.add('opacity-0');
+                    canvasVideo.pause();
+                }
+            }
+        };
+        window.configureCanvasProxy = function() {
+            const current = (typeof AppStorage !== 'undefined' ? AppStorage.getItem('spotify_canvas_proxy') : '') || '';
+            const next = prompt('Spotify Canvas Proxy URL eingeben (z.B. https://mein-canvas-service.vercel.app):', current);
+            if (next !== null) {
+                const trimmed = next.trim();
+                if (trimmed) {
+                    AppStorage.setItem('spotify_canvas_proxy', trimmed);
+                    if (typeof showToast === 'function') showToast('🎬 Canvas-Proxy gespeichert', 'info');
+                } else {
+                    AppStorage.removeItem('spotify_canvas_proxy');
+                    if (typeof showToast === 'function') showToast('🎬 Standard Canvas-Resolver aktiv', 'info');
+                }
+                trackCanvasNegativeCache.clear();
+                const spId = (typeof currentSpotifyTrackId === 'string' ? currentSpotifyTrackId : '').replace(/^spotify:track:/, '').trim();
+                if (spId && canvasEnabled) resolveSpotifyCanvas(spId, currentTrackTitle, currentRawArtist);
             }
         };
         // FIX: Re-Add Smooth Transitions for Size changes
@@ -26603,6 +26726,9 @@ window.setLyricsStyle = function(style) {
             if (progressTickerInterval) {
                 clearInterval(progressTickerInterval);
                 progressTickerInterval = null;
+            }
+            if (canvasVideo && !canvasVideo.paused) {
+                canvasVideo.pause();
             }
         }
         document.addEventListener('visibilitychange', () => {
@@ -27893,39 +28019,52 @@ window.setLyricsStyle = function(style) {
                 // Echtes API-Cover (safeRawCover) hat absolute Priorität vor unsicheren Drittanbieter-Caches
                 const finalArtUrl = safeRawCover || currentResolvedArtUrl || cachedCover || fallbackImg;
                 updateAllCoverVisuals(finalArtUrl);
-                const canvasUrl = (data.track && (data.track.canvas_url || data.track.canvasUrl)) || null;
-                if (canvasUrl !== currentCanvasUrl) {
-                    currentCanvasUrl = canvasUrl;
-                    if (canvasUrl) {
-                        if (canvasVideo) canvasVideo.src = canvasUrl;
-                        if (btnToggleCanvas) btnToggleCanvas.classList.remove('opacity-50', 'cursor-not-allowed', 'text-slate-400');
-                        if (canvasEnabled) {
-                            if (btnToggleCanvas) {
-                                btnToggleCanvas.innerText = t('settings_canvas') + ': ' + t('on_label');
-                                btnToggleCanvas.classList.add('text-green-400');
+                const directCanvasUrl = (data.track && (data.track.canvas_url || data.track.canvasUrl)) || null;
+                const spTrackId = (data.track && (data.track.spotifyId || (data.track.id && !String(data.track.id).includes('|') ? data.track.id : null))) || currentSpotifyTrackId || null;
+                const cleanSpTrackId = spTrackId ? String(spTrackId).replace(/^spotify:track:/, '').trim() : '';
+
+                let activeCanvasUrl = directCanvasUrl;
+                if (!activeCanvasUrl && cleanSpTrackId && trackCanvasMemoryCache.has(cleanSpTrackId)) {
+                    activeCanvasUrl = trackCanvasMemoryCache.get(cleanSpTrackId);
+                }
+
+                if (activeCanvasUrl !== currentCanvasUrl) {
+                    currentCanvasUrl = activeCanvasUrl;
+                    if (activeCanvasUrl) {
+                        if (canvasVideo) {
+                            if (canvasVideo.src !== activeCanvasUrl) {
+                                canvasVideo.src = activeCanvasUrl;
+                                canvasVideo.load();
                             }
-                            if (canvasVideo) {
+                            if (canvasEnabled && isPlaying) {
                                 canvasVideo.classList.remove('opacity-0');
                                 canvasVideo.play().catch(()=>{});
-                            }
-                        } else {
-                            if (btnToggleCanvas) {
-                                btnToggleCanvas.innerText = t('settings_canvas') + ': ' + t('off_label');
-                                btnToggleCanvas.classList.add('text-slate-400');
+                            } else {
+                                canvasVideo.classList.add('opacity-0');
+                                canvasVideo.pause();
                             }
                         }
                     } else {
                         if (canvasVideo) {
                             canvasVideo.removeAttribute('src');
                             canvasVideo.classList.add('opacity-0');
-                        }
-                        if (btnToggleCanvas) {
-                            btnToggleCanvas.classList.add('opacity-50', 'cursor-not-allowed', 'text-slate-400');
-                            btnToggleCanvas.classList.remove('text-green-400');
-                            btnToggleCanvas.innerText = t('settings_canvas') + ' Video (N/A)';
+                            canvasVideo.pause();
                         }
                     }
+                } else if (activeCanvasUrl && canvasVideo) {
+                    if (canvasEnabled && isPlaying) {
+                        canvasVideo.classList.remove('opacity-0');
+                        if (canvasVideo.paused) canvasVideo.play().catch(()=>{});
+                    } else {
+                        if (!canvasVideo.paused) canvasVideo.pause();
+                        if (!canvasEnabled) canvasVideo.classList.add('opacity-0');
+                    }
                 }
+
+                if (canvasEnabled && !currentCanvasUrl && cleanSpTrackId && !trackCanvasNegativeCache.has(cleanSpTrackId)) {
+                    resolveSpotifyCanvas(cleanSpTrackId, trackTitle, rawArtist);
+                }
+                updateCanvasButtonUI();
                 if (mTitle && mTitle.innerText !== trackTitle) {
                     mTitle.innerText = trackTitle;
                     if (lyricsMiniTitle) { lyricsMiniTitle.innerText = trackTitle; lyricsMiniTitle.removeAttribute('data-i18n-placeholder'); }
