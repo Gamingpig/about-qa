@@ -27373,7 +27373,6 @@ window.setLyricsStyle = function(style) {
                     if (fetchId !== currentFetchId) return;
                     // ── STUFE 2: Multi-Tier-Aggregation über ALLE Datenbanken ──
                     const allCandidates = [];
-                    if (bundledCandidate) allCandidates.push(bundledCandidate);
                     searchResults.forEach(c => {
                         if (!c) return;
                         c.provider = 'LRCLIB';
@@ -27404,17 +27403,10 @@ window.setLyricsStyle = function(style) {
                     // ── STUFE 3: Sieger speichern & rendern (Enhanced-LRC bevorzugt) ──
                     if (best) {
                         const bestSynced = (best.syncedLyrics && !isDummyLyrics(best.syncedLyrics)) ? best.syncedLyrics : null;
-                        const bestTier = bestSynced ? detectLrcTier(bestSynced, best.hasWordSync === true) : 0;
-                        // Nur aufwerten, wenn noch nichts gerendert wurde ODER ein echt verbesserter
-                        // Enhanced-LRC (Tier 2) gefunden wurde. So bleibt die 0ms-Bundled-Anzeige stabil,
-                        // aber ein Wort-Sync-Treffer setzt sich IMMER durch.
-                        const shouldRender = !bundledCandidate || (bestTier >= 2 && bestTier > bundledTier);
-                        if (shouldRender) {
-                            if (bestSynced) {
-                                if (saveAndRender(bestSynced, best.plainLyrics, best.provider || 'LRCLIB', best.writer || '')) return;
-                            } else if (best.plainLyrics && !isDummyLyrics(best.plainLyrics)) {
-                                if (saveAndRender(null, best.plainLyrics, best.provider || 'LRCLIB', best.writer || '')) return;
-                            }
+                        if (bestSynced) {
+                            if (saveAndRender(bestSynced, best.plainLyrics, best.provider || 'LRCLIB', best.writer || '')) return;
+                        } else if (best.plainLyrics && !isDummyLyrics(best.plainLyrics)) {
+                            if (saveAndRender(null, best.plainLyrics, best.provider || 'LRCLIB', best.writer || '')) return;
                         }
                     }
                     // Wurde bereits etwas gerendert (z.B. Bundled-First-Paint), hier sauber beenden.
