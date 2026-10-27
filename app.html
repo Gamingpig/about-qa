@@ -14223,6 +14223,7 @@ html.gp-android:not(.dark) #ui-controls {
         // überhaupt sichtbar waren - Ursache für dauerhaft hohe CPU/GPU-Last beim Musikhören.
         // lastProgressUIUpdate drosselt die eigentlichen DOM-Writes (Balken/Zeit/Dynamic Island)
         // auf ~5x/Sek, was optisch identisch aussieht, aber >90% weniger Style-Recalcs/Paints kostet.
+        let lastProgressUiUpdate = 0;
         let lastProgressUIUpdate = 0;
         // PERF-FIX v24.11: 500ms (v24.10) sah spürbar ruckelig aus - die Progressbar-Transition
         // ist nur 0.3s lang, bei 500ms-Updates stand der Balken also kurz still zwischen den
@@ -26362,7 +26363,7 @@ window.setLyricsStyle = function(style) {
                 }
             }
 
-            if (newParallelIndex !== parallelLyricIndex) {
+            if (isSeekOrResync || newParallelIndex !== parallelLyricIndex) {
                 if (parallelLyricIndex >= 0 && parallelLyricIndex !== activeIndex) {
                     const oldParEl = document.getElementById(`lyric-line-${parallelLyricIndex}`);
                     if (oldParEl) {
@@ -26385,7 +26386,7 @@ window.setLyricsStyle = function(style) {
                 }
             }
 
-            if (activeIndex !== currentLyricIndex || (activeIndex >= 0 && !currentLineAnimCache)) {
+            if (isSeekOrResync || activeIndex !== currentLyricIndex || (activeIndex >= 0 && !currentLineAnimCache)) {
                 currentLyricIndex = activeIndex;
                 currentLineAnimCache = activeIndex >= 0 ? buildLineAnimCache(activeIndex) : null;
                 if (activeIndex >= 0) {
@@ -26503,15 +26504,13 @@ window.setLyricsStyle = function(style) {
             // PERF/FLICKER-FIX: Wenn das globale Website-Einstellungsmenü geöffnet oder im Übergang ist,
             // rAF-DOM-Aktualisierungen pausieren. Für das Songtext-Menü (#lyrics-settings-menu)
             // läuft die Animation unterbrechungsfrei weiter, damit Offset & Style im Hintergrund live sichtbar bleiben.
-            const isMenuBusy = (typeof isGlobalSettingsOpen !== 'undefined' && isGlobalSettingsOpen) ||
-                               (typeof document !== 'undefined' && document && document.querySelector('#global-settings-menu.settings-closing, #global-settings-menu.settings-opening'));
-            if (isMenuBusy) {
-                lyricAnimFrame = requestAnimationFrame(animateLoop);
-                return;
-            }
+            // Menü-Öffnung pausiert Songtext-Animation nicht mehr, um Freeze und Zeit-Drifts zu verhindern.
             const currentPerfNow = frameNow;
             const elapsed = currentPerfNow - localStartTime;
             currentMs = serverBaseProgress + elapsed;
+            if (!Number.isFinite(currentMs)) {
+                currentMs = 0;
+            }
             if (totalMs && currentMs > totalMs) {
                 currentMs = totalMs;
             }
@@ -26522,6 +26521,7 @@ window.setLyricsStyle = function(style) {
                 if (currentPerfNow - lastProgressUiUpdate >= 40) {
                     updateProgressUI();
                     lastProgressUiUpdate = currentPerfNow;
+                    lastProgressUIUpdate = currentPerfNow;
                 }
                 if (mainMusicCard && mainMusicCard.classList.contains('lyrics-open')) {
                     syncLyricsUI();
@@ -28018,6 +28018,7 @@ window.setLyricsStyle = function(style) {
                             lastSeenStatsFmProgressMs = currentApiProgress;
                         }
                         // Playback startet/wird fortgesetzt
+                        startProgressTracking();
                         syncLyricsUI(true, true);
                     } else if (trackIsPlaying && !isPlaying) {
                         trackIsPlaying = false;
