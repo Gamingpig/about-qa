@@ -16636,7 +16636,9 @@ html.gp-android:not(.dark) #ui-controls {
                 if (event.data && (event.data.type === 'SW_UPDATED' || event.data.type === 'SW_ACTIVATED')) {
                     const swVer = (event.data.version || '').replace(/^v/, '').trim();
                     const currentVer = String(window.ONBOARDING_VERSION || '').split(' · ')[0].replace(/^v/, '').trim();
-                    if (swVer && currentVer && swVer !== currentVer) {
+                    const swNum = typeof parseVersionNum === 'function' ? parseVersionNum(swVer) : 0;
+                    const curNum = typeof parseVersionNum === 'function' ? parseVersionNum(currentVer) : 0;
+                    if (swVer && currentVer && swNum > curNum) {
                         showUpdatePrompt('Neue Version v' + swVer + ' verfügbar!', swVer);
                     }
                 }
@@ -16696,7 +16698,9 @@ html.gp-android:not(.dark) #ui-controls {
                     const data = await res.json();
                     const liveVer = (data && data.version ? String(data.version) : '').replace(/^v/, '').trim();
                     const currentVer = String(window.ONBOARDING_VERSION || '').split(' · ')[0].replace(/^v/, '').trim();
-                    if (liveVer && currentVer && liveVer !== currentVer) {
+                    const liveNum = typeof parseVersionNum === 'function' ? parseVersionNum(liveVer) : 0;
+                    const curNum = typeof parseVersionNum === 'function' ? parseVersionNum(currentVer) : 0;
+                    if (liveVer && currentVer && liveNum > curNum) {
                         console.log('[VersionWatcher] Update verfügbar:', currentVer, '->', liveVer);
                         showUpdatePrompt('Version v' + liveVer + ' verfügbar!', liveVer, data.shortNotes || []);
                     }
@@ -16723,7 +16727,9 @@ html.gp-android:not(.dark) #ui-controls {
                         const now = new Date();
                         const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                         if (lastCheckedEl) lastCheckedEl.textContent = 'Zuletzt geprüft: Heute, ' + timeStr + ' Uhr';
-                        if (liveVer && currentVer && liveVer !== currentVer) {
+                        const liveNum = typeof parseVersionNum === 'function' ? parseVersionNum(liveVer) : 0;
+                        const curNum = typeof parseVersionNum === 'function' ? parseVersionNum(currentVer) : 0;
+                        if (liveVer && currentVer && liveNum > curNum) {
                             const notes = data.shortNotes || [];
                             showUpdatePrompt('Version v' + liveVer + ' verfügbar!', liveVer, notes);
                             updateSettingsSystemUpdateUI({ version: liveVer, shortNotes: notes });
@@ -16753,7 +16759,9 @@ html.gp-android:not(.dark) #ui-controls {
                     if (raw) {
                         const pending = JSON.parse(raw);
                         const currentVer = String(window.ONBOARDING_VERSION || '').split(' · ')[0].replace(/^v/, '').trim();
-                        if (pending && pending.version && pending.version !== currentVer) {
+                        const pendingNum = typeof parseVersionNum === 'function' ? parseVersionNum(pending.version) : 0;
+                        const curNum = typeof parseVersionNum === 'function' ? parseVersionNum(currentVer) : 0;
+                        if (pending && pending.version && pendingNum > curNum) {
                             updateSettingsSystemUpdateUI(pending);
                             setSettingsUpdateBadge(true);
                             if (AppStorage.getItem('gp_update_snoozed_' + pending.version) !== 'true') {
