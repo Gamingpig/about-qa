@@ -26319,90 +26319,93 @@ window.setLyricsStyle = function(style) {
         let lastProgressUiUpdate = 0;
         let lastLyricFrameTime = 0;
         function renderActiveLineWordVisuals(adjustedMs) {
-            if (!currentLineAnimCache || !currentLineAnimCache.words) return;
-            const words = currentLineAnimCache.words;
-            for (let w = 0; w < words.length; w++) {
-                const word = words[w];
-                const wSpan = word.span;
-                if (adjustedMs < word.startMs) {
-                    if (word.lastState !== 'pending') {
-                        word.lastState = 'pending';
-                        word.isActiveClassSet = false;
-                        word.lastFillPercent = '0%';
+            if (!activeLineAnimCaches || activeLineAnimCaches.size === 0) return;
+            for (const animCache of activeLineAnimCaches.values()) {
+                if (!animCache || !animCache.words) continue;
+                const words = animCache.words;
+                for (let w = 0; w < words.length; w++) {
+                    const word = words[w];
+                    const wSpan = word.span;
+                    if (adjustedMs < word.startMs) {
+                        if (word.lastState !== 'pending') {
+                            word.lastState = 'pending';
+                            word.isActiveClassSet = false;
+                            word.lastFillPercent = '0%';
+                            if (wSpan) {
+                                wSpan.style.setProperty('--fill-percent', '0%');
+                                wSpan.classList.remove('word-active', 'word-passed');
+                            }
+                            for (let c = 0; c < word.chars.length; c++) {
+                                const charObj = word.chars[c];
+                                if (charObj.el && charObj.lastState !== 'none') {
+                                    charObj.lastState = 'none';
+                                    charObj.el.classList.remove('char-passed', 'char-active');
+                                }
+                            }
+                        }
+                    } else if (adjustedMs >= word.endMs) {
+                        if (word.lastState !== 'passed') {
+                            word.lastState = 'passed';
+                            word.isActiveClassSet = false;
+                            word.lastFillPercent = '100%';
+                            if (wSpan) {
+                                wSpan.style.setProperty('--fill-percent', '100%');
+                                wSpan.classList.add('word-passed');
+                                wSpan.classList.remove('word-active');
+                            }
+                            for (let c = 0; c < word.chars.length; c++) {
+                                const charObj = word.chars[c];
+                                if (charObj.el && charObj.lastState !== 'passed') {
+                                    charObj.lastState = 'passed';
+                                    charObj.el.classList.add('char-passed');
+                                    charObj.el.classList.remove('char-active');
+                                }
+                            }
+                        }
+                    } else {
+                        word.lastState = 'active';
+                        const wordElapsed = adjustedMs - word.startMs;
+                        const wordProgress = word.duration > 0 ? Math.min(1, Math.max(0, wordElapsed / word.duration)) : 1;
+                        const fillPercent = Math.round(wordProgress * 100) + '%';
                         if (wSpan) {
-                            wSpan.style.setProperty('--fill-percent', '0%');
-                            wSpan.classList.remove('word-active', 'word-passed');
+                            if (word.lastFillPercent !== fillPercent) {
+                                word.lastFillPercent = fillPercent;
+                                wSpan.style.setProperty('--fill-percent', fillPercent);
+                            }
+                            if (word.lastHoldScale !== word.holdScale) {
+                                word.lastHoldScale = word.holdScale;
+                                wSpan.style.setProperty('--word-hold-scale', word.holdScale);
+                            }
+                            if (!word.isActiveClassSet) {
+                                word.isActiveClassSet = true;
+                                wSpan.classList.add('word-active');
+                                wSpan.classList.remove('word-passed');
+                            }
                         }
                         for (let c = 0; c < word.chars.length; c++) {
                             const charObj = word.chars[c];
-                            if (charObj.el && charObj.lastState !== 'none') {
-                                charObj.lastState = 'none';
-                                charObj.el.classList.remove('char-passed', 'char-active');
-                            }
-                        }
-                    }
-                } else if (adjustedMs >= word.endMs) {
-                    if (word.lastState !== 'passed') {
-                        word.lastState = 'passed';
-                        word.isActiveClassSet = false;
-                        word.lastFillPercent = '100%';
-                        if (wSpan) {
-                            wSpan.style.setProperty('--fill-percent', '100%');
-                            wSpan.classList.add('word-passed');
-                            wSpan.classList.remove('word-active');
-                        }
-                        for (let c = 0; c < word.chars.length; c++) {
-                            const charObj = word.chars[c];
-                            if (charObj.el && charObj.lastState !== 'passed') {
-                                charObj.lastState = 'passed';
-                                charObj.el.classList.add('char-passed');
-                                charObj.el.classList.remove('char-active');
-                            }
-                        }
-                    }
-                } else {
-                    word.lastState = 'active';
-                    const wordElapsed = adjustedMs - word.startMs;
-                    const wordProgress = word.duration > 0 ? Math.min(1, Math.max(0, wordElapsed / word.duration)) : 1;
-                    const fillPercent = Math.round(wordProgress * 100) + '%';
-                    if (wSpan) {
-                        if (word.lastFillPercent !== fillPercent) {
-                            word.lastFillPercent = fillPercent;
-                            wSpan.style.setProperty('--fill-percent', fillPercent);
-                        }
-                        if (word.lastHoldScale !== word.holdScale) {
-                            word.lastHoldScale = word.holdScale;
-                            wSpan.style.setProperty('--word-hold-scale', word.holdScale);
-                        }
-                        if (!word.isActiveClassSet) {
-                            word.isActiveClassSet = true;
-                            wSpan.classList.add('word-active');
-                            wSpan.classList.remove('word-passed');
-                        }
-                    }
-                    for (let c = 0; c < word.chars.length; c++) {
-                        const charObj = word.chars[c];
-                        if (!charObj.el) continue;
-                        let state = 'none';
-                        if (wordProgress === 0) {
-                            state = 'none';
-                        } else if (wordProgress >= charObj.endRatio) {
-                            state = 'passed';
-                        } else if (wordProgress >= charObj.startRatio && wordProgress < charObj.endRatio) {
-                            state = 'active';
-                        } else {
-                            state = 'none';
-                        }
-                        if (state !== charObj.lastState) {
-                            charObj.lastState = state;
-                            if (state === 'passed') {
-                                charObj.el.classList.add('char-passed');
-                                charObj.el.classList.remove('char-active');
-                            } else if (state === 'active') {
-                                charObj.el.classList.add('char-active');
-                                charObj.el.classList.remove('char-passed');
+                            if (!charObj.el) continue;
+                            let state = 'none';
+                            if (wordProgress === 0) {
+                                state = 'none';
+                            } else if (wordProgress >= charObj.endRatio) {
+                                state = 'passed';
+                            } else if (wordProgress >= charObj.startRatio && wordProgress < charObj.endRatio) {
+                                state = 'active';
                             } else {
-                                charObj.el.classList.remove('char-passed', 'char-active');
+                                state = 'none';
+                            }
+                            if (state !== charObj.lastState) {
+                                charObj.lastState = state;
+                                if (state === 'passed') {
+                                    charObj.el.classList.add('char-passed');
+                                    charObj.el.classList.remove('char-active');
+                                } else if (state === 'active') {
+                                    charObj.el.classList.add('char-active');
+                                    charObj.el.classList.remove('char-passed');
+                                } else {
+                                    charObj.el.classList.remove('char-passed', 'char-active');
+                                }
                             }
                         }
                     }
