@@ -23341,6 +23341,10 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
         let currentRawArtist = "";
         let currentAppleMusicId = ""; // v24.223.0: Apple-Music-Song-ID für den AMLL-Wort-Sync
         let currentSpotifyTrackId = ""; // v24.223.1: Spotify-Track-ID für den direkten AMLL-Wort-Sync
+        // Anti-Ping-Pong Tracking: speichert den vorherigen, beendeten Track
+        let previousTrackTitle = "";
+        let previousRawArtist = "";
+        let previousSpotifyTrackId = "";
         window.toggleDashboard = function() {
             isDashboardOpen = !isDashboardOpen;
             document.body.classList.toggle('dashboard-open', isDashboardOpen);
@@ -27002,14 +27006,11 @@ window.setLyricsStyle = function(style) {
                     } else {
                         lyricsMemoryCache.delete(cacheKey);
                     }
-                } else if (cached.provider === 'none') {
-                    // Negativer Cache: für 10 Sekunden merken, damit bei fehlendem Song nicht endlos gespammt wird, aber ein baldiger Retry greift
-                    if (Date.now() - (cached.cachedAt || 0) < 10000) {
-                        renderLyrics(currentNoLyricsMessage);
-                        return;
-                    } else {
-                        lyricsMemoryCache.delete(cacheKey);
-                    }
+                } else if (cached.provider === 'none' || cached.noLyricsFound) {
+                    // Negativer Cache: Für diesen Song gibt es nachweislich keine Texte.
+                    // Bleibt für den Song stabil gecacht und wird NIEMALS periodisch erneut angefragt!
+                    renderLyrics(currentNoLyricsMessage);
+                    return;
                 }
             }
             // Persistente Songtexte sind deaktiviert: Es gibt keinen AppStorage-Lyrics-Cache mehr.
@@ -27429,9 +27430,9 @@ window.setLyricsStyle = function(style) {
                         renderLyrics(currentNoLyricsMessage);
                         return;
                     }
-                    // Keine Treffer -> im Cache merken (30s Ruhe, kein Dauer-Polling)
+                    // Keine Treffer -> im Cache dauerhaft für diesen Song merken (kein erneutes Hintergrund-Polling!)
                     currentLyricsProvider = "none";
-                    lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, provider: "none", writer: "", cachedAt: Date.now() });
+                    lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, provider: "none", noLyricsFound: true, writer: "", cachedAt: Date.now() });
                     renderLyrics(currentNoLyricsMessage);
                 } finally {
                     if (inFlightLyricsKey === cacheKey) {
@@ -27527,6 +27528,11 @@ window.setLyricsStyle = function(style) {
                 const art = track?.artwork_url || (changed ? fallbackImg : lastStandbyTrackInfo?.artUrl) || fallbackImg;
                 syncStandByTrackInfo(title, artist, art, changed, playing && !ended, true);
                 if (changed && playing && title) {
+                    if (currentTrackTitle && currentTrackTitle !== title) {
+                        previousTrackTitle = currentTrackTitle;
+                        previousRawArtist = currentRawArtist;
+                        previousSpotifyTrackId = currentSpotifyTrackId;
+                    }
                     const cleanA = artist.replace(/\s*•\s*From Smart Shuffle/gi, '').trim();
                     currentTrackTitle = title;
                     currentRawArtist = cleanA;
@@ -27626,6 +27632,11 @@ window.setLyricsStyle = function(style) {
             // DEDUPLIKATION: Wenn NPC oder stats.fm nachziehen, darf derselbe Song NIEMALS ein zweites Mal initialisiert werden!
             const isSameAsCurrent = !isFirstLoad && isSameSongTrack(trackTitle, cleanArtist, incomingSpotifyId, currentTrackTitle, currentRawArtist, currentSpotifyTrackId);
             const isNewTrack = isFirstLoad || !isSameAsCurrent;
+            if (isNewTrack && currentTrackTitle && !isFirstLoad) {
+                previousTrackTitle = currentTrackTitle;
+                previousRawArtist = currentRawArtist;
+                previousSpotifyTrackId = currentSpotifyTrackId;
+            }
             const newTrackId = trackTitle + "-" + cleanArtist;
             currentTrackId = newTrackId;
             currentTrackTitle = trackTitle;
@@ -27897,12 +27908,13 @@ window.setLyricsStyle = function(style) {
                 }
                 // 2. Automatischer Lyrics-Fetch:
                 // Nur wenn nicht im Cache vorhanden, nicht kürzlich fehlgeschlagen/rate-limited und kein laufender Request aktiv ist
-                const isAttemptedRecently = cachedLyricsEntry && (
-                    (cachedLyricsEntry.provider === 'none' && Date.now() - (cachedLyricsEntry.cachedAt || 0) < 10000) ||
-                    (cachedLyricsEntry.isRateLimited && Date.now() - (cachedLyricsEntry.cachedAt || 0) < 15000)
-                );
+                const hasNegativeCache = cachedLyricsEntry && (cachedLyricsEntry.provider === 'none' || cachedLyricsEntry.noLyricsFound === true);
                 const hasLyricsInCache = hasSyncedInCache || (cachedLyricsEntry && cachedLyricsEntry.plainLyrics && !isDummyLyrics(cachedLyricsEntry.plainLyrics));
-                const lyricsNeedFetch = !hasLyricsInCache && !isAttemptedRecently && (inFlightLyricsKey !== currentTrackCacheKey);
+                // AUTOMATISCHER FETCH:
+                // Nur am Anfang eines echten neuen Songs (isNewTrack) wird einmalig gesucht,
+                // falls noch kein Text und kein Negativ-Cache vorliegt und kein Request läuft.
+                // Während des laufenden Songs wird NIEMALS periodisch erneut gesucht!
+                const lyricsNeedFetch = isNewTrack && !hasLyricsInCache && !hasNegativeCache && (inFlightLyricsKey !== currentTrackCacheKey);
                 if (isNewTrack) {
                     addToRecentlyPlayed(trackTitle, rawArtist, finalArtUrl);
                     if (!isFirstLoad && isPlaying) {
@@ -27931,10 +27943,9 @@ window.setLyricsStyle = function(style) {
                     }
                     currentNoLyricsMessage = fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
                 }
-                // AUTOMATISCHER FETCH OHNE RE-SYNC-ZWANG:
-                // 1) Neuer Songwechsel -> sofort laden (auch wenn der Track im Player gerade noch pausiert ist)
-                // 2) Laufende Wiedergabe ohne gerenderte Lyrics -> sofort nachladen
-                if (lyricsNeedFetch && (isNewTrack || (isPlaying && (!parsedLyrics || parsedLyrics.length === 0)))) {
+                // AUTOMATISCHER FETCH:
+                // Ausschließlich am Anfang eines neuen Songs einmalig laden.
+                if (lyricsNeedFetch) {
                     fetchExternalLyrics(trackTitle, cleanArtist, trackDuration, false);
                 }
                 if (!isNewTrack) {
@@ -27954,10 +27965,7 @@ window.setLyricsStyle = function(style) {
                         if (data.source === 'statsfm') {
                             lastSeenStatsFmProgressMs = currentApiProgress;
                         }
-                        // Playback startet/wird fortgesetzt: sofort prüfen ob Lyrics noch fehlen
-                        if (lyricsNeedFetch && (!parsedLyrics || parsedLyrics.length === 0)) {
-                            fetchExternalLyrics(trackTitle, cleanArtist, trackDuration, false);
-                        }
+                        // Playback startet/wird fortgesetzt
                         syncLyricsUI(true, true);
                     } else if (trackIsPlaying && !isPlaying) {
                         trackIsPlaying = false;
@@ -28193,11 +28201,14 @@ window.setLyricsStyle = function(style) {
                 } else {
                     // EINER der beiden Provider hat bereits den neuen Song, während der andere noch nachhängt.
                     // Wer als erstes etwas Neues hat, übernimmt sofort die Führung!
-                    const npcIsOld = isSameSongTrack(npcData.track.title || npcData.track.name, npcData.track.artist, npcData.track.id, currentTrackTitle, currentRawArtist, currentSpotifyTrackId);
-                    const statsIsOld = isSameSongTrack(statsFmData.track.title || statsFmData.track.name, statsFmData.track.artist, statsFmData.track.id, currentTrackTitle, currentRawArtist, currentSpotifyTrackId);
+                    // WICHTIG (Anti-Ping-Pong): Prüfen, welcher Provider noch den beendeten vorherigen Song meldet!
+                    const npcMatchesCurrent = Boolean(currentTrackTitle && isSameSongTrack(npcData.track.title || npcData.track.name, npcData.track.artist, npcData.track.id, currentTrackTitle, currentRawArtist, currentSpotifyTrackId));
+                    const statsMatchesCurrent = Boolean(currentTrackTitle && isSameSongTrack(statsFmData.track.title || statsFmData.track.name, statsFmData.track.artist, statsFmData.track.id, currentTrackTitle, currentRawArtist, currentSpotifyTrackId));
+                    const npcMatchesPrevious = Boolean(previousTrackTitle && isSameSongTrack(npcData.track.title || npcData.track.name, npcData.track.artist, npcData.track.id, previousTrackTitle, previousRawArtist, previousSpotifyTrackId));
+                    const statsMatchesPrevious = Boolean(previousTrackTitle && isSameSongTrack(statsFmData.track.title || statsFmData.track.name, statsFmData.track.artist, statsFmData.track.id, previousTrackTitle, previousRawArtist, previousSpotifyTrackId));
 
-                    if (statsIsOld && !npcIsOld) {
-                        // NPC meldet bereits den neuen Song, stats.fm hängt noch auf dem alten -> NPC führt!
+                    if (statsMatchesPrevious && !npcMatchesPrevious) {
+                        // stats.fm hängt noch auf dem alten, beendeten Song -> NPC hat die Führung!
                         const merged = { ...npcData, source: 'npc' };
                         if (npcData.timestamp && npcServerDate) {
                             const srvNow = new Date(npcServerDate).getTime();
@@ -28205,11 +28216,23 @@ window.setLyricsStyle = function(style) {
                             merged.serverElapsed = Math.max(0, srvNow - snapTime);
                         }
                         updateMusicUI(merged, latency);
-                    } else if (npcIsOld && !statsIsOld) {
-                        // stats.fm meldet bereits den neuen Song, NPC hängt noch auf dem alten -> stats.fm führt!
+                    } else if (npcMatchesPrevious && !statsMatchesPrevious) {
+                        // NPC hängt noch auf dem alten, beendeten Song -> stats.fm hat die Führung!
+                        updateMusicUI(statsFmData, latency);
+                    } else if (npcMatchesCurrent && !statsMatchesCurrent) {
+                        // NPC ist bereits auf dem aktuellen Song, stats.fm ist noch woanders -> bei NPC bleiben!
+                        const merged = { ...npcData, source: 'npc' };
+                        if (npcData.timestamp && npcServerDate) {
+                            const srvNow = new Date(npcServerDate).getTime();
+                            const snapTime = new Date(npcData.timestamp).getTime();
+                            merged.serverElapsed = Math.max(0, srvNow - snapTime);
+                        }
+                        updateMusicUI(merged, latency);
+                    } else if (statsMatchesCurrent && !npcMatchesCurrent) {
+                        // stats.fm ist bereits auf dem aktuellen Song -> bei stats.fm bleiben!
                         updateMusicUI(statsFmData, latency);
                     } else {
-                        // Wenn beide neu sind (z.B. nach längerer Pause), bevorzugen wir NPC für sofortige Metadaten
+                        // Komplett neuer Songwechsel (beide neu oder Erstanlauf) -> Standard-Auswahl
                         const merged = { ...npcData, source: 'npc' };
                         if (npcData.timestamp && npcServerDate) {
                             const srvNow = new Date(npcServerDate).getTime();
