@@ -14170,6 +14170,7 @@ html.gp-android:not(.dark) #ui-controls {
         let progressTickerInterval = null;
         let isAnimating = false;
         let lyricAnimFrame = null;
+        let lastLyricFrameTime = 0;
         try {
             Object.defineProperty(window, 'liveSyncOffset', {
                 get: () => liveSyncOffset,
@@ -25948,6 +25949,7 @@ window.setLyricsStyle = function(style) {
         function renderLyrics(fallbackText, isUnsyncedData = false) {
             const syncBadge = document.getElementById('sync-status-badge');
             if (!lyricsContent) return;
+            currentLyricIndex = -1;
             lineAnimCache = null;
             currentLineAnimCache = null;
             parallelLyricIndex = -1;
@@ -26118,7 +26120,20 @@ window.setLyricsStyle = function(style) {
         }
         function buildLineAnimCache(idx) {
             const line = parsedLyrics[idx];
-            if (!line || !Array.isArray(line.tokens) || line.tokens.length === 0) return null;
+            if (!line) return null;
+            const lStart = typeof line.startMs === 'number' ? line.startMs : line.timeMs;
+            const lEnd = typeof line.endMs === 'number' ? line.endMs : (lStart + 5000);
+            const lineEl = document.getElementById(`lyric-line-${idx}`);
+            if (!Array.isArray(line.tokens) || line.tokens.length === 0) {
+                return {
+                    idx: idx,
+                    el: lineEl,
+                    startMs: lStart,
+                    endMs: lEnd,
+                    words: [],
+                    isInstrumental: !!line.isInstrumental
+                };
+            }
             const words = [];
             line.tokens.forEach((tok, wIdx) => {
                 const wSpan = document.getElementById(`word-${idx}-${wIdx}`);
@@ -26159,12 +26174,11 @@ window.setLyricsStyle = function(style) {
                     chars: cData
                 });
             });
-            const lStart = typeof line.startMs === 'number' ? line.startMs : line.timeMs;
             return {
                 idx: idx,
-                el: document.getElementById(`lyric-line-${idx}`),
+                el: lineEl,
                 startMs: lStart,
-                endMs: typeof line.endMs === 'number' ? line.endMs : (lStart + 5000),
+                endMs: lEnd,
                 words: words
             };
         }
@@ -26261,10 +26275,10 @@ window.setLyricsStyle = function(style) {
         }
 
         function renderActiveLineWordVisuals(adjustedMs) {
-            if (currentLineAnimCache && currentLineAnimCache.words) {
+            if (currentLineAnimCache && currentLineAnimCache.words && currentLineAnimCache.words.length > 0) {
                 animateLineWords(currentLineAnimCache, adjustedMs);
             }
-            if (parallelLineAnimCache && parallelLineAnimCache.words && parallelLineAnimCache !== currentLineAnimCache) {
+            if (parallelLineAnimCache && parallelLineAnimCache.words && parallelLineAnimCache.words.length > 0 && parallelLineAnimCache !== currentLineAnimCache) {
                 animateLineWords(parallelLineAnimCache, adjustedMs);
             }
         }
@@ -26341,6 +26355,11 @@ window.setLyricsStyle = function(style) {
                         currEl.classList.add('active');
                     }
                 }
+            } else if (activeIndex >= 0) {
+                const currEl = document.getElementById(`lyric-line-${activeIndex}`);
+                if (currEl && !currEl.classList.contains('active')) {
+                    currEl.classList.add('active');
+                }
             }
 
             if (newParallelIndex !== parallelLyricIndex) {
@@ -26359,9 +26378,14 @@ window.setLyricsStyle = function(style) {
                 }
                 parallelLyricIndex = newParallelIndex;
                 parallelLineAnimCache = newParallelIndex >= 0 ? buildLineAnimCache(newParallelIndex) : null;
+            } else if (newParallelIndex >= 0) {
+                const parEl = document.getElementById(`lyric-line-${newParallelIndex}`);
+                if (parEl && !parEl.classList.contains('active')) {
+                    parEl.classList.add('active');
+                }
             }
 
-            if (activeIndex !== currentLyricIndex || !currentLineAnimCache) {
+            if (activeIndex !== currentLyricIndex || (activeIndex >= 0 && !currentLineAnimCache)) {
                 currentLyricIndex = activeIndex;
                 currentLineAnimCache = activeIndex >= 0 ? buildLineAnimCache(activeIndex) : null;
                 if (activeIndex >= 0) {
@@ -26377,9 +26401,12 @@ window.setLyricsStyle = function(style) {
                 }
             }
 
-            if (currentLineAnimCache && currentLineAnimCache.words) {
+            if (currentLineAnimCache && currentLineAnimCache.words && currentLineAnimCache.words.length > 0) {
                 renderActiveLineWordVisuals(adjustedMs);
             } else {
+                if (parallelLineAnimCache && parallelLineAnimCache.words && parallelLineAnimCache.words.length > 0) {
+                    animateLineWords(parallelLineAnimCache, adjustedMs);
+                }
                 // Takt-Countdown-Punkte bei echten Instrumental-Abschnitten
                 const curLine = (activeIndex >= 0 && activeIndex < parsedLyrics.length) ? parsedLyrics[activeIndex] : null;
                 if (curLine && curLine.isInstrumental) {
@@ -26491,12 +26518,16 @@ window.setLyricsStyle = function(style) {
             checkSongEndTrigger();
             // PERF-OPTIMIERUNG (Pixel/120Hz Fix): DOM-Text- & Skalierungs-Updates auf max 25fps drosseln (~40ms),
             // während Wort-Highlights und sanfte Animationen flüssig bleiben. Verhindert massive Überhitzung & Lag.
-            if (currentPerfNow - lastProgressUiUpdate >= 40) {
-                updateProgressUI();
-                lastProgressUiUpdate = currentPerfNow;
-            }
-            if (mainMusicCard && mainMusicCard.classList.contains('lyrics-open')) {
-                syncLyricsUI();
+            try {
+                if (currentPerfNow - lastProgressUiUpdate >= 40) {
+                    updateProgressUI();
+                    lastProgressUiUpdate = currentPerfNow;
+                }
+                if (mainMusicCard && mainMusicCard.classList.contains('lyrics-open')) {
+                    syncLyricsUI();
+                }
+            } catch (err) {
+                console.error('[Lyrics] Error during frame update in animateLoop:', err);
             }
             lyricAnimFrame = requestAnimationFrame(animateLoop);
         }
@@ -26523,7 +26554,7 @@ window.setLyricsStyle = function(style) {
                     clearInterval(progressTickerInterval);
                     progressTickerInterval = null;
                 }
-                if (!isAnimating) {
+                if (!isAnimating || !lyricAnimFrame) {
                     isAnimating = true;
                     if (lyricAnimFrame) cancelAnimationFrame(lyricAnimFrame);
                     lyricAnimFrame = requestAnimationFrame(animateLoop);
@@ -28395,9 +28426,18 @@ window.setLyricsStyle = function(style) {
         // starten - BEDINGUNGSLOS, nicht mit einem fragilen !isAnimating-Check.
         setInterval(() => {
             if (shouldPauseBackgroundWork()) return;
-            if (trackIsPlaying && !progressTickerInterval && !(mainMusicCard && mainMusicCard.classList.contains('lyrics-open'))) {
-                console.warn('Selbstheilungs-Check: Fortschritts-Tracking war trotz laufender Musik inaktiv - starte neu.');
-                startProgressTracking();
+            const isLyricsOpen = mainMusicCard && mainMusicCard.classList.contains('lyrics-open');
+            const hasSynced = parsedLyrics && parsedLyrics.length > 0;
+            if (trackIsPlaying) {
+                if (isLyricsOpen && hasSynced) {
+                    if (!lyricAnimFrame) {
+                        console.warn('Selbstheilungs-Check: Lyrics rAF-Loop war trotz offener Lyrics inaktiv - starte neu.');
+                        startProgressTracking();
+                    }
+                } else if (!progressTickerInterval) {
+                    console.warn('Selbstheilungs-Check: Fortschritts-Tracking war trotz laufender Musik inaktiv - starte neu.');
+                    startProgressTracking();
+                }
             }
         }, 3000);
         // NEU v24.66 (LETZTE SICHERHEITSSTUFE): Nutzer meldete nach mehreren Fix-Runden
