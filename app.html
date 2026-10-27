@@ -25872,6 +25872,12 @@ window.setLyricsStyle = function(style) {
                         tok.rawWeight *= 0.8;
                     }
                     tok.weight = Math.pow(tok.rawWeight, 0.75);
+                    const digitMatches = tok.cleanText.match(/\d/g);
+                    if (digitMatches && digitMatches.length >= 2) {
+                        // Mehrstellige Zahlenfolgen ("247365", "24/7", "365") phonetisch proportional gewichten:
+                        // Jede Ziffer repräsentiert ein eigenes Wort/Silbe im Gesang ("twenty-four seven, three, six, five")
+                        tok.weight = Math.max(tok.weight, digitMatches.length * 2.8);
+                    }
                     lineWeight += tok.weight;
                 });
                 line.totalSyllables = totalSyllables;
@@ -25919,24 +25925,23 @@ window.setLyricsStyle = function(style) {
                     // Bei Pop ca. 280-320ms/Silbe, Ballade ca. 400ms/Silbe, Rap ca. 210ms/Silbe.
                     const msPerSyllable = isLineBallad ? 400 : (isRapMode ? 210 : 300);
                     const lastTok = line.tokens[line.tokens.length - 1];
-                    const hasSustainEnding = lastTok && (lastTok.endingType === 'sacred_hold' || lastTok.endingType === 'vocal_sustain');
-                    const maxSustainTail = hasSustainEnding ? (isLineBallad ? 850 : 600) : 320;
-                    const naturalSingingCapacity = (line.totalSyllables * msPerSyllable) + (line.tokens.length * 60) + maxSustainTail;
+                    const hasSustainEnding = lastTok && (lastTok.endingType === 'sacred_hold' || lastTok.endingType === 'vocal_sustain' || /[-~]$|[aeiouyäöüáéíóú]$/i.test(lastTok.cleanText));
+                    const maxSustainTail = hasSustainEnding ? (isLineBallad ? 900 : 650) : 350;
 
+                    // Lange Instrumentalpausen (>=7.5s) sauber erkennen, aber normale Takte (bis ~7s)
+                    // voll ausklingen lassen, da der letzte Ton/Vokal fast immer gehalten wird ("satisfied~~~~", "like-~~~~")
+                    const isLongInstrumentalBreak = timeToNextLine >= 7500;
                     let targetSingingTime;
-                    if (timeToNextLine > naturalSingingCapacity + 350) {
-                        // ECHTE ZWISCHENPAUSE ERKANNT (auch ohne Satzzeichen!):
-                        // Die Zeit bis zur nächsten Zeile übersteigt die natürliche Gesangsdauer für diese Textmenge.
-                        // Der Sänger macht eine Gesangspause/Instrumental-Fill -> Gesang endet musikalisch getaktet,
-                        // und die Animation verharrt sauber, anstatt kriechend durch die Pause zu schleichen.
-                        targetSingingTime = Math.max(600, Math.min(timeToNextLine - 350, naturalSingingCapacity));
+
+                    if (isLongInstrumentalBreak) {
+                        const naturalSingingCapacity = (line.totalSyllables * msPerSyllable) + (line.tokens.length * 80) + maxSustainTail;
+                        targetSingingTime = Math.max(800, Math.min(timeToNextLine - 1500, naturalSingingCapacity));
                     } else {
-                        // Fließender Zeilenübergang mit natürlichem Atemzug
                         const lineEndsSentence = /[.!?…]["'”’)\]]*$/.test(line.text.trim());
                         const lineBreathMargin = lineEndsSentence
-                            ? Math.min(240, Math.max(140, 90 + timeToNextLine * 0.03))
-                            : Math.min(100, Math.max(65, 50 + timeToNextLine * 0.015));
-                        targetSingingTime = Math.max(250, timeToNextLine - lineBreathMargin);
+                            ? Math.min(260, Math.max(150, 90 + timeToNextLine * 0.025))
+                            : Math.min(160, Math.max(80, 50 + timeToNextLine * 0.015));
+                        targetSingingTime = Math.max(350, timeToNextLine - lineBreathMargin);
                     }
                     let totalRawTime = 0;
                     line.tokens.forEach((tok, idx) => {
@@ -25968,8 +25973,8 @@ window.setLyricsStyle = function(style) {
                             // Gedankenstriche: Takt-Pause (~120–160ms)
                             tok.rawPause = isLineBallad ? 155 : 130;
                         } else if (hasComma) {
-                            // Teilsatz-Komma bekommt sanften Atemzug, Aufzählungs-Komma bleibt flüssig
-                            tok.rawPause = isMajorClause ? (isLineBallad ? 150 : 95) : (isLineBallad ? 100 : 70);
+                            // Komma im Gesang ist ein feiner melodischer Übergang (~20-35ms), kein Stillstand
+                            tok.rawPause = isMajorClause ? (isLineBallad ? 35 : 25) : (isLineBallad ? 25 : 18);
                         } else if (hasPeriod) {
                             // Satzende: rhetorische Zäsur (~140–180ms)
                             tok.rawPause = isLineBallad ? 175 : 150;
@@ -25996,15 +26001,11 @@ window.setLyricsStyle = function(style) {
                         tok.timeMs = currentOffsetMs;
                         tok.duration = tok.rawDuration * timeScale;
                         let microPause = tok.rawPause * timeScale;
-                        // Harmonisches Ausklingen des letzten Wortes (z.B. Yahweh oder langgezogene Vokale)
+                        // Harmonisches Ausklingen des letzten Wortes (z.B. Yahweh, "satisfied" oder langgezogene Töne)
                         if (j === line.tokens.length - 1) {
                             const rem = (line.timeMs + targetSingingTime) - (currentOffsetMs + tok.duration);
                             if (rem > 0) {
-                                if (tok.endingType === 'sacred_hold') {
-                                    tok.duration += rem;
-                                } else if (tok.endingType === 'vocal_sustain' || isLineBallad) {
-                                    tok.duration += Math.min(rem, 600);
-                                }
+                                tok.duration += rem;
                             }
                         }
                         // Sicherheitsgrenze: Dauer darf niemals in die Folgezeile hineinragen
@@ -26342,21 +26343,43 @@ window.setLyricsStyle = function(style) {
                         }
                     }
                 } else if (adjustedMs >= word.endMs) {
-                    if (word.lastState !== 'passed') {
-                        word.lastState = 'passed';
-                        word.isActiveClassSet = false;
-                        word.lastFillPercent = '100%';
-                        if (wSpan) {
-                            wSpan.style.setProperty('--fill-percent', '100%');
-                            wSpan.classList.add('word-passed');
-                            wSpan.classList.remove('word-active');
+                    const isNextWordStarting = (w + 1 < words.length) ? (adjustedMs >= words[w + 1].startMs) : true;
+                    if (isNextWordStarting) {
+                        if (word.lastState !== 'passed') {
+                            word.lastState = 'passed';
+                            word.isActiveClassSet = false;
+                            word.lastFillPercent = '100%';
+                            if (wSpan) {
+                                wSpan.style.setProperty('--fill-percent', '100%');
+                                wSpan.classList.add('word-passed');
+                                wSpan.classList.remove('word-active');
+                            }
+                            for (let c = 0; c < word.chars.length; c++) {
+                                const charObj = word.chars[c];
+                                if (charObj.el && charObj.lastState !== 'passed') {
+                                    charObj.lastState = 'passed';
+                                    charObj.el.classList.add('char-passed');
+                                    charObj.el.classList.remove('char-active');
+                                }
+                            }
                         }
-                        for (let c = 0; c < word.chars.length; c++) {
-                            const charObj = word.chars[c];
-                            if (charObj.el && charObj.lastState !== 'passed') {
-                                charObj.lastState = 'passed';
-                                charObj.el.classList.add('char-passed');
-                                charObj.el.classList.remove('char-active');
+                    } else {
+                        // Zwischen Wort und nächstem Wort (Komma/Pause): Aktives Wort bleibt mit 100% Füllung aktiv
+                        // und fällt NIEMALS in ein leeres Freeze-Loch!
+                        if (word.lastState !== 'holding') {
+                            word.lastState = 'holding';
+                            word.lastFillPercent = '100%';
+                            if (wSpan) {
+                                wSpan.style.setProperty('--fill-percent', '100%');
+                                wSpan.classList.add('word-active');
+                                wSpan.classList.remove('word-passed');
+                            }
+                            for (let c = 0; c < word.chars.length; c++) {
+                                const charObj = word.chars[c];
+                                if (charObj.el) {
+                                    charObj.el.classList.add('char-passed');
+                                    charObj.el.classList.remove('char-active');
+                                }
                             }
                         }
                     }
@@ -27206,10 +27229,14 @@ window.setLyricsStyle = function(style) {
                         lyricsMemoryCache.delete(cacheKey);
                     }
                 } else if (cached.provider === 'none' || cached.noLyricsFound) {
-                    // Negativer Cache: Für diesen Song gibt es nachweislich keine Texte.
-                    // Bleibt für den Song stabil gecacht und wird NIEMALS periodisch erneut angefragt!
-                    renderLyrics(currentNoLyricsMessage);
-                    return;
+                    // Negativer Cache nur kurzzeitig (60s) halten, damit temporäre 503/Netzwerkfehler
+                    // nicht dauerhaft echte Texte blockieren.
+                    if (Date.now() - (cached.cachedAt || 0) < 60000) {
+                        renderLyrics(currentNoLyricsMessage);
+                        return;
+                    } else {
+                        lyricsMemoryCache.delete(cacheKey);
+                    }
                 }
             }
             // Persistente Songtexte sind deaktiviert: Es gibt keinen AppStorage-Lyrics-Cache mehr.
@@ -28120,7 +28147,7 @@ window.setLyricsStyle = function(style) {
                 }
                 // 2. Automatischer Lyrics-Fetch:
                 // Nur wenn nicht im Cache vorhanden, nicht kürzlich fehlgeschlagen/rate-limited und kein laufender Request aktiv ist
-                const hasNegativeCache = cachedLyricsEntry && (cachedLyricsEntry.provider === 'none' || cachedLyricsEntry.noLyricsFound === true);
+                const hasNegativeCache = cachedLyricsEntry && (cachedLyricsEntry.provider === 'none' || cachedLyricsEntry.noLyricsFound === true) && (Date.now() - (cachedLyricsEntry.cachedAt || 0) < 60000);
                 const hasLyricsInCache = hasSyncedInCache || (cachedLyricsEntry && cachedLyricsEntry.plainLyrics && !isDummyLyrics(cachedLyricsEntry.plainLyrics));
                 // AUTOMATISCHER FETCH:
                 // Nur am Anfang eines echten neuen Songs (isNewTrack) wird einmalig gesucht,
