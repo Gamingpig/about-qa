@@ -25778,21 +25778,29 @@ window.setLyricsStyle = function(style) {
                     const lineDensity = line.totalSyllables / durationSec;
                     const isLineBallad = isBalladSong || (lineDensity < 1.75);
                     const isRapMode = lineDensity > 3.6;
-                    // STÄRKE DES NEUEN ALGORITHMUS: Echte Hook-Drops & EDM-Pausen (z.B. "She's unforgettable" gefolgt von Beat-Drop)
-                    const isDropLine = (timeToNextLine >= 5000 && line.totalSyllables <= 4);
+                    // 2. Hybrid Master-Engine mit automatischer Gesangspausen- & Drop-Erkennung
+                    // Auch wenn KEIN Satzzeichen am Zeilenende steht: Wir berechnen die natürliche,
+                    // physiologische Obergrenze der Gesangsdauer anhand der tatsächlichen Silbenmenge.
+                    // Bei Pop ca. 280-320ms/Silbe, Ballade ca. 400ms/Silbe, Rap ca. 210ms/Silbe.
+                    const msPerSyllable = isLineBallad ? 400 : (isRapMode ? 210 : 300);
+                    const lastTok = line.tokens[line.tokens.length - 1];
+                    const hasSustainEnding = lastTok && (lastTok.endingType === 'sacred_hold' || lastTok.endingType === 'vocal_sustain');
+                    const maxSustainTail = hasSustainEnding ? (isLineBallad ? 850 : 600) : 320;
+                    const naturalSingingCapacity = (line.totalSyllables * msPerSyllable) + (line.tokens.length * 60) + maxSustainTail;
+
                     let targetSingingTime;
-                    if (isDropLine) {
-                        // Gesang endet natürlich getaktet auf den Beat – der Rest des Fensters ist der Instrumental-Drop
-                        targetSingingTime = Math.min(timeToNextLine, Math.max(1100, line.totalSyllables * 280 + 360));
+                    if (timeToNextLine > naturalSingingCapacity + 350) {
+                        // ECHTE ZWISCHENPAUSE ERKANNT (auch ohne Satzzeichen!):
+                        // Die Zeit bis zur nächsten Zeile übersteigt die natürliche Gesangsdauer für diese Textmenge.
+                        // Der Sänger macht eine Gesangspause/Instrumental-Fill -> Gesang endet musikalisch getaktet,
+                        // und die Animation verharrt sauber, anstatt kriechend durch die Pause zu schleichen.
+                        targetSingingTime = Math.max(600, Math.min(timeToNextLine - 350, naturalSingingCapacity));
                     } else {
-                        // Natürliche Atempause: Satzenden (., ?, !) bekommen einen spürbaren
-                        // Atemzug (~140–220ms je nach Tempo), fließende Enjambements
-                        // (kein Satzzeichen, Komma oder Bindestrich) nur eine kurze (~60–90ms),
-                        // damit das letzte Wort voll ausgesungen wird und nicht abbricht.
+                        // Fließender Zeilenübergang mit natürlichem Atemzug
                         const lineEndsSentence = /[.!?…]["'”’)\]]*$/.test(line.text.trim());
                         const lineBreathMargin = lineEndsSentence
-                            ? Math.min(220, Math.max(140, 90 + timeToNextLine * 0.03))
-                            : Math.min(90, Math.max(60, 50 + timeToNextLine * 0.01));
+                            ? Math.min(240, Math.max(140, 90 + timeToNextLine * 0.03))
+                            : Math.min(100, Math.max(65, 50 + timeToNextLine * 0.015));
                         targetSingingTime = Math.max(250, timeToNextLine - lineBreathMargin);
                     }
                     let totalRawTime = 0;
@@ -26765,6 +26773,30 @@ window.setLyricsStyle = function(style) {
                 .replace(/\s+/g, ' ')
                 .trim();
         }
+        // Robuste Song-Gleichheitsprüfung: Erkennt denselben Song über Provider-Grenzen (NPC vs. stats.fm)
+        // hinweg, auch wenn Schreibweisen wie 'feat.', 'with', Radio Edit oder Zusatzkünstler leicht abweichen.
+        function isSameSongTrack(titleA, artistA, idA, titleB, artistB, idB) {
+            if (!titleA || !titleB) return false;
+            const sIdA = (idA && !String(idA).includes('|')) ? String(idA).trim() : '';
+            const sIdB = (idB && !String(idB).includes('|')) ? String(idB).trim() : '';
+            if (sIdA && sIdB && sIdA === sIdB) return true;
+
+            const normT1 = normLyricsStr(titleA);
+            const normT2 = normLyricsStr(titleB);
+            if (!normT1 || !normT2) return false;
+            if (normT1 !== normT2 && !normT1.includes(normT2) && !normT2.includes(normT1)) return false;
+
+            const normA1 = normLyricsStr(artistA || '');
+            const normA2 = normLyricsStr(artistB || '');
+            if (!normA1 || !normA2) return true;
+            if (normA1 === normA2) return true;
+
+            const p1 = normA1.split(/\s*(?:,|&|\/|\+)\s*/)[0].trim();
+            const p2 = normA2.split(/\s*(?:,|&|\/|\+)\s*/)[0].trim();
+            if (p1 && p2 && (p1 === p2 || normA1.includes(p2) || normA2.includes(p1))) return true;
+
+            return false;
+        }
         // Einheitliche, datenbankübergreifende Bewertung eines Lyrics-Kandidaten.
         // Tier 2 (Enhanced LRC) schlägt IMMER Tier 1 (Zeilen-Sync) und Tier 0 (Plain),
         // da die Tier-Basis (500/150/0) alle Titel-/Künstler-/Dauer-Deltas übersteigt.
@@ -27430,7 +27462,9 @@ window.setLyricsStyle = function(style) {
                 const raw = data?.progress_ms ?? track?.progress_ms;
                 const progress = raw !== null && raw !== undefined && Number.isFinite(Number(raw)) ? Math.max(0, Number(raw)) : null;
                 const previous = standbyProgressSample;
-                const newTrack = !previous || previous.id !== id;
+                const sId = (track?.spotifyId || (track?.id && !String(track.id).includes('|') ? String(track.id) : '')) || '';
+                const isSameStandby = Boolean(previous && isSameSongTrack(title, artist, sId, lastStandbyTrackInfo?.title, lastStandbyTrackInfo?.artist, lastStandbyTrackInfo?.spotifyId));
+                const newTrack = !previous || (!isSameStandby && previous.id !== id);
                 const playbackChanged = !previous || previous.playing !== playing;
                 totalMs = Number(track?.duration_ms || data?.duration_ms) || 0;
                 const now = performance.now();
@@ -27595,10 +27629,13 @@ window.setLyricsStyle = function(style) {
             const rawArtist = (data.track && data.track.artist) || "Unknown";
             const cleanArtist = rawArtist.replace(/\s*•\s*From Smart Shuffle/gi, '').trim();
             const trackTitle = (data.track && data.track.title) || "";
-            const newTrackId = trackTitle + "-" + cleanArtist;
-            const isNewTrack = (newTrackId !== currentTrackId);
+            const incomingSpotifyId = (data.track && (data.track.spotifyId || (data.track.id && !String(data.track.id).includes('|') ? String(data.track.id) : ''))) || '';
             const isFirstLoad = (currentTrackId === "");
-            currentTrackId = newTrackId; // FIX: update so same song never re-triggers fetchExternalLyrics
+            // DEDUPLIKATION: Wenn NPC oder stats.fm nachziehen, darf derselbe Song NIEMALS ein zweites Mal initialisiert werden!
+            const isSameAsCurrent = !isFirstLoad && isSameSongTrack(trackTitle, cleanArtist, incomingSpotifyId, currentTrackTitle, currentRawArtist, currentSpotifyTrackId);
+            const isNewTrack = isFirstLoad || !isSameAsCurrent;
+            const newTrackId = trackTitle + "-" + cleanArtist;
+            currentTrackId = newTrackId;
             currentTrackTitle = trackTitle;
             currentRawArtist = cleanArtist;
             lastKnownMusicData = data;
@@ -28137,11 +28174,18 @@ window.setLyricsStyle = function(style) {
             const statsPlaying = Boolean(statsFmData && statsFmData.status === 'playing' && statsFmData.track && (statsFmData.track.title || statsFmData.track.name));
 
             if (npcPlaying && statsPlaying) {
-                const npcTitle = (npcData.track.title || npcData.track.name || '').toLowerCase().trim();
-                const statsTitle = (statsFmData.track.title || statsFmData.track.name || '').toLowerCase().trim();
-                const sameTrack = (npcTitle === statsTitle) || (npcData.track.id && statsFmData.track.id && String(npcData.track.id) === String(statsFmData.track.id));
+                const sameTrack = isSameSongTrack(
+                    npcData.track.title || npcData.track.name,
+                    npcData.track.artist,
+                    npcData.track.id,
+                    statsFmData.track.title || statsFmData.track.name,
+                    statsFmData.track.artist,
+                    statsFmData.track.id
+                );
 
                 if (sameTrack) {
+                    // Beide Plattformen sind synchron auf demselben Track:
+                    // Wir nutzen den hochpräzisen Spotify-Cloud-Progress von stats.fm und reichern ihn mit NPC-Metadaten an.
                     const merged = { ...statsFmData };
                     if (npcData.track.platform_links) merged.track.platform_links = npcData.track.platform_links;
                     if (npcData.track.track_url) merged.track.track_url = npcData.track.track_url;
@@ -28152,19 +28196,36 @@ window.setLyricsStyle = function(style) {
                     if (npcData.track.artwork_url && !npcData.track.artwork_url.includes('npc-api.aikins.xyz/v1/artwork/')) {
                         merged.track.artwork_url = npcData.track.artwork_url;
                     }
-                    // stats.fm liefert kein verlässliches serverElapsed (item.date wird nicht als
-                    // Snapshot-Alter missbraucht) – NPC-Metadaten bleiben rein additiv.
                     delete merged.serverElapsed;
                     updateMusicUI(merged, latency);
                 } else {
-                    // Songwechsel: NPC meldet den neuen Song bereits live, während stats.fm noch nachhängt
-                    const merged = { ...npcData, source: 'npc' };
-                    if (npcData.timestamp && npcServerDate) {
-                        const srvNow = new Date(npcServerDate).getTime();
-                        const snapTime = new Date(npcData.timestamp).getTime();
-                        merged.serverElapsed = Math.max(0, srvNow - snapTime);
+                    // EINER der beiden Provider hat bereits den neuen Song, während der andere noch nachhängt.
+                    // Wer als erstes etwas Neues hat, übernimmt sofort die Führung!
+                    const npcIsOld = isSameSongTrack(npcData.track.title || npcData.track.name, npcData.track.artist, npcData.track.id, currentTrackTitle, currentRawArtist, currentSpotifyTrackId);
+                    const statsIsOld = isSameSongTrack(statsFmData.track.title || statsFmData.track.name, statsFmData.track.artist, statsFmData.track.id, currentTrackTitle, currentRawArtist, currentSpotifyTrackId);
+
+                    if (statsIsOld && !npcIsOld) {
+                        // NPC meldet bereits den neuen Song, stats.fm hängt noch auf dem alten -> NPC führt!
+                        const merged = { ...npcData, source: 'npc' };
+                        if (npcData.timestamp && npcServerDate) {
+                            const srvNow = new Date(npcServerDate).getTime();
+                            const snapTime = new Date(npcData.timestamp).getTime();
+                            merged.serverElapsed = Math.max(0, srvNow - snapTime);
+                        }
+                        updateMusicUI(merged, latency);
+                    } else if (npcIsOld && !statsIsOld) {
+                        // stats.fm meldet bereits den neuen Song, NPC hängt noch auf dem alten -> stats.fm führt!
+                        updateMusicUI(statsFmData, latency);
+                    } else {
+                        // Wenn beide neu sind (z.B. nach längerer Pause), bevorzugen wir NPC für sofortige Metadaten
+                        const merged = { ...npcData, source: 'npc' };
+                        if (npcData.timestamp && npcServerDate) {
+                            const srvNow = new Date(npcServerDate).getTime();
+                            const snapTime = new Date(npcData.timestamp).getTime();
+                            merged.serverElapsed = Math.max(0, srvNow - snapTime);
+                        }
+                        updateMusicUI(merged, latency);
                     }
-                    updateMusicUI(merged, latency);
                 }
                 if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
                 if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
