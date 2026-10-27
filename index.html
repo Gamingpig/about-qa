@@ -25778,44 +25778,27 @@ window.setLyricsStyle = function(style) {
                     const isRapMode = lineDensity > 3.6;
                     // 2. Hybrid Master-Engine mit automatischer Gesangspausen- & Drop-Erkennung
                     // Auch wenn KEIN Satzzeichen am Zeilenende steht: Wir berechnen die natürliche,
-                    // physiologische Obergrenze der Gesangsdauer anhand der tatsächlichen Silbenmenge und Endlaut-Art.
-                    const msPerSyllable = isLineBallad ? 380 : (isRapMode ? 210 : 290);
+                    // physiologische Obergrenze der Gesangsdauer anhand der tatsächlichen Silbenmenge.
+                    // Bei Pop ca. 280-320ms/Silbe, Ballade ca. 400ms/Silbe, Rap ca. 210ms/Silbe.
+                    const msPerSyllable = isLineBallad ? 400 : (isRapMode ? 210 : 300);
                     const lastTok = line.tokens[line.tokens.length - 1];
-                    const endingType = lastTok ? lastTok.endingType : 'neutral';
-                    const hasSustainEnding = endingType === 'sacred_hold' || endingType === 'vocal_sustain';
-                    const isHardStop = endingType === 'hardStop';
-
-                    const maxSustainTail = endingType === 'sacred_hold' ? (isLineBallad ? 900 : 750)
-                        : (isHardStop ? 120
-                        : (hasSustainEnding ? (isLineBallad ? 650 : 450) : 260));
-
-                    const naturalSingingCapacity = (line.totalSyllables * msPerSyllable) + (line.tokens.length * 50) + maxSustainTail;
-                    const lineEndsSentence = /[.!?…]["'”’)\]]*$/.test(line.text.trim());
-                    const lineEndsClause = /[,;:\-–—]["'”’)\]]*$/.test(line.text.trim());
-
-                    // Geschätzter Beat für organische musikalische Takt-Ausrichtung der Gesangspause
-                    const estBeatMs = Math.round(Math.min(750, Math.max(380, 1100 / Math.max(1.2, songCadence))));
+                    const hasSustainEnding = lastTok && (lastTok.endingType === 'sacred_hold' || lastTok.endingType === 'vocal_sustain');
+                    const maxSustainTail = hasSustainEnding ? (isLineBallad ? 850 : 600) : 320;
+                    const naturalSingingCapacity = (line.totalSyllables * msPerSyllable) + (line.tokens.length * 60) + maxSustainTail;
 
                     let targetSingingTime;
-                    if (timeToNextLine > naturalSingingCapacity + 100) {
+                    if (timeToNextLine > naturalSingingCapacity + 350) {
                         // ECHTE ZWISCHENPAUSE ERKANNT (auch ohne Satzzeichen!):
-                        // Der Sänger pausiert oder macht einen Instrumental-Fill.
-                        // Bei staccato/hardStop endet die Text-Hervorhebung sofort crisp;
-                        // bei Vokalen klingt sie musikalisch in den Beat aus, lässt aber garantiert sauberen Atemraum.
-                        let computedSingTime = naturalSingingCapacity;
-                        if (hasSustainEnding && !isHardStop) {
-                            const excess = timeToNextLine - naturalSingingCapacity;
-                            computedSingTime += Math.min(excess * 0.25, estBeatMs * 0.5);
-                        }
-                        const minRestBeforeNext = isHardStop ? 250 : Math.min(600, Math.max(300, estBeatMs * 0.6));
-                        targetSingingTime = Math.max(500, Math.min(timeToNextLine - minRestBeforeNext, computedSingTime));
+                        // Die Zeit bis zur nächsten Zeile übersteigt die natürliche Gesangsdauer für diese Textmenge.
+                        // Der Sänger macht eine Gesangspause/Instrumental-Fill -> Gesang endet musikalisch getaktet,
+                        // und die Animation verharrt sauber, anstatt kriechend durch die Pause zu schleichen.
+                        targetSingingTime = Math.max(600, Math.min(timeToNextLine - 350, naturalSingingCapacity));
                     } else {
-                        // Fließender Zeilenübergang:
+                        // Fließender Zeilenübergang mit natürlichem Atemzug
+                        const lineEndsSentence = /[.!?…]["'”’)\]]*$/.test(line.text.trim());
                         const lineBreathMargin = lineEndsSentence
-                            ? Math.min(380, Math.max(220, 140 + timeToNextLine * 0.05))
-                            : (lineEndsClause
-                                ? Math.min(220, Math.max(120, 80 + timeToNextLine * 0.03))
-                                : Math.min(130, Math.max(65, 45 + timeToNextLine * 0.015)));
+                            ? Math.min(240, Math.max(140, 90 + timeToNextLine * 0.03))
+                            : Math.min(100, Math.max(65, 50 + timeToNextLine * 0.015));
                         targetSingingTime = Math.max(250, timeToNextLine - lineBreathMargin);
                     }
                     let totalRawTime = 0;
@@ -25883,11 +25866,7 @@ window.setLyricsStyle = function(style) {
                                 if (tok.endingType === 'sacred_hold') {
                                     tok.duration += rem;
                                 } else if (tok.endingType === 'vocal_sustain' || isLineBallad) {
-                                    tok.duration += Math.min(rem, isLineBallad ? 700 : 500);
-                                } else if (tok.endingType === 'hardStop') {
-                                    tok.duration += Math.min(rem, 80);
-                                } else {
-                                    tok.duration += Math.min(rem, 250);
+                                    tok.duration += Math.min(rem, 600);
                                 }
                             }
                         }
@@ -25925,10 +25904,10 @@ window.setLyricsStyle = function(style) {
                     line.singingEndMs = line.tokens[line.tokens.length - 1]?.endMs || line.endMs;
                 }
             }
-            // 3. Echte Instrumental-Pausen (lange Intros, Solos & Bridges ab 4.5 Sekunden) mit 3 Takt-Punkten anreichern
+            // 3. Echte Instrumental-Pausen (lange Intros, Solos & Bridges ab 5.0 Sekunden) mit 3 Takt-Punkten anreichern
             // Normal große Abstände zwischen Zeilen (2-4s) bleiben saubere Songtext-Pausen ohne störendes Aufploppen
             const enriched = [];
-            if (parsedLyrics.length > 0 && parsedLyrics[0].timeMs >= 3500) {
+            if (parsedLyrics.length > 0 && parsedLyrics[0].timeMs >= 2000) {
                 enriched.push({
                     timeMs: 0,
                     startMs: 0,
@@ -25946,8 +25925,8 @@ window.setLyricsStyle = function(style) {
                 if (nextLine && !line.isInstrumental && !nextLine.isInstrumental) {
                     const singEnd = line.singingEndMs || line.endMs;
                     const breakDuration = nextLine.timeMs - singEnd;
-                    // Echte längere Soli / Bridges ab 4.5s Pause erhalten Takt-Punkte
-                    if (breakDuration >= 4500) {
+                    // Echte längere Soli / Bridges ab 5.0s Pause erhalten Takt-Punkte
+                    if (breakDuration >= 2000) {
                         enriched.push({
                             timeMs: singEnd,
                             startMs: singEnd,
