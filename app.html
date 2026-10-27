@@ -25349,25 +25349,14 @@ window.setLyricsStyle = function(style) {
                         parseLrc(cachedLyricsEntry.syncedLyrics);
                         renderLyrics();
                         syncLyricsUI(true);
+                    } else if (inFlightLyricsKey === currentTrackCacheKey && inFlightLyricsPromise) {
+                        // Ein Abruf läuft bereits für diesen Song – Lade-Skeleton stehen lassen, nicht abbrechen
+                        renderLyricsLoading(currentTrackTitle, currentRawArtist);
                     } else {
-                        // 2) Nach einem Reload ist der Memory-Cache leer -> persistenten Speicher (AppStorage) prüfen
-                        const persisted = readPersistedLyrics(currentTrackCacheKey);
-                        if (persisted && persisted.syncedLyrics && !isDummyLyrics(persisted.syncedLyrics)) {
-                            lyricsMemoryCache.set(currentTrackCacheKey, persisted);
-                            currentLyricsProvider = persisted.provider || "LRCLIB";
-                            currentLyricsWriter = persisted.writer || "";
-                            parseLrc(persisted.syncedLyrics);
-                            renderLyrics();
-                            syncLyricsUI(true);
-                        } else if (inFlightLyricsKey === currentTrackCacheKey && inFlightLyricsPromise) {
-                            // Ein Abruf läuft bereits für diesen Song – Lade-Skeleton stehen lassen, nicht abbrechen
-                            renderLyricsLoading(currentTrackTitle, currentRawArtist);
-                        } else {
-                            // 3) Nutzer-Klick = klare Lade-Absicht: Skeleton sofort zeigen und mit force=true suchen.
-                            //    Das überschreibt einen evtl. vorhandenen „none"/Busy-Negativ-Cache und sucht garantiert neu.
-                            renderLyricsLoading(currentTrackTitle, currentRawArtist);
-                            fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs, true);
-                        }
+                        // 3) Nutzer-Klick = klare Lade-Absicht: Skeleton sofort zeigen und mit force=true suchen.
+                        //    Das überschreibt einen evtl. vorhandenen „none"/Busy-Negativ-Cache und sucht garantiert neu.
+                        renderLyricsLoading(currentTrackTitle, currentRawArtist);
+                        fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs, true);
                     }
                 }
                 setTimeout(() => {
@@ -25695,6 +25684,16 @@ window.setLyricsStyle = function(style) {
                         tok.rawWeight += getCharWeight(c, tok.isPhraseEnd, /[aeiouy]/.test(c.toLowerCase()));
                     }
                     if (tok.rawWeight === 0) tok.rawWeight = 0.5;
+                    // Diphthonge & lange Vokale ("au", "ei", "ie", "oo") werden gedehnt
+                    // gesungen und bekommen daher etwas mehr Gewicht.
+                    const lowerWord = tok.cleanText.toLowerCase();
+                    const hasLongVowelOrDiphthong = /(?:au|ei|ai|ie|oo|ee|oa|ou|ay|ey|oy|ow|ue|ui|äu)/.test(lowerWord);
+                    if (hasLongVowelOrDiphthong) tok.rawWeight *= 1.25;
+                    // Kurze Funktionswörter bleiben leichtgewichtig, damit sie den Takt nicht füllen.
+                    const plainWord = lowerWord.replace(/[^\wäöüß]/g, '');
+                    const FUNCTION_WORDS = ['the', 'a', 'an', 'and', 'of', 'to', 'in', 'on', 'at', 'it', 'is', 'my', 'me',
+                                            'und', 'der', 'die', 'das', 'dem', 'den', 'des', 'ein', 'eine', 'im', 'ich', 'du', 'er', 'sie', 'es'];
+                    if (FUNCTION_WORDS.includes(plainWord)) tok.rawWeight *= 0.7;
                     if (tok.endingType === 'sacred_hold') {
                         tok.rawWeight *= 2.0;
                     } else if (tok.endingType === 'hardStop') {
@@ -25749,11 +25748,14 @@ window.setLyricsStyle = function(style) {
                         // Gesang endet natürlich getaktet auf den Beat – der Rest des Fensters ist der Instrumental-Drop
                         targetSingingTime = Math.min(timeToNextLine, Math.max(1100, line.totalSyllables * 280 + 360));
                     } else {
-                        // STÄRKE DES ALTEN ALGORITHMUS: Sanfte, menschliche Atempause (80-220ms) statt künstlicher 1-Sekunden-Löcher!
-                        // Der Gesang füllt den Takt harmonisch aus, genau wie der Künstler ihn singt.
-                        const lineBreathMargin = isLineBallad
-                            ? Math.min(260, Math.max(110, timeToNextLine * 0.07))
-                            : Math.min(190, Math.max(75, timeToNextLine * 0.05));
+                        // Natürliche Atempause: Satzenden (., ?, !) bekommen einen spürbaren
+                        // Atemzug (~140–220ms je nach Tempo), fließende Enjambements
+                        // (kein Satzzeichen, Komma oder Bindestrich) nur eine kurze (~60–90ms),
+                        // damit das letzte Wort voll ausgesungen wird und nicht abbricht.
+                        const lineEndsSentence = /[.!?…]["'”’)\]]*$/.test(line.text.trim());
+                        const lineBreathMargin = lineEndsSentence
+                            ? Math.min(220, Math.max(140, 90 + timeToNextLine * 0.03))
+                            : Math.min(90, Math.max(60, 50 + timeToNextLine * 0.01));
                         targetSingingTime = Math.max(250, timeToNextLine - lineBreathMargin);
                     }
                     let totalRawTime = 0;
@@ -25762,24 +25764,43 @@ window.setLyricsStyle = function(style) {
                         const baseMs = isLineBallad ? 90 : (isRapMode ? 52 : 64);
                         tok.rawDuration = tok.weight * baseMs;
                         const nextTokText = line.tokens[idx + 1]?.cleanText || '';
-                        const hasComma = /[,;:]$/.test(tok.cleanText);
-                        const hasDash = /[—\-\/]$/.test(tok.cleanText);
-                        const hasPeriod = /[.!?]$/.test(tok.cleanText);
+                        const hasComma = /,$/.test(tok.cleanText);
+                        const hasPeriod = /\.$/.test(tok.cleanText);
+                        const hasEllipsis = /(?:\.{3,}|…)$/.test(tok.cleanText);
+                        const hasQuestionBang = /[?!]$/.test(tok.cleanText);
+                        const hasSemicolonColon = /[;:]$/.test(tok.cleanText);
+                        const hasDash = /[—–\-\/]$/.test(tok.cleanText);
                         const isMajorClause = isMajorClauseComma(tok.cleanText, nextTokText);
+                        const endsWithVowel = /[aeiouyäöüáéíóúàèìòùâêîôûãẽĩõũ]$/i.test(tok.cleanText);
+                        const nextStartsWithVowel = /^[aeiouyäöüáéíóúàèìòùâêîôûãẽĩõũ]/i.test(nextTokText.trim());
                         if (isLastWord) {
                             tok.rawPause = 0;
+                        } else if (hasEllipsis) {
+                            // Auslassungspunkte / Ellipsen: sanftes Nachklingen (~180–220ms)
+                            tok.rawPause = isLineBallad ? 210 : 190;
+                        } else if (hasQuestionBang) {
+                            // Frage- & Ausrufezeichen: rhetorische Zäsur (~140–180ms)
+                            tok.rawPause = isLineBallad ? 175 : 150;
+                        } else if (hasSemicolonColon) {
+                            // Semikolon & Doppelpunkt: Teilsatz-Atemzug (~120–150ms)
+                            tok.rawPause = isLineBallad ? 145 : 128;
                         } else if (hasDash) {
-                            tok.rawPause = isLineBallad ? 160 : 120;
-                        } else if (hasPeriod) {
-                            tok.rawPause = isLineBallad ? 170 : 110;
+                            // Gedankenstriche: Takt-Pause (~120–160ms)
+                            tok.rawPause = isLineBallad ? 155 : 130;
                         } else if (hasComma) {
                             // Teilsatz-Komma bekommt sanften Atemzug, Aufzählungs-Komma bleibt flüssig
                             tok.rawPause = isMajorClause ? (isLineBallad ? 150 : 95) : (isLineBallad ? 100 : 70);
+                        } else if (hasPeriod) {
+                            // Satzende: rhetorische Zäsur (~140–180ms)
+                            tok.rawPause = isLineBallad ? 175 : 150;
                         } else {
-                            // STÄRKE DES ALTEN ALGORITHMUS: Natürliches Wort-zu-Wort-Gleiten (Legato) ohne roboterhafte Stotter-Pausen!
+                            // Natürliches Wort-zu-Wort-Gleiten (Legato) ohne roboterhafte Stotter-Pausen!
                             const endsWithConsonant = /[bcdfghjklmnpqrstvwxyz]$/i.test(tok.cleanText);
                             const nextStartsWithConsonant = /^[bcdfghjklmnpqrstvwxyz]/i.test(nextTokText);
-                            if (endsWithConsonant && nextStartsWithConsonant) {
+                            if (endsWithVowel && nextStartsWithVowel) {
+                                // Hiatus (Vokal-zu-Vokal, z.B. "see each"): feines Gleiten (~25–35ms)
+                                tok.rawPause = isLineBallad ? 32 : 28;
+                            } else if (endsWithConsonant && nextStartsWithConsonant) {
                                 tok.rawPause = isLineBallad ? 26 : 20;
                             } else {
                                 tok.rawPause = isLineBallad ? 16 : 12;
@@ -27103,48 +27124,29 @@ window.setLyricsStyle = function(style) {
         let lrclibRateLimitedUntil = 0;
         let lrclibAutoRetryTimeout = null;
         let lastLyricsFetchTime = 0;
-        // ── PERSISTENTER LYRICS-CACHE (AppStorage) ──────────────────────────────────
-        // Gefundene Synced-Lyrics werden dauerhaft (über Reloads/App-Neustarts hinweg) in AppStorage
-        // gespeichert. Vor jedem Netzwerk-Request wird der Songtext damit sofort in 0ms angezeigt.
+        // ── FLÜCHTIGER LYRICS-CACHE (nur In-Memory) ─────────────────────────────────
+        // Songtexte werden NICHT mehr dauerhaft in AppStorage abgelegt. Für die aktive
+        // Wiedergabe genügt der flüchtige lyricsMemoryCache; bei jedem Start/Songwechsel
+        // werden die Texte frisch aus den APIs bzw. der BUNDLED_LYRICS_DB geladen und
+        // durch den aktuellen Parser geschickt. So können alte/fehlerhafte Texte nie
+        // wieder aus einem persistenten Cache auftauchen.
         const LYRICS_STORE_PREFIX = 'gp_lyrics_cache_';
-        const LYRICS_STORE_MAX_ENTRIES = 60;
-        function readPersistedLyrics(cacheKey) {
+        // Einmalige Bereinigung beim Seitenstart: alle alten persistenten Lyrics-Schlüssel entfernen.
+        if (window.AppStorage && typeof AppStorage.keys === 'function') {
             try {
-                if (!window.AppStorage) return null;
-                const raw = AppStorage.getItem(LYRICS_STORE_PREFIX + cacheKey);
-                if (!raw) return null;
-                const obj = JSON.parse(raw);
-                if (obj && obj.syncedLyrics && !isDummyLyrics(obj.syncedLyrics)) return obj;
+                AppStorage.keys()
+                    .filter(k => k.startsWith(LYRICS_STORE_PREFIX))
+                    .forEach(k => AppStorage.removeItem(k));
             } catch (e) {}
+        }
+        function readPersistedLyrics(cacheKey) {
+            // Persistente Songtexte sind bewusst deaktiviert: Immer frisch laden.
             return null;
         }
         function persistLyrics(cacheKey, synced, plain, provider, writer) {
-            if (!synced || isDummyLyrics(synced) || !window.AppStorage) return;
-            // Bundled-Lyrics werden NICHT persistiert: Sie sind ohnehin sofort offline verfügbar.
-            // So bleibt der Netzwerk-Suchpfad bei jedem Laden aktiv und kann jederzeit auf einen
-            // echten Enhanced-LRC (Tier 2) aufwerten, statt dauerhaft auf Zeilen-Sync zu sitzen.
-            if (provider === 'AboutQA-DB' || provider === 'Bundled-Enhanced-DB') return;
-            const payload = JSON.stringify({
-                syncedLyrics: synced,
-                plainLyrics: plain || null,
-                provider: provider || 'LRCLIB',
-                writer: writer || '',
-                cachedAt: Date.now()
-            });
-            try {
-                AppStorage.setItem(LYRICS_STORE_PREFIX + cacheKey, payload);
-            } catch (e) {
-                // Quota überschritten? Einmal älteste Lyrics-Einträge verwerfen und erneut versuchen.
-                try {
-                    if (typeof AppStorage.keys === 'function') {
-                        AppStorage.keys()
-                            .filter(k => k.indexOf(LYRICS_STORE_PREFIX) === 0)
-                            .slice(0, LYRICS_STORE_MAX_ENTRIES)
-                            .forEach(k => AppStorage.removeItem(k));
-                    }
-                    AppStorage.setItem(LYRICS_STORE_PREFIX + cacheKey, payload);
-                } catch (e2) {}
-            }
+            // Persistente Songtexte sind bewusst deaktiviert: Der flüchtige
+            // lyricsMemoryCache für den aktuellen Song reicht vollkommen aus.
+            return;
         }
         async function fetchExternalLyrics(title, artist, searchDurationMs = 0, force = false) {
             if (!title) return;
@@ -27213,22 +27215,8 @@ window.setLyricsStyle = function(style) {
                     }
                 }
             }
-            // Persistenter Cache (AppStorage): Songtext sofort in 0ms anzeigen – ganz ohne Netzwerk-Request.
-            if (!force) {
-                const persisted = readPersistedLyrics(cacheKey);
-                if (persisted) {
-                    const persistedTier = detectLrcTier(persisted.syncedLyrics, persisted.hasWordSync === true);
-                    lyricsMemoryCache.set(cacheKey, { syncedLyrics: persisted.syncedLyrics, plainLyrics: persisted.plainLyrics || null, provider: persisted.provider || 'LRCLIB', writer: persisted.writer || '', isPlainOnly: false, cachedAt: persisted.cachedAt || Date.now() });
-                    currentLyricsProvider = persisted.provider || 'LRCLIB';
-                    currentLyricsWriter = persisted.writer || '';
-                    parseLrc(persisted.syncedLyrics);
-                    renderLyrics();
-                    syncLyricsUI(true);
-                    // Tier 2 (Studio Word-Sync) -> sofort fertig!
-                    // Tier 1 (Line-Sync) -> sofort anzeigen (0ms), aber Hintergrund-Suche nach Tier 2 (AMLL) läuft weiter!
-                    if (persistedTier >= 2) return;
-                }
-            }
+            // Persistente Songtexte sind deaktiviert: Es gibt keinen AppStorage-Lyrics-Cache mehr.
+            // Jeder Song wird frisch aus den APIs bzw. der BUNDLED_LYRICS_DB geladen.
             const fetchId = ++currentFetchId;
             inFlightLyricsKey = cacheKey;
             const doFetch = async () => {
@@ -27711,26 +27699,41 @@ window.setLyricsStyle = function(style) {
                 const songEndedLocally = playing && totalMs > 0 && (currentMs >= totalMs || expected >= totalMs);
                 const isLegitRepeat = (playing && progress !== null) && (
                     (songEndedLocally && progress < Math.max(25000, totalMs * 0.4)) ||
-                    (expected - progress > 4000)
+                    (previous && typeof previous.progress === 'number' && progress < previous.progress - 3000)
                 );
                 // Wenn der Song am Ende ist, niemals durch verzögerte API-Snapshots zurück in den alten Song springen (außer bei echtem Repeat/Rücksprung)!
-                if (newTrack || playbackChanged || (progress !== null && progress !== previous.progress && !songEndedLocally) || isLegitRepeat) {
+                // Die führende Zeitbasis ist IMMER der lokale Monotonie-Timer; Server-Snapshots
+                // werden nur als Korrekturimpuls verwendet.
+                if (newTrack || playbackChanged || isLegitRepeat) {
                     let target = progress ?? (newTrack ? 0 : expected);
                     if (playing && progress !== null) {
-                        target += dynamicLatency;
+                        const measuredTransit = Math.min(250, Math.max(25, dynamicLatency || 50));
+                        target += measuredTransit + 120; // One-Way-Latenz + Spotify-Cloud-Puffer
                     }
                     target = Math.max(0, totalMs > 0 ? Math.min(target, totalMs) : target);
+                    serverBaseProgress = target;
+                    localStartTime = now;
+                    if (isLegitRepeat) {
+                        currentMs = serverBaseProgress;
+                        isHuntingForNextTrack = false;
+                        hasTriggeredSongEndFetch = false;
+                    }
+                } else if (playing && progress !== null && !songEndedLocally) {
+                    let target = progress;
+                    const measuredTransit = Math.min(250, Math.max(25, dynamicLatency || 50));
+                    target += measuredTransit + 120; // One-Way-Latenz + Spotify-Cloud-Puffer
+                    target = Math.max(0, totalMs > 0 ? Math.min(target, totalMs) : target);
                     const drift = target - expected;
-                    if (newTrack || playbackChanged || isLegitRepeat || Math.abs(drift) > 1200) {
+                    if (drift < 0 && drift > -25000) {
+                        // Spotify-Serververzögerung: niemals rückwärts springen – Timer läuft stetig weiter.
+                    } else if (Math.abs(drift) > 3000) {
+                        // Echter Seek/Skip (>3s): sofortiger Re-Sync auf die neue Position.
                         serverBaseProgress = target;
                         localStartTime = now;
-                        if (isLegitRepeat) {
-                            currentMs = serverBaseProgress;
-                            isHuntingForNextTrack = false;
-                            hasTriggeredSongEndFetch = false;
-                        }
-                    } else if (Math.abs(drift) > 120) {
-                        serverBaseProgress = expected + drift * 0.35;
+                        currentMs = serverBaseProgress;
+                    } else if (drift > 1500) {
+                        // Moderater Vorlauf (1,5–3s): unhörbares Einschwingen mit 5% pro Poll.
+                        serverBaseProgress = expected + drift * 0.05;
                         localStartTime = now;
                     }
                 }
@@ -27990,6 +27993,7 @@ window.setLyricsStyle = function(style) {
             if (!window.isForceMusicSync && currentApiProgress === lastSeenProgressMs && trackIsPlaying === isPlaying && !isNewTrack && currentResolvedArtUrl) {
                 return;
             }
+            const previousApiProgress = lastSeenProgressMs;
             lastSeenProgressMs = currentApiProgress;
             const trackDuration = (data.track && data.track.duration_ms) || data.duration_ms || 0;
             let apiProgress = currentApiProgress;
@@ -28087,16 +28091,9 @@ window.setLyricsStyle = function(style) {
                 extractDominantColor(finalArtUrl);
                 if (isPlaying) showIslandPersistent(trackTitle, rawArtist, finalArtUrl);
                 const currentTrackCacheKey = (trackTitle + '---' + (cleanArtist || '')).toLowerCase().trim();
-                // Persistenter Cache SOFORT beim ersten Start prüfen: nach einem Reload ist der
-                // Memory-Cache leer – der Songtext soll dann trotzdem in 0ms aus AppStorage erscheinen.
+                // Nur der flüchtige Memory-Cache für die aktuelle Wiedergabe wird verwendet.
+                // Persistente Songtexte gibt es bewusst nicht mehr.
                 let cachedLyricsEntry = lyricsMemoryCache.get(currentTrackCacheKey);
-                if (!cachedLyricsEntry) {
-                    const persisted = readPersistedLyrics(currentTrackCacheKey);
-                    if (persisted) {
-                        lyricsMemoryCache.set(currentTrackCacheKey, persisted);
-                        cachedLyricsEntry = persisted;
-                    }
-                }
                 const hasSyncedInCache = cachedLyricsEntry && cachedLyricsEntry.syncedLyrics && !isDummyLyrics(cachedLyricsEntry.syncedLyrics);
                 // Songwechsel-Behandlung (strikte Reihenfolge):
                 // 1. Bei einem echten Songwechsel vorherige Songtexte IMMER restlos leeren und den neuen Text laden/rendern.
@@ -28211,9 +28208,10 @@ window.setLyricsStyle = function(style) {
                         let absDrift = Math.abs(drift);
                         const songEndedLocally = trackIsPlaying && totalMs > 0 && (currentMs >= totalMs || expectedLocalProgress >= totalMs);
                         const newProgressVal = apiProgress + addedDelay;
+                        const apiWentBackward = previousApiProgress >= 0 && newProgressVal < previousApiProgress - 3000;
                         const isLegitRepeatOrSeek = (
                             (songEndedLocally && newProgressVal < Math.max(25000, totalMs * 0.4)) ||
-                            (expectedLocalProgress - newProgressVal > 4000)
+                            apiWentBackward
                         );
                         if (window.isForceMusicSync || isLegitRepeatOrSeek) {
                             serverBaseProgress = newProgressVal;
@@ -28235,12 +28233,11 @@ window.setLyricsStyle = function(style) {
                             // 1. Wenn der Server-Snapshot hinter unserem lokalen Timer liegt (drift < 0),
                             //    darf der Song NIEMALS zurückgezogen werden! Der lokale Monotonie-Timer
                             //    läuft ungestört, stetig und butterweich weiter.
-                            // 2. Große Seeks/Skips durch den Nutzer (>3s) lösen sofortigen Re-Sync aus.
-                            // 3. Kleine Vorauseil-Abweichungen (drift > 200ms) werden dynamisch und weich (25%) aufgeholt.
-                            const isSameSnapshot = (currentApiProgress === lastSeenProgressMs);
+                            // 2. Echte Seeks/Skips (>3s Abweichung) lösen sofortigen Re-Sync aus.
+                            // 3. Moderate Vorauseil-Abweichungen (1,5–3s) werden sanft mit 5% pro Poll eingeschwungen.
                             if (drift < 0 && drift > -25000) {
                                 // Reiner Selbstheilungs-Monotonietimer: Läuft stetig, butterweich und millimetergenau weiter
-                            } else if (absDrift > 15000 || (!isSameSnapshot && absDrift > 3000)) {
+                            } else if (absDrift > 3000) {
                                 serverBaseProgress = apiProgress + addedDelay;
                                 localStartTime = performance.now();
                                 currentMs = serverBaseProgress;
@@ -28410,9 +28407,15 @@ window.setLyricsStyle = function(style) {
                     if (npcData.track.platform_links) merged.track.platform_links = npcData.track.platform_links;
                     if (npcData.track.track_url) merged.track.track_url = npcData.track.track_url;
                     if (npcData.track.canvas_url || npcData.track.canvasUrl) merged.track.canvas_url = npcData.track.canvas_url || npcData.track.canvasUrl;
+                    if (npcData.track.appleMusicId) merged.track.appleMusicId = npcData.track.appleMusicId;
+                    if (npcData.track.spotifyId && !merged.track.spotifyId) merged.track.spotifyId = npcData.track.spotifyId;
+                    if (npcData.track.album && !merged.track.album) merged.track.album = npcData.track.album;
                     if (npcData.track.artwork_url && !npcData.track.artwork_url.includes('npc-api.aikins.xyz/v1/artwork/')) {
                         merged.track.artwork_url = npcData.track.artwork_url;
                     }
+                    // stats.fm liefert kein verlässliches serverElapsed (item.date wird nicht als
+                    // Snapshot-Alter missbraucht) – NPC-Metadaten bleiben rein additiv.
+                    delete merged.serverElapsed;
                     updateMusicUI(merged, latency);
                 } else {
                     // Songwechsel: NPC meldet den neuen Song bereits live, während stats.fm noch nachhängt
