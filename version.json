@@ -1,9 +1,9 @@
 {
-  "version": "24.225.26",
-  "buildTime": "2026-10-28T19:25:00.000Z",
+  "version": "24.225.27",
+  "buildTime": "2026-10-28T19:35:00.000Z",
   "shortNotes": [
-    "Mute/Unmute-Taste im Kinomodus: Musikvideos starten standardmäßig stummgeschaltet ('🔇 Stumm') und können mit 1 Klick entstummt werden",
-    "Intelligente Video-Zeitsynchronisation: YouTube-Videos starten synchron zur Songposition (start=...) und gleichen bei Song-Sprüngen automatisch ab",
-    "Manueller Sync-Knopf: Neuer ⏱️ Sync-Button in der Kinoleiste gleicht das Video sofort auf die aktuelle Sekunde ab"
+    "100% werbefreie Player-Karte: YouTube-Iframes wurden komplett von Cover & Hintergrund der Hauptkarte verbannt",
+    "Natives Spotify-Canvas auf der Karte: Cover und Hintergrund nutzen immer den echten, offiziellen Spotify-Canvas-Stream ohne Werbung",
+    "Musikvideos exklusiv im Kinomodus: Optionale YouTube-Musikvideos laufen nur noch im Kinomodus, niemals auf der Karte"
   ]
 }
