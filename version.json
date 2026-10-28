@@ -1,9 +1,8 @@
 {
-  "version": "24.225.24",
-  "buildTime": "2026-10-28T19:05:00.000Z",
+  "version": "24.225.25",
+  "buildTime": "2026-10-28T19:15:00.000Z",
   "shortNotes": [
-    "Canvas Glow Tuning: Einstellbare Schieberegler für Radius (10px–180px) und Weichzeichner (5px–120px) der Live-Aura auf der Haupt-Musikkarte",
-    "Card Glow Button & Panel: Neuer ✨ Glow-Button auf der Karte klappt ein Tuning-Panel für sofortige Echtzeit-Vorschau aus",
-    "Persistente Synchronisation: Einstellungen werden in AppStorage gesichert und simultan in allen Menüs synchronisiert"
+    "Canvas Cinema Glow: Vollbild-Kinomodus nutzt nun eine dezent erweiternde Aura (14–18% Skalierung, 38px Soft-Blur) exakt hinter der 9:16 Karte",
+    "Solid Cinema Background: Reiner #000000-Hintergrund umrahmt die Karte und lässt die Licht-Aura sanft ins Tiefschwarz auslaufen"
   ]
 }
