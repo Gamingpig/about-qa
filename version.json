@@ -1,9 +1,9 @@
 {
-  "version": "24.225.6",
-  "buildTime": "2026-10-28T16:11:39.902Z",
+  "version": "24.225.7",
+  "buildTime": "2026-10-28T16:28:33.085Z",
   "shortNotes": [
-    "100% Frame-Lock Canvas Sync: 40ms Drift-Kompensation und ausnahmslose Synchronisation aller Canvas-Instanzen",
-    "Amphitheater Cinema Glow: 3.5x Sättigung und 1.4x Helligkeit für raumfüllenden Vollbild-Ambilight-Glow",
-    "Massives Canvas-Update: Über 380 Song- & Track-IDs direkt gebundlet für 0ms Sofort-Wiedergabe"
+    "Instant Songwechsel-Isolierung: Sofortiges restloses Leeren der vorherigen Songtexte bei jedem Titelwechsel",
+    "Race-Condition-Schutz (currentFetchId & Track-Matching): Spät eintreffende Songtexte alter Titel werden niemals mehr für den neuen Song gerendert",
+    "Zuverlässiges Fallback: Zeigt für Songs ohne Lyrics sofort den passenden Hinweistext statt veralteter Textzeilen"
   ]
 }
