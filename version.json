@@ -1,9 +1,9 @@
 {
-  "version": "24.225.4",
-  "buildTime": "2026-10-28T15:41:22.214Z",
+  "version": "24.225.5",
+  "buildTime": "2026-10-28T15:52:01.498Z",
   "shortNotes": [
-    "Liquid Glass Rendering gefixt: Overflow-Freigabe fuer Ambilight- & Canvas-Glow ohne Kantenbeschnitt",
-    "Transparenz-Harmonisierung: Kein milchiger Schleier ueber Canvas-Videos im Liquid Glass Modus",
-    "Glasklare Lyrics: Canvas-Video scheint bei geoeffneten Lyrics im Liquid Glass Modus brillant durch"
+    "Instant Lyrics First-Paint: Songtexte laden in 200ms ohne 15s Wartezeit auf langsame Dritt-APIs",
+    "Autonomer Selbstheilungs-Retry: Niemals wieder manuell auf \"Re-Sync\" klicken müssen",
+    "Progressive Word-Sync Aufwertung im Hintergrund ohne Wiedergabeunterbrechung"
   ]
 }
