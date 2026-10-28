@@ -1,9 +1,10 @@
 {
-  "version": "24.225.27",
-  "buildTime": "2026-10-28T19:35:00.000Z",
+  "version": "24.225.28",
+  "buildTime": "2026-10-28T19:42:00.000Z",
   "shortNotes": [
-    "100% werbefreie Player-Karte: YouTube-Iframes wurden komplett von Cover & Hintergrund der Hauptkarte verbannt",
-    "Natives Spotify-Canvas auf der Karte: Cover und Hintergrund nutzen immer den echten, offiziellen Spotify-Canvas-Stream ohne Werbung",
-    "Musikvideos exklusiv im Kinomodus: Optionale YouTube-Musikvideos laufen nur noch im Kinomodus, niemals auf der Karte"
+    "Kinomodus Werbe-Skip-Fix: Untenliegendes Overlay entfernt, damit der native YouTube 'Werbung überspringen'-Button 100% frei klickbar ist",
+    "Strikter Canvas-Vorrang im Vollbild: Kinomodus öffnet bei vorhandenem Spotify-Canvas immer die 100% werbefreie Original-Ansicht",
+    "Sofort-Ad-Bypass 'Zu Canvas': Neuer Notausgangs-Knopf im Kinomodus überspringt unüberspringbare YouTube-Spots direkt zum Spotify-Canvas",
+    "Zwei-Wege-Umschaltung: Nahtloses Hin- und Herschalten zwischen nativem Spotify-Canvas und YouTube-Musikvideo"
   ]
 }
