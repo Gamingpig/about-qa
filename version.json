@@ -1,9 +1,9 @@
 {
-  "version": "24.224.3",
-  "buildTime": "2026-10-28T09:01:26.133Z",
+  "version": "24.224.4",
+  "buildTime": "2026-10-28T10:54:19.565Z",
   "shortNotes": [
-    "Stille Canvas-Kaskade & bereinigte Mirror-Endpunkte (kein Konsolen-Spam)",
-    "Ausfallsicheres Cover-Rendering: Artwork bleibt jederzeit sichtbar",
-    "Oeffentliche Release Notes getrennt auf v24.222.7 gehalten"
+    "Echtes Spotify Canvas ueber 0ms-Bundled-Database fuer 247365, Love Flow & Unforgettable",
+    "Direkte MP4-Streaming-Anbindung ohne CORS-Blocker oder API-Ausfaelle",
+    "Symmetrische Cover- & Hintergrund-Wiedergabe mit nahtlosem Crossfade"
   ]
 }
