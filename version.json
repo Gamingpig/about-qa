@@ -1,9 +1,10 @@
 {
-  "version": "24.225.12",
-  "buildTime": "2026-10-28T17:29:34.585Z",
+  "version": "24.225.13",
+  "buildTime": "2026-10-28T17:38:59.447Z",
   "shortNotes": [
-    "Zero Canvas Song-Kollision: Blinder Titel-Fallback restlos entfernt, verhindert falsche Videos bei Songs mit gleichem Namen (z.B. 'Hold on Me')",
-    "Strikte Spotify-Track-ID-Prüfung: Canvas-Matching erfolgt ausschließlich über verifizierte 22-Zeichen-Track-IDs",
-    "Bereinigte Canvas-Datenbank: 129 uneindeutige Titel-Duplikate entfernt, 260 verifizierte IDs für fehlertreue Wiedergabe aktiv"
+    "Keine 'Video is unavailable' Fehler mehr: listType=search restlos eliminiert, Musikvideos laden ausschließlich mit verifizierter Video-ID",
+    "Feste Multi-API & CORS-Proxy-Kaskade für Canvas: Manueller Proxy-Dialog entfernt, 5 APIs fest im Code verankert",
+    "Integrierte Top-Track Musikvideo-Datenbank: 0ms Wiedergabe für Marcus & Martinus (Elektrisk, Unforgettable), ILKO & Adele",
+    "Lückenloser Cinema-Fallback: Direkter 'Auf YouTube ansehen' Link und 'Zu Canvas wechseln' Button im Kino-Modus"
   ]
 }
