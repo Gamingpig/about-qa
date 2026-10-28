@@ -1,9 +1,9 @@
 {
-  "version": "24.225.8",
-  "buildTime": "2026-10-28T16:37:17.596Z",
+  "version": "24.225.9",
+  "buildTime": "2026-10-28T16:41:21.102Z",
   "shortNotes": [
-    "1000% Frame-Lock Video-Pair Engine: Phase-Locked Loop (PLL) und requestVideoFrameCallback koppeln Vordergrund- und Glow-Videos ohne Latenz",
-    "Fullscreen & Main-Card Glow-Lock: Glow-Videos spiegeln jedes Frame des Vordergrundvideos in Sub-Frame-Präzision (<12ms)",
-    "Automatischer Visibility- & Fokus-Resync: Nach Tab-Wechsel, Minimieren oder Sperrbildschirm sofortige frame-synchrone Fortsetzung"
+    "Spotify Canvas Proxy Priorisierung: Eigene Canvas-Resolver (z.B. Vercel) werden als primäre Quelle für 100% Canvas-Abdeckung weltweit abgefragt",
+    "Settings-Integration: Neuer 'Canvas Proxy'-Button in den Einstellungen zum schnellen Hinterlegen des eigenen Open-Source-Endpunkts",
+    "Universal Canvas Support: Vorbereitung für weltweiten Live-Canvas-Abruf für jeden Spotify-Song"
   ]
 }
