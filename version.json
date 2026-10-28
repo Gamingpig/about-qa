@@ -1,9 +1,9 @@
 {
-  "version": "24.225.19",
+  "version": "24.225.20",
   "buildTime": "2026-10-28T17:58:51.692Z",
   "shortNotes": [
-    "Musikvideo-Hintergrund & Cover: Verifizierte Musikvideos werden bei aktiviertem Schalter automatisch nahtlos auf dem Cover und im Hintergrund der Karte abgespielt",
-    "Strikte Prioritäts-Hierarchie: Canvas AUS sperrt alles; Videos AN priorisiert Musikvideos auf Cover & Hintergrund mit automatischem Canvas-Fallback",
-    "GPU-optimiertes Looping: Lautloses, flüssiges Ambient-Video-Embedding mit sofortiger Entlastung der Canvas-Decoder"
+    "Kino-Hintergrund-Glow: Weit gefächerte 65px-Ambilight-Aura mit radialem Vignette-Masking statt scharfer Videodopplung",
+    "Card-Glow Wiederherstellung: Vergrößerte Bleed-Insets (-35px / -65px) und 48px Blur für sichtbare Lichtabstrahlung",
+    "Klarstellung Canvas vs. YouTube-Musikvideos"
   ]
 }
