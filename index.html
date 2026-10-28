@@ -7,12 +7,12 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
-    [LYRICS / MULTI-PROVIDER WORD-SYNC] Release v24.225.18 · 2026-10-16: Apple-Music-TTML-Wort-Sync via AMLL-API, NetEase-YRC + LRCLIB-Kaskade, 0ms-Bundle für "Jente i fra by'n", "You Make Me" & "Make You Believe In Love", autonomer Re-Sync-Fix, Smart-Word-Cadence, Instrumental-Bühne, Lade-Sound restlos entfernt
+    [LYRICS / MULTI-PROVIDER WORD-SYNC] Release v24.225.19 · 2026-10-16: Apple-Music-TTML-Wort-Sync via AMLL-API, NetEase-YRC + LRCLIB-Kaskade, 0ms-Bundle für "Jente i fra by'n", "You Make Me" & "Make You Believe In Love", autonomer Re-Sync-Fix, Smart-Word-Cadence, Instrumental-Bühne, Lade-Sound restlos entfernt
       - Neue Multi-Provider-Wort-Sync-Kaskade: fetchExternalLyrics fragt jetzt zusätzlich die freie Apple-Music-TTML-Datenbank (api.amll.dev) ab.
         Converter formatTtmlTimestamp/convertTtmlToEnhancedLrc übersetzt Apple-Music-TTML in Enhanced-LRC ([mm:ss.xx] <mm:ss.xx>Wort). Provider 'AMLL-AppleMusic' (Tier 2) schlägt NetEase-YRC (30) und LRCLIB (10); Bonus 40.
         Apple-Music-ID wird in updateMusicUI über extractAppleMusicIdFromLinks aus platform_links/track_url gewonnen (currentAppleMusicId) und direkt abgefragt; sonst Suche über Titel+Artist.
       - "Jente i fra by'n" (Marcus & Martinus): neuer LRC_JENTE_I_FRA_BYN-Eintrag mit 4 Schlüssel-Varianten (Apostroph/Komma/Feature) in BUNDLED_LYRICS_DB → 0ms-First-Paint ohne Netzwerk.
-      - Version v24.225.18 (PUBLIC_CHANGELOG de/en, Header/Footer/Settings-Labels, release.html, version.json).
+      - Version v24.225.19 (PUBLIC_CHANGELOG de/en, Header/Footer/Settings-Labels, release.html, version.json).
     [LYRICS / TIMING / COVER / QA PIN GATE] Release v24.222.7: Strenge Synced-Lyrics-Priorisierung, Beseitigung von Songende-Zeitsprüngen, Original-API-Cover im Haupt-Player, Präziser Re-Sync mit Zeitabgleich & Reload-gesichertes PIN-Gate
       - Strikte Priorisierung synchronisierter Lyrics:
         Symptom: Bei Songwechsel wurden oft ungesyncte Plain-Lyrics geladen, obwohl synchronisierte in der Datenbank existierten.
@@ -3267,7 +3267,7 @@
     <script src="./js/core/storage.e856be99df567fd2.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.225.18</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.225.19</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3292,7 +3292,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.225.18 · 2026-10-16';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.225.19 · 2026-10-16';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -5471,7 +5471,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             border: none !important;
             box-shadow: none !important;
         }
-        /* FIX v24.210.0 & v24.225.18: Bei normalen Lyrics-Animationen (ohne Canvas)
+        /* FIX v24.210.0 & v24.225.19: Bei normalen Lyrics-Animationen (ohne Canvas)
            sorgt ein deckender, eleganter Tiefschwarz-Glas-Hintergrund für gestochen
            scharfe Lesbarkeit aller Zeilen. Wenn Canvas aktiv ist, bleibt es glasklar transparent. */
         body.liquid-glass-active #main-music-card:not(.canvas-active).lyrics-open #lyrics-overlay:not(.apple-ambient-active) {
@@ -5550,7 +5550,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         body.low-end #canvas-glow-video {
             display: none !important;
         }
-        /* Liquid Glass Glow- & Overflow-Reparatur (v24.225.18) */
+        /* Liquid Glass Glow- & Overflow-Reparatur (v24.225.19) */
         body.liquid-glass-active #main-music-card:not(.lyrics-open) {
             overflow: visible !important;
         }
@@ -8903,7 +8903,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.18</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.19</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -8940,7 +8940,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.18 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.18 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.19 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.19 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9172,7 +9172,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <div class="flex items-center gap-2 flex-wrap">
                         <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
                         <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
-                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.225.18</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.225.19</span>
                     </div>
                     <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
                 </div>
@@ -9196,7 +9196,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.225.18</span>
+                <span>🧪 QA TESTUMGEBUNG v24.225.19</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -9473,6 +9473,8 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="absolute inset-0 rounded-[inherit] overflow-hidden z-0 pointer-events-none">
                             <div id="ambient-bg"></div>
                             <video id="canvas-video" class="absolute inset-0 w-full h-full object-cover z-[1] opacity-0 transition-opacity duration-1000" autoplay loop muted playsinline></video>
+                            <!-- FIX v24.225.19: Musikvideo Hintergrund-Ebene direkt hinter der Karte -->
+                            <iframe id="mv-bg-iframe" class="absolute inset-[-20%] w-[140%] h-[140%] border-0 z-[1] opacity-0 pointer-events-none transition-opacity duration-1000 object-cover scale-125" allow="autoplay; encrypted-media"></iframe>
                             <div class="absolute inset-0 bg-black/10 z-[2]"></div>
                         </div>
                         <div id="ambilight-glow"></div>
@@ -9679,6 +9681,8 @@ html.gp-android:not(.dark) #ui-controls {
                             <img id="artwork" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" alt="" aria-label="Album Artwork" class="w-full h-full object-cover relative z-0 transition-opacity duration-500" decoding="async" fetchpriority="high">
                             <!-- Echte Spotify Canvas Video-Fläche direkt auf dem Cover (wie in Spotify Mobile/Desktop) -->
                             <video id="canvas-media-video" class="absolute inset-0 w-full h-full object-cover z-10 opacity-0 transition-opacity duration-700 pointer-events-none" autoplay loop muted playsinline disablepictureinpicture></video>
+                            <!-- FIX v24.225.19: Musikvideo Cover-Ebene direkt auf dem Cover-Fenster -->
+                            <iframe id="media-video-iframe" class="absolute inset-0 w-full h-full border-0 z-10 opacity-0 pointer-events-none transition-opacity duration-700 scale-150" allow="autoplay; encrypted-media"></iframe>
                             <div id="offline-icon" class="absolute text-2xl xxs:text-4xl sm:text-6xl z-20" aria-hidden="true">🌙</div>
                         </div>
                         <div id="track-info-container" class="relative z-10 mb-2 xxs:mb-4 sm:mb-6 text-left px-1 sm:px-2 w-full shrink-0">
@@ -10254,7 +10258,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.225.18</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.225.19</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -10501,7 +10505,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.225.18</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.225.19</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -10512,7 +10516,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.225.18</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.225.19</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -10555,7 +10559,7 @@ html.gp-android:not(.dark) #ui-controls {
         </div>
     </div>
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.225.18</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.225.19</p>
 </div>
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
@@ -10811,7 +10815,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <a href="checklist.html" target="_blank" class="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500 text-teal-300 hover:text-slate-950 font-bold text-[11px] transition-all border border-teal-500/30 inline-flex items-center gap-1">
                         <span>📋</span> <span>QA Checkliste</span>
                     </a>
-                    <span class="text-pink-400 font-mono">v24.225.18</span>
+                    <span class="text-pink-400 font-mono">v24.225.19</span>
                 </div>
             </div>
         </div>
@@ -18905,7 +18909,7 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
-        { version: "v24.225.18", date: "16. Oktober 2026", type: "performance", items: {
+        { version: "v24.225.19", date: "16. Oktober 2026", type: "performance", items: {
             de: [
                 "🚀 Beseitigung der rekursiven Canvas-Seek-Schleife: Der 'seeked'-Event-Listener auf dem Master-Video wurde restlos eliminiert – verhindert kontinuierliche Hardware-Decoder-Flushes und Ruckler",
                 "🎯 Master-Selbstseek-Schutz: Der Master-Video-Stream (canvasVideo) wird niemals mehr in die Slave-Seek-Liste aufgenommen; nur noch echte Slaves gleichen sanft ab",
@@ -18919,7 +18923,7 @@ let shareCardLoading;
                 "🛡️ Eliminated Micro-PlaybackRate Jitter: Preserved native GPU AVSync clocks by removing rapid 0.98x/1.02x clock shifts"
             ]
         }},
-        { version: "v24.225.18", date: "16. Oktober 2026", type: "feature", items: {
+        { version: "v24.225.19", date: "16. Oktober 2026", type: "feature", items: {
             de: [
                 "🎬 Luca Casella - Tomorrow! Canvas integriert: Echte, dynamische 9:16 Canvas-Wiedergabe für den neuen Track (5M2hG1M5I7YsrC9PKEJHHC) direkt in der Offline-Datenbank",
                 "🎥 Marcus & Martinus - Elektrisk lückenlos verifiziert: Offizielle YouTube-Musikvideo-ID (ri5_fzndMBg) und Canvas-Stream (4WW5jLs5WXLE5YoRBoju0p) nahtlos hinterlegt",
@@ -18933,7 +18937,7 @@ let shareCardLoading;
                 "🛡️ Card Canvas Preservation: Music video mode never suppresses active Canvas playback on the main music card"
             ]
         }},
-        { version: "v24.225.18", date: "16. Oktober 2026", type: "fix", items: {
+        { version: "v24.225.19", date: "16. Oktober 2026", type: "fix", items: {
             de: [
                 "🎥 Beseitigung von 'Video is unavailable' bei Musikvideos: YouTube listType=search restlos eliminiert – Musikvideos laden nur noch mit verifizierter Video-ID",
                 "🎬 Feste Multi-API & CORS-Proxy-Kaskade für Canvas: Manueller Proxy-Einstellungsdialog restlos entfernt; 5 Hochgeschwindigkeits-APIs fest und autonom im Code verankert",
@@ -18947,7 +18951,7 @@ let shareCardLoading;
                 "🛡️ Seamless Cinema Fallback: Direct 'Watch on YouTube ↗' and 'Switch to Canvas' buttons inside fullscreen cinema modal"
             ]
         }},
-        { version: "v24.225.18", date: "16. Oktober 2026", type: "fix", items: {
+        { version: "v24.225.19", date: "16. Oktober 2026", type: "fix", items: {
             de: [
                 "🛡️ Beseitigung von Song-Kollisionen bei Canvas: Blinder Titel-Fallback restlos entfernt – verhindert zuverlässig, dass gleichnamige Songs anderer Künstler (z.B. 'Hold on Me') falsche Canvas-Videos laden",
                 "🎯 Strikte Spotify-Track-ID-Validierung: Offline-Canvas-Matching erfolgt ausschließlich über eindeutige 22-Zeichen-Track-IDs (sowohl Original-Case als auch Lowercase)",
@@ -18959,7 +18963,7 @@ let shareCardLoading;
                 "✨ Cleaned Canvas Database: Pruned 129 ambiguous title duplicates, preserving 260 verified track IDs for 100% collision-free playback"
             ]
         }},
-        { version: "v24.225.18", date: "16. Oktober 2026", type: "performance", items: {
+        { version: "v24.225.19", date: "16. Oktober 2026", type: "performance", items: {
             de: [
                 "⚡ GPU 100% Thermal & Performance Fix: Reduzierung der Blur-Radien um 80%, Eliminierung von 300ms Video-Seek-Loops und Pausierung von Hintergrund-Blobs während der Wiedergabe",
                 "😴 Dormant Video Hibernation: Lyrics- und Glow-Videos schlafen bei Nichtbenutzung ein und sparen 75% der Hardware-Videodekoder und VRAM-Bandbreite",
@@ -18973,7 +18977,7 @@ let shareCardLoading;
                 "🛡️ Background Blob Relief: Eliminates continuous backdrop-filter recalculations during music playback"
             ]
         }},
-        { version: "v24.225.18", date: "16. Oktober 2026", type: "feature", items: {
+        { version: "v24.225.19", date: "16. Oktober 2026", type: "feature", items: {
             de: [
                 "🎬 1000% Exhaustive Canvas Purge: Zentrales clearAllCanvasVideos() leert beim Songwechsel und im Leerlauf alle 6 Video-Elemente, setzt Hardware-Decoder per .load() zurück und eliminiert Ghost-Frames restlos",
                 "🎥 Intelligenter Musikvideo-Modus: Bei aktivierter Option und verfügbarem YouTube-Musikvideo wird das offizielle Video in Kino-Ansicht mit Ambilight-Glow priorisiert",
@@ -18989,7 +18993,7 @@ let shareCardLoading;
                 "✨ Widescreen Cinema & Dual-Mode Modal: Native 9:16 vertical view for Spotify Canvas and 16:9 widescreen with glowing aura for official music videos"
             ]
         }},
-        { version: "v24.225.18", date: "16. Oktober 2026", type: "feature", items: {
+        { version: "v24.225.19", date: "16. Oktober 2026", type: "feature", items: {
             de: [
                 "?? Apple Music TTML Integration: Direkter Zugriff auf die weltweite Apple-Music-Songtext-Datenbank (AMLL API) f?r echtes, millimetergenaues Silben- und Wort-Timing im Karaoke-Modus",
                 "?? Echtes Wort-Synchron-Erlebnis (Enhanced LRC): L?ckenloser Converter ?bersetzt Apple-Music-TTML und Spotify-Syllables in Echtzeit in standardisiertes Enhanced LRC mit leuchtendem Fuchsia-Badge",
@@ -23836,7 +23840,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
         };
         let currentTrackTitle = "";
         let currentRawArtist = "";
-        let currentAppleMusicId = ""; // v24.225.18: Apple-Music-Song-ID für den AMLL-Wort-Sync
+        let currentAppleMusicId = ""; // v24.225.19: Apple-Music-Song-ID für den AMLL-Wort-Sync
         let currentSpotifyTrackId = ""; // v24.223.1: Spotify-Track-ID für den direkten AMLL-Wort-Sync
         // Anti-Ping-Pong Tracking: speichert den vorherigen, beendeten Track
         let previousTrackTitle = "";
@@ -25889,6 +25893,9 @@ window.setLyricsStyle = function(style) {
             if (typeof updateMediaButtonState === 'function') {
                 updateMediaButtonState();
             }
+            if (typeof applyActiveMediaMode === 'function') {
+                applyActiveMediaMode();
+            }
         };
 
         function getActiveMediaMode() {
@@ -25899,10 +25906,89 @@ window.setLyricsStyle = function(style) {
             if (currentCanvasUrl) {
                 return 'canvas';
             }
-            if (musicVideosEnabled && currentMusicVideoUrl) {
-                return 'musicvideo';
-            }
             return 'artwork';
+        }
+
+        // FIX v24.225.19: Musikvideos automatisch im Hintergrund & auf dem Cover anzeigen
+        function applyActiveMediaMode() {
+            const mode = getActiveMediaMode();
+            const isPlaying = trackIsPlaying || (typeof isMusicPlaying !== 'undefined' && isMusicPlaying);
+            const mvBg = document.getElementById('mv-bg-iframe');
+            const mvCover = document.getElementById('media-video-iframe');
+            const canvasMediaVideo = document.getElementById('canvas-media-video');
+            const canvasGlowVideo = document.getElementById('canvas-glow-video');
+
+            if (mode === 'musicvideo' && currentMusicVideoUrl && isPlaying) {
+                const m = currentMusicVideoUrl.match(/\/embed\/([a-zA-Z0-9_-]{11})/);
+                const vidId = m ? m[1] : null;
+                if (vidId) {
+                    const ambientUrl = `https://www.youtube-nocookie.com/embed/${vidId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${vidId}&playsinline=1&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1`;
+                    if (mvCover && mvCover.src !== ambientUrl) {
+                        mvCover.src = ambientUrl;
+                    }
+                    if (mvBg && mvBg.src !== ambientUrl) {
+                        mvBg.src = ambientUrl;
+                    }
+                    if (mvCover) {
+                        mvCover.classList.remove('opacity-0');
+                        mvCover.classList.add('opacity-100');
+                    }
+                    if (mvBg) {
+                        mvBg.classList.remove('opacity-0');
+                        mvBg.classList.add('opacity-100');
+                    }
+                }
+                // Pause canvas videos to save GPU decoding
+                if (canvasVideo) {
+                    canvasVideo.classList.add('opacity-0');
+                    canvasVideo.classList.remove('opacity-100');
+                    canvasVideo.pause();
+                }
+                if (canvasMediaVideo) {
+                    canvasMediaVideo.classList.add('opacity-0');
+                    canvasMediaVideo.classList.remove('opacity-100');
+                    canvasMediaVideo.pause();
+                }
+                if (canvasGlowVideo) {
+                    canvasGlowVideo.classList.add('opacity-0');
+                    canvasGlowVideo.classList.remove('opacity-100');
+                    canvasGlowVideo.pause();
+                }
+                if (mainMusicCard) {
+                    mainMusicCard.classList.add('canvas-active');
+                }
+            } else if (mode === 'canvas' && currentCanvasUrl && isPlaying) {
+                // Clear & hide music video iframes
+                if (mvCover) {
+                    mvCover.src = 'about:blank';
+                    mvCover.classList.add('opacity-0');
+                    mvCover.classList.remove('opacity-100');
+                }
+                if (mvBg) {
+                    mvBg.src = 'about:blank';
+                    mvBg.classList.add('opacity-0');
+                    mvBg.classList.remove('opacity-100');
+                }
+                if (mainMusicCard) {
+                    mainMusicCard.classList.add('canvas-active');
+                }
+            } else {
+                // Artwork or paused
+                if (mvCover) {
+                    mvCover.src = 'about:blank';
+                    mvCover.classList.add('opacity-0');
+                    mvCover.classList.remove('opacity-100');
+                }
+                if (mvBg) {
+                    mvBg.src = 'about:blank';
+                    mvBg.classList.add('opacity-0');
+                    mvBg.classList.remove('opacity-100');
+                }
+                if (mainMusicCard) {
+                    mainMusicCard.classList.remove('canvas-active');
+                }
+            }
+            updateMediaButtonState();
         }
 
         function updateMediaButtonState() {
@@ -25969,6 +26055,18 @@ window.setLyricsStyle = function(style) {
                     cArt.classList.add('opacity-0');
                     cArt.classList.remove('opacity-60');
                 } catch (_) {}
+            }
+            const mvCoverClean = document.getElementById('media-video-iframe');
+            if (mvCoverClean) {
+                mvCoverClean.src = 'about:blank';
+                mvCoverClean.classList.add('opacity-0');
+                mvCoverClean.classList.remove('opacity-100');
+            }
+            const mvBgClean = document.getElementById('mv-bg-iframe');
+            if (mvBgClean) {
+                mvBgClean.src = 'about:blank';
+                mvBgClean.classList.add('opacity-0');
+                mvBgClean.classList.remove('opacity-100');
             }
 
             const mvIframe = document.getElementById('cinema-mv-iframe');
@@ -26325,7 +26423,7 @@ window.setLyricsStyle = function(style) {
                 lockVideoPair(canvasMediaVideo, canvasGlowVideo);
             }
 
-            // 4. Canvas Video im Lyrics-Overlay (FIX v24.225.18: Nur abspielen wenn Lyrics tatsächlich offen sind!)
+            // 4. Canvas Video im Lyrics-Overlay (FIX v24.225.19: Nur abspielen wenn Lyrics tatsächlich offen sind!)
             const isLyricsActive = mainMusicCard && mainMusicCard.classList.contains('lyrics-open');
             const lyricsCanvasVideo = document.getElementById('lyrics-canvas-video');
             const lyricsCanvasTint = document.getElementById('lyrics-canvas-tint');
@@ -26354,7 +26452,7 @@ window.setLyricsStyle = function(style) {
                 }
             }
 
-            // 5. FIX v24.225.18: Cinema Modal Canvas & Glow (falls geöffnet)
+            // 5. FIX v24.225.19: Cinema Modal Canvas & Glow (falls geöffnet)
             const cinemaModal = document.getElementById('canvas-cinema-modal');
             const isCinemaOpen = cinemaModal && cinemaModal.classList.contains('opacity-100');
             const cVidEl = document.getElementById('canvas-cinema-video');
@@ -26410,6 +26508,9 @@ window.setLyricsStyle = function(style) {
 
             updateMediaButtonState();
             updateCanvasButtonUI();
+            if (typeof applyActiveMediaMode === 'function') {
+                applyActiveMediaMode();
+            }
         }
         async function resolveSpotifyCanvas(spotifyId, trackTitle, rawArtist) {
             let cleanId = (typeof spotifyId === 'string' ? spotifyId : '').replace(/^spotify:track:/, '').trim();
@@ -26677,7 +26778,7 @@ window.setLyricsStyle = function(style) {
                 }
             }
 
-            // PERF-FIX v24.225.18: Dashboard-Videos im Hintergrund schlafen legen solange Cinema aktiv ist
+            // PERF-FIX v24.225.19: Dashboard-Videos im Hintergrund schlafen legen solange Cinema aktiv ist
             if (canvasVideo && !canvasVideo.paused) canvasVideo.pause();
             const cmvBg = document.getElementById('canvas-media-video');
             if (cmvBg && !cmvBg.paused) cmvBg.pause();
@@ -26713,7 +26814,7 @@ window.setLyricsStyle = function(style) {
                 cGlow.classList.add('opacity-0');
                 cGlow.classList.remove('opacity-100');
             }
-            // PERF-FIX v24.225.18: Dashboard-Videos wieder aufwecken wenn Cinema geschlossen wird
+            // PERF-FIX v24.225.19: Dashboard-Videos wieder aufwecken wenn Cinema geschlossen wird
             const isPlayingNow = (typeof trackIsPlaying !== 'undefined' ? trackIsPlaying : (typeof isMusicPlaying !== 'undefined' && isMusicPlaying));
             if (canvasEnabled && isPlayingNow && currentCanvasUrl) {
                 if (canvasVideo && canvasVideo.paused) canvasVideo.play().catch(()=>{});
@@ -29194,7 +29295,7 @@ window.setLyricsStyle = function(style) {
                     mainMusicCard.classList.add('offline');
                     mainMusicCard.classList.remove('playing', 'paused', 'canvas-active');
                 }
-                // FIX v24.225.18: Alle Canvas- & Video-Instanzen im Ruhemodus restlos stoppen und freigeben!
+                // FIX v24.225.19: Alle Canvas- & Video-Instanzen im Ruhemodus restlos stoppen und freigeben!
                 if (typeof clearAllCanvasVideos === 'function') {
                     clearAllCanvasVideos();
                 }
@@ -29251,7 +29352,7 @@ window.setLyricsStyle = function(style) {
             const isSameAsCurrent = !isFirstLoad && isSameSongTrack(trackTitle, cleanArtist, incomingSpotifyId, currentTrackTitle, currentRawArtist, currentSpotifyTrackId);
             const isNewTrack = isFirstLoad || !isSameAsCurrent;
             if (isNewTrack) {
-                // FIX v24.225.18: Bei JEDEM Songwechsel sofort alle vorherigen Lyrics-Zustände,
+                // FIX v24.225.19: Bei JEDEM Songwechsel sofort alle vorherigen Lyrics-Zustände,
                 // laufenden Hintergrund-Fetches und Visuals restlos invalidieren und leeren!
                 currentFetchId++;
                 inFlightLyricsKey = null;
@@ -29266,7 +29367,7 @@ window.setLyricsStyle = function(style) {
                 if (syncBadge) syncBadge.style.display = 'none';
                 renderLyricsLoading(trackTitle, cleanArtist);
 
-                // FIX v24.225.18: Bei JEDEM Songwechsel sofort alle vorherigen Canvas- & Video-Instanzen restlos bereinigen!
+                // FIX v24.225.19: Bei JEDEM Songwechsel sofort alle vorherigen Canvas- & Video-Instanzen restlos bereinigen!
                 if (typeof clearAllCanvasVideos === 'function') {
                     clearAllCanvasVideos();
                 }
@@ -29491,6 +29592,9 @@ window.setLyricsStyle = function(style) {
                         if (mvUrl && isSameSongTrack(trackTitle, rawArtist, incomingSpotifyId, currentTrackTitle, currentRawArtist, currentSpotifyTrackId)) {
                             currentMusicVideoUrl = mvUrl;
                             updateMediaButtonState();
+                            if (typeof applyActiveMediaMode === 'function') {
+                                applyActiveMediaMode();
+                            }
                         }
                     }).catch(() => {});
                 }
@@ -29632,7 +29736,7 @@ window.setLyricsStyle = function(style) {
                 // Nur wenn nicht im Cache vorhanden, nicht kürzlich fehlgeschlagen/rate-limited und kein laufender Request aktiv ist
                 const hasNegativeCache = cachedLyricsEntry && (cachedLyricsEntry.provider === 'none' || cachedLyricsEntry.noLyricsFound === true) && (Date.now() - (cachedLyricsEntry.cachedAt || 0) < 60000);
                 const hasLyricsInCache = hasSyncedInCache || (cachedLyricsEntry && cachedLyricsEntry.plainLyrics && !isDummyLyrics(cachedLyricsEntry.plainLyrics));
-                // AUTOMATISCHER FETCH & AUTONOMER HEILUNGS-RETRY (v24.225.18):
+                // AUTOMATISCHER FETCH & AUTONOMER HEILUNGS-RETRY (v24.225.19):
                 // 1. Am Anfang jedes neuen Songs sofort laden.
                 // 2. Falls während des Abspielens noch kein Text vorliegt (z.B. durch vorübergehende LTE-Latenz),
                 //    nach 10s autonom erneut versuchen – der Nutzer muss NIEMALS manuell "Re-Sync" klicken!
@@ -29730,7 +29834,7 @@ window.setLyricsStyle = function(style) {
                             currentMs = totalMs;
                             isHuntingForNextTrack = true;
                         } else {
-                            // FIX v24.225.18: Bidirektionale, selbstheilende Synchronisation für Echo Dot, Lautsprecher & Headsets
+                            // FIX v24.225.19: Bidirektionale, selbstheilende Synchronisation für Echo Dot, Lautsprecher & Headsets
                             // 1. Echte Seeks, Skips oder deutliche Abweichungen (>2,5s) in BEIDE Richtungen sofort synchronisieren
                             if (absDrift > 2500) {
                                 serverBaseProgress = apiProgress + addedDelay;
@@ -29803,7 +29907,7 @@ window.setLyricsStyle = function(style) {
             const spotifyId = track.externalIds && Array.isArray(track.externalIds.spotify) ? track.externalIds.spotify[0] : null;
             const appleMusicId = track.externalIds && Array.isArray(track.externalIds.appleMusic) ? track.externalIds.appleMusic[0] : null;
 
-            // FIX v24.225.18: Millimetergenaue Echo-Dot- & Spotify-Synchronisation ohne Vorauseilen
+            // FIX v24.225.19: Millimetergenaue Echo-Dot- & Spotify-Synchronisation ohne Vorauseilen
             // item.progressMs ist bereits der exakte Spotify-Wiedergabefortschritt.
             // item.date ist der Stream-Startzeitpunkt und darf niemals addiert werden!
             const pureProgressMs = Number(item.progressMs) || 0;
@@ -31158,7 +31262,7 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.225.18</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.225.19</span>
         </a>
     </div>
 
@@ -31167,9 +31271,9 @@ window.setLyricsStyle = function(style) {
     <!-- 1. SPOTIFY CANVAS MODUS (9:16 Hochformat) -->
     <video id="canvas-cinema-glow-video" class="absolute w-[520px] sm:w-[700px] h-[96vh] max-h-[940px] aspect-[9/16] rounded-3xl opacity-95 pointer-events-none object-cover transition-opacity duration-700 scale-125 sm:scale-140 z-0" style="filter: blur(14px) saturate(2.2) brightness(1.2); contain: strict; will-change: transform;" autoplay loop muted playsinline></video>
     <div id="canvas-cinema-card" class="relative w-full max-w-[340px] sm:max-w-[400px] max-h-[85vh] aspect-[9/16] rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.9)] border border-white/20 flex items-center justify-center bg-black z-10">
-        <!-- FIX v24.225.18: Artwork Backdrop verhindert schwarzen Kasten beim Laden/Puffern -->
+        <!-- FIX v24.225.19: Artwork Backdrop verhindert schwarzen Kasten beim Laden/Puffern -->
         <img id="canvas-cinema-artwork" class="absolute inset-0 w-full h-full object-cover z-0 filter blur-sm scale-105 opacity-60 transition-opacity duration-500" alt="" aria-hidden="true">
-        <!-- FIX v24.225.18: Canvas Video mit transition-opacity und z-10 -->
+        <!-- FIX v24.225.19: Canvas Video mit transition-opacity und z-10 -->
         <video id="canvas-cinema-video" class="relative z-10 w-full h-full object-cover opacity-0 transition-opacity duration-500" autoplay loop muted playsinline disablepictureinpicture></video>
         <!-- Floating Close Button -->
         <button onclick="closeCanvasCinema()" class="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 text-white/90 hover:text-white border border-white/20 flex items-center justify-center transition-all shadow-lg active:scale-95" title="Schließen (Esc)">

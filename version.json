@@ -1,9 +1,9 @@
 {
-  "version": "24.225.18",
+  "version": "24.225.19",
   "buildTime": "2026-10-28T17:58:51.692Z",
   "shortNotes": [
-    "Mini-Player Dashboard-Header: 'Klicken zum Schließen' bei laufender Musik entfernt, voller Platz für lange Künstlernamen",
-    "Konsistente Künstler-Darstellung im oberen Mini-Toggle während Wiedergabe",
-    "GPU-Thermal & Load-Optimierungen aus v24.225.17 aktiv"
+    "Musikvideo-Hintergrund & Cover: Verifizierte Musikvideos werden bei aktiviertem Schalter automatisch nahtlos auf dem Cover und im Hintergrund der Karte abgespielt",
+    "Strikte Prioritäts-Hierarchie: Canvas AUS sperrt alles; Videos AN priorisiert Musikvideos auf Cover & Hintergrund mit automatischem Canvas-Fallback",
+    "GPU-optimiertes Looping: Lautloses, flüssiges Ambient-Video-Embedding mit sofortiger Entlastung der Canvas-Decoder"
   ]
 }
