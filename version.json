@@ -1,9 +1,9 @@
 {
-  "version": "24.225.9",
-  "buildTime": "2026-10-28T16:41:21.102Z",
+  "version": "24.225.10",
+  "buildTime": "2026-10-28T17:02:15.625Z",
   "shortNotes": [
-    "Spotify Canvas Proxy Priorisierung: Eigene Canvas-Resolver (z.B. Vercel) werden als primäre Quelle für 100% Canvas-Abdeckung weltweit abgefragt",
-    "Settings-Integration: Neuer 'Canvas Proxy'-Button in den Einstellungen zum schnellen Hinterlegen des eigenen Open-Source-Endpunkts",
-    "Universal Canvas Support: Vorbereitung für weltweiten Live-Canvas-Abruf für jeden Spotify-Song"
+    "1000% Canvas Purge: Vollständiges Leeren aller 6 Video-Instanzen beim Songwechsel & im Leerlauf per clearAllCanvasVideos()",
+    "Intelligenter Musikvideo-Modus: Priorisierung offizieller Musikvideos bei aktiviertem Schalter mit lückenlosem Spotify-Canvas-Fallback",
+    "Strikte Prioritäts-Hierarchie: Canvas AUS sperrt Musikvideos restlos; Widescreen Cinema & 9:16 Canvas Vollbild-Erlebnis"
   ]
 }
