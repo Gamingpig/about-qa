@@ -1,9 +1,9 @@
 {
-  "version": "24.225.3",
-  "buildTime": "2026-10-28T15:32:39.807Z",
+  "version": "24.225.4",
+  "buildTime": "2026-10-28T15:41:22.214Z",
   "shortNotes": [
-    "Mini-Player State-Fix: Bei geoeffnetem Dashboard im Ruhemodus kein widerspruechliches \"Klicken zum Oeffnen\" mehr",
-    "Echo-Dot- & Spotify-Time-Sync gefixt: Beseitigung des Vorauseilens der Lyrics",
-    "Bidirektionale sanfte Drift-Kompensation fuer Bluetooth- & WLAN-Lautsprecher"
+    "Liquid Glass Rendering gefixt: Overflow-Freigabe fuer Ambilight- & Canvas-Glow ohne Kantenbeschnitt",
+    "Transparenz-Harmonisierung: Kein milchiger Schleier ueber Canvas-Videos im Liquid Glass Modus",
+    "Glasklare Lyrics: Canvas-Video scheint bei geoeffneten Lyrics im Liquid Glass Modus brillant durch"
   ]
 }
