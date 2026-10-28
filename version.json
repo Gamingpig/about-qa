@@ -1,9 +1,9 @@
 {
-  "version": "24.225.2",
-  "buildTime": "2026-10-28T15:21:17.777Z",
+  "version": "24.225.3",
+  "buildTime": "2026-10-28T15:32:39.807Z",
   "shortNotes": [
+    "Mini-Player State-Fix: Bei geoeffnetem Dashboard im Ruhemodus kein widerspruechliches \"Klicken zum Oeffnen\" mehr",
     "Echo-Dot- & Spotify-Time-Sync gefixt: Beseitigung des Vorauseilens der Lyrics",
-    "Bidirektionale sanfte Drift-Kompensation fuer Bluetooth- & WLAN-Lautsprecher",
-    "Reiner Millisekunden-Fortschritt ohne kuenstliche Snapshot-Extrapolation"
+    "Bidirektionale sanfte Drift-Kompensation fuer Bluetooth- & WLAN-Lautsprecher"
   ]
 }
