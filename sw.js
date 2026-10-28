@@ -7,7 +7,7 @@
 // - Kontrollierte Übernahme: Nutzer-gesteuerte Aktivierung via Update-Center
 // ==============================================================================
 
-const SW_VERSION = "24.224.5";
+const SW_VERSION = "24.224.6";
 const CURRENT_CACHE_VERSION = `gamingpig-cache-v${SW_VERSION}`;
 const CACHE_NAME = CURRENT_CACHE_VERSION;
 

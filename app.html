@@ -7,12 +7,12 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
-    [LYRICS / MULTI-PROVIDER WORD-SYNC] Release v24.224.5 · 2026-10-16: Apple-Music-TTML-Wort-Sync via AMLL-API, NetEase-YRC + LRCLIB-Kaskade, 0ms-Bundle für "Jente i fra by'n", "You Make Me" & "Make You Believe In Love", autonomer Re-Sync-Fix, Smart-Word-Cadence, Instrumental-Bühne, Lade-Sound restlos entfernt
+    [LYRICS / MULTI-PROVIDER WORD-SYNC] Release v24.224.6 · 2026-10-16: Apple-Music-TTML-Wort-Sync via AMLL-API, NetEase-YRC + LRCLIB-Kaskade, 0ms-Bundle für "Jente i fra by'n", "You Make Me" & "Make You Believe In Love", autonomer Re-Sync-Fix, Smart-Word-Cadence, Instrumental-Bühne, Lade-Sound restlos entfernt
       - Neue Multi-Provider-Wort-Sync-Kaskade: fetchExternalLyrics fragt jetzt zusätzlich die freie Apple-Music-TTML-Datenbank (api.amll.dev) ab.
         Converter formatTtmlTimestamp/convertTtmlToEnhancedLrc übersetzt Apple-Music-TTML in Enhanced-LRC ([mm:ss.xx] <mm:ss.xx>Wort). Provider 'AMLL-AppleMusic' (Tier 2) schlägt NetEase-YRC (30) und LRCLIB (10); Bonus 40.
         Apple-Music-ID wird in updateMusicUI über extractAppleMusicIdFromLinks aus platform_links/track_url gewonnen (currentAppleMusicId) und direkt abgefragt; sonst Suche über Titel+Artist.
       - "Jente i fra by'n" (Marcus & Martinus): neuer LRC_JENTE_I_FRA_BYN-Eintrag mit 4 Schlüssel-Varianten (Apostroph/Komma/Feature) in BUNDLED_LYRICS_DB → 0ms-First-Paint ohne Netzwerk.
-      - Version v24.224.5 (PUBLIC_CHANGELOG de/en, Header/Footer/Settings-Labels, release.html, version.json).
+      - Version v24.224.6 (PUBLIC_CHANGELOG de/en, Header/Footer/Settings-Labels, release.html, version.json).
     [LYRICS / TIMING / COVER / QA PIN GATE] Release v24.222.7: Strenge Synced-Lyrics-Priorisierung, Beseitigung von Songende-Zeitsprüngen, Original-API-Cover im Haupt-Player, Präziser Re-Sync mit Zeitabgleich & Reload-gesichertes PIN-Gate
       - Strikte Priorisierung synchronisierter Lyrics:
         Symptom: Bei Songwechsel wurden oft ungesyncte Plain-Lyrics geladen, obwohl synchronisierte in der Datenbank existierten.
@@ -3267,7 +3267,7 @@
     <script src="./js/core/storage.e856be99df567fd2.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.224.5</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.224.6</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3292,7 +3292,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.224.5 · 2026-10-16';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.224.6 · 2026-10-16';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -5498,6 +5498,21 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         /* PERF-FIX v24.19: will-change von der Basis-Regel entfernt (galt bisher permanent,
            auch bei opacity:0/unsichtbar) - jetzt nur noch aktiv, während der Effekt beim
            Songstart tatsächlich einmalig einschwingt (siehe .playing-Regel unten). */
+        #canvas-glow-video {
+            position: absolute; inset: -30px; z-index: -1;
+            filter: blur(45px) saturate(2.6) brightness(1.35); opacity: 0; transition: opacity 1.2s ease;
+            pointer-events: none; border-radius: inherit; transform: translate3d(0,0,0);
+        }
+        @media (min-width: 640px) {
+            #canvas-glow-video {
+                inset: -85px;
+                filter: blur(85px) saturate(2.8) brightness(1.3);
+            }
+        }
+        body.cover-glow-disabled #canvas-glow-video,
+        body.low-end #canvas-glow-video {
+            display: none !important;
+        }
         #ambilight-glow {
             position: absolute; inset: -30px; z-index: -1; background-size: cover; background-position: center;
             filter: blur(45px) saturate(2.6) brightness(1.35); opacity: 0; transition: opacity 1.5s ease, transform 1s ease;
@@ -8802,7 +8817,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.224.5</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.224.6</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -8839,7 +8854,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.224.5 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.224.5 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.224.6 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.224.6 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9071,7 +9086,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <div class="flex items-center gap-2 flex-wrap">
                         <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
                         <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
-                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.224.5</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.224.6</span>
                     </div>
                     <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
                 </div>
@@ -9095,7 +9110,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.224.5</span>
+                <span>🧪 QA TESTUMGEBUNG v24.224.6</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -9367,6 +9382,8 @@ html.gp-android:not(.dark) #ui-controls {
             <div id="music-card-layout-wrapper" class="hidden">
                 <div id="music-card-wrapper" class="relative origin-top flex justify-center w-full">
                     <div id="main-music-card" class="glass-card offline w-full max-w-[420px] mx-auto p-4 sm:p-6 md:p-8 rounded-[1.5rem] xxs:rounded-3xl md:rounded-[2.5rem] text-center relative z-10 flex flex-col justify-center items-center">
+                        <!-- Live Canvas Video-Glow: Echtes Ambilight, das Farben dynamisch in Echtzeit am Rand mitbewegt -->
+                        <video id="canvas-glow-video" class="absolute inset-[-30px] sm:inset-[-80px] w-[calc(100%+60px)] sm:w-[calc(100%+160px)] h-[calc(100%+60px)] sm:h-[calc(100%+160px)] object-cover z-[-1] opacity-0 transition-opacity duration-1000 pointer-events-none rounded-[inherit]" autoplay loop muted playsinline></video>
                         <div class="absolute inset-0 rounded-[inherit] overflow-hidden z-0 pointer-events-none">
                             <div id="ambient-bg"></div>
                             <video id="canvas-video" class="absolute inset-0 w-full h-full object-cover z-[1] opacity-0 transition-opacity duration-1000" autoplay loop muted playsinline></video>
@@ -9399,6 +9416,9 @@ html.gp-android:not(.dark) #ui-controls {
                          Deckkraft (bg-slate-950, kein Opacity-Suffix mehr = 100%) umgestellt -
                          jetzt eine komplett solide Fläche, nichts scheint mehr durch. -->
                     <div id="lyrics-overlay" class="absolute inset-0 bg-slate-950 rounded-[inherit] flex-col p-2 xxs:p-3 xs:p-6 md:p-8 z-40 transition-all duration-500 opacity-0 pointer-events-none flex border-0 invisible overflow-hidden">
+                        <!-- Canvas Video im Lyrics-Hintergrund -->
+                        <video id="lyrics-canvas-video" class="absolute inset-0 w-full h-full object-cover z-[-2] opacity-0 transition-opacity duration-1000 pointer-events-none" autoplay loop muted playsinline></video>
+                        <div id="lyrics-canvas-tint" class="absolute inset-0 z-[-1] bg-slate-950/75 pointer-events-none opacity-0 transition-opacity duration-700"></div>
                         <div id="lyrics-ambient-bg"></div>
                         <div id="lyrics-ambient-tint"></div>
                         <div class="flex items-center justify-between gap-1 xxs:gap-1.5 sm:gap-4 mb-2 xxs:mb-3 sm:mb-6 shrink-0 w-full bg-white/10 p-1.5 xxs:p-2 xs:p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/10 relative z-[100]">
@@ -9567,11 +9587,15 @@ html.gp-android:not(.dark) #ui-controls {
                         <div id="music-header-tag" class="relative z-10 text-[6px] xxs:text-[8px] xs:text-[10px] font-black text-blue-500 uppercase tracking-[0.1em] xxs:tracking-[0.2em] xs:tracking-[0.4em] mb-2 xxs:mb-3 sm:mb-4 md:mb-6 transition-all shrink-0">
                             Gamingpig is Offline
                         </div>
-                        <div id="media-container" onclick="handleMediaContainerTap(event)" title="Streamingdienst wählen" role="button" tabindex="0" class="relative z-10 w-[clamp(140px,36vw,240px)] aspect-square shrink-0 rounded-2xl mx-auto mb-3 sm:mb-5 overflow-hidden flex items-center justify-center bg-[#121212] shadow-[0_12px_32px_rgba(0,0,0,0.8)] cursor-pointer hover:ring-2 hover:ring-white/20 transition-all">
+                        <div id="media-container" onclick="handleMediaContainerTap(event)" title="Streamingdienst wählen" role="button" tabindex="0" class="relative z-10 w-[clamp(140px,36vw,240px)] aspect-square shrink-0 rounded-2xl mx-auto mb-3 sm:mb-5 overflow-hidden flex items-center justify-center bg-[#121212] shadow-[0_12px_32px_rgba(0,0,0,0.8)] cursor-pointer hover:ring-2 hover:ring-white/20 transition-all group">
                             <!-- FIX v24.85: decoding="async" ergänzt + fetchpriority="high" -->
-                            <img id="artwork" src="" alt="" aria-label="Album Artwork" class="w-full h-full object-cover relative z-0 transition-opacity duration-500" decoding="async" fetchpriority="high">
+                            <img id="artwork" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" alt="" aria-label="Album Artwork" class="w-full h-full object-cover relative z-0 transition-opacity duration-500" decoding="async" fetchpriority="high">
                             <!-- Echte Spotify Canvas Video-Fläche direkt auf dem Cover (wie in Spotify Mobile/Desktop) -->
                             <video id="canvas-media-video" class="absolute inset-0 w-full h-full object-cover z-10 opacity-0 transition-opacity duration-700 pointer-events-none" autoplay loop muted playsinline disablepictureinpicture></video>
+                            <!-- Freie Canvas Vollbild-Ansicht Button (erscheint bei aktivem Canvas) -->
+                            <button onclick="openCanvasCinema(event)" id="btn-open-canvas-cinema" class="absolute bottom-2 right-2 z-20 px-2.5 py-1 rounded-full bg-black/75 hover:bg-black/90 border border-white/25 text-[10px] text-white/90 hover:text-white font-bold flex items-center gap-1 shadow-lg backdrop-blur-md opacity-0 pointer-events-none transition-all active:scale-95 group-hover:scale-105" title="Canvas frei / im Vollbild ansehen">
+                                <span>🎬</span><span>Frei ansehen</span>
+                            </button>
                             <div id="offline-icon" class="absolute text-2xl xxs:text-4xl sm:text-6xl z-20" aria-hidden="true">🌙</div>
                         </div>
                         <div id="track-info-container" class="relative z-10 mb-2 xxs:mb-4 sm:mb-6 text-left px-1 sm:px-2 w-full shrink-0">
@@ -10143,7 +10167,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.224.5</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.224.6</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -10390,7 +10414,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.224.5</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.224.6</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -10401,7 +10425,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.224.5</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.224.6</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -10444,7 +10468,7 @@ html.gp-android:not(.dark) #ui-controls {
         </div>
     </div>
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.224.5</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.224.6</p>
 </div>
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
@@ -10700,7 +10724,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <a href="checklist.html" target="_blank" class="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500 text-teal-300 hover:text-slate-950 font-bold text-[11px] transition-all border border-teal-500/30 inline-flex items-center gap-1">
                         <span>📋</span> <span>QA Checkliste</span>
                     </a>
-                    <span class="text-pink-400 font-mono">v24.224.5</span>
+                    <span class="text-pink-400 font-mono">v24.224.6</span>
                 </div>
             </div>
         </div>
@@ -18543,7 +18567,7 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
-        { version: "v24.224.5", date: "16. Oktober 2026", type: "feature", items: {
+        { version: "v24.224.6", date: "16. Oktober 2026", type: "feature", items: {
             de: [
                 "?? Apple Music TTML Integration: Direkter Zugriff auf die weltweite Apple-Music-Songtext-Datenbank (AMLL API) f?r echtes, millimetergenaues Silben- und Wort-Timing im Karaoke-Modus",
                 "?? Echtes Wort-Synchron-Erlebnis (Enhanced LRC): L?ckenloser Converter ?bersetzt Apple-Music-TTML und Spotify-Syllables in Echtzeit in standardisiertes Enhanced LRC mit leuchtendem Fuchsia-Badge",
@@ -23390,7 +23414,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
         };
         let currentTrackTitle = "";
         let currentRawArtist = "";
-        let currentAppleMusicId = ""; // v24.224.5: Apple-Music-Song-ID für den AMLL-Wort-Sync
+        let currentAppleMusicId = ""; // v24.224.6: Apple-Music-Song-ID für den AMLL-Wort-Sync
         let currentSpotifyTrackId = ""; // v24.223.1: Spotify-Track-ID für den direkten AMLL-Wort-Sync
         // Anti-Ping-Pong Tracking: speichert den vorherigen, beendeten Track
         let previousTrackTitle = "";
@@ -25431,6 +25455,65 @@ window.setLyricsStyle = function(style) {
                     canvasMediaVideo.pause();
                 }
             }
+
+            // 3. Live Canvas Video-Glow (Ambilight) um die Haupt-Karte
+            const canvasGlowVideo = document.getElementById('canvas-glow-video');
+            if (canvasGlowVideo) {
+                if (canvasGlowVideo.src !== url) {
+                    canvasGlowVideo.src = url;
+                    canvasGlowVideo.load();
+                }
+                canvasGlowVideo.muted = true;
+                if (canvasEnabled && isCurrentlyPlaying && coverGlowEnabled) {
+                    canvasGlowVideo.classList.remove('opacity-0');
+                    canvasGlowVideo.classList.add('opacity-100');
+                    canvasGlowVideo.play().catch(()=>{});
+                } else {
+                    canvasGlowVideo.classList.add('opacity-0');
+                    canvasGlowVideo.classList.remove('opacity-100');
+                    canvasGlowVideo.pause();
+                }
+            }
+
+            // 4. Canvas Video im Lyrics-Overlay
+            const lyricsCanvasVideo = document.getElementById('lyrics-canvas-video');
+            const lyricsCanvasTint = document.getElementById('lyrics-canvas-tint');
+            if (lyricsCanvasVideo) {
+                if (lyricsCanvasVideo.src !== url) {
+                    lyricsCanvasVideo.src = url;
+                    lyricsCanvasVideo.load();
+                }
+                lyricsCanvasVideo.muted = true;
+                if (canvasEnabled && isCurrentlyPlaying) {
+                    lyricsCanvasVideo.classList.remove('opacity-0');
+                    lyricsCanvasVideo.classList.add('opacity-100');
+                    if (lyricsCanvasTint) {
+                        lyricsCanvasTint.classList.remove('opacity-0');
+                        lyricsCanvasTint.classList.add('opacity-100');
+                    }
+                    lyricsCanvasVideo.play().catch(()=>{});
+                } else {
+                    lyricsCanvasVideo.classList.add('opacity-0');
+                    lyricsCanvasVideo.classList.remove('opacity-100');
+                    if (lyricsCanvasTint) {
+                        lyricsCanvasTint.classList.add('opacity-0');
+                        lyricsCanvasTint.classList.remove('opacity-100');
+                    }
+                    lyricsCanvasVideo.pause();
+                }
+            }
+
+            // 5. Frei-ansehen Button aktivieren
+            const btnCinema = document.getElementById('btn-open-canvas-cinema');
+            if (btnCinema) {
+                if (canvasEnabled && isCurrentlyPlaying) {
+                    btnCinema.classList.remove('opacity-0', 'pointer-events-none');
+                    btnCinema.classList.add('opacity-100', 'pointer-events-auto');
+                } else {
+                    btnCinema.classList.add('opacity-0', 'pointer-events-none');
+                    btnCinema.classList.remove('opacity-100', 'pointer-events-auto');
+                }
+            }
             updateCanvasButtonUI();
         }
         async function resolveSpotifyCanvas(spotifyId, trackTitle, rawArtist) {
@@ -25512,6 +25595,10 @@ window.setLyricsStyle = function(style) {
                 const cmv = document.getElementById('canvas-media-video');
                 if (cmv && cmv.paused) cmv.play().catch(() => {});
                 if (canvasVideo && canvasVideo.paused) canvasVideo.play().catch(() => {});
+                const cgv = document.getElementById('canvas-glow-video');
+                if (cgv && cgv.paused) cgv.play().catch(() => {});
+                const lcv = document.getElementById('lyrics-canvas-video');
+                if (lcv && lcv.paused) lcv.play().catch(() => {});
             }
         }
         ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(evt => {
@@ -25523,35 +25610,13 @@ window.setLyricsStyle = function(style) {
             canvasEnabled = !canvasEnabled;
             AppStorage.setItem('canvasEnabled', canvasEnabled);
             updateCanvasButtonUI();
+            const btnCinema = document.getElementById('btn-open-canvas-cinema');
             if (canvasEnabled) {
                 if (typeof showToast === 'function') {
                     showToast('🎬 ' + t('settings_canvas') + ': ' + t('on_label'), 'info');
                 }
                 if (currentCanvasUrl) {
-                    if (canvasVideo) {
-                        if (canvasVideo.src !== currentCanvasUrl) {
-                            canvasVideo.src = currentCanvasUrl;
-                            canvasVideo.load();
-                        }
-                        if (trackIsPlaying) {
-                            canvasVideo.classList.remove('opacity-0');
-                            canvasVideo.play().catch(()=>{});
-                        }
-                    }
-                    const canvasMediaVideo = document.getElementById('canvas-media-video');
-                    if (canvasMediaVideo) {
-                        if (canvasMediaVideo.src !== currentCanvasUrl) {
-                            canvasMediaVideo.src = currentCanvasUrl;
-                            canvasMediaVideo.load();
-                        }
-                        if (trackIsPlaying) {
-                            canvasMediaVideo.play().then(() => {
-                                canvasMediaVideo.classList.remove('opacity-0');
-                                canvasMediaVideo.classList.add('opacity-100');
-                                if (mArtwork) mArtwork.classList.add('opacity-0');
-                            }).catch(()=>{});
-                        }
-                    }
+                    applyResolvedCanvas(currentCanvasUrl);
                 } else {
                     const spId = (typeof currentSpotifyTrackId === 'string' ? currentSpotifyTrackId : '').replace(/^spotify:track:/, '').trim();
                     if (spId) resolveSpotifyCanvas(spId, currentTrackTitle, currentRawArtist);
@@ -25562,6 +25627,7 @@ window.setLyricsStyle = function(style) {
                 }
                 if (canvasVideo) {
                     canvasVideo.classList.add('opacity-0');
+                    canvasVideo.classList.remove('opacity-100');
                     canvasVideo.pause();
                 }
                 const canvasMediaVideo = document.getElementById('canvas-media-video');
@@ -25569,10 +25635,77 @@ window.setLyricsStyle = function(style) {
                     canvasMediaVideo.classList.add('opacity-0');
                     canvasMediaVideo.classList.remove('opacity-100');
                     canvasMediaVideo.pause();
-                    if (mArtwork) mArtwork.classList.remove('opacity-0');
+                }
+                const canvasGlowVideo = document.getElementById('canvas-glow-video');
+                if (canvasGlowVideo) {
+                    canvasGlowVideo.classList.add('opacity-0');
+                    canvasGlowVideo.classList.remove('opacity-100');
+                    canvasGlowVideo.pause();
+                }
+                const lyricsCanvasVideo = document.getElementById('lyrics-canvas-video');
+                if (lyricsCanvasVideo) {
+                    lyricsCanvasVideo.classList.add('opacity-0');
+                    lyricsCanvasVideo.classList.remove('opacity-100');
+                    lyricsCanvasVideo.pause();
+                }
+                const lyricsCanvasTint = document.getElementById('lyrics-canvas-tint');
+                if (lyricsCanvasTint) {
+                    lyricsCanvasTint.classList.add('opacity-0');
+                    lyricsCanvasTint.classList.remove('opacity-100');
+                }
+                if (btnCinema) {
+                    btnCinema.classList.add('opacity-0', 'pointer-events-none');
+                    btnCinema.classList.remove('opacity-100', 'pointer-events-auto');
+                }
+                // Normales Album-Cover wiederherstellen & sichtbar machen
+                if (mArtwork) {
+                    mArtwork.classList.remove('opacity-0');
+                    mArtwork.classList.add('opacity-100');
+                    const artTarget = currentResolvedArtUrl || (typeof fallbackImg !== 'undefined' ? fallbackImg : '');
+                    if (artTarget && (!mArtwork.src || mArtwork.src.includes('data:image/svg+xml,%3Csvg') || mArtwork.naturalWidth === 0)) {
+                        mArtwork.src = artTarget;
+                    }
                 }
             }
         };
+
+        // Funktionen für das Canvas Cinema Modal (Freie Ansicht)
+        window.openCanvasCinema = function(e) {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            if (!currentCanvasUrl) return;
+            const modal = document.getElementById('canvas-cinema-modal');
+            const video = document.getElementById('canvas-cinema-video');
+            const titleEl = document.getElementById('canvas-cinema-title');
+            const artistEl = document.getElementById('canvas-cinema-artist');
+            if (titleEl && mTitle) titleEl.innerText = mTitle.innerText || 'Song Title';
+            if (artistEl && mArtist) artistEl.innerText = mArtist.innerText || 'Artist';
+            if (video) {
+                if (video.src !== currentCanvasUrl) {
+                    video.src = currentCanvasUrl;
+                    video.load();
+                }
+                video.muted = true;
+                video.play().catch(()=>{});
+            }
+            if (modal) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.classList.add('opacity-100', 'pointer-events-auto');
+            }
+        };
+
+        window.closeCanvasCinema = function() {
+            const modal = document.getElementById('canvas-cinema-modal');
+            const video = document.getElementById('canvas-cinema-video');
+            if (modal) {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modal.classList.remove('opacity-100', 'pointer-events-auto');
+            }
+            if (video) video.pause();
+        };
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeCanvasCinema();
+        });
         window.configureCanvasProxy = function() {
             const current = (typeof AppStorage !== 'undefined' ? AppStorage.getItem('spotify_canvas_proxy') : '') || '';
             const next = prompt('Spotify Canvas Proxy URL eingeben (z.B. https://mein-canvas-service.vercel.app):', current);
@@ -27163,8 +27296,12 @@ window.setLyricsStyle = function(style) {
         // Einheitliche, datenbankübergreifende Bewertung eines Lyrics-Kandidaten.
         // Tier 2 (Enhanced LRC) schlägt IMMER Tier 1 (Zeilen-Sync) und Tier 0 (Plain),
         // da die Tier-Basis (500/150/0) alle Titel-/Künstler-/Dauer-Deltas übersteigt.
+        // Unerwünschte / fehlerhafte Community-Einträge von LRCLIB (z.B. falsches ELRC) ignorieren
+        const BANNED_LYRICS_CANDIDATE_IDS = new Set([6629086]);
+
         function scoreLyricsCandidate(c, target, searchDurationMs = 0) {
             if (!c || !target) return -1;
+            if (c.id && BANNED_LYRICS_CANDIDATE_IDS.has(c.id)) return -1;
             const synced = (c.syncedLyrics && !isDummyLyrics(c.syncedLyrics)) ? c.syncedLyrics : null;
             const plain = (c.plainLyrics && !isDummyLyrics(c.plainLyrics)) ? c.plainLyrics : null;
             if (!synced && !plain) return -1;
@@ -28200,6 +28337,11 @@ window.setLyricsStyle = function(style) {
                 }
 
                 const canvasMediaVideo = document.getElementById('canvas-media-video');
+                const canvasGlowVideo = document.getElementById('canvas-glow-video');
+                const lyricsCanvasVideo = document.getElementById('lyrics-canvas-video');
+                const lyricsCanvasTint = document.getElementById('lyrics-canvas-tint');
+                const btnCinema = document.getElementById('btn-open-canvas-cinema');
+
                 if (activeCanvasUrl !== currentCanvasUrl) {
                     currentCanvasUrl = activeCanvasUrl;
                     if (activeCanvasUrl) {
@@ -28235,18 +28377,71 @@ window.setLyricsStyle = function(style) {
                                 canvasMediaVideo.pause();
                             }
                         }
-                    } else {
-                        if (canvasVideo) {
-                            canvasVideo.removeAttribute('src');
-                            canvasVideo.classList.add('opacity-0');
-                            canvasVideo.classList.remove('opacity-100');
-                            canvasVideo.pause();
+                        if (canvasGlowVideo) {
+                            if (canvasGlowVideo.src !== activeCanvasUrl) {
+                                canvasGlowVideo.src = activeCanvasUrl;
+                                canvasGlowVideo.load();
+                            }
+                            canvasGlowVideo.muted = true;
+                            if (canvasEnabled && isPlaying && coverGlowEnabled) {
+                                canvasGlowVideo.classList.remove('opacity-0');
+                                canvasGlowVideo.classList.add('opacity-100');
+                                canvasGlowVideo.play().catch(()=>{});
+                            } else {
+                                canvasGlowVideo.classList.add('opacity-0');
+                                canvasGlowVideo.classList.remove('opacity-100');
+                                canvasGlowVideo.pause();
+                            }
                         }
-                        if (canvasMediaVideo) {
-                            canvasMediaVideo.removeAttribute('src');
-                            canvasMediaVideo.classList.add('opacity-0');
-                            canvasMediaVideo.classList.remove('opacity-100');
-                            canvasMediaVideo.pause();
+                        if (lyricsCanvasVideo) {
+                            if (lyricsCanvasVideo.src !== activeCanvasUrl) {
+                                lyricsCanvasVideo.src = activeCanvasUrl;
+                                lyricsCanvasVideo.load();
+                            }
+                            lyricsCanvasVideo.muted = true;
+                            if (canvasEnabled && isPlaying) {
+                                lyricsCanvasVideo.classList.remove('opacity-0');
+                                lyricsCanvasVideo.classList.add('opacity-100');
+                                if (lyricsCanvasTint) {
+                                    lyricsCanvasTint.classList.remove('opacity-0');
+                                    lyricsCanvasTint.classList.add('opacity-100');
+                                }
+                                lyricsCanvasVideo.play().catch(()=>{});
+                            } else {
+                                lyricsCanvasVideo.classList.add('opacity-0');
+                                lyricsCanvasVideo.classList.remove('opacity-100');
+                                if (lyricsCanvasTint) {
+                                    lyricsCanvasTint.classList.add('opacity-0');
+                                    lyricsCanvasTint.classList.remove('opacity-100');
+                                }
+                                lyricsCanvasVideo.pause();
+                            }
+                        }
+                        if (btnCinema) {
+                            if (canvasEnabled && isPlaying) {
+                                btnCinema.classList.remove('opacity-0', 'pointer-events-none');
+                                btnCinema.classList.add('opacity-100', 'pointer-events-auto');
+                            } else {
+                                btnCinema.classList.add('opacity-0', 'pointer-events-none');
+                                btnCinema.classList.remove('opacity-100', 'pointer-events-auto');
+                            }
+                        }
+                    } else {
+                        [canvasVideo, canvasMediaVideo, canvasGlowVideo, lyricsCanvasVideo].forEach(v => {
+                            if (v) {
+                                v.removeAttribute('src');
+                                v.classList.add('opacity-0');
+                                v.classList.remove('opacity-100');
+                                v.pause();
+                            }
+                        });
+                        if (lyricsCanvasTint) {
+                            lyricsCanvasTint.classList.add('opacity-0');
+                            lyricsCanvasTint.classList.remove('opacity-100');
+                        }
+                        if (btnCinema) {
+                            btnCinema.classList.add('opacity-0', 'pointer-events-none');
+                            btnCinema.classList.remove('opacity-100', 'pointer-events-auto');
                         }
                     }
                 } else if (activeCanvasUrl) {
@@ -28272,6 +28467,45 @@ window.setLyricsStyle = function(style) {
                             if (!canvasMediaVideo.paused) canvasMediaVideo.pause();
                             canvasMediaVideo.classList.add('opacity-0');
                             canvasMediaVideo.classList.remove('opacity-100');
+                        }
+                    }
+                    if (canvasGlowVideo) {
+                        if (canvasEnabled && isPlaying && coverGlowEnabled) {
+                            canvasGlowVideo.classList.remove('opacity-0');
+                            canvasGlowVideo.classList.add('opacity-100');
+                            if (canvasGlowVideo.paused) canvasGlowVideo.play().catch(()=>{});
+                        } else {
+                            if (!canvasGlowVideo.paused) canvasGlowVideo.pause();
+                            canvasGlowVideo.classList.add('opacity-0');
+                            canvasGlowVideo.classList.remove('opacity-100');
+                        }
+                    }
+                    if (lyricsCanvasVideo) {
+                        if (canvasEnabled && isPlaying) {
+                            lyricsCanvasVideo.classList.remove('opacity-0');
+                            lyricsCanvasVideo.classList.add('opacity-100');
+                            if (lyricsCanvasTint) {
+                                lyricsCanvasTint.classList.remove('opacity-0');
+                                lyricsCanvasTint.classList.add('opacity-100');
+                            }
+                            if (lyricsCanvasVideo.paused) lyricsCanvasVideo.play().catch(()=>{});
+                        } else {
+                            if (!lyricsCanvasVideo.paused) lyricsCanvasVideo.pause();
+                            lyricsCanvasVideo.classList.add('opacity-0');
+                            lyricsCanvasVideo.classList.remove('opacity-100');
+                            if (lyricsCanvasTint) {
+                                lyricsCanvasTint.classList.add('opacity-0');
+                                lyricsCanvasTint.classList.remove('opacity-100');
+                            }
+                        }
+                    }
+                    if (btnCinema) {
+                        if (canvasEnabled && isPlaying) {
+                            btnCinema.classList.remove('opacity-0', 'pointer-events-none');
+                            btnCinema.classList.add('opacity-100', 'pointer-events-auto');
+                        } else {
+                            btnCinema.classList.add('opacity-0', 'pointer-events-none');
+                            btnCinema.classList.remove('opacity-100', 'pointer-events-auto');
                         }
                     }
                 }
@@ -29860,8 +30094,30 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.224.5</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.224.6</span>
         </a>
     </div>
+
+<!-- Spotify Canvas Cinema Modal: Ungequetschte, freie Original-Ansicht im nativen 9:16 Format -->
+<div id="canvas-cinema-modal" class="fixed inset-0 z-[99999] bg-black/90 backdrop-blur-2xl flex flex-col items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-all duration-300" onclick="if(event.target === this) closeCanvasCinema()">
+    <!-- Ambient Video Glow behind Cinema Video -->
+    <div id="canvas-cinema-glow" class="absolute w-[300px] h-[520px] rounded-full blur-[90px] opacity-60 pointer-events-none bg-blue-600/40 transition-opacity duration-500"></div>
+    <div class="relative w-full max-w-[340px] sm:max-w-[400px] max-h-[85vh] aspect-[9/16] rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.9)] border border-white/20 flex items-center justify-center bg-black">
+        <video id="canvas-cinema-video" class="w-full h-full object-cover" autoplay loop muted playsinline disablepictureinpicture></video>
+        <!-- Floating Close Button -->
+        <button onclick="closeCanvasCinema()" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 text-white/90 hover:text-white border border-white/20 flex items-center justify-center transition-all shadow-lg active:scale-95" title="Schließen (Esc)">
+            ✕
+        </button>
+        <!-- Floating Track Info Bottom -->
+        <div class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-black/95 via-black/60 to-transparent z-20 text-left">
+            <span class="text-[10px] uppercase font-black tracking-widest text-green-400 flex items-center gap-1.5 mb-1">
+                <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                Spotify Canvas • Original
+            </span>
+            <h3 id="canvas-cinema-title" class="text-base sm:text-lg font-extrabold text-white truncate">Unforgettable</h3>
+            <p id="canvas-cinema-artist" class="text-xs sm:text-sm text-white/70 font-medium truncate">Marcus & Martinus</p>
+        </div>
+    </div>
+</div>
 </body>
 </html>

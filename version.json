@@ -1,9 +1,11 @@
 {
-  "version": "24.224.5",
-  "buildTime": "2026-10-28T11:18:00.000Z",
+  "version": "24.224.6",
+  "buildTime": "2026-10-28T11:45:00.000Z",
   "shortNotes": [
-    "Spotify Canvas Autoplay-Unlocker fuer Mobile- & Desktop-Browser",
-    "Erweiterung der gebuendelten Canvas-Datenbank (Unforgettable Album-ID, Little Seed, Oceans)",
-    "Entfernung destruktiver Catch-Hide-Logik & Aktivierung nativer Autoplay-Attribute"
+    "Spotify Canvas Cinema-Modal (ungequetschte 9:16 Vollbild-Ansicht)",
+    "Echtes Canvas-Video-Ambilight mit dynamischer Farb-Pulsation am Rand",
+    "Canvas-Video-Integration in der Lyrics-Vollbildansicht mit sanfter Tönung",
+    "Robuste Cover-Wiederherstellung bei deaktiviertem Canvas",
+    "Filterung fehlerhafter Community-ELRCs fuer Unforgettable"
   ]
 }
