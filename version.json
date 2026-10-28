@@ -1,9 +1,9 @@
 {
-  "version": "24.225.7",
-  "buildTime": "2026-10-28T16:28:33.085Z",
+  "version": "24.225.8",
+  "buildTime": "2026-10-28T16:37:17.596Z",
   "shortNotes": [
-    "Instant Songwechsel-Isolierung: Sofortiges restloses Leeren der vorherigen Songtexte bei jedem Titelwechsel",
-    "Race-Condition-Schutz (currentFetchId & Track-Matching): Spät eintreffende Songtexte alter Titel werden niemals mehr für den neuen Song gerendert",
-    "Zuverlässiges Fallback: Zeigt für Songs ohne Lyrics sofort den passenden Hinweistext statt veralteter Textzeilen"
+    "1000% Frame-Lock Video-Pair Engine: Phase-Locked Loop (PLL) und requestVideoFrameCallback koppeln Vordergrund- und Glow-Videos ohne Latenz",
+    "Fullscreen & Main-Card Glow-Lock: Glow-Videos spiegeln jedes Frame des Vordergrundvideos in Sub-Frame-Präzision (<12ms)",
+    "Automatischer Visibility- & Fokus-Resync: Nach Tab-Wechsel, Minimieren oder Sperrbildschirm sofortige frame-synchrone Fortsetzung"
   ]
 }
