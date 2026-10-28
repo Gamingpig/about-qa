@@ -1,10 +1,9 @@
 {
-  "version": "24.225.17",
+  "version": "24.225.18",
   "buildTime": "2026-10-28T17:58:51.692Z",
   "shortNotes": [
-    "GPU-Thermal & 100% Last-Fix: Eliminierung von backdrop-blur-2xl auf Cinema-Modal und Halbierung der Blur-Shader-Kerne",
-    "Dormant Video Hibernation: Lyrics-Video schläft bei geschlossenen Lyrics; Dashboard-Videos pausieren während Cinema-Vollbild",
-    "Zero-Idle GPU-Last: Blobs, Partikel und Ambilight stoppen restlos im Leerlauf und wenn kein Canvas aktiv ist",
-    "Butterweiche 30 FPS Canvas-Wiedergabe ohne GPU-Überlastung"
+    "Mini-Player Dashboard-Header: 'Klicken zum Schließen' bei laufender Musik entfernt, voller Platz für lange Künstlernamen",
+    "Konsistente Künstler-Darstellung im oberen Mini-Toggle während Wiedergabe",
+    "GPU-Thermal & Load-Optimierungen aus v24.225.17 aktiv"
   ]
 }
