@@ -1,10 +1,9 @@
 {
-  "version": "24.225.14",
-  "buildTime": "2026-10-28T17:50:55.724Z",
+  "version": "24.225.15",
+  "buildTime": "2026-10-28T17:58:51.692Z",
   "shortNotes": [
-    "Luca Casella - Tomorrow! Canvas integriert: Sofortige 0ms 9:16 Canvas-Wiedergabe in der Offline-Datenbank",
-    "Marcus & Martinus - Elektrisk lückenlos verifiziert: Offizielles Musikvideo (ri5_fzndMBg) und Canvas fest verknüpft",
-    "Parallele Video-ID-Auflösung über Spotify-Track-IDs für fehlerfreie Sofort-Wiedergabe",
-    "Card-Canvas-Immunität: Musikvideo-Modus unterdrückt niemals mehr die Canvas-Darstellung auf der Player-Karte"
+    "Beseitigung der rekursiven Canvas-Seek-Schleife: 'seeked'-Event-Listener restlos eliminiert, keine Decoder-Flushes mehr",
+    "Master-Selbstseek-Schutz: Master-Video wird niemals mehr selbst gesucht",
+    "400ms Event-Drosselung & Beseitigung von micro-playbackRate Jitter für butterweiche 30 FPS"
   ]
 }
