@@ -1,9 +1,9 @@
 {
-  "version": "24.225.11",
-  "buildTime": "2026-10-28T17:15:36.125Z",
+  "version": "24.225.12",
+  "buildTime": "2026-10-28T17:29:34.585Z",
   "shortNotes": [
-    "GPU 100% Thermal & Performance Fix: Reduzierung der Blur-Radien um 80%, Eliminierung von 300ms Video-Seek-Loops und Pausierung von Hintergrund-Blobs",
-    "Dormant Video Hibernation: Lyrics- und Glow-Videos schlafen bei Nichtbenutzung, sparen 75% der Hardware-Videodekoder",
-    "Butterweiche 30 FPS Canvas-Wiedergabe: Zero-Lag Wiedergabe durch sanfte PLL-Kompensation statt harter Decoder-Flushes"
+    "Zero Canvas Song-Kollision: Blinder Titel-Fallback restlos entfernt, verhindert falsche Videos bei Songs mit gleichem Namen (z.B. 'Hold on Me')",
+    "Strikte Spotify-Track-ID-Prüfung: Canvas-Matching erfolgt ausschließlich über verifizierte 22-Zeichen-Track-IDs",
+    "Bereinigte Canvas-Datenbank: 129 uneindeutige Titel-Duplikate entfernt, 260 verifizierte IDs für fehlertreue Wiedergabe aktiv"
   ]
 }
