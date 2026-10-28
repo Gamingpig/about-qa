@@ -1,10 +1,9 @@
 {
-  "version": "24.225.21",
+  "version": "24.225.22",
   "buildTime": "2026-10-28T17:58:51.692Z",
   "shortNotes": [
-    "Eliminierung der scharfen Video-Dopplung: Karten-Hintergrundvideo erhält 28px Ambient-Blur und Skalierung für fließende Farbverläufe",
-    "Atmosphärische Erweiterung: Cover-Video ist die scharfe Helden-Ebene, der Hintergrund erweitert die Stimmung ohne Gesichts-Dopplung",
-    "Diffundiertes Ambilight: Abgerundetes 46px-52px Ambilight mit natürlicher Lichtabstrahlung statt harter Kanten",
-    "Kino-Modus mit 70px Halo & radialer Vignette"
+    "Kino-Hintergrund: Vollflächiger Vollbild-Ambient-Bleed über den gesamten Screen statt runder Maskenblase",
+    "Perfekte Zentrierung: Card-Ambilight-Glow ist nun mathematisch exakt auf 50%/50% der Karte ausgerichtet",
+    "Garantierter Glow-Start nach Songwechsel: canplay & loadeddata Listener sichern Playback nach Track-Wechsel ab"
   ]
 }
