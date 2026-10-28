@@ -1,9 +1,9 @@
 {
-  "version": "24.224.2",
-  "buildTime": "2026-10-27T13:12:57.361Z",
+  "version": "24.224.3",
+  "buildTime": "2026-10-28T09:01:26.133Z",
   "shortNotes": [
-    "Sofort-Fix fuer Timeline- und Songtext-Freeze (ReferenceError: activeCanvasUrl behoben)",
-    "Ausfallsicheres Cover-Rendering: Artwork bleibt jederzeit sichtbar waehrend Canvas laedt",
-    "Symmetrische Canvas-Steuerung im Cover und Karten-Hintergrund"
+    "Stille Canvas-Kaskade & bereinigte Mirror-Endpunkte (kein Konsolen-Spam)",
+    "Ausfallsicheres Cover-Rendering: Artwork bleibt jederzeit sichtbar",
+    "Oeffentliche Release Notes getrennt auf v24.222.7 gehalten"
   ]
 }
