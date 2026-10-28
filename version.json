@@ -1,11 +1,10 @@
 {
-  "version": "24.224.6",
-  "buildTime": "2026-10-28T11:45:00.000Z",
+  "version": "24.224.7",
+  "buildTime": "2026-10-28T13:20:00.000Z",
   "shortNotes": [
-    "Spotify Canvas Cinema-Modal (ungequetschte 9:16 Vollbild-Ansicht)",
-    "Echtes Canvas-Video-Ambilight mit dynamischer Farb-Pulsation am Rand",
-    "Canvas-Video-Integration in der Lyrics-Vollbildansicht mit sanfter Tönung",
-    "Robuste Cover-Wiederherstellung bei deaktiviertem Canvas",
-    "Filterung fehlerhafter Community-ELRCs fuer Unforgettable"
+    "Echtes dynamisches Video-Ambilight (statischer Glow weicht Live-Video-Pulsation)",
+    "Transparenter Canvas-Hintergrund in Lyrics-Vollbildansicht fuer optimale Sichtbarkeit",
+    "Sofa-Bereinigung: Frei-ansehen-Button in Aktionsleiste verlagert + Cover-Tap fuer Cinema",
+    "Vollstaendige Canvas-Abschaltung im Ruhemodus ('Aktuell ist es ruhig...')"
   ]
 }
