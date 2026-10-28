@@ -1,10 +1,11 @@
 {
-  "version": "24.225.28",
-  "buildTime": "2026-10-28T19:42:00.000Z",
+  "version": "24.225.29",
+  "buildTime": "2026-10-28T21:45:00.000Z",
   "shortNotes": [
-    "Kinomodus Werbe-Skip-Fix: Untenliegendes Overlay entfernt, damit der native YouTube 'Werbung überspringen'-Button 100% frei klickbar ist",
-    "Strikter Canvas-Vorrang im Vollbild: Kinomodus öffnet bei vorhandenem Spotify-Canvas immer die 100% werbefreie Original-Ansicht",
-    "Sofort-Ad-Bypass 'Zu Canvas': Neuer Notausgangs-Knopf im Kinomodus überspringt unüberspringbare YouTube-Spots direkt zum Spotify-Canvas",
-    "Zwei-Wege-Umschaltung: Nahtloses Hin- und Herschalten zwischen nativem Spotify-Canvas und YouTube-Musikvideo"
+    "Canvas-Glow wächst jetzt in beide Achsen: Der Aura-Radius dehnt die Leuchtfläche horizontal UND vertikal aus (Tailwind max-width-Klemme behoben)",
+    "Eigener Karten-Blur-Regler: Der Weichzeichner auf der Player-Karte ist separat einstellbar und standardmäßig AUS (0px)",
+    "Aura-Radius und Aura-Blur nutzen wieder die Standardwerte (mobil 60px / Desktop 90px, Blur 48px), Aura-Ecken folgen der Karte",
+    "Musikvideo-/YouTube-Features komplett abgeschaltet: kein YouTube-Loader, keine Werbespots, keine Video-Buttons – nur Spotify Canvas",
+    "Canvas-Abruf robuster: Jeder Track mit Spotify-Canvas wird nachgeladen, Netzwerkfehler werden nur kurz negativ gecacht"
   ]
 }
