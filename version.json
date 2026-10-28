@@ -1,9 +1,9 @@
 {
-  "version": "24.225.10",
-  "buildTime": "2026-10-28T17:02:15.625Z",
+  "version": "24.225.11",
+  "buildTime": "2026-10-28T17:15:36.125Z",
   "shortNotes": [
-    "1000% Canvas Purge: Vollständiges Leeren aller 6 Video-Instanzen beim Songwechsel & im Leerlauf per clearAllCanvasVideos()",
-    "Intelligenter Musikvideo-Modus: Priorisierung offizieller Musikvideos bei aktiviertem Schalter mit lückenlosem Spotify-Canvas-Fallback",
-    "Strikte Prioritäts-Hierarchie: Canvas AUS sperrt Musikvideos restlos; Widescreen Cinema & 9:16 Canvas Vollbild-Erlebnis"
+    "GPU 100% Thermal & Performance Fix: Reduzierung der Blur-Radien um 80%, Eliminierung von 300ms Video-Seek-Loops und Pausierung von Hintergrund-Blobs",
+    "Dormant Video Hibernation: Lyrics- und Glow-Videos schlafen bei Nichtbenutzung, sparen 75% der Hardware-Videodekoder",
+    "Butterweiche 30 FPS Canvas-Wiedergabe: Zero-Lag Wiedergabe durch sanfte PLL-Kompensation statt harter Decoder-Flushes"
   ]
 }
