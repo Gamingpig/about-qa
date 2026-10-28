@@ -1,9 +1,10 @@
 {
-  "version": "24.225.20",
+  "version": "24.225.21",
   "buildTime": "2026-10-28T17:58:51.692Z",
   "shortNotes": [
-    "Kino-Hintergrund-Glow: Weit gefächerte 65px-Ambilight-Aura mit radialem Vignette-Masking statt scharfer Videodopplung",
-    "Card-Glow Wiederherstellung: Vergrößerte Bleed-Insets (-35px / -65px) und 48px Blur für sichtbare Lichtabstrahlung",
-    "Klarstellung Canvas vs. YouTube-Musikvideos"
+    "Eliminierung der scharfen Video-Dopplung: Karten-Hintergrundvideo erhält 28px Ambient-Blur und Skalierung für fließende Farbverläufe",
+    "Atmosphärische Erweiterung: Cover-Video ist die scharfe Helden-Ebene, der Hintergrund erweitert die Stimmung ohne Gesichts-Dopplung",
+    "Diffundiertes Ambilight: Abgerundetes 46px-52px Ambilight mit natürlicher Lichtabstrahlung statt harter Kanten",
+    "Kino-Modus mit 70px Halo & radialer Vignette"
   ]
 }
