@@ -1,9 +1,9 @@
 {
-  "version": "24.224.4",
-  "buildTime": "2026-10-28T10:54:19.565Z",
+  "version": "24.224.5",
+  "buildTime": "2026-10-28T11:18:00.000Z",
   "shortNotes": [
-    "Echtes Spotify Canvas ueber 0ms-Bundled-Database fuer 247365, Love Flow & Unforgettable",
-    "Direkte MP4-Streaming-Anbindung ohne CORS-Blocker oder API-Ausfaelle",
-    "Symmetrische Cover- & Hintergrund-Wiedergabe mit nahtlosem Crossfade"
+    "Spotify Canvas Autoplay-Unlocker fuer Mobile- & Desktop-Browser",
+    "Erweiterung der gebuendelten Canvas-Datenbank (Unforgettable Album-ID, Little Seed, Oceans)",
+    "Entfernung destruktiver Catch-Hide-Logik & Aktivierung nativer Autoplay-Attribute"
   ]
 }
