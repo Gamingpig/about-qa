@@ -1,11 +1,10 @@
 {
-  "version": "24.224.8",
-  "buildTime": "2026-10-28T14:00:00.000Z",
+  "version": "24.224.9",
+  "buildTime": "2026-10-28T14:30:00.000Z",
   "shortNotes": [
-    "Universelle Canvas-Suche ueber Proxy-Kaskade fuer jeden Spotify-Song",
-    "Lyrics-Header Mini-Cover wiederhergestellt (<img> statt unzuverlaessiges 0x0-Canvas)",
-    "Cinema-Vollbildmodus mit Live-Video-Ambilight-Glow erweitert",
-    "Glow-Sichtbarkeit im Liquid-Glass-Modus verstaerkt",
-    "Intelligenter Auto-Fetch fuer Songtexte ohne manuellen Resync-Klick"
+    "Cover-Tap oeffnet wieder wie gewohnt den Streaming-Picker",
+    "Glow-Video nahtlos als 1:1 Kanten-Bleed skaliert (kein abgeschnittenes Duplikat mehr)",
+    "Perfekte Canvas-Synchronisation: unsichtbare Loops werden eingefroren & bei Oeffnen synchronisiert",
+    "Automatischer Spotify-Track-ID-Resolver via Songlink/Apple-ID fuer universelle Canvas-Suche"
   ]
 }

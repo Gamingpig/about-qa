@@ -7,12 +7,12 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
-    [LYRICS / MULTI-PROVIDER WORD-SYNC] Release v24.224.8 · 2026-10-16: Apple-Music-TTML-Wort-Sync via AMLL-API, NetEase-YRC + LRCLIB-Kaskade, 0ms-Bundle für "Jente i fra by'n", "You Make Me" & "Make You Believe In Love", autonomer Re-Sync-Fix, Smart-Word-Cadence, Instrumental-Bühne, Lade-Sound restlos entfernt
+    [LYRICS / MULTI-PROVIDER WORD-SYNC] Release v24.224.9 · 2026-10-16: Apple-Music-TTML-Wort-Sync via AMLL-API, NetEase-YRC + LRCLIB-Kaskade, 0ms-Bundle für "Jente i fra by'n", "You Make Me" & "Make You Believe In Love", autonomer Re-Sync-Fix, Smart-Word-Cadence, Instrumental-Bühne, Lade-Sound restlos entfernt
       - Neue Multi-Provider-Wort-Sync-Kaskade: fetchExternalLyrics fragt jetzt zusätzlich die freie Apple-Music-TTML-Datenbank (api.amll.dev) ab.
         Converter formatTtmlTimestamp/convertTtmlToEnhancedLrc übersetzt Apple-Music-TTML in Enhanced-LRC ([mm:ss.xx] <mm:ss.xx>Wort). Provider 'AMLL-AppleMusic' (Tier 2) schlägt NetEase-YRC (30) und LRCLIB (10); Bonus 40.
         Apple-Music-ID wird in updateMusicUI über extractAppleMusicIdFromLinks aus platform_links/track_url gewonnen (currentAppleMusicId) und direkt abgefragt; sonst Suche über Titel+Artist.
       - "Jente i fra by'n" (Marcus & Martinus): neuer LRC_JENTE_I_FRA_BYN-Eintrag mit 4 Schlüssel-Varianten (Apostroph/Komma/Feature) in BUNDLED_LYRICS_DB → 0ms-First-Paint ohne Netzwerk.
-      - Version v24.224.8 (PUBLIC_CHANGELOG de/en, Header/Footer/Settings-Labels, release.html, version.json).
+      - Version v24.224.9 (PUBLIC_CHANGELOG de/en, Header/Footer/Settings-Labels, release.html, version.json).
     [LYRICS / TIMING / COVER / QA PIN GATE] Release v24.222.7: Strenge Synced-Lyrics-Priorisierung, Beseitigung von Songende-Zeitsprüngen, Original-API-Cover im Haupt-Player, Präziser Re-Sync mit Zeitabgleich & Reload-gesichertes PIN-Gate
       - Strikte Priorisierung synchronisierter Lyrics:
         Symptom: Bei Songwechsel wurden oft ungesyncte Plain-Lyrics geladen, obwohl synchronisierte in der Datenbank existierten.
@@ -3267,7 +3267,7 @@
     <script src="./js/core/storage.e856be99df567fd2.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.224.8</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.224.9</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3292,7 +3292,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.224.8 · 2026-10-16';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.224.9 · 2026-10-16';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -5499,17 +5499,18 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
            auch bei opacity:0/unsichtbar) - jetzt nur noch aktiv, während der Effekt beim
            Songstart tatsächlich einmalig einschwingt (siehe .playing-Regel unten). */
         #canvas-glow-video {
-            position: absolute; inset: -40px; z-index: -1;
-            width: calc(100% + 80px) !important; height: calc(100% + 80px) !important;
+            position: absolute; inset: -20px; z-index: -1;
+            width: calc(100% + 40px) !important; height: calc(100% + 40px) !important;
             object-fit: cover;
-            filter: blur(50px) saturate(2.8) brightness(1.35); opacity: 0; transition: opacity 1.2s ease;
-            pointer-events: none; border-radius: inherit; transform: translate3d(0,0,0);
+            filter: blur(40px) saturate(2.5) brightness(1.25); opacity: 0; transition: opacity 1.2s ease;
+            pointer-events: none; border-radius: inherit; transform: translate3d(0,0,0) scale(1.08);
         }
         @media (min-width: 640px) {
             #canvas-glow-video {
-                inset: -90px;
-                width: calc(100% + 180px) !important; height: calc(100% + 180px) !important;
-                filter: blur(85px) saturate(3.0) brightness(1.35);
+                inset: -45px;
+                width: calc(100% + 90px) !important; height: calc(100% + 90px) !important;
+                filter: blur(65px) saturate(2.8) brightness(1.3);
+                transform: translate3d(0,0,0) scale(1.12);
             }
         }
         body.cover-glow-disabled #canvas-glow-video,
@@ -8852,7 +8853,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.224.8</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.224.9</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -8889,7 +8890,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.224.8 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.224.8 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.224.9 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.224.9 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9121,7 +9122,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <div class="flex items-center gap-2 flex-wrap">
                         <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
                         <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
-                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.224.8</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.224.9</span>
                     </div>
                     <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
                 </div>
@@ -9145,7 +9146,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.224.8</span>
+                <span>🧪 QA TESTUMGEBUNG v24.224.9</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -10202,7 +10203,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.224.8</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.224.9</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -10449,7 +10450,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.224.8</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.224.9</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -10460,7 +10461,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.224.8</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.224.9</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -10503,7 +10504,7 @@ html.gp-android:not(.dark) #ui-controls {
         </div>
     </div>
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.224.8</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.224.9</p>
 </div>
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
@@ -10759,7 +10760,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <a href="checklist.html" target="_blank" class="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500 text-teal-300 hover:text-slate-950 font-bold text-[11px] transition-all border border-teal-500/30 inline-flex items-center gap-1">
                         <span>📋</span> <span>QA Checkliste</span>
                     </a>
-                    <span class="text-pink-400 font-mono">v24.224.8</span>
+                    <span class="text-pink-400 font-mono">v24.224.9</span>
                 </div>
             </div>
         </div>
@@ -11182,10 +11183,6 @@ html.gp-android:not(.dark) #ui-controls {
             lastMediaContainerTap = now;
             setTimeout(() => {
                 if (lastMediaContainerTap === now) {
-                    if (typeof canvasEnabled !== 'undefined' && canvasEnabled && typeof currentCanvasUrl !== 'undefined' && currentCanvasUrl && typeof openCanvasCinema === 'function') {
-                        openCanvasCinema(e);
-                        return;
-                    }
                     if (typeof toggleMusicPicker === 'function') toggleMusicPicker(true);
                 }
             }, 370);
@@ -14245,7 +14242,7 @@ html.gp-android:not(.dark) #ui-controls {
             if (!cleanId) return false;
             const t = trackCanvasNegativeCache.get(cleanId);
             if (!t) return false;
-            if (Date.now() - t < 120000) return true;
+            if (Date.now() - t < 15000) return true;
             trackCanvasNegativeCache.delete(cleanId);
             return false;
         }
@@ -18612,7 +18609,7 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
-        { version: "v24.224.8", date: "16. Oktober 2026", type: "feature", items: {
+        { version: "v24.224.9", date: "16. Oktober 2026", type: "feature", items: {
             de: [
                 "?? Apple Music TTML Integration: Direkter Zugriff auf die weltweite Apple-Music-Songtext-Datenbank (AMLL API) f?r echtes, millimetergenaues Silben- und Wort-Timing im Karaoke-Modus",
                 "?? Echtes Wort-Synchron-Erlebnis (Enhanced LRC): L?ckenloser Converter ?bersetzt Apple-Music-TTML und Spotify-Syllables in Echtzeit in standardisiertes Enhanced LRC mit leuchtendem Fuchsia-Badge",
@@ -23459,7 +23456,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
         };
         let currentTrackTitle = "";
         let currentRawArtist = "";
-        let currentAppleMusicId = ""; // v24.224.8: Apple-Music-Song-ID für den AMLL-Wort-Sync
+        let currentAppleMusicId = ""; // v24.224.9: Apple-Music-Song-ID für den AMLL-Wort-Sync
         let currentSpotifyTrackId = ""; // v24.223.1: Spotify-Track-ID für den direkten AMLL-Wort-Sync
         // Anti-Ping-Pong Tracking: speichert den vorherigen, beendeten Track
         let previousTrackTitle = "";
@@ -25458,10 +25455,41 @@ window.setLyricsStyle = function(style) {
                 btn.classList.remove('text-green-400');
             }
         }
+        // Synchronisations- & Einfrier-Engine für Canvas-Videos (Performance + Zero-Drift)
+        function syncCanvasPlayback(slave, master) {
+            if (!slave || !master) return;
+            try {
+                if (master.currentTime > 0 && Math.abs(slave.currentTime - master.currentTime) > 0.08) {
+                    slave.currentTime = master.currentTime;
+                }
+                if (master.paused && !slave.paused) slave.pause();
+                else if (!master.paused && slave.paused && (trackIsPlaying || (typeof isMusicPlaying !== 'undefined' && isMusicPlaying))) {
+                    slave.play().catch(()=>{});
+                }
+            } catch (_) {}
+        }
+
+        function registerMasterCanvasSync() {
+            if (canvasVideo && !canvasVideo.__hasSyncListener) {
+                canvasVideo.__hasSyncListener = true;
+                canvasVideo.addEventListener('timeupdate', () => {
+                    const lcv = document.getElementById('lyrics-canvas-video');
+                    if (lcv && !lcv.paused) syncCanvasPlayback(lcv, canvasVideo);
+                    const ccv = document.getElementById('canvas-cinema-video');
+                    if (ccv && !ccv.paused) syncCanvasPlayback(ccv, canvasVideo);
+                    const ccgv = document.getElementById('canvas-cinema-glow-video');
+                    if (ccgv && !ccgv.paused) syncCanvasPlayback(ccgv, canvasVideo);
+                    const cgv = document.getElementById('canvas-glow-video');
+                    if (cgv && !cgv.paused) syncCanvasPlayback(cgv, canvasVideo);
+                }, { passive: true });
+            }
+        }
+
         function applyResolvedCanvas(url, forSpotifyId) {
             if (!url || typeof url !== 'string' || !url.startsWith('http')) return;
             currentCanvasUrl = url;
             const isCurrentlyPlaying = trackIsPlaying || (typeof isMusicPlaying !== 'undefined' && isMusicPlaying);
+            registerMasterCanvasSync();
             console.log('[Canvas] Applying Canvas URL:', url, 'Enabled:', canvasEnabled, 'Playing:', isCurrentlyPlaying);
 
             // 1. Hintergrund-Canvas im Kartenhintergrund
@@ -25571,8 +25599,26 @@ window.setLyricsStyle = function(style) {
             updateCanvasButtonUI();
         }
         async function resolveSpotifyCanvas(spotifyId, trackTitle, rawArtist) {
-            if (!spotifyId || typeof spotifyId !== 'string') return null;
-            const cleanId = spotifyId.replace(/^spotify:track:/, '').trim();
+            let cleanId = (typeof spotifyId === 'string' ? spotifyId : '').replace(/^spotify:track:/, '').trim();
+
+            // Falls keine direkte 22-Zeichen-Spotify-ID vorliegt: automatisch auflösen
+            if (!cleanId || !/^[a-zA-Z0-9]{22}$/.test(cleanId)) {
+                // 1. Aus Apple-Music-ID auflösen via Songlink/Odesli
+                const amId = (typeof currentAppleMusicId !== 'undefined' ? currentAppleMusicId : '');
+                if (amId && /^[0-9]+$/.test(amId)) {
+                    try {
+                        const slRes = await fetch(`https://api.songlink.io/v1-alpha.1/links?url=https://music.apple.com/song/${amId}&userCountry=DE`, { signal: AbortSignal.timeout(4500) });
+                        if (slRes.ok) {
+                            const slData = await slRes.json();
+                            const spUrl = slData?.linksByPlatform?.spotify?.url;
+                            if (spUrl) {
+                                const m = spUrl.match(/track\/([a-zA-Z0-9]{22})/);
+                                if (m) cleanId = m[1];
+                            }
+                        }
+                    } catch (_) {}
+                }
+            }
             if (!cleanId || !/^[a-zA-Z0-9]{22}$/.test(cleanId)) return null;
             if (trackCanvasMemoryCache.has(cleanId)) {
                 const cached = trackCanvasMemoryCache.get(cleanId);
@@ -25748,6 +25794,7 @@ window.setLyricsStyle = function(style) {
                     video.load();
                 }
                 video.muted = true;
+                if (canvasVideo) syncCanvasPlayback(video, canvasVideo);
                 video.play().catch(()=>{});
             }
             if (glowVideo) {
@@ -25756,6 +25803,7 @@ window.setLyricsStyle = function(style) {
                     glowVideo.load();
                 }
                 glowVideo.muted = true;
+                if (canvasVideo) syncCanvasPlayback(glowVideo, canvasVideo);
                 glowVideo.play().catch(()=>{});
             }
             if (modal) {
@@ -25827,6 +25875,15 @@ window.setLyricsStyle = function(style) {
                 mainMusicCard.classList.remove('lyrics-closing-state');
                 void mainMusicCard.offsetWidth; // Reflow erzwingen
                 mainMusicCard.classList.add('lyrics-open');
+
+                // Performance + Sync: Lyrics-Canvas auf Master-Zeit synchronisieren und starten
+                if (canvasEnabled && currentCanvasUrl) {
+                    const lcvOpen = document.getElementById('lyrics-canvas-video');
+                    if (lcvOpen && canvasVideo) {
+                        syncCanvasPlayback(lcvOpen, canvasVideo);
+                        lcvOpen.play().catch(()=>{});
+                    }
+                }
                 // Cover im Lyrics-Header direkt synchronisieren
                 const lmArt = document.getElementById('lyrics-mini-art');
                 if (lmArt && currentResolvedArtUrl) lmArt.src = currentResolvedArtUrl;
@@ -25888,6 +25945,10 @@ window.setLyricsStyle = function(style) {
                     if (btnSpeak && typeof ttsSetButtonState === 'function') ttsSetButtonState(btnSpeak, 'idle');
                 }
                 stopLyricsStylePreviewLoop();
+                // Performance: Unsichtbares Lyrics-Canvas sofort einfrieren
+                const lcvClose = document.getElementById('lyrics-canvas-video');
+                if (lcvClose) lcvClose.pause();
+
                 mainMusicCard.classList.add('lyrics-closing-state');
                 mainMusicCard.classList.remove('lyrics-open');
                 setTimeout(() => {
@@ -30204,7 +30265,7 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.224.8</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.224.9</span>
         </a>
     </div>
 
