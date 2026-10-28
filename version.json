@@ -1,9 +1,9 @@
 {
-  "version": "24.225.5",
-  "buildTime": "2026-10-28T15:52:01.498Z",
+  "version": "24.225.6",
+  "buildTime": "2026-10-28T16:11:39.902Z",
   "shortNotes": [
-    "Instant Lyrics First-Paint: Songtexte laden in 200ms ohne 15s Wartezeit auf langsame Dritt-APIs",
-    "Autonomer Selbstheilungs-Retry: Niemals wieder manuell auf \"Re-Sync\" klicken müssen",
-    "Progressive Word-Sync Aufwertung im Hintergrund ohne Wiedergabeunterbrechung"
+    "100% Frame-Lock Canvas Sync: 40ms Drift-Kompensation und ausnahmslose Synchronisation aller Canvas-Instanzen",
+    "Amphitheater Cinema Glow: 3.5x Sättigung und 1.4x Helligkeit für raumfüllenden Vollbild-Ambilight-Glow",
+    "Massives Canvas-Update: Über 380 Song- & Track-IDs direkt gebundlet für 0ms Sofort-Wiedergabe"
   ]
 }

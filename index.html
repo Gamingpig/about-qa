@@ -7,12 +7,12 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
-    [LYRICS / MULTI-PROVIDER WORD-SYNC] Release v24.225.5 · 2026-10-16: Apple-Music-TTML-Wort-Sync via AMLL-API, NetEase-YRC + LRCLIB-Kaskade, 0ms-Bundle für "Jente i fra by'n", "You Make Me" & "Make You Believe In Love", autonomer Re-Sync-Fix, Smart-Word-Cadence, Instrumental-Bühne, Lade-Sound restlos entfernt
+    [LYRICS / MULTI-PROVIDER WORD-SYNC] Release v24.225.6 · 2026-10-16: Apple-Music-TTML-Wort-Sync via AMLL-API, NetEase-YRC + LRCLIB-Kaskade, 0ms-Bundle für "Jente i fra by'n", "You Make Me" & "Make You Believe In Love", autonomer Re-Sync-Fix, Smart-Word-Cadence, Instrumental-Bühne, Lade-Sound restlos entfernt
       - Neue Multi-Provider-Wort-Sync-Kaskade: fetchExternalLyrics fragt jetzt zusätzlich die freie Apple-Music-TTML-Datenbank (api.amll.dev) ab.
         Converter formatTtmlTimestamp/convertTtmlToEnhancedLrc übersetzt Apple-Music-TTML in Enhanced-LRC ([mm:ss.xx] <mm:ss.xx>Wort). Provider 'AMLL-AppleMusic' (Tier 2) schlägt NetEase-YRC (30) und LRCLIB (10); Bonus 40.
         Apple-Music-ID wird in updateMusicUI über extractAppleMusicIdFromLinks aus platform_links/track_url gewonnen (currentAppleMusicId) und direkt abgefragt; sonst Suche über Titel+Artist.
       - "Jente i fra by'n" (Marcus & Martinus): neuer LRC_JENTE_I_FRA_BYN-Eintrag mit 4 Schlüssel-Varianten (Apostroph/Komma/Feature) in BUNDLED_LYRICS_DB → 0ms-First-Paint ohne Netzwerk.
-      - Version v24.225.5 (PUBLIC_CHANGELOG de/en, Header/Footer/Settings-Labels, release.html, version.json).
+      - Version v24.225.6 (PUBLIC_CHANGELOG de/en, Header/Footer/Settings-Labels, release.html, version.json).
     [LYRICS / TIMING / COVER / QA PIN GATE] Release v24.222.7: Strenge Synced-Lyrics-Priorisierung, Beseitigung von Songende-Zeitsprüngen, Original-API-Cover im Haupt-Player, Präziser Re-Sync mit Zeitabgleich & Reload-gesichertes PIN-Gate
       - Strikte Priorisierung synchronisierter Lyrics:
         Symptom: Bei Songwechsel wurden oft ungesyncte Plain-Lyrics geladen, obwohl synchronisierte in der Datenbank existierten.
@@ -3267,7 +3267,7 @@
     <script src="./js/core/storage.e856be99df567fd2.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.225.5</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.225.6</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3292,7 +3292,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.225.5 · 2026-10-16';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.225.6 · 2026-10-16';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -5448,7 +5448,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             border: none !important;
             box-shadow: none !important;
         }
-        /* FIX v24.210.0 & v24.225.5: Bei normalen Lyrics-Animationen (ohne Canvas)
+        /* FIX v24.210.0 & v24.225.6: Bei normalen Lyrics-Animationen (ohne Canvas)
            sorgt ein deckender, eleganter Tiefschwarz-Glas-Hintergrund für gestochen
            scharfe Lesbarkeit aller Zeilen. Wenn Canvas aktiv ist, bleibt es glasklar transparent. */
         body.liquid-glass-active #main-music-card:not(.canvas-active).lyrics-open #lyrics-overlay:not(.apple-ambient-active) {
@@ -5526,7 +5526,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         body.low-end #canvas-glow-video {
             display: none !important;
         }
-        /* Liquid Glass Glow- & Overflow-Reparatur (v24.225.5) */
+        /* Liquid Glass Glow- & Overflow-Reparatur (v24.225.6) */
         body.liquid-glass-active #main-music-card:not(.lyrics-open) {
             overflow: visible !important;
         }
@@ -8877,7 +8877,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.5</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.6</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -8914,7 +8914,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.5 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.5 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.6 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.6 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9146,7 +9146,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <div class="flex items-center gap-2 flex-wrap">
                         <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
                         <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
-                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.225.5</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.225.6</span>
                     </div>
                     <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
                 </div>
@@ -9170,7 +9170,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.225.5</span>
+                <span>🧪 QA TESTUMGEBUNG v24.225.6</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -10227,7 +10227,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.225.5</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.225.6</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -10474,7 +10474,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.225.5</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.225.6</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -10485,7 +10485,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.225.5</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.225.6</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -10528,7 +10528,7 @@ html.gp-android:not(.dark) #ui-controls {
         </div>
     </div>
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.225.5</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.225.6</p>
 </div>
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
@@ -10784,7 +10784,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <a href="checklist.html" target="_blank" class="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500 text-teal-300 hover:text-slate-950 font-bold text-[11px] transition-all border border-teal-500/30 inline-flex items-center gap-1">
                         <span>📋</span> <span>QA Checkliste</span>
                     </a>
-                    <span class="text-pink-400 font-mono">v24.225.5</span>
+                    <span class="text-pink-400 font-mono">v24.225.6</span>
                 </div>
             </div>
         </div>
@@ -14242,74 +14242,395 @@ html.gp-android:not(.dark) #ui-controls {
         const trackCanvasMemoryCache = new Map();
         const trackCanvasNegativeCache = new Map();
         const BUNDLED_CANVAS_DB = {
-            // Marcus & Martinus - 247365
-            "1pDuguLeQ2OhYbfA3DhQ2Q": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/232a0f40c20443ccaba0f8c383da127a.cnvs.mp4",
-            "247365": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/232a0f40c20443ccaba0f8c383da127a.cnvs.mp4",
-            // Marcus & Martinus - Love Flow
-            "2joCJp4nNp0ug8Dr7txktX": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/53635cb72dbd45cc89870d93220dcffd.cnvs.mp4",
-            "love flow": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/53635cb72dbd45cc89870d93220dcffd.cnvs.mp4",
-            // Marcus & Martinus - Unforgettable (Single & Album IDs)
-            "0RnJVPoIT2NDRCSsjpd0V7": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/165992fac9d94bebb2adeb2e2e0f3ed9.cnvs.mp4",
-            "5L8C1PZGCpZf8STcN79H5j": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/165992fac9d94bebb2adeb2e2e0f3ed9.cnvs.mp4",
-            "unforgettable": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/165992fac9d94bebb2adeb2e2e0f3ed9.cnvs.mp4",
-            // Ed Sheeran - Shape of You
-            "7qiZfU4dY1lWllzX7mPBI3": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/a4201a09839c41d291b9b7d43f3e1e30.cnvs.mp4",
-            "shape of you": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/a4201a09839c41d291b9b7d43f3e1e30.cnvs.mp4",
-            // Little Seed
-            "0v31zcfKirky9rKY2YfLgJ": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/092814bdd54e4c0f9c1c0c802af65585.cnvs.mp4",
-            "little seed": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/092814bdd54e4c0f9c1c0c802af65585.cnvs.mp4",
-            // Oceans
-            "7mndKWWRqtr5uawuwINjDC": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/c589a900666f4734a0f59423f9a12807.cnvs.mp4",
-            "oceans": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/c589a900666f4734a0f59423f9a12807.cnvs.mp4",
-            // ILKO - I Never Lose
+            "0axd3uv4oozjdsrjaaa60j": "https://canvaz.scdn.co/upload/artist/3OKg7YbOIatODzkRIbLJR4/image/af0e4e949b3c45edb3ac80e85548fc79.cnvs.jpg",
+            "0AxD3uv4oOzJDsrjAAA60J": "https://canvaz.scdn.co/upload/artist/3OKg7YbOIatODzkRIbLJR4/image/af0e4e949b3c45edb3ac80e85548fc79.cnvs.jpg",
+            "0ewmckh5yefvjusuuyb1sf": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/e29bdb32bc8543f585c1af7dcc1d7948.cnvs.mp4",
+            "0eWmckh5yefvjUsuUyb1Sf": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/e29bdb32bc8543f585c1af7dcc1d7948.cnvs.mp4",
+            "0jxjgn9r9zosarc1cfwxxv": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/823d88becaf9423c8552640da03d2f72.cnvs.mp4",
+            "0JxJGN9r9ZOSARC1cfwXxV": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/823d88becaf9423c8552640da03d2f72.cnvs.mp4",
+            "0kpccxxva0cxrmjlirdqki": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/3924bb097a9743908ec4724831d465d0.cnvs.mp4",
+            "0kPcCxxva0cxrmJLirDQKI": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/3924bb097a9743908ec4724831d465d0.cnvs.mp4",
+            "0l7wdpkfuu065leykftzld": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/39b0401d8f564a26b582ab904434d02e.cnvs.mp4",
+            "0L7WdPKfUu065LeyKfTzLd": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/39b0401d8f564a26b582ab904434d02e.cnvs.mp4",
+            "0mbztr1o13cjacv3eptuzz": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/701b13cb330449119f06ff51c9aa3fb8.cnvs.mp4",
+            "0mbzTR1o13CJaCV3EPtUzz": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/701b13cb330449119f06ff51c9aa3fb8.cnvs.mp4",
+            "0r5ryo1zxvlaet61aeu3rp": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/a27cbdca1d58495a8243fe8fa388bede.cnvs.mp4",
+            "0R5RyO1ZxVLaeT61AeU3rp": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/a27cbdca1d58495a8243fe8fa388bede.cnvs.mp4",
+            "0rjuz1h5u3uavpojuvgjyg": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/a7073c873c654a3e87ea477e873c64a5.cnvs.mp4",
             "0rJUZ1h5u3uavPOjUvGJyg": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/a7073c873c654a3e87ea477e873c64a5.cnvs.mp4",
-            "i never lose": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/a7073c873c654a3e87ea477e873c64a5.cnvs.mp4",
-            // VDSIS - Vergiss mich nicht
-            "7eumrITUOpXKUUEDP7g6C2": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/7c7ea86176b44e67ac3b90c54e97a49c.cnvs.mp4",
-            "vergiss mich nicht": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/7c7ea86176b44e67ac3b90c54e97a49c.cnvs.mp4",
-            // VDSIS - Überall
-            "1VbE1hXPk0lZQyb8T8owpZ": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/142f38a24d3f4d3f9972334d1918001b.cnvs.mp4",
-            "überall": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/142f38a24d3f4d3f9972334d1918001b.cnvs.mp4",
-            // Oscar Stembridge - What If
-            "3vuEsINQsyGAsgJ2DSPZbF": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/072a078e2539456eb3e693a3ca1cc6ec.cnvs.mp4",
-            "7oagsVrnksscqODO6duJlT": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/c8f7c4be27404336af03ce6e63bc4171.cnvs.mp4",
-            "what if": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/072a078e2539456eb3e693a3ca1cc6ec.cnvs.mp4",
-            // Oscar Stembridge - Dead Man Walking
-            "44fmr0ohtGtHeJuwOFc1P4": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/15c658d77f1943869a3e781fac7a0b34.cnvs.mp4",
-            "dead man walking": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/15c658d77f1943869a3e781fac7a0b34.cnvs.mp4",
-            // Oscar Stembridge - Fake Front
-            "2iXwwdVpUb1MH5TEZwe2W6": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/cc8fda31a51144f985d0c892f3068b58.cnvs.mp4",
-            "fake front": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/cc8fda31a51144f985d0c892f3068b58.cnvs.mp4",
-            // Bjarne - Set Fire to the Rain
-            "70qF1pG13clZzhLk1OfEbL": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/18de9587650442b2958fba9db58a19e6.cnvs.mp4",
-            "set fire to the rain": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/18de9587650442b2958fba9db58a19e6.cnvs.mp4",
-            // Bjarne - Bird Set Free
-            "4gnVJ8PmMlw9cUK0pVtxcU": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/ee30d1fcf3a247fd86a316ada21c7de1.cnvs.mp4",
-            "bird set free": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/ee30d1fcf3a247fd86a316ada21c7de1.cnvs.mp4",
-            // Bjarne - People Help the People
+            "0rnjvpoit2ndrcssjpd0v7": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/165992fac9d94bebb2adeb2e2e0f3ed9.cnvs.mp4",
+            "0RnJVPoIT2NDRCSsjpd0V7": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/165992fac9d94bebb2adeb2e2e0f3ed9.cnvs.mp4",
+            "0v31zcfkirky9rky2yflgj": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/092814bdd54e4c0f9c1c0c802af65585.cnvs.mp4",
+            "0v31zcfKirky9rKY2YfLgJ": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/092814bdd54e4c0f9c1c0c802af65585.cnvs.mp4",
+            "0v974mm8j4ghh0nssefr9z": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/d806468e98574ba8ac9ddfdf4c903f81.cnvs.mp4",
+            "0V974mM8J4ghh0nSseFr9z": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/d806468e98574ba8ac9ddfdf4c903f81.cnvs.mp4",
+            "0vg3dnsufxghjurtpizr37": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/ac9862d1c0ef4099b935ed7a9cb58e8a.cnvs.mp4",
+            "0vg3dNSUFxghjurTPIZr37": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/ac9862d1c0ef4099b935ed7a9cb58e8a.cnvs.mp4",
+            "0wz1lcm0z10dqwottwdiqd": "https://canvaz.scdn.co/upload/artist/58PtHfnVLB3mbDD5z2F5DG/video/38173dc917fb4343a7a1594702727e2b.cnvs.mp4",
+            "0WZ1lcM0Z10DqWOtTWDIQD": "https://canvaz.scdn.co/upload/artist/58PtHfnVLB3mbDD5z2F5DG/video/38173dc917fb4343a7a1594702727e2b.cnvs.mp4",
+            "0ygh0gzx5ngrn4g3twt9e8": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/436fa257aee64b4389851562de456463.cnvs.mp4",
+            "0yGh0gZX5nGRn4G3TWT9E8": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/436fa257aee64b4389851562de456463.cnvs.mp4",
+            "112mtujcdcwt4d7johrc6k": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/5e7f72eaaabc41c897a2e0b6c7a99737.cnvs.mp4",
+            "112MtUJCDCWt4D7JOHrc6K": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/5e7f72eaaabc41c897a2e0b6c7a99737.cnvs.mp4",
+            "17faun4fxno8bvfk1dwg2f": "https://canvaz.scdn.co/upload/artist/04H4Esj5jxaThmH3mcL2Aa/video/dcc85478e7364217a3dd3b6a13b2ff21.cnvs.mp4",
+            "17FAun4fXno8bvfK1dwG2f": "https://canvaz.scdn.co/upload/artist/04H4Esj5jxaThmH3mcL2Aa/video/dcc85478e7364217a3dd3b6a13b2ff21.cnvs.mp4",
+            "18ydkv1f1n9fiq8svgg4hg": "https://canvaz.scdn.co/upload/artist/3N4FiTxpPQRsrihmTMN349/video/6aa606ef81a0464fa169453db013ec0e.cnvs.mp4",
+            "18YdkV1F1N9fiQ8svGg4Hg": "https://canvaz.scdn.co/upload/artist/3N4FiTxpPQRsrihmTMN349/video/6aa606ef81a0464fa169453db013ec0e.cnvs.mp4",
+            "1atzozyvt7x9lqvoxwf0a9": "https://canvaz.scdn.co/upload/artist/2DA16aO9CbATHqMY4ylN5n/video/30c0b0f21b944ea7816f4eab7e1653b9.cnvs.mp4",
+            "1aTzOzyvt7X9LqvOXWf0A9": "https://canvaz.scdn.co/upload/artist/2DA16aO9CbATHqMY4ylN5n/video/30c0b0f21b944ea7816f4eab7e1653b9.cnvs.mp4",
+            "1fy7c3bbxyjczdcsolmxyf": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/8552d7d99f46467f89913013b65469e3.cnvs.mp4",
             "1fY7c3bbXyJCZdcSOlmXyF": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/8552d7d99f46467f89913013b65469e3.cnvs.mp4",
-            "people help the people": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/8552d7d99f46467f89913013b65469e3.cnvs.mp4",
-            // Marcus & Martinus - Air
-            "7af98K7GaM4GOipgDb2OSz": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/20f7c47a8e464ee0b27c9edd1d892c9c.cnvs.mp4",
-            "air": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/20f7c47a8e464ee0b27c9edd1d892c9c.cnvs.mp4",
-            // Marcus & Martinus - Follow Me
-            "5OTqyXuoHavsUXTH6zzEuY": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/1fa8fa947a294dafa513daec67b8687d.cnvs.mp4",
-            "follow me": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/1fa8fa947a294dafa513daec67b8687d.cnvs.mp4",
-            // Marcus & Martinus - Endless Summer
-            "4M1aM0wdvRiWNAbtzztmD2": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/436fa257aee64b4389851562de456463.cnvs.mp4",
-            "endless summer": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/436fa257aee64b4389851562de456463.cnvs.mp4",
-            // ILKO - Turn It Up
-            "43XsZHE39S4Qu83FxwCRF9": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/4bbea6ccc7014e1ca10fae1d34f663df.cnvs.mp4",
-            "turn it up": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/4bbea6ccc7014e1ca10fae1d34f663df.cnvs.mp4",
-            // ILKO - One Step at a Time
-            "6HXBiigdiQU53t5gRuW753": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/b58bd03e80864b67b5a27076f31e0b50.cnvs.mp4",
-            "one step at a time": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/b58bd03e80864b67b5a27076f31e0b50.cnvs.mp4",
-            // Max Giesinger - 80 Millionen
+            "1ghqgb1flccyhehfi2rls9": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/9d408f71f5fa4078b0c1226b24d64cda.cnvs.mp4",
+            "1GHQGB1flCcYhEHFi2rls9": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/9d408f71f5fa4078b0c1226b24d64cda.cnvs.mp4",
+            "1gnx1vhghruftqw642oylg": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/54c9f5e650ea4dbf83d1162f48ec72f5.cnvs.mp4",
+            "1Gnx1vhghRUFTqW642oylg": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/54c9f5e650ea4dbf83d1162f48ec72f5.cnvs.mp4",
+            "1i7loltwbumx6qkudpcfwh": "https://canvaz.scdn.co/upload/artist/7vk5e3vY1uw9plTHJAMwjN/video/13d3c37099294a61bbfccf3ba67a4a9d.cnvs.mp4",
+            "1i7LoLTwbUmX6QkudpcfWh": "https://canvaz.scdn.co/upload/artist/7vk5e3vY1uw9plTHJAMwjN/video/13d3c37099294a61bbfccf3ba67a4a9d.cnvs.mp4",
+            "1kbzcmh6iitcyvqtmncc7z": "https://i.scdn.co/image/ab67ba690000242779126410e79fd1e20a621253",
+            "1kBzCMh6iITCyVqtmncc7z": "https://i.scdn.co/image/ab67ba690000242779126410e79fd1e20a621253",
+            "1kcmf9fdf7sne74r2v46af": "https://canvaz.scdn.co/upload/artist/27gtK7m9vYwCyJ04zz0kIb/video/e0419384365b45048266b21a967d9950.cnvs.mp4",
+            "1KCMF9fdF7sNE74R2V46af": "https://canvaz.scdn.co/upload/artist/27gtK7m9vYwCyJ04zz0kIb/video/e0419384365b45048266b21a967d9950.cnvs.mp4",
+            "1keafamzsvwsqmr6rcuqc2": "https://i.scdn.co/image/ab67ba690000242753a1952133168505b5d0e872",
+            "1keafAMZSvWSQMr6rcuqc2": "https://i.scdn.co/image/ab67ba690000242753a1952133168505b5d0e872",
+            "1kyeliwdt2zxrgevsm01g5": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/af5153a532a547e394ba3747e40cc5f6.cnvs.mp4",
+            "1kyELIWdT2ZxrgeVsM01G5": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/af5153a532a547e394ba3747e40cc5f6.cnvs.mp4",
+            "1m5txjybkhng8rphray33q": "https://canvaz.scdn.co/upload/artist/3N4FiTxpPQRsrihmTMN349/video/d27a98d6176d4121955f48f385686900.cnvs.mp4",
+            "1m5tXJyBkhNg8RPhRAy33q": "https://canvaz.scdn.co/upload/artist/3N4FiTxpPQRsrihmTMN349/video/d27a98d6176d4121955f48f385686900.cnvs.mp4",
+            "1nbx0maomsujtifqf1oz96": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/e6378583b1bd4fb196b3d9f7c1c43d2e.cnvs.mp4",
+            "1NbX0mAoMSuJtIFqf1oz96": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/e6378583b1bd4fb196b3d9f7c1c43d2e.cnvs.mp4",
+            "1pduguleq2ohybfa3dhq2q": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/232a0f40c20443ccaba0f8c383da127a.cnvs.mp4",
+            "1pDuguLeQ2OhYbfA3DhQ2Q": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/232a0f40c20443ccaba0f8c383da127a.cnvs.mp4",
+            "1qn9ctpuziynykfeoonwy9": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/a63b7adefdd745079f5cf54b16e6f0ce.cnvs.mp4",
+            "1qn9cTpUZiynYkFEOOnwY9": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/a63b7adefdd745079f5cf54b16e6f0ce.cnvs.mp4",
+            "1uwwnss9711p33i8pgzwm6": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/31691be3dd9b4ce9b89acf7fdd6c2b3f.cnvs.mp4",
+            "1UwwNsS9711p33i8pGZwM6": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/31691be3dd9b4ce9b89acf7fdd6c2b3f.cnvs.mp4",
+            "1vbe1hxpk0lzqyb8t8owpz": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/142f38a24d3f4d3f9972334d1918001b.cnvs.mp4",
+            "1VbE1hXPk0lZQyb8T8owpZ": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/142f38a24d3f4d3f9972334d1918001b.cnvs.mp4",
+            "1viwgqyqxfjiu0jjicdmhw": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/9f93c728c2264038a975da69313eee56.cnvs.mp4",
+            "1VIWgqyqxfjIu0jjiCDMHW": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/9f93c728c2264038a975da69313eee56.cnvs.mp4",
+            "1wnkajjetia5idxyj5s0bk": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/c363062806d9457c8eb808e5a7b0f424.cnvs.mp4",
+            "1wnkajJEtIa5IDXyJ5s0bk": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/c363062806d9457c8eb808e5a7b0f424.cnvs.mp4",
+            "1xnx9egm4xved83134deva": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/0535cde94e3144c2a64ca571d1c334cb.cnvs.mp4",
+            "1xnx9Egm4xVED83134dEVA": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/0535cde94e3144c2a64ca571d1c334cb.cnvs.mp4",
+            "21e92w40yof8gr40cosrsg": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/503edd50d2f44880bf1b135fd092db9b.cnvs.mp4",
+            "21e92w40Yof8Gr40CosrsG": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/503edd50d2f44880bf1b135fd092db9b.cnvs.mp4",
+            "21ooxpfyqipio74md1eatc": "https://canvaz.scdn.co/upload/artist/67SeoU54DvDpkDDXtWEoOc/video/06710fe7adb348c89ca393005f2dc320.cnvs.mp4",
+            "21ooXPFYQIPIo74Md1EaTC": "https://canvaz.scdn.co/upload/artist/67SeoU54DvDpkDDXtWEoOc/video/06710fe7adb348c89ca393005f2dc320.cnvs.mp4",
+            "247365": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/232a0f40c20443ccaba0f8c383da127a.cnvs.mp4",
+            "24auslyklbuvepm3uog7dp": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/4f2ce488b4a14b1a88630e003802699d.cnvs.mp4",
+            "24AuSlyKLBuVEpm3UOg7dP": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/4f2ce488b4a14b1a88630e003802699d.cnvs.mp4",
+            "2ghufq8xnc3trqwvl2zgew": "https://canvaz.scdn.co/upload/artist/7nPBkdzUQ0fJhsfXjRDrLh/video/bf4e909ee32148ee96e26644f1116393.cnvs.mp4",
+            "2GHuFQ8XNC3tRQwvl2zgew": "https://canvaz.scdn.co/upload/artist/7nPBkdzUQ0fJhsfXjRDrLh/video/bf4e909ee32148ee96e26644f1116393.cnvs.mp4",
+            "2goyof1sqqdv2wyoeloywa": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/0ecdd8773d7e4ecb8587a63664e0fa43.cnvs.mp4",
+            "2gOyOf1sQqDv2wyOeloywA": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/0ecdd8773d7e4ecb8587a63664e0fa43.cnvs.mp4",
+            "2if0bq1txjscmmsvoaljnw": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/c94386e7b83e43bd8b6a8dac3c267438.cnvs.mp4",
+            "2IF0Bq1TxJSCmMSVoaLJNw": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/c94386e7b83e43bd8b6a8dac3c267438.cnvs.mp4",
+            "2ixwwdvpub1mh5tezwe2w6": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/cc8fda31a51144f985d0c892f3068b58.cnvs.mp4",
+            "2iXwwdVpUb1MH5TEZwe2W6": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/cc8fda31a51144f985d0c892f3068b58.cnvs.mp4",
+            "2jocjp4nnp0ug8dr7txktx": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/53635cb72dbd45cc89870d93220dcffd.cnvs.mp4",
+            "2joCJp4nNp0ug8Dr7txktX": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/53635cb72dbd45cc89870d93220dcffd.cnvs.mp4",
+            "2ladamwcfafqbgiidkewax": "https://canvaz.scdn.co/upload/artist/224CDJhbm230iSo9ZomTWe/video/5e86087c9ce54a8aa4b45964e6564771.cnvs.mp4",
             "2ladamWCFAfQbgIIdkewAx": "https://canvaz.scdn.co/upload/artist/224CDJhbm230iSo9ZomTWe/video/5e86087c9ce54a8aa4b45964e6564771.cnvs.mp4",
-            "80 millionen": "https://canvaz.scdn.co/upload/artist/224CDJhbm230iSo9ZomTWe/video/5e86087c9ce54a8aa4b45964e6564771.cnvs.mp4",
-            // MVX - Kein Wir
+            "2nleghjwqashdg1hwvpuyu": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/0938dad608ed4d7e89738c89cdb2c7bd.cnvs.mp4",
+            "2nLEGhjWqAShdg1HWVPuyU": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/0938dad608ed4d7e89738c89cdb2c7bd.cnvs.mp4",
+            "2obt1akdnqloetimdljhkj": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/4a11cdd6379f4be1b3d174f8dd0026e5.cnvs.mp4",
+            "2OBT1aKdnQLoetImdljhkJ": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/4a11cdd6379f4be1b3d174f8dd0026e5.cnvs.mp4",
+            "2pq5nmsojuqfynjndwetul": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/39146fd1f9ac44ea891404637188a066.cnvs.mp4",
+            "2Pq5NmsOJuqfynJnDwETUl": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/39146fd1f9ac44ea891404637188a066.cnvs.mp4",
+            "2sdzwr9xjlsbbf3jxckaad": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/f54532578f554b53970d96ada190fe8d.cnvs.mp4",
+            "2sdZWR9xJlSbbf3JXCKaaD": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/f54532578f554b53970d96ada190fe8d.cnvs.mp4",
+            "2t14krx2g24inxfwpfvf93": "https://canvaz.scdn.co/upload/artist/3NRFinRTEqUCfaTTZmk8ek/video/a6fff56fe1ac4bb38b0541df8bff818f.cnvs.mp4",
+            "2t14KrX2g24inxFWpFVf93": "https://canvaz.scdn.co/upload/artist/3NRFinRTEqUCfaTTZmk8ek/video/a6fff56fe1ac4bb38b0541df8bff818f.cnvs.mp4",
+            "2uf1ume8krbgbyp3idelyc": "https://canvaz.scdn.co/upload/artist/58yUFNnwk1DyoBvKNPmYdH/video/56dbb8dd89704d99b3dd0323f4bfaa79.cnvs.mp4",
+            "2UF1uMe8kRBGBYp3iDElyC": "https://canvaz.scdn.co/upload/artist/58yUFNnwk1DyoBvKNPmYdH/video/56dbb8dd89704d99b3dd0323f4bfaa79.cnvs.mp4",
+            "2ufvdgm0a5stczirml8l3o": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/48502173015e44ada03de6b9b91fc410.cnvs.mp4",
+            "2UfVDgM0a5STczIRmL8L3O": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/48502173015e44ada03de6b9b91fc410.cnvs.mp4",
+            "2uvkgmyglpmfefeer7hdb2": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/39891590c55d467b842fbceeabc16e43.cnvs.mp4",
+            "2uvKGmyGlPMfefeer7hDB2": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/39891590c55d467b842fbceeabc16e43.cnvs.mp4",
+            "2vhsdw4mlsmcqcbzmfggtw": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/c1dc80e4434d46fab6bf9545e8bfe022.cnvs.mp4",
+            "2VHSdw4mlsmCqcBZMFGGtw": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/c1dc80e4434d46fab6bf9545e8bfe022.cnvs.mp4",
+            "2wcpndkwo91m865yn1bssq": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/446a599154634b3cacd375ef014bd265.cnvs.mp4",
+            "2WcpnDkwo91M865YN1bSSq": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/446a599154634b3cacd375ef014bd265.cnvs.mp4",
+            "2wlohqkov1ca5rgs0syhls": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/b2c596920a81419ba04361b0866f170e.cnvs.mp4",
+            "2wLOHQKOv1CA5RGS0SYhLs": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/b2c596920a81419ba04361b0866f170e.cnvs.mp4",
+            "2zurckx9eafs3xgutlhyia": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/4258c8dddffb43c2b8a39333d48c0f17.cnvs.mp4",
+            "2ZurckX9eAFs3xguTlhyIA": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/4258c8dddffb43c2b8a39333d48c0f17.cnvs.mp4",
+            "33s": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/7dd374f5c64141259a76da0b3b618465.cnvs.mp4",
+            "397ej50sdid9cb9fzhjhal": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/a6e42f8e399c4b878a17aab3fe1bf442.cnvs.mp4",
+            "397Ej50sdiD9Cb9fzHJHAl": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/a6e42f8e399c4b878a17aab3fe1bf442.cnvs.mp4",
+            "3cgqmdutsyvroovobbngha": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/673403e6dbb241daa7977eedf0715412.cnvs.mp4",
+            "3CGQmDutSYvROovOBBNgHA": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/673403e6dbb241daa7977eedf0715412.cnvs.mp4",
+            "3fisf4vqkv7t0wfagt9c3y": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/baa6c7bb328c441f9958e346b628632a.cnvs.mp4",
+            "3fISF4vqKv7T0WfagT9c3y": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/baa6c7bb328c441f9958e346b628632a.cnvs.mp4",
+            "3fu6fffgqxv59sqekpf31x": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/ea99a64297ab473d88a032c2f5b8589c.cnvs.mp4",
+            "3fU6FfFGqxV59sqeKpF31x": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/ea99a64297ab473d88a032c2f5b8589c.cnvs.mp4",
+            "3hjsont4ikap3y7k1e8hmu": "https://canvaz.scdn.co/upload/artist/6BcFQXbjnioLmtkzvGKYmz/video/2db149dccd9243119fe9619792eb438b.cnvs.mp4",
+            "3hjsOnT4IKaP3Y7k1e8HmU": "https://canvaz.scdn.co/upload/artist/6BcFQXbjnioLmtkzvGKYmz/video/2db149dccd9243119fe9619792eb438b.cnvs.mp4",
+            "3hpowc6sne9hgpgz75xudq": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/263fde71ce314d6cb59868d7f446b533.cnvs.mp4",
+            "3HPowC6sNe9hgpGZ75XUdq": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/263fde71ce314d6cb59868d7f446b533.cnvs.mp4",
+            "3ikbwvcodvkauaexhc8xat": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/bc86093800a6430a89c877c30c4faae9.cnvs.mp4",
+            "3IkBWVcOdVKauaexhc8xat": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/bc86093800a6430a89c877c30c4faae9.cnvs.mp4",
+            "3nk4pdb8wvymvvgtuval9y": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/d8fc10f904704e6098d3b4d78c9b0c2f.cnvs.mp4",
+            "3NK4pdB8WvyMVVGtuVAl9Y": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/d8fc10f904704e6098d3b4d78c9b0c2f.cnvs.mp4",
+            "3orlkvndfstiraocjndmmd": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/b7b9de9f07c24c5a8b1ef4aa529b60d3.cnvs.mp4",
+            "3orLKvndFsTirAOCjndMmd": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/b7b9de9f07c24c5a8b1ef4aa529b60d3.cnvs.mp4",
+            "3ufcxyatzzpnhfgfzgr0lo": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/544eb03b91b4434dbdb9ff20bed79a10.cnvs.mp4",
+            "3ufCXYAtZZpnHFGFzGr0lo": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/544eb03b91b4434dbdb9ff20bed79a10.cnvs.mp4",
+            "3uii9u0ofs2pcrimp1gnfp": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/41f069c5be1042d6b41d7b49e1ec2b64.cnvs.mp4",
+            "3UiI9u0oFs2pcrImp1gNfP": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/41f069c5be1042d6b41d7b49e1ec2b64.cnvs.mp4",
+            "3vuesinqsygasgj2dspzbf": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/072a078e2539456eb3e693a3ca1cc6ec.cnvs.mp4",
+            "3vuEsINQsyGAsgJ2DSPZbF": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/072a078e2539456eb3e693a3ca1cc6ec.cnvs.mp4",
+            "3weqsnxcim8x6dpxswjtk2": "https://canvaz.scdn.co/upload/artist/2DA16aO9CbATHqMY4ylN5n/video/a4e0e8d26f044db988d0430a42e7ff28.cnvs.mp4",
+            "3WEQSNxCim8X6dPXswjTK2": "https://canvaz.scdn.co/upload/artist/2DA16aO9CbATHqMY4ylN5n/video/a4e0e8d26f044db988d0430a42e7ff28.cnvs.mp4",
+            "43ic5hbwpmialwkkl0z4td": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/1f041d6889a5438fac1b84609a20d611.cnvs.mp4",
+            "43Ic5HBWPMiAlWKKl0z4tD": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/1f041d6889a5438fac1b84609a20d611.cnvs.mp4",
+            "43xszhe39s4qu83fxwcrf9": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/4bbea6ccc7014e1ca10fae1d34f663df.cnvs.mp4",
+            "43XsZHE39S4Qu83FxwCRF9": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/4bbea6ccc7014e1ca10fae1d34f663df.cnvs.mp4",
+            "441mbncjsyiknvwu3qwxe0": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/62eb16d9019b45118ab0629df23d12b0.cnvs.mp4",
+            "441mBNCjSYiknvWU3QWxe0": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/62eb16d9019b45118ab0629df23d12b0.cnvs.mp4",
+            "44fmr0ohtgthejuwofc1p4": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/15c658d77f1943869a3e781fac7a0b34.cnvs.mp4",
+            "44fmr0ohtGtHeJuwOFc1P4": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/15c658d77f1943869a3e781fac7a0b34.cnvs.mp4",
+            "45jyemfowspca3paut7yxe": "https://canvaz.scdn.co/upload/artist/67MNhiAICFY6Pwc2YxCO0K/video/d0dd7af11ac84df0abcb00fcf7eb83d5.cnvs.mp4",
+            "45JYEmfoWSpCA3Paut7YXE": "https://canvaz.scdn.co/upload/artist/67MNhiAICFY6Pwc2YxCO0K/video/d0dd7af11ac84df0abcb00fcf7eb83d5.cnvs.mp4",
+            "48hvybu7nmepxgjahzuytd": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/ba3967a64662457e890b40aca32ac749.cnvs.mp4",
+            "48HVybu7NmepXgJahZuYTd": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/ba3967a64662457e890b40aca32ac749.cnvs.mp4",
+            "49etvevduecnxamqzummcx": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/752d28fb1c584681aa77b6d6f739b51d.cnvs.mp4",
+            "49etvEvduECNxAmQzummCx": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/752d28fb1c584681aa77b6d6f739b51d.cnvs.mp4",
+            "4axgw8papucibwqxkaveie": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/b7c805fffa41483e96483f5bdea0e013.cnvs.mp4",
+            "4axgw8pAPUcIbwQXKaVEie": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/b7c805fffa41483e96483f5bdea0e013.cnvs.mp4",
+            "4d6fohjncqz3ysufmtyazr": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/6050977d785447779144c2a4f19b3586.cnvs.mp4",
+            "4d6FOhJncQz3ysufmTYAzR": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/6050977d785447779144c2a4f19b3586.cnvs.mp4",
+            "4e0hp4pxszm201osk6tnxn": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/cb4ae398441c47ea94155f868ef6074d.cnvs.mp4",
+            "4E0hp4pxSZM201OSk6TNXN": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/cb4ae398441c47ea94155f868ef6074d.cnvs.mp4",
+            "4ewywansawovopyg5tev1v": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/28e5dfc086eb4a7aa9d7000205772c13.cnvs.mp4",
+            "4eWYwansAWOvOpYg5tEv1v": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/28e5dfc086eb4a7aa9d7000205772c13.cnvs.mp4",
+            "4frowv6oqn1xmc9dzhzcpk": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/402ed79a87a44e78bb57c6e6b0418258.cnvs.mp4",
+            "4fRoWV6OQn1XMC9DZHZcpk": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/402ed79a87a44e78bb57c6e6b0418258.cnvs.mp4",
+            "4gnvj8pmmlw9cuk0pvtxcu": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/ee30d1fcf3a247fd86a316ada21c7de1.cnvs.mp4",
+            "4gnVJ8PmMlw9cUK0pVtxcU": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/ee30d1fcf3a247fd86a316ada21c7de1.cnvs.mp4",
+            "4m1am0wdvriwnabtzztmd2": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/436fa257aee64b4389851562de456463.cnvs.mp4",
+            "4M1aM0wdvRiWNAbtzztmD2": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/436fa257aee64b4389851562de456463.cnvs.mp4",
+            "4p8qo4homohurh8p41x6th": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/c70de9fdaa0f418ca90050681ad3b6aa.cnvs.mp4",
+            "4P8qo4hOMohUrh8p41x6th": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/c70de9fdaa0f418ca90050681ad3b6aa.cnvs.mp4",
+            "4s5ceg20pul5sljjc59rvg": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/ab6ae41fd27841c9b4257072a5944a8e.cnvs.mp4",
+            "4S5cEg20PUL5SljJC59Rvg": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/ab6ae41fd27841c9b4257072a5944a8e.cnvs.mp4",
+            "4valvjfuh7ij4xsafdfshh": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/c6add9c8a3fa43afad0aec22acebcb16.cnvs.mp4",
+            "4vALvJFUh7ij4xsafDfShH": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/c6add9c8a3fa43afad0aec22acebcb16.cnvs.mp4",
+            "4xk5gga7k1fxmcrpdekemi": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/7ec85b81b59f4b4b895e1934520b2854.cnvs.mp4",
+            "4XK5gGA7k1fXmcRpDeKEmI": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/7ec85b81b59f4b4b895e1934520b2854.cnvs.mp4",
+            "51eye3mo7uigc7yskeanww": "https://canvaz.scdn.co/upload/artist/6C0TXBe9hNjH6NG8RkZMLv/video/cfcdf2da05464f25860aec9b71b3aaf0.cnvs.mp4",
+            "51eYe3MO7UIgC7yskeanww": "https://canvaz.scdn.co/upload/artist/6C0TXBe9hNjH6NG8RkZMLv/video/cfcdf2da05464f25860aec9b71b3aaf0.cnvs.mp4",
+            "51rky9hmavryjwkaftdh4g": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/7208d10f31444acba2cb7bb7023e5739.cnvs.mp4",
+            "51RkY9HMavrYjwKafTdh4G": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/7208d10f31444acba2cb7bb7023e5739.cnvs.mp4",
+            "55vuauhpjx0gzom6vqrbs7": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/7dd374f5c64141259a76da0b3b618465.cnvs.mp4",
+            "55VUauhPJx0gzom6vqrBS7": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/7dd374f5c64141259a76da0b3b618465.cnvs.mp4",
+            "5a8uovlaexd09gyyqgyddj": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/4a27ac98bcea4c4a9c839ecf5ce16251.cnvs.mp4",
+            "5a8UovlaExd09GyYqgYddj": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/4a27ac98bcea4c4a9c839ecf5ce16251.cnvs.mp4",
+            "5ck2gvmyi2ktjdjxhfzwpx": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/0b67e828fdf546ceb840103d40c85524.cnvs.mp4",
+            "5Ck2GVMyi2ktjdJxHfZwpX": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/0b67e828fdf546ceb840103d40c85524.cnvs.mp4",
+            "5hayv8nc96yltny8ejdliq": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/15c658d77f1943869a3e781fac7a0b34.cnvs.mp4",
+            "5HaYV8Nc96yLtnY8EjdlIQ": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/15c658d77f1943869a3e781fac7a0b34.cnvs.mp4",
+            "5l8c1pzgcpzf8stcn79h5j": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/165992fac9d94bebb2adeb2e2e0f3ed9.cnvs.mp4",
+            "5L8C1PZGCpZf8STcN79H5j": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/165992fac9d94bebb2adeb2e2e0f3ed9.cnvs.mp4",
+            "5otqyxuohavsuxth6zzeuy": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/1fa8fa947a294dafa513daec67b8687d.cnvs.mp4",
+            "5OTqyXuoHavsUXTH6zzEuY": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/1fa8fa947a294dafa513daec67b8687d.cnvs.mp4",
+            "5sjf9ouynyvnb8vv50banu": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/76d827a3ca6f4650af2c8840e53bddaf.cnvs.mp4",
+            "5SJF9OUyNYVNB8Vv50BAnU": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/76d827a3ca6f4650af2c8840e53bddaf.cnvs.mp4",
+            "5xf5h7com7wzihg76cg11u": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/a931d77b4ae1427eb5b6bf8793b7674f.cnvs.mp4",
+            "5Xf5H7cOm7wZIhG76CG11u": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/a931d77b4ae1427eb5b6bf8793b7674f.cnvs.mp4",
+            "5xoqk8rybrj9eqqxy4h3jq": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/53dabba835be48248891e9dbc34424ba.cnvs.mp4",
+            "5xoqK8RYBrJ9EQQXY4H3Jq": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/53dabba835be48248891e9dbc34424ba.cnvs.mp4",
+            "5xzjvahar7nnr4pqjxgfa3": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/9663ce8c9ecb46fdbbca0267a557e897.cnvs.mp4",
+            "5XzjVahar7NNr4PQJxGfA3": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/9663ce8c9ecb46fdbbca0267a557e897.cnvs.mp4",
+            "60odwdlmffaxkurjgyh5gc": "https://canvaz.scdn.co/upload/artist/6fuVPu0miTsJTEmgDrCpfW/video/7a5d876887ee4608b7c38d513332d8b2.cnvs.mp4",
+            "60ODWDLMFFAXKURjGyH5gc": "https://canvaz.scdn.co/upload/artist/6fuVPu0miTsJTEmgDrCpfW/video/7a5d876887ee4608b7c38d513332d8b2.cnvs.mp4",
+            "68xfgds728lgomanygffqj": "https://canvaz.scdn.co/upload/artist/2kgvaYV2tbNyOonFI3YlfH/video/673ace19d2b04c4785aefbd884032f30.cnvs.mp4",
+            "68XfGdS728LgoManygFfqj": "https://canvaz.scdn.co/upload/artist/2kgvaYV2tbNyOonFI3YlfH/video/673ace19d2b04c4785aefbd884032f30.cnvs.mp4",
+            "6basnn1eb67b9ftljosiyh": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/a3fa24351b5440e99e0da7302d3037c6.cnvs.mp4",
+            "6bAsnn1eB67B9fTljOsIyH": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/a3fa24351b5440e99e0da7302d3037c6.cnvs.mp4",
+            "6e2jy1n8bwt9mcd7lfq8zf": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/740e0457949045c8bd10a081308a42fc.cnvs.mp4",
             "6E2jy1n8bWT9Mcd7LFQ8zF": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/740e0457949045c8bd10a081308a42fc.cnvs.mp4",
-            "kein wir": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/740e0457949045c8bd10a081308a42fc.cnvs.mp4"
+            "6flldk3pyfjswra3x8mivp": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/62263828abac426a8e8978fe6afc93c1.cnvs.mp4",
+            "6FlLDK3PYFJSwrA3X8miVp": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/62263828abac426a8e8978fe6afc93c1.cnvs.mp4",
+            "6hxbiigdiqu53t5gruw753": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/b58bd03e80864b67b5a27076f31e0b50.cnvs.mp4",
+            "6HXBiigdiQU53t5gRuW753": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/b58bd03e80864b67b5a27076f31e0b50.cnvs.mp4",
+            "6ikx1jpmafylbswqrjfswd": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/ac2ee055d1704d82bf13c9854792e855.cnvs.mp4",
+            "6Ikx1jpMAfYLbsWQrJfsWd": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/ac2ee055d1704d82bf13c9854792e855.cnvs.mp4",
+            "6ntg5xa1ovwvj6vpgbwm9u": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/e66a7b51bda74ad99236afacff3056a3.cnvs.mp4",
+            "6ntg5xa1OVWVj6VPgbWm9U": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/e66a7b51bda74ad99236afacff3056a3.cnvs.mp4",
+            "6qivp7jaeyxtpmimpn7izj": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/913ba83ed87e4cb2a24a52c24638ed36.cnvs.mp4",
+            "6qIVp7jaeyxtpmIMpn7izJ": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/913ba83ed87e4cb2a24a52c24638ed36.cnvs.mp4",
+            "6vrxltsb9qjwiqjzuqfbuq": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/615c1f04f934425ea838137b5923bd1f.cnvs.mp4",
+            "6VRxlTSB9QJWiQjZuQfBuq": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/615c1f04f934425ea838137b5923bd1f.cnvs.mp4",
+            "6xetwh5ln5med0b5t6ovv7": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/b451b0f7692f4142ade8f49030d05639.cnvs.mp4",
+            "6xeTwH5lN5MEd0b5t6Ovv7": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/b451b0f7692f4142ade8f49030d05639.cnvs.mp4",
+            "6ympmc28gtzas1txujsjr3": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/c9d8b18c9c004ade93fa58810917ffcc.cnvs.mp4",
+            "6ymPmC28gTZas1tXUJSjr3": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/c9d8b18c9c004ade93fa58810917ffcc.cnvs.mp4",
+            "6yvk1s4rhldoygb1ryq6zi": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/9581f167b94746af821b75963fee2de0.cnvs.mp4",
+            "6yVk1S4RHLdoYGb1ryq6zI": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/9581f167b94746af821b75963fee2de0.cnvs.mp4",
+            "70qf1pg13clzzhlk1ofebl": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/18de9587650442b2958fba9db58a19e6.cnvs.mp4",
+            "70qF1pG13clZzhLk1OfEbL": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/18de9587650442b2958fba9db58a19e6.cnvs.mp4",
+            "77bbgbo18pbvo1epn9vjf9": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/48ec7c1a2ff44f00a0c6043f7a99cf9c.cnvs.mp4",
+            "77BBGBo18pBVO1ePn9vjF9": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/48ec7c1a2ff44f00a0c6043f7a99cf9c.cnvs.mp4",
+            "7af98k7gam4goipgdb2osz": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/20f7c47a8e464ee0b27c9edd1d892c9c.cnvs.mp4",
+            "7af98K7GaM4GOipgDb2OSz": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/20f7c47a8e464ee0b27c9edd1d892c9c.cnvs.mp4",
+            "7bemoh9dzi4tdnor6qd1o3": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/8c30b11e017e40489a9a7204327f5282.cnvs.mp4",
+            "7bEMOh9dzi4tDNOr6QD1O3": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/8c30b11e017e40489a9a7204327f5282.cnvs.mp4",
+            "7bklcz1jbubvqri2fvltvw": "https://canvaz.scdn.co/upload/artist/69GGBxA162lTqCwzJG5jLp/video/d45427ff93f44a9fba2aa0a41ad457ec.cnvs.mp4",
+            "7BKLCZ1jbUBVqRi2FVlTVw": "https://canvaz.scdn.co/upload/artist/69GGBxA162lTqCwzJG5jLp/video/d45427ff93f44a9fba2aa0a41ad457ec.cnvs.mp4",
+            "7d0fbm0x2hqcwk7wjl8feu": "https://canvaz.scdn.co/upload/artist/32BHM1azoYgb5hwKBDiOm3/video/ffa99c39eb624e5ab92ed5716908bd1d.cnvs.mp4",
+            "7d0fbm0x2HqCwk7wjL8Feu": "https://canvaz.scdn.co/upload/artist/32BHM1azoYgb5hwKBDiOm3/video/ffa99c39eb624e5ab92ed5716908bd1d.cnvs.mp4",
+            "7dy1fc0nnaynriqywumqsl": "https://canvaz.scdn.co/upload/licensor/5EZ1Veh90Hf6PZqY6vlwIe/video/475d7a46832c46808bfee65f552f4f16.cnvs.mp4",
+            "7Dy1fC0nNAYNriQYWuMqsl": "https://canvaz.scdn.co/upload/licensor/5EZ1Veh90Hf6PZqY6vlwIe/video/475d7a46832c46808bfee65f552f4f16.cnvs.mp4",
+            "7eumrituopxkuuedp7g6c2": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/7c7ea86176b44e67ac3b90c54e97a49c.cnvs.mp4",
+            "7eumrITUOpXKUUEDP7g6C2": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/7c7ea86176b44e67ac3b90c54e97a49c.cnvs.mp4",
+            "7f0tkmvxzvorookjd9tmfl": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/4bf7ae7a170a42e2a717ea2976747d95.cnvs.mp4",
+            "7F0tKmvXzvORoOKJD9tmFl": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/4bf7ae7a170a42e2a717ea2976747d95.cnvs.mp4",
+            "7g1k2dqv4cgh7mmtxbihnp": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/bc54fbb41440437a90482a4d03744359.cnvs.mp4",
+            "7G1K2DQv4cgH7MMtxbIHNp": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/bc54fbb41440437a90482a4d03744359.cnvs.mp4",
+            "7hfivjyswxey0aghglt8dz": "https://canvaz.scdn.co/upload/artist/0PBe3R2MHwvq8J9h4b9bG1/video/465c98864cc949d3ae61ccebe1c7a297.cnvs.mp4",
+            "7hFIvjYswxEY0agHGlT8dZ": "https://canvaz.scdn.co/upload/artist/0PBe3R2MHwvq8J9h4b9bG1/video/465c98864cc949d3ae61ccebe1c7a297.cnvs.mp4",
+            "7mndkwwrqtr5uawuwinjdc": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/c589a900666f4734a0f59423f9a12807.cnvs.mp4",
+            "7mndKWWRqtr5uawuwINjDC": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/c589a900666f4734a0f59423f9a12807.cnvs.mp4",
+            "7oagsvrnksscqodo6dujlt": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/c8f7c4be27404336af03ce6e63bc4171.cnvs.mp4",
+            "7oagsVrnksscqODO6duJlT": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/c8f7c4be27404336af03ce6e63bc4171.cnvs.mp4",
+            "7qizfu4dy1lwllzx7mpbi3": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/a4201a09839c41d291b9b7d43f3e1e30.cnvs.mp4",
+            "7qiZfU4dY1lWllzX7mPBI3": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/a4201a09839c41d291b9b7d43f3e1e30.cnvs.mp4",
+            "7yn8tuec3i9arzeljqipd9": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/bcc47cafaf5546cea3a6495327ef877a.cnvs.mp4",
+            "7yn8TUEC3i9aRZeLJqiPD9": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/bcc47cafaf5546cea3a6495327ef877a.cnvs.mp4",
+            "7zzobnhkigwv1ydomvmmru": "https://canvaz.scdn.co/upload/artist/5WSHLe99vM0ASG76GbAQlG/video/3ee01d64ff72430896ec897a119a1d7c.cnvs.mp4",
+            "7zzOBnHKIgwv1yDoMVmMrU": "https://canvaz.scdn.co/upload/artist/5WSHLe99vM0ASG76GbAQlG/video/3ee01d64ff72430896ec897a119a1d7c.cnvs.mp4",
+            "80 millionen": "https://canvaz.scdn.co/upload/artist/224CDJhbm230iSo9ZomTWe/video/5e86087c9ce54a8aa4b45964e6564771.cnvs.mp4",
+            "af1": "https://canvaz.scdn.co/upload/artist/0PBe3R2MHwvq8J9h4b9bG1/video/465c98864cc949d3ae61ccebe1c7a297.cnvs.mp4",
+            "af1 (aus \"the voice kids, staffel 14\")": "https://canvaz.scdn.co/upload/artist/0PBe3R2MHwvq8J9h4b9bG1/video/465c98864cc949d3ae61ccebe1c7a297.cnvs.mp4",
+            "air": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/20f7c47a8e464ee0b27c9edd1d892c9c.cnvs.mp4",
+            "alles": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/bc54fbb41440437a90482a4d03744359.cnvs.mp4",
+            "am i the only one": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/0ecdd8773d7e4ecb8587a63664e0fa43.cnvs.mp4",
+            "another life": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/a63b7adefdd745079f5cf54b16e6f0ce.cnvs.mp4",
+            "another life (marcus & martinus vs vize)": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/a63b7adefdd745079f5cf54b16e6f0ce.cnvs.mp4",
+            "another love": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/4bf7ae7a170a42e2a717ea2976747d95.cnvs.mp4",
+            "are we there yet": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/4258c8dddffb43c2b8a39333d48c0f17.cnvs.mp4",
+            "belinda": "https://canvaz.scdn.co/upload/artist/3N4FiTxpPQRsrihmTMN349/video/6aa606ef81a0464fa169453db013ec0e.cnvs.mp4",
+            "belinda (with alex rose)": "https://canvaz.scdn.co/upload/artist/3N4FiTxpPQRsrihmTMN349/video/6aa606ef81a0464fa169453db013ec0e.cnvs.mp4",
+            "big dreams": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/263fde71ce314d6cb59868d7f446b533.cnvs.mp4",
+            "bird set free": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/ee30d1fcf3a247fd86a316ada21c7de1.cnvs.mp4",
+            "breath": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/bcc47cafaf5546cea3a6495327ef877a.cnvs.mp4",
+            "breath (instrumental)": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/bcc47cafaf5546cea3a6495327ef877a.cnvs.mp4",
+            "brought me this far": "https://canvaz.scdn.co/upload/artist/32BHM1azoYgb5hwKBDiOm3/video/ffa99c39eb624e5ab92ed5716908bd1d.cnvs.mp4",
+            "buffet": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/28e5dfc086eb4a7aa9d7000205772c13.cnvs.mp4",
+            "city kids": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/e6378583b1bd4fb196b3d9f7c1c43d2e.cnvs.mp4",
+            "closer": "https://canvaz.scdn.co/upload/artist/69GGBxA162lTqCwzJG5jLp/video/d45427ff93f44a9fba2aa0a41ad457ec.cnvs.mp4",
+            "cloud with no rain": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/8c30b11e017e40489a9a7204327f5282.cnvs.mp4",
+            "coca cola": "https://canvaz.scdn.co/upload/artist/2DA16aO9CbATHqMY4ylN5n/video/a4e0e8d26f044db988d0430a42e7ff28.cnvs.mp4",
+            "dead man walking": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/15c658d77f1943869a3e781fac7a0b34.cnvs.mp4",
+            "deep blue": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/bc86093800a6430a89c877c30c4faae9.cnvs.mp4",
+            "delusion": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/701b13cb330449119f06ff51c9aa3fb8.cnvs.mp4",
+            "den fyrste song": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/53dabba835be48248891e9dbc34424ba.cnvs.mp4",
+            "denke an mein mädchen": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/7ec85b81b59f4b4b895e1934520b2854.cnvs.mp4",
+            "die for you": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/c9d8b18c9c004ade93fa58810917ffcc.cnvs.mp4",
+            "do you understand": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/9663ce8c9ecb46fdbbca0267a557e897.cnvs.mp4",
+            "du fehlst mir": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/3924bb097a9743908ec4724831d465d0.cnvs.mp4",
+            "du und ich": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/39b0401d8f564a26b582ab904434d02e.cnvs.mp4",
+            "du weißt": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/48ec7c1a2ff44f00a0c6043f7a99cf9c.cnvs.mp4",
+            "ein ball ⚽ eine welt 🌍": "https://canvaz.scdn.co/upload/artist/5WSHLe99vM0ASG76GbAQlG/video/3ee01d64ff72430896ec897a119a1d7c.cnvs.mp4",
+            "endless summer": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/436fa257aee64b4389851562de456463.cnvs.mp4",
+            "ex ex": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/62263828abac426a8e8978fe6afc93c1.cnvs.mp4",
+            "fake front": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/cc8fda31a51144f985d0c892f3068b58.cnvs.mp4",
+            "faster than light": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/823d88becaf9423c8552640da03d2f72.cnvs.mp4",
+            "feeling of going under": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/b2c596920a81419ba04361b0866f170e.cnvs.mp4",
+            "follow me": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/1fa8fa947a294dafa513daec67b8687d.cnvs.mp4",
+            "force": "https://canvaz.scdn.co/upload/artist/7vk5e3vY1uw9plTHJAMwjN/video/13d3c37099294a61bbfccf3ba67a4a9d.cnvs.mp4",
+            "freunde werden feinde": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/c363062806d9457c8eb808e5a7b0f424.cnvs.mp4",
+            "full 180": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/baa6c7bb328c441f9958e346b628632a.cnvs.mp4",
+            "germinating growth": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/d8fc10f904704e6098d3b4d78c9b0c2f.cnvs.mp4",
+            "germination": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/a27cbdca1d58495a8243fe8fa388bede.cnvs.mp4",
+            "glas": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/4a11cdd6379f4be1b3d174f8dd0026e5.cnvs.mp4",
+            "happy xmas": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/41f069c5be1042d6b41d7b49e1ec2b64.cnvs.mp4",
+            "happy xmas (war is over) [feat. chili]": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/41f069c5be1042d6b41d7b49e1ec2b64.cnvs.mp4",
+            "hellcat": "https://canvaz.scdn.co/upload/artist/58yUFNnwk1DyoBvKNPmYdH/video/56dbb8dd89704d99b3dd0323f4bfaa79.cnvs.mp4",
+            "hold me till it's over": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/0938dad608ed4d7e89738c89cdb2c7bd.cnvs.mp4",
+            "hold on me": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/ab6ae41fd27841c9b4257072a5944a8e.cnvs.mp4",
+            "hold the light": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/6050977d785447779144c2a4f19b3586.cnvs.mp4",
+            "how did we end up here?": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/913ba83ed87e4cb2a24a52c24638ed36.cnvs.mp4",
+            "how we love": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/673403e6dbb241daa7977eedf0715412.cnvs.mp4",
+            "how you do": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/1f041d6889a5438fac1b84609a20d611.cnvs.mp4",
+            "i never lose": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/a7073c873c654a3e87ea477e873c64a5.cnvs.mp4",
+            "i want you": "https://canvaz.scdn.co/upload/artist/3NRFinRTEqUCfaTTZmk8ek/video/a6fff56fe1ac4bb38b0541df8bff818f.cnvs.mp4",
+            "ich liebe dich sehr": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/c94386e7b83e43bd8b6a8dac3c267438.cnvs.mp4",
+            "idiot": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/cb4ae398441c47ea94155f868ef6074d.cnvs.mp4",
+            "idiot (for fallin’ in love with you)": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/cb4ae398441c47ea94155f868ef6074d.cnvs.mp4",
+            "jente fra by'n": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/76d827a3ca6f4650af2c8840e53bddaf.cnvs.mp4",
+            "kein wir": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/740e0457949045c8bd10a081308a42fc.cnvs.mp4",
+            "kind heart": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/c70de9fdaa0f418ca90050681ad3b6aa.cnvs.mp4",
+            "kukuruku": "https://canvaz.scdn.co/upload/artist/6BcFQXbjnioLmtkzvGKYmz/video/2db149dccd9243119fe9619792eb438b.cnvs.mp4",
+            "laufrad": "https://i.scdn.co/image/ab67ba690000242779126410e79fd1e20a621253",
+            "laufrad - martinbepunkt remix": "https://canvaz.scdn.co/upload/artist/67SeoU54DvDpkDDXtWEoOc/video/06710fe7adb348c89ca393005f2dc320.cnvs.mp4",
+            "let me know": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/0b67e828fdf546ceb840103d40c85524.cnvs.mp4",
+            "light me up": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/d806468e98574ba8ac9ddfdf4c903f81.cnvs.mp4",
+            "little bird": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/e29bdb32bc8543f585c1af7dcc1d7948.cnvs.mp4",
+            "little seed": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/092814bdd54e4c0f9c1c0c802af65585.cnvs.mp4",
+            "losing you": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/7208d10f31444acba2cb7bb7023e5739.cnvs.mp4",
+            "lost time": "https://canvaz.scdn.co/upload/artist/2kgvaYV2tbNyOonFI3YlfH/video/673ace19d2b04c4785aefbd884032f30.cnvs.mp4",
+            "love flow": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/53635cb72dbd45cc89870d93220dcffd.cnvs.mp4",
+            "mafia": "https://canvaz.scdn.co/upload/artist/2DA16aO9CbATHqMY4ylN5n/video/30c0b0f21b944ea7816f4eab7e1653b9.cnvs.mp4",
+            "mein mädchen liebt einen anderen": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/503edd50d2f44880bf1b135fd092db9b.cnvs.mp4",
+            "melodious": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/c1dc80e4434d46fab6bf9545e8bfe022.cnvs.mp4",
+            "middle of the night": "https://canvaz.scdn.co/upload/artist/67MNhiAICFY6Pwc2YxCO0K/video/d0dd7af11ac84df0abcb00fcf7eb83d5.cnvs.mp4",
+            "monody": "https://canvaz.scdn.co/upload/artist/3OKg7YbOIatODzkRIbLJR4/image/af0e4e949b3c45edb3ac80e85548fc79.cnvs.jpg",
+            "monody - radio edit": "https://canvaz.scdn.co/upload/artist/3OKg7YbOIatODzkRIbLJR4/image/af0e4e949b3c45edb3ac80e85548fc79.cnvs.jpg",
+            "muscle it up": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/9f93c728c2264038a975da69313eee56.cnvs.mp4",
+            "nattevandrer": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/9581f167b94746af821b75963fee2de0.cnvs.mp4",
+            "newness": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/752d28fb1c584681aa77b6d6f739b51d.cnvs.mp4",
+            "nie wieder": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/402ed79a87a44e78bb57c6e6b0418258.cnvs.mp4",
+            "note to self": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/a931d77b4ae1427eb5b6bf8793b7674f.cnvs.mp4",
+            "nur eine chance": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/a6e42f8e399c4b878a17aab3fe1bf442.cnvs.mp4",
+            "nur mit dir": "https://canvaz.scdn.co/upload/artist/7nPBkdzUQ0fJhsfXjRDrLh/video/bf4e909ee32148ee96e26644f1116393.cnvs.mp4",
+            "oceans": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/c589a900666f4734a0f59423f9a12807.cnvs.mp4",
+            "oceans rise": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/c6add9c8a3fa43afad0aec22acebcb16.cnvs.mp4",
+            "oh, appalachia": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/5e7f72eaaabc41c897a2e0b6c7a99737.cnvs.mp4",
+            "ok rosa blomst": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/ac2ee055d1704d82bf13c9854792e855.cnvs.mp4",
+            "one step at a time": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/b58bd03e80864b67b5a27076f31e0b50.cnvs.mp4",
+            "overrated": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/ba3967a64662457e890b40aca32ac749.cnvs.mp4",
+            "paint a picture": "https://canvaz.scdn.co/upload/artist/58PtHfnVLB3mbDD5z2F5DG/video/38173dc917fb4343a7a1594702727e2b.cnvs.mp4",
+            "papa meiner freundin": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/39146fd1f9ac44ea891404637188a066.cnvs.mp4",
+            "peace with pain": "https://canvaz.scdn.co/upload/artist/6C0TXBe9hNjH6NG8RkZMLv/video/cfcdf2da05464f25860aec9b71b3aaf0.cnvs.mp4",
+            "people help the people": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/8552d7d99f46467f89913013b65469e3.cnvs.mp4",
+            "pygmy": "https://canvaz.scdn.co/upload/artist/2qR6RrotSuFCec73VExpS2/video/b7b9de9f07c24c5a8b1ef4aa529b60d3.cnvs.mp4",
+            "runaway": "https://canvaz.scdn.co/upload/artist/3L3LFvtOjqaNkOvZDIFnW0/video/544eb03b91b4434dbdb9ff20bed79a10.cnvs.mp4",
+            "safer with you": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/54c9f5e650ea4dbf83d1162f48ec72f5.cnvs.mp4",
+            "save the best for us": "https://canvaz.scdn.co/upload/licensor/5EZ1Veh90Hf6PZqY6vlwIe/video/475d7a46832c46808bfee65f552f4f16.cnvs.mp4",
+            "schwarz und weiss": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/ac9862d1c0ef4099b935ed7a9cb58e8a.cnvs.mp4",
+            "set fire to the rain": "https://canvaz.scdn.co/upload/artist/6PElwozsot7wymD9Xkbk1i/video/18de9587650442b2958fba9db58a19e6.cnvs.mp4",
+            "shape of you": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/a4201a09839c41d291b9b7d43f3e1e30.cnvs.mp4",
+            "someone you loved": "https://i.scdn.co/image/ab67ba690000242753a1952133168505b5d0e872",
+            "someone you loved (aus \"the voice kids, staffel 12\") - sing off live": "https://i.scdn.co/image/ab67ba690000242753a1952133168505b5d0e872",
+            "stranded": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/f54532578f554b53970d96ada190fe8d.cnvs.mp4",
+            "sure thing": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/62eb16d9019b45118ab0629df23d12b0.cnvs.mp4",
+            "ta meg tillbake": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/9d408f71f5fa4078b0c1226b24d64cda.cnvs.mp4",
+            "tanz mit mir": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/0535cde94e3144c2a64ca571d1c334cb.cnvs.mp4",
+            "tanz mit mir - akustik": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/e66a7b51bda74ad99236afacff3056a3.cnvs.mp4",
+            "tears to cry": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/39891590c55d467b842fbceeabc16e43.cnvs.mp4",
+            "tell me": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/4f2ce488b4a14b1a88630e003802699d.cnvs.mp4",
+            "this christmas": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/48502173015e44ada03de6b9b91fc410.cnvs.mp4",
+            "this time": "https://canvaz.scdn.co/upload/artist/04H4Esj5jxaThmH3mcL2Aa/video/dcc85478e7364217a3dd3b6a13b2ff21.cnvs.mp4",
+            "too young, too dumb": "https://canvaz.scdn.co/upload/licensor/3ZBqv9LoqAZkFanJh73zcz/video/446a599154634b3cacd375ef014bd265.cnvs.mp4",
+            "turn it up": "https://canvaz.scdn.co/upload/artist/5rsvzcAhQMySGItH0IOd4z/video/4bbea6ccc7014e1ca10fae1d34f663df.cnvs.mp4",
+            "u'r so bad": "https://canvaz.scdn.co/upload/artist/1hJqfBGgscbW0q8j6YiF4g/video/b7c805fffa41483e96483f5bdea0e013.cnvs.mp4",
+            "überall": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/142f38a24d3f4d3f9972334d1918001b.cnvs.mp4",
+            "um die welt": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/ea99a64297ab473d88a032c2f5b8589c.cnvs.mp4",
+            "under the xmas tree": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/b451b0f7692f4142ade8f49030d05639.cnvs.mp4",
+            "unforgettable": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/165992fac9d94bebb2adeb2e2e0f3ed9.cnvs.mp4",
+            "vergiss mich nicht": "https://canvaz.scdn.co/upload/artist/2zDr7zwCINBkWNfAljbYAy/video/7c7ea86176b44e67ac3b90c54e97a49c.cnvs.mp4",
+            "we march": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/a3fa24351b5440e99e0da7302d3037c6.cnvs.mp4",
+            "weil mein herz dich nie mehr vergisst": "https://canvaz.scdn.co/upload/artist/6fuVPu0miTsJTEmgDrCpfW/video/7a5d876887ee4608b7c38d513332d8b2.cnvs.mp4",
+            "weil mein herz dich nie mehr vergisst (aus \"titanic\")": "https://canvaz.scdn.co/upload/artist/6fuVPu0miTsJTEmgDrCpfW/video/7a5d876887ee4608b7c38d513332d8b2.cnvs.mp4",
+            "what if": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/072a078e2539456eb3e693a3ca1cc6ec.cnvs.mp4",
+            "when all the lights go out": "https://canvaz.scdn.co/upload/licensor/7JGwF0zhX9oItt9901OvB5/video/af5153a532a547e394ba3747e40cc5f6.cnvs.mp4",
+            "wild love": "https://canvaz.scdn.co/upload/artist/3N4FiTxpPQRsrihmTMN349/video/d27a98d6176d4121955f48f385686900.cnvs.mp4",
+            "won't wait": "https://canvaz.scdn.co/upload/artist/5uOGFWzEcgMwZw3dxXdCJX/video/31691be3dd9b4ce9b89acf7fdd6c2b3f.cnvs.mp4",
+            "you": "https://canvaz.scdn.co/upload/artist/27gtK7m9vYwCyJ04zz0kIb/video/e0419384365b45048266b21a967d9950.cnvs.mp4",
+            "young ones": "https://canvaz.scdn.co/upload/artist/21PEkJjPYN8SDkaATbMdl9/video/615c1f04f934425ea838137b5923bd1f.cnvs.mp4",
+            "zeit": "https://canvaz.scdn.co/upload/artist/0RPsLPRFnWlI6gdfhQM8pl/video/4a27ac98bcea4c4a9c839ecf5ce16251.cnvs.mp4"
         };
         function hasNegativeCanvas(cleanId) {
             if (!cleanId) return false;
@@ -18682,7 +19003,7 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
-        { version: "v24.225.5", date: "16. Oktober 2026", type: "feature", items: {
+        { version: "v24.225.6", date: "16. Oktober 2026", type: "feature", items: {
             de: [
                 "?? Apple Music TTML Integration: Direkter Zugriff auf die weltweite Apple-Music-Songtext-Datenbank (AMLL API) f?r echtes, millimetergenaues Silben- und Wort-Timing im Karaoke-Modus",
                 "?? Echtes Wort-Synchron-Erlebnis (Enhanced LRC): L?ckenloser Converter ?bersetzt Apple-Music-TTML und Spotify-Syllables in Echtzeit in standardisiertes Enhanced LRC mit leuchtendem Fuchsia-Badge",
@@ -23529,7 +23850,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
         };
         let currentTrackTitle = "";
         let currentRawArtist = "";
-        let currentAppleMusicId = ""; // v24.225.5: Apple-Music-Song-ID für den AMLL-Wort-Sync
+        let currentAppleMusicId = ""; // v24.225.6: Apple-Music-Song-ID für den AMLL-Wort-Sync
         let currentSpotifyTrackId = ""; // v24.223.1: Spotify-Track-ID für den direkten AMLL-Wort-Sync
         // Anti-Ping-Pong Tracking: speichert den vorherigen, beendeten Track
         let previousTrackTitle = "";
@@ -25534,11 +25855,14 @@ window.setLyricsStyle = function(style) {
         function syncCanvasPlayback(slave, master, force = false) {
             if (!slave || !master) return;
             try {
-                if (master.currentTime > 0 && (force || Math.abs(slave.currentTime - master.currentTime) > 0.25)) {
+                const drift = Math.abs(slave.currentTime - master.currentTime);
+                // 100% Frame-Lock: Abweichung über 40ms (~1 Frame bei 25/30fps) sofort abfangen
+                if (master.currentTime >= 0 && (force || drift > 0.04)) {
                     slave.currentTime = master.currentTime;
                 }
-                if (master.paused && !slave.paused) slave.pause();
-                else if (!master.paused && slave.paused && (trackIsPlaying || (typeof isMusicPlaying !== 'undefined' && isMusicPlaying))) {
+                if (master.paused && !slave.paused) {
+                    slave.pause();
+                } else if (!master.paused && slave.paused && (trackIsPlaying || (typeof isMusicPlaying !== 'undefined' && isMusicPlaying))) {
                     slave.play().catch(()=>{});
                 }
             } catch (_) {}
@@ -25547,38 +25871,43 @@ window.setLyricsStyle = function(style) {
         function registerMasterCanvasSync() {
             if (canvasVideo && !canvasVideo.__hasSyncListener) {
                 canvasVideo.__hasSyncListener = true;
-                // Alle untergeordneten Canvas-Videos bei Loop-Neustart oder Seek synchronisieren
+                const getAllSlaves = () => [
+                    document.getElementById('canvas-media-video'),
+                    document.getElementById('canvas-glow-video'),
+                    document.getElementById('lyrics-canvas-video'),
+                    document.getElementById('canvas-cinema-video'),
+                    document.getElementById('canvas-cinema-glow-video')
+                ].filter(Boolean);
+
+                // Alle untergeordneten Canvas-Videos ohne Ausnahme synchronisieren
                 const doSyncAll = (force = false) => {
-                    const slaves = [
-                        document.getElementById('canvas-media-video'),
-                        document.getElementById('canvas-glow-video'),
-                        document.getElementById('lyrics-canvas-video'),
-                        document.getElementById('canvas-cinema-video'),
-                        document.getElementById('canvas-cinema-glow-video')
-                    ];
+                    const slaves = getAllSlaves();
                     slaves.forEach(s => {
-                        if (s && !s.paused) syncCanvasPlayback(s, canvasVideo, force);
+                        syncCanvasPlayback(s, canvasVideo, force);
                     });
                 };
 
                 canvasVideo.addEventListener('seeked', () => doSyncAll(true), { passive: true });
                 canvasVideo.addEventListener('play', () => doSyncAll(true), { passive: true });
+                canvasVideo.addEventListener('playing', () => doSyncAll(true), { passive: true });
+
                 // Perfekte Loop-Synchronisation: Wenn das Master-Video am Ende neu beginnt
                 let lastMasterTime = 0;
                 canvasVideo.addEventListener('timeupdate', () => {
                     const ct = canvasVideo.currentTime;
-                    if (ct < lastMasterTime - 0.5) {
+                    if (ct < lastMasterTime - 0.25) {
                         // Loop-Neustart detektiert -> sofort alle Slaves auf Sekunde 0 setzen
                         doSyncAll(true);
                     }
                     lastMasterTime = ct;
                 }, { passive: true });
-                // Sanfter Drift-Abgleich alle 1,5 Sekunden
+
+                // Hochpräziser Drift-Abgleich alle 350 Millisekunden (100% Frame-Lock)
                 setInterval(() => {
                     if (canvasEnabled && trackIsPlaying && !canvasVideo.paused) {
                         doSyncAll(false);
                     }
-                }, 1500);
+                }, 350);
             }
         }
 
@@ -25730,8 +26059,14 @@ window.setLyricsStyle = function(style) {
                     return bundled;
                 }
                 const nTitle = (trackTitle || '').toLowerCase().trim();
+                const cleanTitle = nTitle.replace(/\s*[\(\[\-].*$/, '').trim();
                 if (nTitle && BUNDLED_CANVAS_DB[nTitle]) {
                     const bundled = BUNDLED_CANVAS_DB[nTitle];
+                    trackCanvasMemoryCache.set(cleanId, bundled);
+                    applyResolvedCanvas(bundled, cleanId);
+                    return bundled;
+                } else if (cleanTitle && BUNDLED_CANVAS_DB[cleanTitle]) {
+                    const bundled = BUNDLED_CANVAS_DB[cleanTitle];
                     trackCanvasMemoryCache.set(cleanId, bundled);
                     applyResolvedCanvas(bundled, cleanId);
                     return bundled;
@@ -25884,24 +26219,19 @@ window.setLyricsStyle = function(style) {
             const artistEl = document.getElementById('canvas-cinema-artist');
             if (titleEl && mTitle) titleEl.innerText = mTitle.innerText || 'Song Title';
             if (artistEl && mArtist) artistEl.innerText = mArtist.innerText || 'Artist';
-            if (video) {
-                if (video.src !== currentCanvasUrl) {
-                    video.src = currentCanvasUrl;
-                    video.load();
+            [video, glowVideo].forEach(v => {
+                if (!v) return;
+                if (v.src !== currentCanvasUrl) {
+                    v.src = currentCanvasUrl;
+                    v.load();
                 }
-                video.muted = true;
-                if (canvasVideo) syncCanvasPlayback(video, canvasVideo);
-                video.play().catch(()=>{});
-            }
-            if (glowVideo) {
-                if (glowVideo.src !== currentCanvasUrl) {
-                    glowVideo.src = currentCanvasUrl;
-                    glowVideo.load();
+                v.muted = true;
+                if (canvasVideo) {
+                    v.currentTime = canvasVideo.currentTime;
+                    syncCanvasPlayback(v, canvasVideo, true);
                 }
-                glowVideo.muted = true;
-                if (canvasVideo) syncCanvasPlayback(glowVideo, canvasVideo);
-                glowVideo.play().catch(()=>{});
-            }
+                v.play().catch(()=>{});
+            });
             if (modal) {
                 modal.classList.remove('opacity-0', 'pointer-events-none');
                 modal.classList.add('opacity-100', 'pointer-events-auto');
@@ -28402,7 +28732,7 @@ window.setLyricsStyle = function(style) {
             const isSameAsCurrent = !isFirstLoad && isSameSongTrack(trackTitle, cleanArtist, incomingSpotifyId, currentTrackTitle, currentRawArtist, currentSpotifyTrackId);
             const isNewTrack = isFirstLoad || !isSameAsCurrent;
             if (isNewTrack) {
-                // FIX v24.225.5: Bei jedem Songwechsel das alte Canvas-Video SOFORT restlos entfernen!
+                // FIX v24.225.6: Bei jedem Songwechsel das alte Canvas-Video SOFORT restlos entfernen!
                 // Verhindert das Durchscheinen des Videos vom vorherigen Song im Lyrics-Overlay & Hintergrund.
                 currentCanvasUrl = null;
                 [canvasVideo, document.getElementById('canvas-media-video'), document.getElementById('canvas-glow-video'), document.getElementById('lyrics-canvas-video')].forEach(v => {
@@ -28623,8 +28953,12 @@ window.setLyricsStyle = function(style) {
                         trackCanvasMemoryCache.set(cleanSpTrackId, activeCanvasUrl);
                     } else {
                         const nTitle = (trackTitle || '').toLowerCase().trim();
+                        const cleanTitle = nTitle.replace(/\s*[\(\[\-].*$/, '').trim();
                         if (nTitle && BUNDLED_CANVAS_DB[nTitle]) {
                             activeCanvasUrl = BUNDLED_CANVAS_DB[nTitle];
+                            if (cleanSpTrackId) trackCanvasMemoryCache.set(cleanSpTrackId, activeCanvasUrl);
+                        } else if (cleanTitle && BUNDLED_CANVAS_DB[cleanTitle]) {
+                            activeCanvasUrl = BUNDLED_CANVAS_DB[cleanTitle];
                             if (cleanSpTrackId) trackCanvasMemoryCache.set(cleanSpTrackId, activeCanvasUrl);
                         }
                     }
@@ -28873,7 +29207,7 @@ window.setLyricsStyle = function(style) {
                 // Nur wenn nicht im Cache vorhanden, nicht kürzlich fehlgeschlagen/rate-limited und kein laufender Request aktiv ist
                 const hasNegativeCache = cachedLyricsEntry && (cachedLyricsEntry.provider === 'none' || cachedLyricsEntry.noLyricsFound === true) && (Date.now() - (cachedLyricsEntry.cachedAt || 0) < 60000);
                 const hasLyricsInCache = hasSyncedInCache || (cachedLyricsEntry && cachedLyricsEntry.plainLyrics && !isDummyLyrics(cachedLyricsEntry.plainLyrics));
-                // AUTOMATISCHER FETCH & AUTONOMER HEILUNGS-RETRY (v24.225.5):
+                // AUTOMATISCHER FETCH & AUTONOMER HEILUNGS-RETRY (v24.225.6):
                 // 1. Am Anfang jedes neuen Songs sofort laden.
                 // 2. Falls während des Abspielens noch kein Text vorliegt (z.B. durch vorübergehende LTE-Latenz),
                 //    nach 10s autonom erneut versuchen – der Nutzer muss NIEMALS manuell "Re-Sync" klicken!
@@ -28971,7 +29305,7 @@ window.setLyricsStyle = function(style) {
                             currentMs = totalMs;
                             isHuntingForNextTrack = true;
                         } else {
-                            // FIX v24.225.5: Bidirektionale, selbstheilende Synchronisation für Echo Dot, Lautsprecher & Headsets
+                            // FIX v24.225.6: Bidirektionale, selbstheilende Synchronisation für Echo Dot, Lautsprecher & Headsets
                             // 1. Echte Seeks, Skips oder deutliche Abweichungen (>2,5s) in BEIDE Richtungen sofort synchronisieren
                             if (absDrift > 2500) {
                                 serverBaseProgress = apiProgress + addedDelay;
@@ -29048,7 +29382,7 @@ window.setLyricsStyle = function(style) {
             const spotifyId = track.externalIds && Array.isArray(track.externalIds.spotify) ? track.externalIds.spotify[0] : null;
             const appleMusicId = track.externalIds && Array.isArray(track.externalIds.appleMusic) ? track.externalIds.appleMusic[0] : null;
 
-            // FIX v24.225.5: Millimetergenaue Echo-Dot- & Spotify-Synchronisation ohne Vorauseilen
+            // FIX v24.225.6: Millimetergenaue Echo-Dot- & Spotify-Synchronisation ohne Vorauseilen
             // item.progressMs ist bereits der exakte Spotify-Wiedergabefortschritt.
             // item.date ist der Stream-Startzeitpunkt und darf niemals addiert werden!
             const pureProgressMs = Number(item.progressMs) || 0;
@@ -30403,14 +30737,14 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.225.5</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.225.6</span>
         </a>
     </div>
 
 <!-- Spotify Canvas Cinema Modal: Ungequetschte, freie Original-Ansicht im nativen 9:16 Format -->
 <div id="canvas-cinema-modal" class="fixed inset-0 z-[99999] bg-black/92 backdrop-blur-2xl flex flex-col items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-all duration-300" onclick="if(event.target === this) closeCanvasCinema()">
     <!-- Live Canvas Video-Glow (Ambilight) im Vollbild Cinema Modus -->
-    <video id="canvas-cinema-glow-video" class="absolute w-[360px] sm:w-[440px] h-[85vh] max-h-[750px] aspect-[9/16] rounded-3xl blur-[80px] sm:blur-[120px] opacity-80 pointer-events-none object-cover transition-opacity duration-700" autoplay loop muted playsinline></video>
+    <video id="canvas-cinema-glow-video" class="absolute w-[520px] sm:w-[700px] h-[96vh] max-h-[940px] aspect-[9/16] rounded-3xl opacity-95 pointer-events-none object-cover transition-opacity duration-700 scale-125 sm:scale-140 z-0" style="filter: blur(55px) saturate(3.5) brightness(1.4);" autoplay loop muted playsinline></video>
     <div class="relative w-full max-w-[340px] sm:max-w-[400px] max-h-[85vh] aspect-[9/16] rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.9)] border border-white/20 flex items-center justify-center bg-black">
         <video id="canvas-cinema-video" class="w-full h-full object-cover" autoplay loop muted playsinline disablepictureinpicture></video>
         <!-- Floating Close Button -->
