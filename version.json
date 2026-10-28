@@ -1,9 +1,10 @@
 {
-  "version": "24.225.15",
+  "version": "24.225.16",
   "buildTime": "2026-10-28T17:58:51.692Z",
   "shortNotes": [
-    "Beseitigung der rekursiven Canvas-Seek-Schleife: 'seeked'-Event-Listener restlos eliminiert, keine Decoder-Flushes mehr",
-    "Master-Selbstseek-Schutz: Master-Video wird niemals mehr selbst gesucht",
-    "400ms Event-Drosselung & Beseitigung von micro-playbackRate Jitter für butterweiche 30 FPS"
+    "Reparatur der leeren/schwarzen Cinema-Canvas-Mitte: opacity-0 Beseitigung und sofortiges Un-Hide bei Modal-Aktivierung",
+    "Artwork-Backdrop im Cinema-Modal gegen schwarze Ladeblenden bei Netzwerkverzögerung",
+    "Eliminierung des NetEase 405 Method Not Allowed Fehlers durch Bereinigung der Mirror-Kaskade",
+    "Autonomes Cinema-Modal Canvas-Live-Update bei Songwechsel"
   ]
 }
