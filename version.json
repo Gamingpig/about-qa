@@ -1,9 +1,9 @@
 {
-  "version": "24.225.1",
-  "buildTime": "2026-10-28T15:15:41.681Z",
+  "version": "24.225.2",
+  "buildTime": "2026-10-28T15:21:17.777Z",
   "shortNotes": [
-    "Sofortiges rückstandsloses Entfernen des vorherigen Canvas-Videos bei jedem Songwechsel",
-    "Perfekte Loop-Synchronisation aller Canvas-Ebenen bei Video-Neustart ohne Ruckeln",
-    "Erweiterte Offline-Canvas-Datenbank fuer Gamingpig Top-Tracks (VDSIS, Oscar Stembridge, Bjarne, M&M, etc.)"
+    "Echo-Dot- & Spotify-Time-Sync gefixt: Beseitigung des Vorauseilens der Lyrics",
+    "Bidirektionale sanfte Drift-Kompensation fuer Bluetooth- & WLAN-Lautsprecher",
+    "Reiner Millisekunden-Fortschritt ohne kuenstliche Snapshot-Extrapolation"
   ]
 }
