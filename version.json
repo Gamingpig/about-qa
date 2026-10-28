@@ -1,9 +1,9 @@
 {
-  "version": "24.225.23",
-  "buildTime": "2026-10-28T18:55:00.000Z",
+  "version": "24.225.24",
+  "buildTime": "2026-10-28T19:05:00.000Z",
   "shortNotes": [
-    "StandBy-Grade Cinema Isolation: Kompletter Freeze des DOM-Baums & aller Hintergrund-Animationen bei geöffnetem Kino-Modus",
-    "Solid Black Cinema Layer: Kino-Ansicht rendert auf reiner #000000-Hardware-Ebene ohne teure Backdrop-Blur-Filter",
-    "Card-Canvas Zero Overdraw: Deaktivierung von Mesh-Gradients & Pause von Hintergrund-Blobs während aktiver Canvas-Wiedergabe"
+    "Canvas Glow Tuning: Einstellbare Schieberegler für Radius (10px–180px) und Weichzeichner (5px–120px) der Live-Aura auf der Haupt-Musikkarte",
+    "Card Glow Button & Panel: Neuer ✨ Glow-Button auf der Karte klappt ein Tuning-Panel für sofortige Echtzeit-Vorschau aus",
+    "Persistente Synchronisation: Einstellungen werden in AppStorage gesichert und simultan in allen Menüs synchronisiert"
   ]
 }
