@@ -1,10 +1,9 @@
 {
-  "version": "24.225.0",
-  "buildTime": "2026-10-28T15:00:00.000Z",
+  "version": "24.225.1",
+  "buildTime": "2026-10-28T15:15:41.681Z",
   "shortNotes": [
-    "Stats.fm Snapshot-Age-Extrapolation fuer millimetergenauen Time-Sync ohne Lags",
-    "High-Speed Promise.any Parallel-Rennen fuer Canvas-Suche (1-2s statt 27s)",
-    "Ruckelfreie Canvas-Synchronisation ohne 250ms Mikro-Stottern",
-    "Gebuendelte Canvas-Erweiterung fuer ILKO - I Never Lose"
+    "Sofortiges rückstandsloses Entfernen des vorherigen Canvas-Videos bei jedem Songwechsel",
+    "Perfekte Loop-Synchronisation aller Canvas-Ebenen bei Video-Neustart ohne Ruckeln",
+    "Erweiterte Offline-Canvas-Datenbank fuer Gamingpig Top-Tracks (VDSIS, Oscar Stembridge, Bjarne, M&M, etc.)"
   ]
 }
