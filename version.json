@@ -1,8 +1,9 @@
 {
-  "version": "24.225.35",
-  "buildTime": "2026-10-29T14:10:00.000Z",
+  "version": "24.225.36",
+  "buildTime": "2026-10-29T14:20:00.000Z",
   "shortNotes": [
-    "Kein automatisches Scrollen beim Öffnen/Schließen der Lyrics: Die Seite verharrt an der exakten Scroll-Position ohne störendes Springen",
-    "Dynamic Island bleibt bei geöffneten Lyrics voll sichtbar & aktiv: Kollisionsfreies Verhalten, Ring-Animation und Songstatus bleiben auch im Songtext-Modus erhalten"
+    "Vollständige Spotify-Künstler-Galerie: Lädt alle echten Fotos aus dem Spotify-Künstlerprofil (640x640 HD Avatar, offizielle Single-/Album-Porträts und Release-Fotos direkt aus dem Spotify-CDN)",
+    "Erweiterter Diashow-Puffer: Bis zu 12 verifizierte Künstler- und Coverbilder pro Artist zum Durchblättern",
+    "Vollständige Integration für ILKO, Alan Walker, Marcus & Martinus und dynamische Künstler"
   ]
 }
