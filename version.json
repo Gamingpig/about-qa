@@ -6,6 +6,9 @@
     "Eigener Karten-Blur-Regler: Der Weichzeichner auf der Player-Karte ist separat einstellbar und standardmäßig AUS (0px)",
     "Aura-Radius und Aura-Blur nutzen wieder die Standardwerte (mobil 60px / Desktop 90px, Blur 48px), Aura-Ecken folgen der Karte",
     "Musikvideo-/YouTube-Features komplett abgeschaltet: kein YouTube-Loader, keine Werbespots, keine Video-Buttons – nur Spotify Canvas",
-    "Canvas-Abruf robuster: Jeder Track mit Spotify-Canvas wird nachgeladen, Netzwerkfehler werden nur kurz negativ gecacht"
+    "Canvas-Abruf robuster: Jeder Track mit Spotify-Canvas wird nachgeladen, Netzwerkfehler werden nur kurz negativ gecacht",
+    "Neuer Glow-Stärke-Regler (0–150 %): Die Canvas-Aura lässt sich stufenlos kräftiger oder schwächer stellen – 100 % ist der bisherige Look",
+    "Canvas-Abdeckung: Fehlt die Spotify-ID eines Tracks, wird sie automatisch über die Spotify-Suche ermittelt – dadurch bekommen auch Songs ohne stats.fm-/NPC-ID ihr Canvas",
+    "Canvas-Sync feinjustiert: Notfall-Resync alle 4 s statt 8 s, gemessener Versatz der Karten-Videos 0,12–0,29 s"
   ]
 }
