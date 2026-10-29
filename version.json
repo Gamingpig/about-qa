@@ -1,10 +1,11 @@
 {
-  "version": "24.225.30",
-  "buildTime": "2026-10-29T13:00:00.000Z",
+  "version": "24.225.31",
+  "buildTime": "2026-10-29T13:30:00.000Z",
   "shortNotes": [
-    "Künstler-Info & Galerie-Modal: Klick auf den Artist-Namen öffnet detaillierte Biografie, Genre, Herkunft und Diskografie",
-    "Automatische Bilder-Diashow: Schwebende Galerie mit Pressefotos, Album-Artworks und Covern wechselt sanft mit Pfeilen & Dots",
-    "Multi-Source-Auflösung: Wikipedia REST API (de/en) & iTunes Search API liefern verifizierte Infos und Top-Hits für jeden Artist",
-    "0ms-Bundled-Daten für Top-Künstler (Marcus & Martinus, Alan Walker, Tom Odell) für sofortige Offline-Anzeige"
+    "Zentriertes Künstler-Info Modal: Vollständig zentriertes Layout für Artist-Name, Badges, Biografie und Diskografie",
+    "Unbeschnittene Bilder-Galerie: Dual-Layer Diashow mit unscharfem Ambient-Backdrop und 100% vollständigem Vordergrund-Bild (object-contain)",
+    "Ambilight Ambient Glow: Dynamischer Ambilight-Lichtschein hinter dem Dialog passend zur Song-Farbpalette",
+    "Sanfte Animationen: Elegante Einflug- und Schließen-Animationen für das Dialogfenster und weicher Bildwechsel",
+    "Verifizierte Künstler-Auflösung: Intelligente Relevanz-Prüfung verhindert falsche Wikipedia-Artikel oder unpassende Bilder bei Collabs/Kombinationen"
   ]
 }
