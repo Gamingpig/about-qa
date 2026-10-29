@@ -7338,18 +7338,21 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
                perfekt durchgehenden Look ohne GPU-Overhead. */
             background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.16);
             border-radius: var(--standby-radius, 32px); padding: 26px; box-shadow: 0 20px 60px rgba(0,0,0,0.55), inset 0 1px 1px rgba(255,255,255,0.2);
-            contain: paint;
+            /* A single, static cover aura may extend beyond the card. No backdrop-filter. */
+            overflow: visible; isolation: isolate; contain: layout style;
         }
         #standby-card-blur-bg {
-            position: absolute; inset: -20px; z-index: -1; border-radius: inherit;
+            position: absolute; inset: -28px; z-index: 0;
+            /* Expand the rounded silhouette evenly on all sides. */
+            border-radius: calc(var(--standby-radius, 32px) + 24px);
             background-size: cover; background-position: center;
-            /* Nahtlose Abstimmung auf den StandBy-Hintergrund */
-            filter: blur(14px) brightness(0.44) saturate(150%);
-            transform: scale(1.18);
+            /* Enlarged artwork supplies the soft card glow and shadow. */
+            filter: blur(20px) brightness(0.48) saturate(140%);
+            transform: scale(1.08);
             transition: opacity 0.5s ease;
-            will-change: transform, opacity;
             pointer-events: none;
         }
+        #standby-nowplaying > :not(#standby-card-blur-bg) { position: relative; z-index: 1; }
         #standby-track { display: flex; align-items: center; gap: 20px; }
         #standby-track-art-wrap { position: relative; width: clamp(120px, 34vw, 190px); height: clamp(120px, 34vw, 190px); flex-shrink: 0; border-radius: 28px; overflow: hidden; box-shadow: 0 14px 40px rgba(0,0,0,0.65); }
         #standby-track-art { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.45s ease; }
@@ -29764,8 +29767,12 @@ window.setLyricsStyle = function(style) {
                     // Texte. Erst direkter Get über die Apple-Music-ID des Songs, sonst Suche über
                     // Titel + Artist. Vollständig defensiv: CORS-/Netzfehler ergeben nur ein leeres Array.
                     const AMLL_API_BASE = 'https://api.amll.dev';
+                    // The public AMLL endpoint currently refuses connections. Keep its parser
+                    // available for a later recovery, but do not issue failing requests.
+                    const AMLL_ENABLED = false;
                     const fetchAmll = async (query, isCancelled) => {
                         const out = [];
+                        if (!AMLL_ENABLED) return out;
                         const tryGet = async (param) => {
                             try {
                                 const res = await fetchWithTimeout(`${AMLL_API_BASE}/v1/lyrics/get?${param}`, 6000);
