@@ -22,6 +22,15 @@
       - Canvas-Abruf robuster: Lookup läuft für jeden Track, solange noch kein Canvas aktiv ist. Negative-Cache
         unterscheidet jetzt zwischen "API sagt: kein Canvas" (10 Min) und "Netzwerk/Proxy gestört" (10 Sek Retry).
       - Doppelter, toter else-if-Block in updateMediaButtonState() entfernt.
+      - Performance: Lyrics-Canvas dekodiert nur noch bei offenem Lyrics-Overlay (vorher lief ein 4. Video
+        unsichtbar mit). Canvas-Abruf arbeitet zweistufig - erst r.jina.ai + allorigins/get, die langsamen
+        Fallbacks nur wenn wirklich keine API-Antwort kam; offene Requests werden per AbortController beendet.
+        Zusaetzlich preconnect/dns-prefetch fuer canvaz.scdn.co, r.jina.ai, api.allorigins.win und i.scdn.co.
+      - Lyrics-Darstellung (Canvas-Modus): Weil das Lyrics-Overlay bei aktivem Canvas komplett transparent
+        ist, schienen Titel, Artist, Fortschrittsbalken und Buttons der Karte als Geistertext durch den
+        Songtext. Die Karten-UI wird im Lyrics-Modus jetzt vollstaendig ausgeblendet, die Dynamic Island
+        ebenfalls (sie lag ueber der Kopfzeile), und die letzte Zeile bekommt Abstand zu den schwebenden
+        Buttons (Tipp-zum-Springen / Tempo / Vorlesen).
       - Version v24.225.29 (Header/Footer/Settings-Labels, sw.js, version.json).
     [LYRICS / MULTI-PROVIDER WORD-SYNC] Release v24.225.28 · 2026-10-16: Apple-Music-TTML-Wort-Sync via AMLL-API, NetEase-YRC + LRCLIB-Kaskade, 0ms-Bundle für "Jente i fra by'n", "You Make Me" & "Make You Believe In Love", autonomer Re-Sync-Fix, Smart-Word-Cadence, Instrumental-Bühne, Lade-Sound restlos entfernt
       - Neue Multi-Provider-Wort-Sync-Kaskade: fetchExternalLyrics fragt jetzt zusätzlich die freie Apple-Music-TTML-Datenbank (api.amll.dev) ab.
@@ -3283,6 +3292,12 @@
     <script src="./js/core/storage.e856be99df567fd2.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- v24.225.29: Verbindungen früh aufbauen (Canvas-Video, Canvas-API-Proxy, Cover-CDN).
+         Spart beim ersten Canvas-Lookup rund 200-400ms TLS/DNS-Handshake. -->
+    <link rel="preconnect" href="https://canvaz.scdn.co" crossorigin>
+    <link rel="preconnect" href="https://r.jina.ai" crossorigin>
+    <link rel="preconnect" href="https://api.allorigins.win" crossorigin>
+    <link rel="dns-prefetch" href="https://i.scdn.co">
     <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.225.29</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
@@ -5494,6 +5509,31 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             opacity: 0 !important;
             visibility: hidden !important;
             pointer-events: none !important;
+        }
+        /* FIX v24.225.29: Bei aktivem Canvas ist das Lyrics-Overlay absichtlich komplett
+           transparent (damit das Canvas-Video durchscheint). Dadurch schienen Titel, Artist,
+           Fortschrittsbalken, Buttons und "Zuletzt gehört" der Karte durch den Songtext -
+           sichtbar als Geistertext/Doppeltext. Im Lyrics-Modus wird die komplette Karten-UI
+           ausgeblendet; sichtbar bleiben nur Canvas-Hintergrund und Lyrics-Overlay. */
+        #main-music-card.lyrics-open > .z-10:not(#lyrics-overlay),
+        #main-music-card.lyrics-open > .z-20:not(#lyrics-overlay) {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+        /* FIX v24.225.29: Die Dynamic Island liegt fix am oberen Bildschirmrand und kollidierte
+           im Lyrics-Modus mit der Kopfzeile des Songtexts (schwarzer Kreis über dem Header).
+           In allen anderen Modi bleibt sie unverändert. */
+        body.lyrics-mode-active #dynamic-island {
+            display: none !important;
+        }
+        /* FIX v24.225.29: Unten im Overlay schweben die Buttons "Tipp-zum-Springen" (links) und
+           Tempo/Vorlesen (rechts). Die Scroll-Fläche endet jetzt oberhalb dieser Button-Zeile,
+           damit keine Songtext-Zeile mehr verdeckt wird. */
+        #main-music-card.lyrics-open #lyrics-container {
+            height: auto !important;
+            bottom: 52px !important;
+            padding-bottom: 16px !important;
         }
         #main-music-card.lyrics-open #lyrics-overlay {
             border-radius: inherit !important;
@@ -19143,7 +19183,9 @@ let shareCardLoading;
                 "✨ Aura-Radius und Aura-Blur starten wieder mit den Standardwerten (mobil 60px / Desktop 90px, Blur 48px)",
                 "🪞 Passende Aura-Ecken: Die Leuchtfläche übernimmt exakt die Rundung der Karte – mobil wie Desktop",
                 "🎥 Musikvideo-Funktionen abgeschaltet: Kein YouTube-Loader, keine Werbespots, keine Video-Buttons mehr – es läuft ausschließlich Spotify Canvas",
-                "🛰️ Canvas-Abruf zuverlässiger: Jeder Track mit Spotify-Canvas wird nachgeladen, auch wenn ein Proxy kurzzeitig gestört war"
+                "🛰️ Canvas-Abruf zuverlässiger: Jeder Track mit Spotify-Canvas wird nachgeladen, auch wenn ein Proxy kurzzeitig gestört war",
+                "⚡ Flüssigeres Canvas: Das Lyrics-Canvas wird nur noch bei geöffnetem Songtext dekodiert, und der Canvas-Abruf beendet sich nach der ersten echten Antwort – keine hängenden Proxy-Anfragen mehr",
+                "🎤 Aufgeräumte Songtext-Ansicht: Titel, Artist, Fortschrittsbalken und Buttons der Karte scheinen nicht mehr durch den Songtext durch, und die letzte Zeile wird nicht mehr von den schwebenden Buttons verdeckt"
             ],
             en: [
                 "↔️ Canvas Glow Now Truly Widens: The aura radius expands the glow horizontally AND vertically instead of only growing taller",
@@ -19151,7 +19193,9 @@ let shareCardLoading;
                 "✨ Aura radius and aura blur start with their default values again (60px mobile / 90px desktop, blur 48px)",
                 "🪞 Matching Aura Corners: The glow now inherits the card's exact border radius on mobile and desktop",
                 "🎥 Music video features switched off: No YouTube loader, no ads, no video buttons – Spotify Canvas only",
-                "🛰️ More reliable canvas lookup: Every track with a Spotify Canvas is fetched, even after a temporary proxy hiccup"
+                "🛰️ More reliable canvas lookup: Every track with a Spotify Canvas is fetched, even after a temporary proxy hiccup",
+                "⚡ Smoother canvas playback: The lyrics canvas only decodes while the lyrics overlay is open, and the canvas lookup finishes after the first real API answer instead of waiting on dead proxies",
+                "🎤 Cleaner lyrics view: The card's title, artist, progress bar and buttons no longer bleed through the lyrics, and the last line is no longer covered by the floating buttons"
             ]
         }},
         { version: "v24.225.28", date: "16. Oktober 2026", type: "fix", items: {
@@ -26911,9 +26955,16 @@ window.setLyricsStyle = function(style) {
                 // CORS-fähig als Text zurück (schnell & stabil), allorigins liefert sie als JSON.
                 const targetDirect = `https://spotify-canva.vercel.app/api/canvas?trackId=${encodeURIComponent(cleanId)}`;
                 const encodedTarget = encodeURIComponent(targetDirect);
-                const proxyTargets = [
+                // v24.225.29: Zweistufige Kaskade statt sechsfachem Parallel-Race.
+                // Stufe 1 sind die einzigen Wege, die im Browser zuverlässig antworten.
+                const primaryTargets = [
                     `https://r.jina.ai/${targetDirect}`,
-                    `https://api.allorigins.win/get?url=${encodedTarget}`,
+                    `https://api.allorigins.win/get?url=${encodedTarget}`
+                ];
+                // Stufe 2 (langsam/tot) wird nur noch bemüht, wenn Stufe 1 weder eine
+                // Canvas-URL noch eine echte API-Antwort geliefert hat. Das spart pro
+                // Track ohne Canvas bis zu 6 hängende Requests und Rate-Limit-Treffer.
+                const secondaryTargets = [
                     `https://api.allorigins.win/raw?url=${encodedTarget}`,
                     `https://api.codetabs.com/v1/proxy?quest=${encodedTarget}`,
                     `https://corsproxy.io/?url=${encodedTarget}`,
@@ -26958,8 +27009,8 @@ window.setLyricsStyle = function(style) {
                     return !!(json.data?.canvasesList || json.canvasesList || json.canvasUrl || json.canvas_url || json.url);
                 };
 
-                const fetchSingle = async (fetchUrl) => {
-                    const res = await fetch(fetchUrl, { signal: AbortSignal.timeout(8000) });
+                const fetchSingle = async (fetchUrl, signal) => {
+                    const res = await fetch(fetchUrl, { signal: signal || AbortSignal.timeout(8000) });
                     if (!res || !res.ok) throw new Error('Status: ' + (res ? res.status : 'err'));
                     const txt = await res.text();
                     let json = null;
@@ -26970,10 +27021,40 @@ window.setLyricsStyle = function(style) {
                     throw new Error('No canvas url');
                 };
 
-                try {
-                    resolvedUrl = await Promise.any(proxyTargets.map(u => fetchSingle(u)));
-                } catch (_) {
-                    resolvedUrl = null;
+                // Race mit Frühausstieg: Sobald die API geantwortet hat (Canvas oder
+                // "kein Canvas"), werden die restlichen Proxys abgebrochen statt bis zum
+                // Timeout weiterzulaufen.
+                const raceTier = async (targets, timeoutMs) => {
+                    const controller = new AbortController();
+                    const timer = setTimeout(() => controller.abort(), timeoutMs);
+                    try {
+                        return await new Promise((resolve) => {
+                            let settled = false;
+                            let pending = targets.length;
+                            const finish = (val) => {
+                                if (settled) return;
+                                settled = true;
+                                resolve(val || null);
+                            };
+                            targets.forEach((u) => {
+                                fetchSingle(u, controller.signal)
+                                    .then(finish)
+                                    .catch(() => {})
+                                    .finally(() => {
+                                        pending -= 1;
+                                        if (pending === 0 || gotApiResponse) finish(null);
+                                    });
+                            });
+                        });
+                    } finally {
+                        clearTimeout(timer);
+                        controller.abort();
+                    }
+                };
+
+                resolvedUrl = await raceTier(primaryTargets, 9000);
+                if (!resolvedUrl && !gotApiResponse) {
+                    resolvedUrl = await raceTier(secondaryTargets, 6000);
                 }
             } catch (err) {
                 // Stiller Fehlerabfang
@@ -27000,7 +27081,8 @@ window.setLyricsStyle = function(style) {
                 const cgv = document.getElementById('canvas-glow-video');
                 if (cgv && cgv.paused) cgv.play().catch(() => {});
                 const lcv = document.getElementById('lyrics-canvas-video');
-                if (lcv && lcv.paused) lcv.play().catch(() => {});
+                const lyricsOpen = !!document.getElementById('main-music-card')?.classList.contains('lyrics-open');
+                if (lcv && lyricsOpen && lcv.paused) lcv.play().catch(() => {});
             }
         }
         ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(evt => {
@@ -30256,7 +30338,11 @@ window.setLyricsStyle = function(style) {
                         }
                     }
                     if (lyricsCanvasVideo) {
-                        if (canvasEnabled && isPlaying) {
+                        // FIX v24.225.29: Lyrics-Canvas nur dekodieren, wenn das Lyrics-Overlay
+                        // wirklich offen ist. Vorher lief das 4. Video permanent mit, obwohl es
+                        // unsichtbar war (redundante Decode-Last auf Mobilgeräten).
+                        const lyricsVisible = !!(mainMusicCard && mainMusicCard.classList.contains('lyrics-open'));
+                        if (canvasEnabled && isPlaying && lyricsVisible) {
                             lyricsCanvasVideo.classList.remove('opacity-0');
                             lyricsCanvasVideo.classList.add('opacity-100');
                             if (lyricsCanvasTint) {
