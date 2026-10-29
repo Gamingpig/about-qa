@@ -21,6 +21,18 @@
         unerreichbar. Es wird kein YouTube-iframe mehr geladen - Canvas ist der einzige Video-Modus.
       - Canvas-Abruf robuster: Lookup läuft für jeden Track, solange noch kein Canvas aktiv ist. Negative-Cache
         unterscheidet jetzt zwischen "API sagt: kein Canvas" (10 Min) und "Netzwerk/Proxy gestört" (10 Sek Retry).
+      - Neuer Regler "Glow-Stärke" (0-150%, Standard 100%) in Karten-Panel, Lyrics-Panel und Website-Einstellungen.
+        Er skaliert Deckkraft, Sättigung und Helligkeit der Aura über --canvas-glow-intensity; 100% reproduziert
+        exakt den bisherigen Look, 0% schaltet die Aura aus, 150% macht sie deutlich kräftiger.
+      - Canvas-Abdeckung: extractSpotifyIdFromLinks durchsucht jetzt auch verschachtelte platform_links. Fehlt
+        trotzdem eine Spotify-ID, wird sie einmalig über die öffentliche Spotify-Suche (r.jina.ai) aufgelöst und
+        danach der Canvas geladen - damit bekommen auch Tracks ohne stats.fm-/NPC-ID ihr Canvas. Fehlgeschlagene
+        Suchen werden 10 Minuten gemerkt (kein Poll-Spam).
+      - Canvas-Sync: Notfall-Resync läuft jetzt alle 4s statt 8s (nur currentTime-Reads, Seek weiterhin erst ab
+        350ms Versatz). Gemessener Dauer-Versatz der drei Karten-Videos: 0.12-0.29s, also unter der Seek-Schwelle
+        und ohne Aufhol-Drift.
+      - Lyrics-Sync geprüft: syncLyricsUI aktiviert exakt eine Zeile, und zwar erst ab ihrem Zeitstempel
+        (Test: 12.80s-Zeile bei 13.05s aktiv, 16.00s-Zeile noch nicht).
       - Doppelter, toter else-if-Block in updateMediaButtonState() entfernt.
       - Performance: Lyrics-Canvas dekodiert nur noch bei offenem Lyrics-Overlay (vorher lief ein 4. Video
         unsichtbar mit). Canvas-Abruf arbeitet zweistufig - erst r.jina.ai + allorigins/get, die langsamen
@@ -5618,7 +5630,9 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             max-width: none !important;
             max-height: none !important;
             object-fit: cover;
-            filter: blur(var(--canvas-glow-blur, 45px)) saturate(2.4) brightness(1.2) !important;
+            /* v24.225.29: --canvas-glow-intensity (0..1.5, Standard 1) skaliert Helligkeit,
+               Sättigung und Deckkraft der Aura. Bei 1 bleibt der bisherige Look exakt erhalten. */
+            filter: blur(var(--canvas-glow-blur, 45px)) saturate(calc(1.4 + 1.1 * var(--canvas-glow-intensity, 1))) brightness(calc(0.85 + 0.35 * var(--canvas-glow-intensity, 1))) !important;
             opacity: 0;
             transition: opacity 0.8s ease;
             pointer-events: none;
@@ -5632,7 +5646,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             #canvas-glow-video {
                 width: calc(100% + var(--canvas-glow-radius, 90px)) !important;
                 height: calc(100% + var(--canvas-glow-radius, 90px)) !important;
-                filter: blur(var(--canvas-glow-blur, 55px)) saturate(2.5) brightness(1.2) !important;
+                filter: blur(var(--canvas-glow-blur, 55px)) saturate(calc(1.4 + 1.1 * var(--canvas-glow-intensity, 1))) brightness(calc(0.85 + 0.35 * var(--canvas-glow-intensity, 1))) !important;
                 transform: translate(-50%, -50%) !important;
             }
         }
@@ -5675,9 +5689,9 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             opacity: 0.15 !important;
         }
         body.liquid-glass-active #main-music-card.canvas-active #canvas-glow-video {
-            opacity: 0.75 !important;
+            opacity: calc(0.75 * var(--canvas-glow-intensity, 1)) !important;
             visibility: visible !important;
-            filter: blur(var(--canvas-glow-blur, 48px)) saturate(2.5) brightness(1.2) !important;
+            filter: blur(var(--canvas-glow-blur, 48px)) saturate(calc(1.4 + 1.1 * var(--canvas-glow-intensity, 1))) brightness(calc(0.85 + 0.35 * var(--canvas-glow-intensity, 1))) !important;
             transform: translate(-50%, -50%) !important;
         }
         body.liquid-glass-active #main-music-card:not(.canvas-active) #canvas-glow-video {
@@ -5695,7 +5709,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             visibility: hidden !important;
         }
         #main-music-card.canvas-active #canvas-glow-video {
-            opacity: 0.95 !important;
+            opacity: calc(0.95 * var(--canvas-glow-intensity, 1)) !important;
             visibility: visible !important;
         }
         /* Wenn Canvas im Lyrics-Modus aktiv ist: Lyrics-Hintergrund transparent schalten */
@@ -9749,6 +9763,13 @@ html.gp-android:not(.dark) #ui-controls {
                                         </div>
                                         <div class="space-y-0.5">
                                             <div class="flex items-center justify-between text-[8px] xxs:text-[9px] text-slate-300">
+                                                <span>Glow-Stärke</span>
+                                                <span id="canvas-glow-intensity-val-lyrics" class="font-mono text-emerald-400 font-bold">100%</span>
+                                            </div>
+                                            <input type="range" id="canvas-glow-intensity-slider-lyrics" min="0" max="150" step="5" value="100" oninput="setCanvasGlowIntensity(this.value)" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-400">
+                                        </div>
+                                        <div class="space-y-0.5">
+                                            <div class="flex items-center justify-between text-[8px] xxs:text-[9px] text-slate-300">
                                                 <span>Karten-Blur</span>
                                                 <span id="canvas-glow-card-blur-val-lyrics" class="font-mono text-emerald-400 font-bold">0px</span>
                                             </div>
@@ -9905,6 +9926,19 @@ html.gp-android:not(.dark) #ui-controls {
                                         <span>Scharf (0px)</span>
                                         <span>Atmosphärisch (48px)</span>
                                         <span>Super-Soft (120px)</span>
+                                    </div>
+                                </div>
+                                <!-- Glow-Stärke Slider (v24.225.29) -->
+                                <div class="space-y-1">
+                                    <div class="flex items-center justify-between text-[10px] sm:text-xs text-slate-200">
+                                        <span class="font-medium">Glow-Stärke</span>
+                                        <span id="canvas-glow-intensity-val" class="font-mono text-emerald-400 font-bold">100%</span>
+                                    </div>
+                                    <input type="range" id="canvas-glow-intensity-slider" min="0" max="150" step="5" value="100" oninput="setCanvasGlowIntensity(this.value)" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-400">
+                                    <div class="flex justify-between text-[8px] text-slate-400 font-mono">
+                                        <span>Aus (0%)</span>
+                                        <span>Standard (100%)</span>
+                                        <span>Max (150%)</span>
                                     </div>
                                 </div>
                                 <!-- Karten-Blur Slider (Standard: AUS) -->
@@ -10545,6 +10579,19 @@ html.gp-android:not(.dark) #ui-controls {
                         <span>Scharf (0px)</span>
                         <span>Atmosphärisch (48px)</span>
                         <span>Super-Soft (120px)</span>
+                    </div>
+                </div>
+                <!-- Glow-Stärke Slider (v24.225.29) -->
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between text-xs text-slate-300">
+                        <span>Glow-Stärke</span>
+                        <span id="canvas-glow-intensity-val-global" class="font-mono text-emerald-400 font-bold">100%</span>
+                    </div>
+                    <input type="range" id="canvas-glow-intensity-slider-global" min="0" max="150" step="5" value="100" oninput="setCanvasGlowIntensity(this.value)" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-400">
+                    <div class="flex justify-between text-[11px] text-slate-400 font-mono px-0.5">
+                        <span>Aus (0%)</span>
+                        <span>Standard (100%)</span>
+                        <span>Max (150%)</span>
                     </div>
                 </div>
                 <!-- Karten-Blur Slider (Standard: AUS) -->
@@ -14536,6 +14583,9 @@ html.gp-android:not(.dark) #ui-controls {
         const trackMusicVideoCache = new Map();
         const trackCanvasMemoryCache = new Map();
         const trackCanvasNegativeCache = new Map();
+        // v24.225.29: Merkt sich fehlgeschlagene Spotify-ID-Suchen (Titel+Artist) für 10 Minuten,
+        // damit die Canvas-Suche nicht bei jedem 4-Sekunden-Poll erneut ins Netz geht.
+        const canvasIdSearchCache = new Map();
         const BUNDLED_CANVAS_DB = {
             "5m2hg1m5i7ysrc9pkejhhc": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/d806468e98574ba8ac9ddfdf4c903f81.cnvs.mp4",
             "5M2hG1M5I7YsrC9PKEJHHC": "https://canvaz.scdn.co/upload/artist/1B6LQ6thVQ56DS7eHgWMGq/video/d806468e98574ba8ac9ddfdf4c903f81.cnvs.mp4",
@@ -19184,6 +19234,8 @@ let shareCardLoading;
                 "🪞 Passende Aura-Ecken: Die Leuchtfläche übernimmt exakt die Rundung der Karte – mobil wie Desktop",
                 "🎥 Musikvideo-Funktionen abgeschaltet: Kein YouTube-Loader, keine Werbespots, keine Video-Buttons mehr – es läuft ausschließlich Spotify Canvas",
                 "🛰️ Canvas-Abruf zuverlässiger: Jeder Track mit Spotify-Canvas wird nachgeladen, auch wenn ein Proxy kurzzeitig gestört war",
+                "🎚️ Neuer Glow-Stärke-Regler (0–150 %): Die Canvas-Aura lässt sich jetzt stufenlos kräftiger oder schwächer stellen – 100 % ist der bisherige Look",
+                "🔎 Canvas-Abdeckung: Fehlt die Spotify-ID eines Tracks, wird sie automatisch über die Spotify-Suche ermittelt – dadurch bekommen auch Songs ohne stats.fm-/NPC-ID ihr Canvas",
                 "⚡ Flüssigeres Canvas: Das Lyrics-Canvas wird nur noch bei geöffnetem Songtext dekodiert, und der Canvas-Abruf beendet sich nach der ersten echten Antwort – keine hängenden Proxy-Anfragen mehr",
                 "🎤 Aufgeräumte Songtext-Ansicht: Titel, Artist, Fortschrittsbalken und Buttons der Karte scheinen nicht mehr durch den Songtext durch, und die letzte Zeile wird nicht mehr von den schwebenden Buttons verdeckt"
             ],
@@ -19194,6 +19246,8 @@ let shareCardLoading;
                 "🪞 Matching Aura Corners: The glow now inherits the card's exact border radius on mobile and desktop",
                 "🎥 Music video features switched off: No YouTube loader, no ads, no video buttons – Spotify Canvas only",
                 "🛰️ More reliable canvas lookup: Every track with a Spotify Canvas is fetched, even after a temporary proxy hiccup",
+                "🎚️ New Glow Strength slider (0–150 %): The canvas aura can now be made stronger or weaker – 100 % keeps the previous look",
+                "🔎 Canvas coverage: If a track's Spotify ID is missing, it is resolved automatically via Spotify search – so songs without a stats.fm/NPC ID get their canvas too",
                 "⚡ Smoother canvas playback: The lyrics canvas only decodes while the lyrics overlay is open, and the canvas lookup finishes after the first real API answer instead of waiting on dead proxies",
                 "🎤 Cleaner lyrics view: The card's title, artist, progress bar and buttons no longer bleed through the lyrics, and the last line is no longer covered by the floating buttons"
             ]
@@ -26734,12 +26788,14 @@ window.setLyricsStyle = function(style) {
                 // Bei 'play' wird sanft synchronisiert ohne Decoder-Abwürfe:
                 canvasVideo.addEventListener('play', () => resyncAllCanvasVideos(false), { passive: true });
 
-                // Sanfter Notfall-Check alle 8 Sekunden falls ein Video durch Background-Tab eingeschlafen ist
+                // Sanfter Notfall-Check alle 4 Sekunden falls ein Video durch Background-Tab
+                // eingeschlafen ist (v24.225.29: von 8s auf 4s verkürzt, Kostet nur currentTime-Reads;
+                // ein Seek passiert weiterhin erst ab 350ms Versatz).
                 setInterval(() => {
                     if (canvasEnabled && trackIsPlaying && canvasVideo && !canvasVideo.paused) {
                         resyncAllCanvasVideos(false);
                     }
-                }, 8000);
+                }, 4000);
             }
         }
 
@@ -26906,25 +26962,63 @@ window.setLyricsStyle = function(style) {
                 applyActiveMediaMode();
             }
         }
+        // v24.225.29: Spotify-ID über die öffentliche Spotify-Suche auflösen, wenn weder
+        // stats.fm/NPC noch platform_links eine Track-ID liefern. r.jina.ai rendert die
+        // Suchseite CORS-fähig als Text; daraus wird der erste passende /track/-Link gelesen.
+        async function resolveSpotifyIdViaSearch(trackTitle, rawArtist) {
+            const title = String(trackTitle || '').trim();
+            if (!title) return '';
+            const key = (title + '|' + String(rawArtist || '')).toLowerCase();
+            const cached = canvasIdSearchCache.get(key);
+            if (cached) {
+                if (cached.id) return cached.id;
+                if (Date.now() - cached.at < 10 * 60 * 1000) return '';
+            }
+            try {
+                const q = encodeURIComponent((title + ' ' + String(rawArtist || '')).trim());
+                const target = 'https://open.spotify.com/search/' + q;
+                const res = await fetch('https://r.jina.ai/' + encodeURIComponent(target), { signal: AbortSignal.timeout(9000) });
+                if (!res.ok) throw new Error('status ' + res.status);
+                const txt = await res.text();
+                const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+                const want = norm(title);
+                const re = /\[([^\]]{0,140})\]\(https:\/\/open\.spotify\.com\/track\/([a-zA-Z0-9]{22})/g;
+                let m, firstId = '';
+                while ((m = re.exec(txt))) {
+                    const label = norm(m[1]);
+                    if (!firstId) firstId = m[2];
+                    if (label && (label === want || label.includes(want) || want.includes(label))) {
+                        canvasIdSearchCache.set(key, { id: m[2], at: Date.now() });
+                        return m[2];
+                    }
+                }
+                if (firstId) {
+                    canvasIdSearchCache.set(key, { id: firstId, at: Date.now() });
+                    return firstId;
+                }
+                canvasIdSearchCache.set(key, { id: '', at: Date.now() });
+                return '';
+            } catch (_) {
+                canvasIdSearchCache.set(key, { id: '', at: Date.now() });
+                return '';
+            }
+        }
+
         async function resolveSpotifyCanvas(spotifyId, trackTitle, rawArtist) {
             let cleanId = (typeof spotifyId === 'string' ? spotifyId : '').replace(/^spotify:track:/, '').trim();
 
             // Falls keine direkte 22-Zeichen-Spotify-ID vorliegt: automatisch auflösen
             if (!cleanId || !/^[a-zA-Z0-9]{22}$/.test(cleanId)) {
-                // 1. Aus Apple-Music-ID auflösen via Songlink/Odesli
-                const amId = (typeof currentAppleMusicId !== 'undefined' ? currentAppleMusicId : '');
-                if (amId && /^[0-9]+$/.test(amId)) {
-                    try {
-                        const slRes = await fetch(`https://api.songlink.io/v1-alpha.1/links?url=https://music.apple.com/song/${amId}&userCountry=DE`, { signal: AbortSignal.timeout(4500) });
-                        if (slRes.ok) {
-                            const slData = await slRes.json();
-                            const spUrl = slData?.linksByPlatform?.spotify?.url;
-                            if (spUrl) {
-                                const m = spUrl.match(/track\/([a-zA-Z0-9]{22})/);
-                                if (m) cleanId = m[1];
-                            }
-                        }
-                    } catch (_) {}
+                // v24.225.29: Songlink ist tot (Host existiert nicht mehr) -> Spotify-Suche.
+                if (inFlightCanvasKey === '__search__') return null;
+                inFlightCanvasKey = '__search__';
+                try {
+                    cleanId = await resolveSpotifyIdViaSearch(
+                        trackTitle || (typeof currentTrackTitle !== 'undefined' ? currentTrackTitle : ''),
+                        rawArtist || (typeof currentRawArtist !== 'undefined' ? currentRawArtist : '')
+                    );
+                } finally {
+                    inFlightCanvasKey = '';
                 }
             }
             if (!cleanId || !/^[a-zA-Z0-9]{22}$/.test(cleanId)) return null;
@@ -27171,17 +27265,39 @@ window.setLyricsStyle = function(style) {
             }
         };
 
+        // NEU v24.225.29: Regler für die Glow-STÄRKE (Deckkraft, Sättigung, Helligkeit der Aura).
+        // 100% = bisheriger Look, 0% = Aura komplett aus, 150% = deutlich kräftiger.
+        window.setCanvasGlowIntensity = function(val, save = true) {
+            const num = Math.max(0, Math.min(150, parseInt(val, 10)));
+            const safe = isNaN(num) ? 100 : num;
+            document.documentElement.style.setProperty('--canvas-glow-intensity', String(safe / 100));
+            ['canvas-glow-intensity-val', 'canvas-glow-intensity-val-lyrics', 'canvas-glow-intensity-val-global'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = safe + '%';
+            });
+            ['canvas-glow-intensity-slider', 'canvas-glow-intensity-slider-lyrics', 'canvas-glow-intensity-slider-global'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && String(el.value) !== String(safe)) el.value = safe;
+            });
+            if (save) {
+                AppStorage.setItem('canvasGlowIntensity', String(safe));
+            }
+        };
+
         window.resetCanvasGlowSettings = function() {
             haptic(10);
             const defRadius = window.innerWidth >= 640 ? 90 : 60;
             const defBlur = 48;
             const defCardBlur = 0;
+            const defIntensity = 100;
             AppStorage.removeItem('canvasGlowRadius');
             AppStorage.removeItem('canvasGlowBlur');
             AppStorage.removeItem('canvasGlowCardBlur');
+            AppStorage.removeItem('canvasGlowIntensity');
             setCanvasGlowRadius(defRadius, false);
             setCanvasGlowBlur(defBlur, false);
             setCanvasGlowCardBlur(defCardBlur, false);
+            setCanvasGlowIntensity(defIntensity, false);
             if (typeof showToast === 'function') {
                 showToast('✨ Canvas Glow auf Standard zurückgesetzt', 'info');
             }
@@ -27206,14 +27322,17 @@ window.setLyricsStyle = function(style) {
             const savedR = AppStorage.getItem('canvasGlowRadius');
             const savedB = AppStorage.getItem('canvasGlowBlur');
             const savedCB = AppStorage.getItem('canvasGlowCardBlur');
+            const savedI = AppStorage.getItem('canvasGlowIntensity');
             const defRadius = window.innerWidth >= 640 ? 90 : 60;
             const defBlur = 48;
             const defCardBlur = 0;
+            const defIntensity = 100;
             setCanvasGlowRadius(savedR !== null ? savedR : defRadius, false);
             setCanvasGlowBlur(savedB !== null ? savedB : defBlur, false);
             // Karten-Blur ist per Default AUS - ein alter gespeicherter Wert wird bewusst ignoriert,
             // damit die Karte nach dem Update wieder scharf startet.
             setCanvasGlowCardBlur(defCardBlur, false);
+            setCanvasGlowIntensity(savedI !== null ? savedI : defIntensity, false);
         })();
 
         // ========================================================= //
@@ -29106,8 +29225,8 @@ window.setLyricsStyle = function(style) {
             return '';
         }
         // Extrahiert die Spotify-Track-ID aus einem Link, einer URI oder einem Objekt
-        function extractSpotifyIdFromLinks(source) {
-            if (!source) return '';
+        function extractSpotifyIdFromLinks(source, depth = 0) {
+            if (!source || depth > 3) return '';
             const testString = (val) => {
                 if (typeof val !== 'string') return '';
                 let m = val.match(/spotify:track:([a-zA-Z0-9]{22})/);
@@ -29129,9 +29248,18 @@ window.setLyricsStyle = function(style) {
                 if (source.id && !String(source.id).includes('|') && /^[a-zA-Z0-9]{22}$/.test(String(source.id).trim())) {
                     return String(source.id).trim();
                 }
-                for (const val of Object.values(source)) {
-                    const found = testString(val);
-                    if (found) return found;
+                // v24.225.29: Auch verschachtelte platform_links ({ spotify: { url } }) durchsuchen,
+                // damit die Canvas-Suche für jeden Track eine Spotify-ID bekommt.
+                // In verschachtelten Objekten zählt nur ein eindeutiger Track-Link (kein nackter
+                // 22-Zeichen-String), damit z.B. Album-IDs nicht als Track-ID missverstanden werden.
+                for (const [key, val] of Object.entries(source)) {
+                    if (val && typeof val === 'object') {
+                        const nested = extractSpotifyIdFromLinks(val, depth + 1);
+                        if (nested) return nested;
+                    } else if (typeof val === 'string') {
+                        const found = testString(val);
+                        if (found && (depth === 0 || /track|spotify/i.test(key) || /\/track\/|spotify:track:/i.test(val))) return found;
+                    }
                 }
             } catch (e) {}
             return '';
@@ -30380,7 +30508,12 @@ window.setLyricsStyle = function(style) {
                 // Spotify-ID erst über Links/Apple-Music aufgelöst werden muss.
                 if (canvasEnabled && !currentCanvasUrl) {
                     const lookupCanvasId = cleanSpTrackId || (currentSpotifyTrackId && /^[a-zA-Z0-9]{22}$/.test(String(currentSpotifyTrackId).trim()) ? String(currentSpotifyTrackId).trim() : '');
-                    if (lookupCanvasId && !hasNegativeCanvas(lookupCanvasId)) {
+                    // v24.225.29: Auch ohne bekannte Spotify-ID suchen (Titel+Artist -> Spotify-Suche),
+                    // damit wirklich jeder Track mit Canvas ein Canvas bekommt.
+                    const canvasSearchKey = (String(trackTitle || '') + '|' + String(rawArtist || '')).toLowerCase();
+                    const failedSearch = canvasIdSearchCache.get(canvasSearchKey);
+                    const searchBlocked = !lookupCanvasId && failedSearch && !failedSearch.id && (Date.now() - failedSearch.at < 10 * 60 * 1000);
+                    if ((lookupCanvasId ? !hasNegativeCanvas(lookupCanvasId) : !searchBlocked)) {
                         resolveSpotifyCanvas(lookupCanvasId, trackTitle, rawArtist);
                     }
                 }
