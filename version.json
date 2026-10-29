@@ -1,10 +1,9 @@
 {
-  "version": "24.225.32",
-  "buildTime": "2026-10-29T13:45:00.000Z",
+  "version": "24.225.33",
+  "buildTime": "2026-10-29T13:55:00.000Z",
   "shortNotes": [
-    "Verifizierte Künstler-Infos & Echte Spotify-Daten: Offizielles Spotify-Profil & Bio für ILKO (The Voice Kids 2026 / Sanremo Junior 2025)",
-    "Strenge Musiker-Validierung: Wikipedia-Artikel werden nur noch bei exakter Titel-Übereinstimmung und nachgewiesenem Musik-Bezug akzeptiert (verhindert Historiker wie Ilko-Sascha Kowalczuk)",
-    "Direkte Spotify-CDN Anbindung: Abruf von verifizierten Spotify-Künstler-Avataren, Follower-Zahlen und direktem Artist-Link via stats.fm",
-    "Vollständig zentriertes Modal mit unbeschnittener Dual-Layer Galerie und Ambilight Ambient Glow"
+    "Robuste Song-Cover & Ausfallschutz: Automatische onerror-Fallback-Logik und 500x500 CDN-Auflösung garantieren, dass alle Track-Cover zuverlässig laden",
+    "Erweiterte Bilder-Galerie: Diashow umfasst nun bis zu 8 verifizierte Bilder inklusive offizieller Spotify-Alben & Single-Cover direkt vom Spotify-CDN",
+    "Vollständige Diskografie & Alben: ILKO und alle Künstler bieten jetzt eine reichhaltige Bildersammlung mit Spotify-Avataren und originalen Release-Covern"
   ]
 }
