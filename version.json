@@ -1,11 +1,10 @@
 {
-  "version": "24.225.31",
-  "buildTime": "2026-10-29T13:30:00.000Z",
+  "version": "24.225.32",
+  "buildTime": "2026-10-29T13:45:00.000Z",
   "shortNotes": [
-    "Zentriertes Künstler-Info Modal: Vollständig zentriertes Layout für Artist-Name, Badges, Biografie und Diskografie",
-    "Unbeschnittene Bilder-Galerie: Dual-Layer Diashow mit unscharfem Ambient-Backdrop und 100% vollständigem Vordergrund-Bild (object-contain)",
-    "Ambilight Ambient Glow: Dynamischer Ambilight-Lichtschein hinter dem Dialog passend zur Song-Farbpalette",
-    "Sanfte Animationen: Elegante Einflug- und Schließen-Animationen für das Dialogfenster und weicher Bildwechsel",
-    "Verifizierte Künstler-Auflösung: Intelligente Relevanz-Prüfung verhindert falsche Wikipedia-Artikel oder unpassende Bilder bei Collabs/Kombinationen"
+    "Verifizierte Künstler-Infos & Echte Spotify-Daten: Offizielles Spotify-Profil & Bio für ILKO (The Voice Kids 2026 / Sanremo Junior 2025)",
+    "Strenge Musiker-Validierung: Wikipedia-Artikel werden nur noch bei exakter Titel-Übereinstimmung und nachgewiesenem Musik-Bezug akzeptiert (verhindert Historiker wie Ilko-Sascha Kowalczuk)",
+    "Direkte Spotify-CDN Anbindung: Abruf von verifizierten Spotify-Künstler-Avataren, Follower-Zahlen und direktem Artist-Link via stats.fm",
+    "Vollständig zentriertes Modal mit unbeschnittener Dual-Layer Galerie und Ambilight Ambient Glow"
   ]
 }
