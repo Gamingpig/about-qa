@@ -1,9 +1,9 @@
 {
-  "version": "24.225.33",
-  "buildTime": "2026-10-29T13:55:00.000Z",
+  "version": "24.225.34",
+  "buildTime": "2026-10-29T14:00:00.000Z",
   "shortNotes": [
-    "Robuste Song-Cover & Ausfallschutz: Automatische onerror-Fallback-Logik und 500x500 CDN-Auflösung garantieren, dass alle Track-Cover zuverlässig laden",
-    "Erweiterte Bilder-Galerie: Diashow umfasst nun bis zu 8 verifizierte Bilder inklusive offizieller Spotify-Alben & Single-Cover direkt vom Spotify-CDN",
-    "Vollständige Diskografie & Alben: ILKO und alle Künstler bieten jetzt eine reichhaltige Bildersammlung mit Spotify-Avataren und originalen Release-Covern"
+    "Separater StandBy-Glow Schalter: In den Website-Settings (StandBy-Display) kann der Lichtschein / die Hintergrund-Aura (#standby-card-blur-bg) separat ein- und ausgeschaltet werden",
+    "Erhalt des Hauptkarten-Glows: Das Ausschalten des StandBy-Glows beeinflusst den Glow der normalen Hauptkarte nicht",
+    "Dauerhafte Speicherung: Die Einstellung wird via AppStorage gespeichert und bleibt über Sessions hinweg erhalten"
   ]
 }

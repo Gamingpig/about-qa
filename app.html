@@ -7,7 +7,7 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
-    [BUGFIX] Release v24.225.33 · 2026-10-28: Canvas-Aura wächst in beide Achsen, eigener Karten-Blur-Regler (Standard AUS), YouTube-/Musikvideo-Features komplett abgeschaltet, Canvas-Abruf für jeden Track
+    [BUGFIX] Release v24.225.34 · 2026-10-28: Canvas-Aura wächst in beide Achsen, eigener Karten-Blur-Regler (Standard AUS), YouTube-/Musikvideo-Features komplett abgeschaltet, Canvas-Abruf für jeden Track
       - Symptom: Der Aura-Radius machte die Leuchtfläche nur "länger" (vertikal), nicht "breiter" (horizontal).
         Ursache: Tailwind-Preflight setzt auf <video> `max-width: 100%`, wodurch #canvas-glow-video trotz
         `width: calc(100% + radius)` auf die Kartenbreite geklemmt wurde; nur die Höhe wuchs frei.
@@ -43,7 +43,7 @@
         Songtext. Die Karten-UI wird im Lyrics-Modus jetzt vollstaendig ausgeblendet, die Dynamic Island
         ebenfalls (sie lag ueber der Kopfzeile), und die letzte Zeile bekommt Abstand zu den schwebenden
         Buttons (Tipp-zum-Springen / Tempo / Vorlesen).
-      - Version v24.225.33 (Header/Footer/Settings-Labels, sw.js, version.json).
+      - Version v24.225.34 (Header/Footer/Settings-Labels, sw.js, version.json).
     [LYRICS / MULTI-PROVIDER WORD-SYNC] Release v24.225.28 · 2026-10-16: Apple-Music-TTML-Wort-Sync via AMLL-API, NetEase-YRC + LRCLIB-Kaskade, 0ms-Bundle für "Jente i fra by'n", "You Make Me" & "Make You Believe In Love", autonomer Re-Sync-Fix, Smart-Word-Cadence, Instrumental-Bühne, Lade-Sound restlos entfernt
       - Neue Multi-Provider-Wort-Sync-Kaskade: fetchExternalLyrics fragt jetzt zusätzlich die freie Apple-Music-TTML-Datenbank (api.amll.dev) ab.
         Converter formatTtmlTimestamp/convertTtmlToEnhancedLrc übersetzt Apple-Music-TTML in Enhanced-LRC ([mm:ss.xx] <mm:ss.xx>Wort). Provider 'AMLL-AppleMusic' (Tier 2) schlägt NetEase-YRC (30) und LRCLIB (10); Bonus 40.
@@ -3304,13 +3304,13 @@
     <script src="./js/core/storage.e856be99df567fd2.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <!-- v24.225.33: Verbindungen früh aufbauen (Canvas-Video, Canvas-API-Proxy, Cover-CDN).
+    <!-- v24.225.34: Verbindungen früh aufbauen (Canvas-Video, Canvas-API-Proxy, Cover-CDN).
          Spart beim ersten Canvas-Lookup rund 200-400ms TLS/DNS-Handshake. -->
     <link rel="preconnect" href="https://canvaz.scdn.co" crossorigin>
     <link rel="preconnect" href="https://r.jina.ai" crossorigin>
     <link rel="preconnect" href="https://api.allorigins.win" crossorigin>
     <link rel="dns-prefetch" href="https://i.scdn.co">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.225.33</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.225.34</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3335,7 +3335,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.225.33 · 2026-10-28';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.225.34 · 2026-10-28';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -5522,7 +5522,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             visibility: hidden !important;
             pointer-events: none !important;
         }
-        /* FIX v24.225.33: Bei aktivem Canvas ist das Lyrics-Overlay absichtlich komplett
+        /* FIX v24.225.34: Bei aktivem Canvas ist das Lyrics-Overlay absichtlich komplett
            transparent (damit das Canvas-Video durchscheint). Dadurch schienen Titel, Artist,
            Fortschrittsbalken, Buttons und "Zuletzt gehört" der Karte durch den Songtext -
            sichtbar als Geistertext/Doppeltext. Im Lyrics-Modus wird die komplette Karten-UI
@@ -5533,13 +5533,13 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             visibility: hidden !important;
             pointer-events: none !important;
         }
-        /* FIX v24.225.33: Die Dynamic Island liegt fix am oberen Bildschirmrand und kollidierte
+        /* FIX v24.225.34: Die Dynamic Island liegt fix am oberen Bildschirmrand und kollidierte
            im Lyrics-Modus mit der Kopfzeile des Songtexts (schwarzer Kreis über dem Header).
            In allen anderen Modi bleibt sie unverändert. */
         body.lyrics-mode-active #dynamic-island {
             display: none !important;
         }
-        /* FIX v24.225.33: Unten im Overlay schweben die Buttons "Tipp-zum-Springen" (links) und
+        /* FIX v24.225.34: Unten im Overlay schweben die Buttons "Tipp-zum-Springen" (links) und
            Tempo/Vorlesen (rechts). Die Scroll-Fläche endet jetzt oberhalb dieser Button-Zeile,
            damit keine Songtext-Zeile mehr verdeckt wird. */
         #main-music-card.lyrics-open #lyrics-container {
@@ -5624,19 +5624,19 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             transform: translate(-50%, -50%) !important;
             width: calc(100% + var(--canvas-glow-radius, 60px)) !important;
             height: calc(100% + var(--canvas-glow-radius, 60px)) !important;
-            /* FIX v24.225.33: Tailwind-Preflight setzt auf <video> `max-width: 100%` und kappte
+            /* FIX v24.225.34: Tailwind-Preflight setzt auf <video> `max-width: 100%` und kappte
                damit die horizontale Ausdehnung der Aura. Der Radius konnte so nur nach
                oben/unten wachsen (nur "länger", nicht "breiter"). */
             max-width: none !important;
             max-height: none !important;
             object-fit: cover;
-            /* v24.225.33: --canvas-glow-intensity (0..1.5, Standard 1) skaliert Helligkeit,
+            /* v24.225.34: --canvas-glow-intensity (0..1.5, Standard 1) skaliert Helligkeit,
                Sättigung und Deckkraft der Aura. Bei 1 bleibt der bisherige Look exakt erhalten. */
             filter: blur(var(--canvas-glow-blur, 45px)) saturate(calc(1.4 + 1.1 * var(--canvas-glow-intensity, 1))) brightness(calc(0.85 + 0.35 * var(--canvas-glow-intensity, 1))) !important;
             opacity: 0;
             transition: opacity 0.8s ease;
             pointer-events: none;
-            /* FIX v24.225.33: Ecken folgen exakt der Karte (mobil 1.5rem, Desktop 2.5rem) */
+            /* FIX v24.225.34: Ecken folgen exakt der Karte (mobil 1.5rem, Desktop 2.5rem) */
             border-radius: inherit;
             z-index: -1;
             contain: strict;
@@ -5650,7 +5650,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
                 transform: translate(-50%, -50%) !important;
             }
         }
-        /* FIX v24.225.33: Auch die Karten-Hintergrund-Ebene (#canvas-video) wurde von der
+        /* FIX v24.225.34: Auch die Karten-Hintergrund-Ebene (#canvas-video) wurde von der
            Tailwind-Preflight-Regel `img, video { max-width: 100%; height: auto; }` beschnitten.
            Dadurch blieb `left: -15%` aktiv, während die Breite auf 100% geklemmt wurde ->
            das Canvas-Video saß sichtbar nach links versetzt statt mittig auf der Karte. */
@@ -7341,7 +7341,36 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             /* A single, static cover aura may extend beyond the card. No backdrop-filter. */
             overflow: visible; isolation: isolate; contain: layout style;
         }
-        #standby-card-blur-bg {
+                /* StandBy Glow Abschaltung (v24.225.34) */
+        #standby-overlay.standby-no-glow #standby-card-blur-bg,
+        body.standby-no-glow #standby-card-blur-bg {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+        #standby-overlay.standby-no-glow #standby-nowplaying,
+        body.standby-no-glow #standby-nowplaying {
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75) !important;
+        }
+        #standby-overlay.standby-no-glow.standby-design-edge-glow #standby-nowplaying,
+        body.standby-no-glow #standby-overlay.standby-design-edge-glow #standby-nowplaying {
+            box-shadow: none !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+        }
+        #standby-overlay.standby-no-glow.standby-design-ambient-orb #standby-nowplaying,
+        body.standby-no-glow #standby-overlay.standby-design-ambient-orb #standby-nowplaying {
+            background: rgba(15, 23, 42, 0.95) !important;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75) !important;
+        }
+        #standby-overlay.standby-no-glow.standby-design-ambient-orb #standby-track-art-wrap,
+        body.standby-no-glow #standby-overlay.standby-design-ambient-orb #standby-track-art-wrap {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+        }
+        #standby-overlay.standby-no-glow.standby-design-cyberpunk #standby-nowplaying,
+        body.standby-no-glow #standby-overlay.standby-design-cyberpunk #standby-nowplaying {
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8) !important;
+        }
+#standby-card-blur-bg {
             position: absolute; inset: -28px; z-index: 0;
             /* Expand the rounded silhouette evenly on all sides. */
             border-radius: calc(var(--standby-radius, 32px) + 24px);
@@ -9032,7 +9061,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.33</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.34</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -9069,7 +9098,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.33 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.33 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.34 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.34 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9301,7 +9330,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <div class="flex items-center gap-2 flex-wrap">
                         <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
                         <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
-                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.225.33</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.225.34</span>
                     </div>
                     <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
                 </div>
@@ -9325,7 +9354,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.225.33</span>
+                <span>🧪 QA TESTUMGEBUNG v24.225.34</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -9601,9 +9630,9 @@ html.gp-android:not(.dark) #ui-controls {
                         <video id="canvas-glow-video" class="absolute pointer-events-none opacity-0 transition-opacity duration-700" autoplay loop muted playsinline></video>
                         <div class="absolute inset-0 rounded-[inherit] overflow-hidden z-0 pointer-events-none">
                             <div id="ambient-bg"></div>
-                            <!-- v24.225.33: Karten-Blur hat einen eigenen Regler (Standard: AUS / 0px) -->
+                            <!-- v24.225.34: Karten-Blur hat einen eigenen Regler (Standard: AUS / 0px) -->
                             <video id="canvas-video" class="absolute inset-[-15%] w-[130%] h-[130%] object-cover z-[1] opacity-0 transition-opacity duration-1000 pointer-events-none" style="filter: blur(var(--canvas-glow-card-blur, 0px)) brightness(0.65) saturate(1.8); transform: translate3d(0,0,0); will-change: opacity;" autoplay loop muted playsinline></video>
-                            <!-- v24.225.33: Musikvideo-Hintergrund folgt demselben Karten-Blur-Regler (bleibt deaktiviert) -->
+                            <!-- v24.225.34: Musikvideo-Hintergrund folgt demselben Karten-Blur-Regler (bleibt deaktiviert) -->
                             <iframe id="mv-bg-iframe" class="absolute inset-[-25%] w-[150%] h-[150%] border-0 z-[1] opacity-0 pointer-events-none transition-opacity duration-1000 object-cover" style="filter: blur(var(--canvas-glow-card-blur, 0px)) brightness(0.65) saturate(1.8);" allow="autoplay; encrypted-media"></iframe>
                             <div class="absolute inset-0 bg-black/25 backdrop-blur-[1px] z-[2]"></div>
                         </div>
@@ -9734,7 +9763,7 @@ html.gp-android:not(.dark) #ui-controls {
                                     <p id="label-features" class="text-[8px] xxs:text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-slate-400 px-1">Player &amp; Dashboard Features</p>
                                     <div class="grid grid-cols-2 gap-1.5 w-full">
                                         <button onclick="toggleCanvasVideo()" id="btn-toggle-canvas" class="text-center text-[9px] xxs:text-[10px] sm:text-xs text-green-400 px-2 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-white/5 transition-colors font-bold whitespace-nowrap">Canvas: AN</button>
-                                        <!-- v24.225.33: Musikvideo-Umschalter deaktiviert (Feature abgeschaltet) -->
+                                        <!-- v24.225.34: Musikvideo-Umschalter deaktiviert (Feature abgeschaltet) -->
                                         <button onclick="toggleMusicVideos()" id="btn-toggle-mv" style="display:none;" title="Musikvideos sind deaktiviert – es läuft nur Spotify Canvas" class="hidden text-center text-[9px] xxs:text-[10px] sm:text-xs text-rose-400 px-2 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-white/5 transition-colors font-bold whitespace-nowrap">🎥 Videos: AUS</button>
                                         <button onclick="toggleAmbientColor()" id="btn-toggle-ambient" class="text-center text-[9px] xxs:text-[10px] sm:text-xs text-cyan-400 px-2 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-white/5 transition-colors font-bold whitespace-nowrap">Ambient: AN</button>
                                         <button onclick="toggleColorFrame()" id="btn-toggle-color-frame" class="text-center text-[9px] xxs:text-[10px] sm:text-xs text-cyan-400 px-2 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-white/5 transition-colors font-bold whitespace-nowrap">Farbrahmen: AN</button>
@@ -9934,7 +9963,7 @@ html.gp-android:not(.dark) #ui-controls {
                                         <span>Super-Soft (120px)</span>
                                     </div>
                                 </div>
-                                <!-- Glow-Stärke Slider (v24.225.33) -->
+                                <!-- Glow-Stärke Slider (v24.225.34) -->
                                 <div class="space-y-1">
                                     <div class="flex items-center justify-between text-[10px] sm:text-xs text-slate-200">
                                         <span class="font-medium">Glow-Stärke</span>
@@ -10362,7 +10391,7 @@ html.gp-android:not(.dark) #ui-controls {
     </div>
 </div>
 
-<!-- NEU v24.225.33: Interaktives Künstler-Info & Bilder-Diashow Modal (Zentriert, Vollbild-Galerie ohne Schnitt, Ambilight Glow, sanfte Animationen) -->
+<!-- NEU v24.225.34: Interaktives Künstler-Info & Bilder-Diashow Modal (Zentriert, Vollbild-Galerie ohne Schnitt, Ambilight Glow, sanfte Animationen) -->
 <div id="artist-info-modal" class="fixed inset-0 z-[100000] bg-black/85 backdrop-blur-2xl hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300 select-none" onclick="if(event.target === this) closeArtistModal()">
     
     <!-- Ambilight Ambient Glow hinter der Karte -->
@@ -10596,7 +10625,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.225.33</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.225.34</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -10684,7 +10713,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <span>Super-Soft (120px)</span>
                     </div>
                 </div>
-                <!-- Glow-Stärke Slider (v24.225.33) -->
+                <!-- Glow-Stärke Slider (v24.225.34) -->
                 <div class="space-y-1">
                     <div class="flex items-center justify-between text-xs text-slate-300">
                         <span>Glow-Stärke</span>
@@ -10798,6 +10827,11 @@ html.gp-android:not(.dark) #ui-controls {
                     </div>
                 </div>
                 <!-- Wake Lock Button -->
+                <!-- StandBy Glow Button (v24.225.34) -->
+                <div class="pt-1">
+                    <button onclick="toggleStandbyGlow()" id="btn-toggle-standby-glow" class="w-full min-h-[44px] text-left text-xs sm:text-sm text-teal-400 px-3 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-teal-500/20 transition-all font-bold cursor-pointer active:scale-98">StandBy-Glow (Lichtschein): AN</button>
+                    <p id="settings-standby-glow-hint" class="text-xs text-slate-400 px-1 leading-snug mt-1">Schaltet den leuchtenden Hintergrund-Glow (Aura / Lichtschein) im StandBy-Modus separat aus.</p>
+                </div>
                 <div class="pt-1">
                     <button onclick="toggleStandbyWakeLock()" id="btn-toggle-wakelock" class="w-full min-h-[44px] text-left text-xs sm:text-sm text-teal-400 px-3 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-teal-500/20 transition-all font-bold cursor-pointer active:scale-98">Bildschirm an (StandBy): AN</button>
                     <p id="settings-wakelock-hint" class="text-xs text-slate-400 px-1 leading-snug mt-1">Hält den Bildschirm nur wach, solange Musik läuft – pausiert sie, darf das Handy normal einschlafen.</p>
@@ -10908,7 +10942,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.225.33</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.225.34</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -10919,7 +10953,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.225.33</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.225.34</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -10962,7 +10996,7 @@ html.gp-android:not(.dark) #ui-controls {
         </div>
     </div>
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.225.33</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.225.34</p>
 </div>
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
@@ -11218,7 +11252,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <a href="checklist.html" target="_blank" class="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500 text-teal-300 hover:text-slate-950 font-bold text-[11px] transition-all border border-teal-500/30 inline-flex items-center gap-1">
                         <span>📋</span> <span>QA Checkliste</span>
                     </a>
-                    <span class="text-pink-400 font-mono">v24.225.33</span>
+                    <span class="text-pink-400 font-mono">v24.225.34</span>
                 </div>
             </div>
         </div>
@@ -14674,7 +14708,7 @@ html.gp-android:not(.dark) #ui-controls {
         let canvasEnabled = AppStorage.getItem('canvasEnabled') !== 'false';
         let currentCanvasUrl = null;
         // ==============================================================================
-        // v24.225.33: YOUTUBE-/MUSIKVIDEO-FEATURES KOMPLETT DEAKTIVIERT
+        // v24.225.34: YOUTUBE-/MUSIKVIDEO-FEATURES KOMPLETT DEAKTIVIERT
         // Die komplette Musikvideo-Kette (YouTube-Iframes, Kino-Videomodus, Mute/Sync-Buttons)
         // ist abgeschaltet: Es wird kein einziges YouTube-iframe mehr geladen und die
         // Bedienelemente sind ausgeblendet. Canvas ist der einzige Video-Modus.
@@ -14686,7 +14720,7 @@ html.gp-android:not(.dark) #ui-controls {
         const trackMusicVideoCache = new Map();
         const trackCanvasMemoryCache = new Map();
         const trackCanvasNegativeCache = new Map();
-        // v24.225.33: Merkt sich fehlgeschlagene Spotify-ID-Suchen (Titel+Artist) für 10 Minuten,
+        // v24.225.34: Merkt sich fehlgeschlagene Spotify-ID-Suchen (Titel+Artist) für 10 Minuten,
         // damit die Canvas-Suche nicht bei jedem 4-Sekunden-Poll erneut ins Netz geht.
         const canvasIdSearchCache = new Map();
         const BUNDLED_CANVAS_DB = {
@@ -14957,7 +14991,7 @@ html.gp-android:not(.dark) #ui-controls {
             if (!entry) return false;
             const at = typeof entry === 'number' ? entry : entry.at;
             const definitive = typeof entry === 'object' && !!entry.definitive;
-            // v24.225.33: Eine definitive Absage der API ("Track hat kein Canvas") wird lange
+            // v24.225.34: Eine definitive Absage der API ("Track hat kein Canvas") wird lange
             // gemerkt, ein reiner Netzwerk-/Proxy-Fehler nur kurz - damit ein Track mit Canvas
             // bei einem temporären Ausfall nicht dauerhaft leer bleibt.
             const ttl = definitive ? 10 * 60 * 1000 : 10 * 1000;
@@ -15611,6 +15645,7 @@ html.gp-android:not(.dark) #ui-controls {
         // pausiert die Musik, wird der Wake Lock automatisch freigegeben (siehe
         // updateWakeLockForPlaybackState()), das Handy darf dann ganz normal schlafen. Deutlich
         // günstiger als ein blindes Dauer-An, aber deckt trotzdem den Hauptnutzen ab.
+        let standbyGlowEnabled = AppStorage.getItem('standbyGlow') !== 'false';
         let standbyWakeLockEnabled = AppStorage.getItem('standbyWakeLock') !== 'false';
         let activeWakeLockSentinel = null;
         // NEU v24.80: StandBy-Designs - Nutzerwunsch nach mehreren wählbaren visuellen
@@ -15686,7 +15721,8 @@ html.gp-android:not(.dark) #ui-controls {
             const card = document.getElementById('standby-nowplaying');
             const overlay = document.getElementById('standby-overlay');
             if (!card || !overlay || !standByActive) return;
-            syncStandbyScaleSliderUI();
+            if (typeof applyStandbyGlowState === 'function') applyStandbyGlowState();
+        syncStandbyScaleSliderUI();
             const dims = `${overlay.clientWidth}x${overlay.clientHeight}`;
             const cacheKey = `standbyFitScale:${standbyDesign}:${dims}`;
             if (!forceRemeasure) {
@@ -15816,6 +15852,25 @@ html.gp-android:not(.dark) #ui-controls {
                 if (typeof showToast === 'function') showToast(t('standby_design_code_loaded'), 3000);
             } catch (e) {
                 if (typeof showToast === 'function') showToast(t('standby_design_code_invalid'), 3500);
+            }
+        };
+        window.toggleStandbyGlow = function() {
+            haptic(10);
+            standbyGlowEnabled = !standbyGlowEnabled;
+            AppStorage.setItem('standbyGlow', standbyGlowEnabled);
+            applyStandbyGlowState();
+        };
+        window.applyStandbyGlowState = function() {
+            const overlay = document.getElementById('standby-overlay');
+            if (overlay) {
+                overlay.classList.toggle('standby-no-glow', !standbyGlowEnabled);
+            }
+            document.body.classList.toggle('standby-no-glow', !standbyGlowEnabled);
+            const btn = document.getElementById('btn-toggle-standby-glow');
+            if (btn) {
+                const label = (typeof t === 'function' ? t('settings_standby_glow', 'StandBy-Glow (Lichtschein)') : 'StandBy-Glow (Lichtschein)');
+                const state = standbyGlowEnabled ? (typeof t === 'function' ? t('on_label', 'AN') : 'AN') : (typeof t === 'function' ? t('off_label', 'AUS') : 'AUS');
+                btn.textContent = label + ': ' + state;
             }
         };
         window.toggleStandbyWakeLock = function() {
@@ -18223,6 +18278,7 @@ let shareCardLoading;
                 haptic(standByActive ? [10, 30, 10] : 10);
                 if (standByActive) { pushOverlayHistory(); } else { popOverlayHistory(); }
             }
+            if (typeof applyStandbyGlowState === 'function') applyStandbyGlowState();
             overlay.classList.toggle('standby-active', standByActive);
             document.body.classList.toggle('standby-mode', standByActive);
             if (standByActive) {
@@ -19329,7 +19385,7 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
-        { version: "v24.225.33", date: "28. Oktober 2026", type: "fix", items: {
+        { version: "v24.225.34", date: "28. Oktober 2026", type: "fix", items: {
             de: [
                 "↔️ Canvas-Glow wächst jetzt wirklich in die Breite: Der Aura-Radius dehnt die Leuchtfläche horizontal UND vertikal aus, statt nur nach oben/unten zu wachsen",
                 "🌫️ Eigener Karten-Blur-Regler: Der Weichzeichner auf der Player-Karte lässt sich jetzt separat einstellen und ist standardmäßig AUS (0px)",
@@ -26355,7 +26411,7 @@ window.setLyricsStyle = function(style) {
         function updateMusicVideoButtonUI() {
             const btn = document.getElementById('btn-toggle-mv');
             if (!btn) return;
-            // v24.225.33: Musikvideo-Features deaktiviert -> Button restlos ausblenden
+            // v24.225.34: Musikvideo-Features deaktiviert -> Button restlos ausblenden
             if (!VIDEO_FEATURES_ENABLED) {
                 btn.classList.add('hidden');
                 btn.style.display = 'none';
@@ -26388,7 +26444,7 @@ window.setLyricsStyle = function(style) {
 
         window.toggleMusicVideos = function() {
             haptic(10);
-            // v24.225.33: Musikvideos sind deaktiviert - nur ein Hinweis, kein Moduswechsel.
+            // v24.225.34: Musikvideos sind deaktiviert - nur ein Hinweis, kein Moduswechsel.
             if (!VIDEO_FEATURES_ENABLED) {
                 if (typeof showToast === 'function') {
                     showToast('🎥 Musikvideos sind deaktiviert – es läuft nur Spotify Canvas', 'info');
@@ -26443,7 +26499,7 @@ window.setLyricsStyle = function(style) {
             const canvasGlowVideo = document.getElementById('canvas-glow-video');
 
             // 1. YouTube-Iframes auf der Karte IMMER leeren & ausblenden (verhindert YouTube-Werbespots auf dem Cover!)
-            //    v24.225.33: src wird nur EINMAL auf about:blank gesetzt, danach bleibt das iframe leer.
+            //    v24.225.34: src wird nur EINMAL auf about:blank gesetzt, danach bleibt das iframe leer.
             if (mvCover) {
                 if (mvCover.getAttribute('src')) mvCover.setAttribute('src', 'about:blank');
                 mvCover.classList.add('opacity-0');
@@ -26666,7 +26722,7 @@ window.setLyricsStyle = function(style) {
         };
 
         async function resolveMusicVideo(trackTitle, rawArtist, data) {
-            // v24.225.33: Musikvideos sind komplett deaktiviert - es wird NIE ein YouTube-Link
+            // v24.225.34: Musikvideos sind komplett deaktiviert - es wird NIE ein YouTube-Link
             // aufgelöst und damit auch nie ein YouTube-iframe geladen.
             if (!VIDEO_FEATURES_ENABLED) return null;
             if (!trackTitle || trackTitle.includes('Aktuell ist es ruhig') || trackTitle.includes('Gamingpig is Offline')) return null;
@@ -26892,7 +26948,7 @@ window.setLyricsStyle = function(style) {
                 canvasVideo.addEventListener('play', () => resyncAllCanvasVideos(false), { passive: true });
 
                 // Sanfter Notfall-Check alle 4 Sekunden falls ein Video durch Background-Tab
-                // eingeschlafen ist (v24.225.33: von 8s auf 4s verkürzt, Kostet nur currentTime-Reads;
+                // eingeschlafen ist (v24.225.34: von 8s auf 4s verkürzt, Kostet nur currentTime-Reads;
                 // ein Seek passiert weiterhin erst ab 350ms Versatz).
                 setInterval(() => {
                     if (canvasEnabled && trackIsPlaying && canvasVideo && !canvasVideo.paused) {
@@ -27065,7 +27121,7 @@ window.setLyricsStyle = function(style) {
                 applyActiveMediaMode();
             }
         }
-        // v24.225.33: Spotify-ID über die öffentliche Spotify-Suche auflösen, wenn weder
+        // v24.225.34: Spotify-ID über die öffentliche Spotify-Suche auflösen, wenn weder
         // stats.fm/NPC noch platform_links eine Track-ID liefern. r.jina.ai rendert die
         // Suchseite CORS-fähig als Text; daraus wird der erste passende /track/-Link gelesen.
         async function resolveSpotifyIdViaSearch(trackTitle, rawArtist) {
@@ -27112,7 +27168,7 @@ window.setLyricsStyle = function(style) {
 
             // Falls keine direkte 22-Zeichen-Spotify-ID vorliegt: automatisch auflösen
             if (!cleanId || !/^[a-zA-Z0-9]{22}$/.test(cleanId)) {
-                // v24.225.33: Songlink ist tot (Host existiert nicht mehr) -> Spotify-Suche.
+                // v24.225.34: Songlink ist tot (Host existiert nicht mehr) -> Spotify-Suche.
                 if (inFlightCanvasKey === '__search__') return null;
                 inFlightCanvasKey = '__search__';
                 try {
@@ -27143,16 +27199,16 @@ window.setLyricsStyle = function(style) {
             if (hasNegativeCanvas(cleanId) || inFlightCanvasKey === cleanId) return null;
             inFlightCanvasKey = cleanId;
             let resolvedUrl = null;
-            // v24.225.33: Unterscheiden, ob die API überhaupt geantwortet hat.
+            // v24.225.34: Unterscheiden, ob die API überhaupt geantwortet hat.
             // Nur dann ist "kein Canvas vorhanden" eine verlässliche Aussage.
             let gotApiResponse = false;
             try {
-                // v24.225.33: CORS-Proxy-Kaskade neu aufgebaut. Die direkte API sendet KEINE
+                // v24.225.34: CORS-Proxy-Kaskade neu aufgebaut. Die direkte API sendet KEINE
                 // CORS-Header und wird vom Browser blockiert. r.jina.ai liefert die Antwort
                 // CORS-fähig als Text zurück (schnell & stabil), allorigins liefert sie als JSON.
                 const targetDirect = `https://spotify-canva.vercel.app/api/canvas?trackId=${encodeURIComponent(cleanId)}`;
                 const encodedTarget = encodeURIComponent(targetDirect);
-                // v24.225.33: Zweistufige Kaskade statt sechsfachem Parallel-Race.
+                // v24.225.34: Zweistufige Kaskade statt sechsfachem Parallel-Race.
                 // Stufe 1 sind die einzigen Wege, die im Browser zuverlässig antworten.
                 const primaryTargets = [
                     `https://r.jina.ai/${targetDirect}`,
@@ -27350,7 +27406,7 @@ window.setLyricsStyle = function(style) {
             }
         };
 
-        // NEU v24.225.33: Eigener Regler für den Weichzeichner AUF der Karte.
+        // NEU v24.225.34: Eigener Regler für den Weichzeichner AUF der Karte.
         // Standard ist 0px (AUS) - die Aura bleibt davon unberührt.
         window.setCanvasGlowCardBlur = function(val, save = true) {
             const num = Math.max(0, Math.min(40, parseInt(val, 10) || 0));
@@ -27368,7 +27424,7 @@ window.setLyricsStyle = function(style) {
             }
         };
 
-        // NEU v24.225.33: Regler für die Glow-STÄRKE (Deckkraft, Sättigung, Helligkeit der Aura).
+        // NEU v24.225.34: Regler für die Glow-STÄRKE (Deckkraft, Sättigung, Helligkeit der Aura).
         // 100% = bisheriger Look, 0% = Aura komplett aus, 150% = deutlich kräftiger.
         window.setCanvasGlowIntensity = function(val, save = true) {
             const num = Math.max(0, Math.min(150, parseInt(val, 10)));
@@ -29351,7 +29407,7 @@ window.setLyricsStyle = function(style) {
                 if (source.id && !String(source.id).includes('|') && /^[a-zA-Z0-9]{22}$/.test(String(source.id).trim())) {
                     return String(source.id).trim();
                 }
-                // v24.225.33: Auch verschachtelte platform_links ({ spotify: { url } }) durchsuchen,
+                // v24.225.34: Auch verschachtelte platform_links ({ spotify: { url } }) durchsuchen,
                 // damit die Canvas-Suche für jeden Track eine Spotify-ID bekommt.
                 // In verschachtelten Objekten zählt nur ein eindeutiger Track-Link (kein nackter
                 // 22-Zeichen-String), damit z.B. Album-IDs nicht als Track-ID missverstanden werden.
@@ -30521,7 +30577,7 @@ window.setLyricsStyle = function(style) {
                 }
                 updateMediaButtonState();
 
-                // v24.225.33: Musikvideo-Auflösung ist komplett deaktiviert (kein YouTube-Fetch, kein iframe).
+                // v24.225.34: Musikvideo-Auflösung ist komplett deaktiviert (kein YouTube-Fetch, kein iframe).
                 if (VIDEO_FEATURES_ENABLED && canvasEnabled && musicVideosEnabled && !currentMusicVideoUrl) {
                     resolveMusicVideo(trackTitle, rawArtist, data).then(mvUrl => {
                         if (mvUrl && isSameSongTrack(trackTitle, rawArtist, incomingSpotifyId, currentTrackTitle, currentRawArtist, currentSpotifyTrackId)) {
@@ -30577,7 +30633,7 @@ window.setLyricsStyle = function(style) {
                         }
                     }
                     if (lyricsCanvasVideo) {
-                        // FIX v24.225.33: Lyrics-Canvas nur dekodieren, wenn das Lyrics-Overlay
+                        // FIX v24.225.34: Lyrics-Canvas nur dekodieren, wenn das Lyrics-Overlay
                         // wirklich offen ist. Vorher lief das 4. Video permanent mit, obwohl es
                         // unsichtbar war (redundante Decode-Last auf Mobilgeräten).
                         const lyricsVisible = !!(mainMusicCard && mainMusicCard.classList.contains('lyrics-open'));
@@ -30614,12 +30670,12 @@ window.setLyricsStyle = function(style) {
                     }
                 }
 
-                // v24.225.33: Canvas für JEDEN Track mit Spotify-Canvas nachladen.
+                // v24.225.34: Canvas für JEDEN Track mit Spotify-Canvas nachladen.
                 // Der Lookup läuft immer, solange noch kein Canvas aktiv ist - auch wenn die
                 // Spotify-ID erst über Links/Apple-Music aufgelöst werden muss.
                 if (canvasEnabled && !currentCanvasUrl) {
                     const lookupCanvasId = cleanSpTrackId || (currentSpotifyTrackId && /^[a-zA-Z0-9]{22}$/.test(String(currentSpotifyTrackId).trim()) ? String(currentSpotifyTrackId).trim() : '');
-                    // v24.225.33: Auch ohne bekannte Spotify-ID suchen (Titel+Artist -> Spotify-Suche),
+                    // v24.225.34: Auch ohne bekannte Spotify-ID suchen (Titel+Artist -> Spotify-Suche),
                     // damit wirklich jeder Track mit Canvas ein Canvas bekommt.
                     const canvasSearchKey = (String(trackTitle || '') + '|' + String(rawArtist || '')).toLowerCase();
                     const failedSearch = canvasIdSearchCache.get(canvasSearchKey);
@@ -31695,7 +31751,7 @@ window.setLyricsStyle = function(style) {
             }
         };
         // ==============================================================================
-        // KÜNSTLER-INFO & BILDER-DIASHOW SYSTEM (v24.225.33)
+        // KÜNSTLER-INFO & BILDER-DIASHOW SYSTEM (v24.225.34)
         // Vollständig zentriertes Modal, Ambilight Glow, unbeschnittene Dual-Layer Diashow,
         // sanfte Einflug-Animationen, direkte Spotify-CDN Alben & Fotos, robuste Song-Cover
         // mit automatischem Fallback & strenge Musiker-Validierung
@@ -32771,7 +32827,7 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.225.33</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.225.34</span>
         </a>
     </div>
 
