@@ -1,9 +1,8 @@
 {
-  "version": "24.225.34",
-  "buildTime": "2026-10-29T14:00:00.000Z",
+  "version": "24.225.35",
+  "buildTime": "2026-10-29T14:10:00.000Z",
   "shortNotes": [
-    "Separater StandBy-Glow Schalter: In den Website-Settings (StandBy-Display) kann der Lichtschein / die Hintergrund-Aura (#standby-card-blur-bg) separat ein- und ausgeschaltet werden",
-    "Erhalt des Hauptkarten-Glows: Das Ausschalten des StandBy-Glows beeinflusst den Glow der normalen Hauptkarte nicht",
-    "Dauerhafte Speicherung: Die Einstellung wird via AppStorage gespeichert und bleibt über Sessions hinweg erhalten"
+    "Kein automatisches Scrollen beim Öffnen/Schließen der Lyrics: Die Seite verharrt an der exakten Scroll-Position ohne störendes Springen",
+    "Dynamic Island bleibt bei geöffneten Lyrics voll sichtbar & aktiv: Kollisionsfreies Verhalten, Ring-Animation und Songstatus bleiben auch im Songtext-Modus erhalten"
   ]
 }
