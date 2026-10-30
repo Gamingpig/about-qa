@@ -5004,6 +5004,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             border: 1px solid rgba(255, 255, 255, 0.16) !important;
             border-radius: 0.75rem !important;
             transform: none !important;
+            appearance: textfield !important;
             -moz-appearance: textfield !important;
         }
         #lyrics-settings-menu input[type="number"]::-webkit-outer-spin-button,
@@ -6056,7 +6057,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         .lyrics-style-zoom-char .lyric-char.char-passed { color: rgba(255, 255, 255, 0.6); transform: scale(1) translate3d(0,0,0); opacity: 1; text-shadow: none; }
         .lyrics-style-zoom-char .lyric-char.char-active { color: #ffffff; transform: scale(1) translate3d(0,0,0); opacity: 1; text-shadow: 0 0 10px #3b82f6; position: relative; z-index: 10; }
         .lyrics-style-kinetic .lyric-word { color: rgba(255,255,255,0.1); transform: scale(1.5) translate3d(0,0,0); filter: blur(8px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); } .lyrics-style-kinetic .lyric-word.word-passed { color: rgba(255,255,255,0.5); transform: scale(1) translate3d(0,0,0); filter: blur(0); opacity: 1; } .lyrics-style-kinetic .lyric-word.word-active { color: #ffffff; transform: scale(1.1) translate3d(0,0,0); filter: blur(0); opacity: 1; text-shadow: 0 10px 20px rgba(59,130,246,0.6); }
-        .lyrics-style-hellfire .lyric-word { color: rgba(255,255,255,0.2); transition: all 0.3s; } .lyrics-style-hellfire .lyric-word.word-passed { color: #ff9a9e; opacity: 0.6; } .lyrics-style-hellfire .lyric-word.word-active { background: linear-gradient(90deg, #ff9a9e, #fecfef, #ff9a9e); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: hellfire-burn 1s linear infinite; transform: scale(1.05); text-shadow: 0 0 15px rgba(255,0,0,0.5); } @keyframes hellfire-burn { to { background-position: 200% center; } }
+        .lyrics-style-hellfire .lyric-word { color: rgba(255,255,255,0.2); transition: all 0.3s; } .lyrics-style-hellfire .lyric-word.word-passed { color: #ff9a9e; opacity: 0.6; } .lyrics-style-hellfire .lyric-word.word-active { background: linear-gradient(90deg, #ff9a9e, #fecfef, #ff9a9e); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: hellfire-burn 1s linear infinite; transform: scale(1.05); text-shadow: 0 0 15px rgba(255,0,0,0.5); } @keyframes hellfire-burn { to { background-position: 200% center; } }
         .lyrics-style-hologram .lyric-word { color: rgba(255,255,255,0.2); } .lyrics-style-hologram .lyric-word.word-passed { color: rgba(255,255,255,0.6); } .lyrics-style-hologram .lyric-word.word-active { color: #ffffff; animation: holo-flicker 0.15s infinite; text-shadow: -2px 0 red, 2px 0 cyan; } @keyframes holo-flicker { 0%, 100% { opacity: 1; transform: skewX(0deg); } 50% { opacity: 0.8; transform: skewX(2deg); } }
         .lyrics-style-wave-char .lyric-word { background: none; -webkit-text-fill-color: currentcolor; }
         .lyrics-style-wave-char .lyric-char { display: inline-block; color: rgba(255, 255, 255, 0.2); transform: translate3d(0,8px,0); transition: color 0.15s ease, transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), text-shadow 0.15s ease; }
@@ -7090,7 +7091,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             color: #60a5fa !important;
             font-weight: 700 !important;
         }
-        .lang-picker-btn .lang-flag { font-size: 22px; line-height: 1; shrink-0: 0; }
+        .lang-picker-btn .lang-flag { font-size: 22px; line-height: 1; flex-shrink: 0; }
         .lang-picker-btn .lang-name { font-size: 13px; font-weight: 600; color: #e2e8f0; }
         body.low-end #language-picker-box, body.low-end .lang-picker-btn { transition: none !important; }
         /* Light Mode Language Picker Overrides */
@@ -7512,7 +7513,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         #standby-overlay.standby-design-typography #standby-track-text { text-align: center; flex: none; }
         #standby-overlay.standby-design-typography #standby-track-title {
             font-size: clamp(28px, 9vw, 56px); font-weight: 900; line-height: 1.05;
-            color: var(--standby-accent, #fff); white-space: normal; text-overflow: clip; -webkit-line-clamp: 3;
+            color: var(--standby-accent, #fff); white-space: normal; text-overflow: clip; -webkit-line-clamp: 3; line-clamp: 3;
         }
         #standby-overlay.standby-design-typography #standby-track-artist { font-size: clamp(16px, 4.5vw, 22px); margin-top: 10px; }
         #standby-overlay.standby-design-typography #standby-clock { font-size: clamp(1.6rem, 7vw, 2.8rem); opacity: 0.7; }
