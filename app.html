@@ -6026,7 +6026,9 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
            gesetzt - dort ist es tatsächlich nötig (max. 1 Wort gleichzeitig aktiv). */
         .lyric-word { position: relative; display: inline-block; margin-right: 0; white-space: nowrap; font-size: 14px; font-size: clamp(0.75rem, 4vw, 2.2rem); font-weight: 800; letter-spacing: -0.02em; transition: color 0.1s linear, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), text-shadow 0.1s linear, filter 0.1s linear, opacity 0.1s linear; }
         .lyric-word.word-active { will-change: transform, opacity, color; }
-        .lyrics-style-fill .lyric-word { background: linear-gradient(90deg, #ffffff 0%, #ffffff var(--fill-percent, 0%), rgba(255, 255, 255, 0.75) calc(var(--fill-percent, 0%) + 4%), rgba(255, 255, 255, 0.22) calc(var(--fill-percent, 0%) + 10%)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .lyrics-style-fill .lyric-word { background: linear-gradient(90deg, #ffffff 0%, #ffffff min(var(--fill-percent, 0%), 90%), rgba(255, 255, 255, 0.75) min(calc(var(--fill-percent, 0%) + 4%), 95%), rgba(255, 255, 255, 0.22) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .lyrics-style-fill .lyric-word.word-passed,
+        .lyrics-style-fill .lyric-word.word-fill-complete { background: none; color: #ffffff; -webkit-text-fill-color: #ffffff; }
         body.low-end .lyrics-style-applemusic .lyric-word,
         body.low-end .lyrics-style-applemusicpro .lyric-word {
             background: linear-gradient(90deg, #ffffff 0%, #ffffff var(--fill-percent, 0%), rgba(255, 255, 255, 0.75) calc(var(--fill-percent, 0%) + 4%), rgba(255, 255, 255, 0.28) calc(var(--fill-percent, 0%) + 10%));
@@ -13803,8 +13805,8 @@ html.gp-android:not(.dark) #ui-controls {
                 return `
                 <button class="lang-picker-btn relative ${isActive ? 'active ring-1 ring-blue-500/50' : ''}
                         onclick="selectLanguage('${l.code}')
-                        aria-current="${isActive ? 'true' : 'false'}
-                        aria-label="${l.name}
+                        aria-current="${isActive ? 'true' : 'false'}"
+                        aria-label="${l.name}"
                         data-lang="${l.code}">
                     <span class="lang-flag">${l.flag}</span>
                     <span class="lang-name flex-1">${l.name}</span>
@@ -14573,7 +14575,7 @@ html.gp-android:not(.dark) #ui-controls {
                         const cSpan = document.getElementById(ref.id);
                         if (cSpan) {
                             cSpan.classList.remove('char-active');
-                            cSpan.classList.add('char-passed');
+                      cSpan.classList.add('char-passed');
                         }
                     });
                     for (let wi = 0; wi < totalWords; wi++) {
@@ -14584,50 +14586,50 @@ html.gp-android:not(.dark) #ui-controls {
                             wSpan.style.setProperty('--fill-percent', '100%');
                         }
                     }
-                } else {
-                    allCharRefs.forEach(ref => {
-                        const cSpan = document.getElementById(ref.id);
-                        if (cSpan) {
+                      } else {
+                        allCharRefs.forEach(ref => {
+                          const cSpan = document.getElementById(ref.id);
+                          if (cSpan) {
                             cSpan.classList.remove('char-active', 'char-passed');
-                        }
-                    });
-                    for (let wi = 0; wi < totalWords; wi++) {
-                        const wSpan = document.getElementById(`prev-word-${wi}`);
-                        if (wSpan) {
+                          }
+                        });
+                        for (let wi = 0; wi < totalWords; wi++) {
+                          const wSpan = document.getElementById(`prev-word-${wi}`);
+                          if (wSpan) {
                             wSpan.classList.remove('word-active', 'word-passed');
                             wSpan.style.setProperty('--fill-percent', '0%');
+                          }
                         }
-                    }
                 }
             }
-            // Word-level stepper (word by word)
-            function tickWordStep(step) {
-                for (let wi = 0; wi < totalWords; wi++) {
-                    const wSpan = document.getElementById(`prev-word-${wi}`);
-                    if (!wSpan) continue;
-                    if (step < totalWords) {
-                        if (wi < step) {
+                    // Word-level stepper (word by word)
+                    function tickWordStep(step) {
+                      for (let wi = 0; wi < totalWords; wi++) {
+                        const wSpan = document.getElementById(`prev-word-${wi}`);
+                        if (!wSpan) continue;
+                        if (step < totalWords) {
+                          if (wi < step) {
                             wSpan.classList.remove('word-active');
                             wSpan.classList.add('word-passed');
                             wSpan.style.setProperty('--fill-percent', '100%');
-                        } else if (wi === step) {
+                          } else if (wi === step) {
                             wSpan.classList.remove('word-passed');
                             wSpan.classList.add('word-active');
                             wSpan.style.setProperty('--fill-percent', '100%');
-                        } else {
+                          } else {
                             wSpan.classList.remove('word-active', 'word-passed');
                             wSpan.style.setProperty('--fill-percent', '0%');
+                          }
+                        } else if (step === totalWords) {
+                          wSpan.classList.remove('word-active');
+                          wSpan.classList.add('word-passed');
+                          wSpan.style.setProperty('--fill-percent', '100%');
+                        } else {
+                          wSpan.classList.remove('word-active', 'word-passed');
+                          wSpan.style.setProperty('--fill-percent', '0%');
                         }
-                    } else if (step === totalWords) {
-                        wSpan.classList.remove('word-active');
-                        wSpan.classList.add('word-passed');
-                        wSpan.style.setProperty('--fill-percent', '100%');
-                    } else {
-                        wSpan.classList.remove('word-active', 'word-passed');
-                        wSpan.style.setProperty('--fill-percent', '0%');
+                      }
                     }
-                }
-            }
             // Line-level stepper (ganze Zeile)
             function tickLineStep(step) {
                 if (step === 0) {
@@ -15022,6 +15024,7 @@ html.gp-android:not(.dark) #ui-controls {
         let progressTickerInterval = null;
         let isAnimating = false;
         let lyricAnimFrame = null;
+        let lyricFrameTimeout = null;
         let lastLyricFrameTime = 0;
         try {
             Object.defineProperty(window, 'liveSyncOffset', {
@@ -28642,7 +28645,7 @@ window.setLyricsStyle = function(style) {
                 if (wordSpan) {
                     wordSpan.style.setProperty('--fill-percent', '100%');
                     wordSpan.classList.add('word-passed');
-                    wordSpan.classList.remove('word-active');
+                  wordSpan.classList.remove('word-active', 'word-fill-complete');
                 }
                 for (let cIdx = 0; cIdx < tok.cleanText.length; cIdx++) {
                     const charSpan = document.getElementById(`char-${idx}-${wIdx}-${cIdx}`);
@@ -28660,7 +28663,7 @@ window.setLyricsStyle = function(style) {
                 const wordSpan = document.getElementById(`word-${idx}-${wIdx}`);
                 if (wordSpan) {
                     wordSpan.style.setProperty('--fill-percent', '0%');
-                    wordSpan.classList.remove('word-passed', 'word-active');
+                  wordSpan.classList.remove('word-passed', 'word-active', 'word-fill-complete');
                 }
                 for (let cIdx = 0; cIdx < tok.cleanText.length; cIdx++) {
                     const charSpan = document.getElementById(`char-${idx}-${wIdx}-${cIdx}`);
@@ -28689,29 +28692,34 @@ window.setLyricsStyle = function(style) {
             const words = [];
             line.tokens.forEach((tok, wIdx) => {
                 const wSpan = document.getElementById(`word-${idx}-${wIdx}`);
-                const tokLen = tok.cleanText.length;
-                let currentTokWeightPassed = 0;
-                let pureText = tok.cleanText.replace(/[.,!?()[\]]/g, '');
-                let totalWordWeight = 0;
-                for (let c of pureText) {
-                    totalWordWeight += getCharWeight(c, tok.isPhraseEnd, /[aeiouyäöü]/i.test(c));
-                }
-                if (totalWordWeight <= 0) totalWordWeight = Math.max(1, tokLen);
                 const cData = [];
-                for (let cIdx = 0; cIdx < tokLen; cIdx++) {
-                    const char = tok.cleanText[cIdx];
-                    let cWeight = getCharWeight(char, tok.isPhraseEnd, /[aeiouyäöü]/i.test(char));
-                    if (cWeight === 0 && totalWordWeight > 0) cWeight = totalWordWeight * 0.05;
-                    let charStartRatio = totalWordWeight > 0 ? (currentTokWeightPassed / totalWordWeight) : (cIdx / tokLen);
-                    let charEndRatio = totalWordWeight > 0 ? ((currentTokWeightPassed + cWeight) / totalWordWeight) : ((cIdx + 1) / tokLen);
-                    currentTokWeightPassed += cWeight;
-                    const cSpan = document.getElementById(`char-${idx}-${wIdx}-${cIdx}`);
-                    cData.push({
-                        el: cSpan,
-                        startRatio: charStartRatio,
-                        endRatio: charEndRatio,
-                        lastState: 'none'
+                if (lyricsDomHasCharSplit) {
+                    const tokLen = tok.cleanText.length;
+                    let currentTokWeightPassed = 0;
+                    const charWeights = Array.from(tok.cleanText, char => {
+                        return getCharWeight(char, tok.isPhraseEnd, /[aeiouyäöü]/i.test(char));
                     });
+                    const baseWordWeight = charWeights.reduce((sum, weight) => sum + weight, 0);
+                    const punctuationWeight = baseWordWeight > 0 ? baseWordWeight * 0.05 : 1;
+                    let totalWordWeight = 0;
+                    for (let cIdx = 0; cIdx < tokLen; cIdx++) {
+                      if (charWeights[cIdx] === 0) charWeights[cIdx] = punctuationWeight;
+                      totalWordWeight += charWeights[cIdx];
+                    }
+                    totalWordWeight = totalWordWeight || Math.max(1, tokLen);
+                    for (let cIdx = 0; cIdx < tokLen; cIdx++) {
+                      const cWeight = charWeights[cIdx];
+                        const charStartRatio = currentTokWeightPassed / totalWordWeight;
+                        const charEndRatio = (currentTokWeightPassed + cWeight) / totalWordWeight;
+                        currentTokWeightPassed += cWeight;
+                        const cSpan = document.getElementById(`char-${idx}-${wIdx}-${cIdx}`);
+                        cData.push({
+                            el: cSpan,
+                            startRatio: charStartRatio,
+                            endRatio: charEndRatio,
+                            lastState: 'none'
+                        });
+                    }
                 }
                 const start = typeof tok.startMs === 'number' ? tok.startMs : tok.timeMs;
                 const dur = typeof tok.duration === 'number' ? tok.duration : 100;
@@ -28721,7 +28729,6 @@ window.setLyricsStyle = function(style) {
                     endMs: typeof tok.endMs === 'number' ? tok.endMs : (start + dur),
                     duration: dur,
                     holdScale: holdScale,
-                    cleanLen: tokLen,
                     span: wSpan,
                     chars: cData
                 });
@@ -28747,7 +28754,7 @@ window.setLyricsStyle = function(style) {
                         word.lastFillPercent = '0%';
                         if (wSpan) {
                             wSpan.style.setProperty('--fill-percent', '0%');
-                            wSpan.classList.remove('word-active', 'word-passed');
+                            wSpan.classList.remove('word-active', 'word-passed', 'word-fill-complete');
                         }
                         for (let c = 0; c < word.chars.length; c++) {
                             const charObj = word.chars[c];
@@ -28767,7 +28774,7 @@ window.setLyricsStyle = function(style) {
                             if (wSpan) {
                                 wSpan.style.setProperty('--fill-percent', '100%');
                                 wSpan.classList.add('word-passed');
-                                wSpan.classList.remove('word-active');
+                                wSpan.classList.remove('word-active', 'word-fill-complete');
                             }
                             for (let c = 0; c < word.chars.length; c++) {
                                 const charObj = word.chars[c];
@@ -28786,7 +28793,7 @@ window.setLyricsStyle = function(style) {
                             word.lastFillPercent = '100%';
                             if (wSpan) {
                                 wSpan.style.setProperty('--fill-percent', '100%');
-                                wSpan.classList.add('word-active');
+                                wSpan.classList.add('word-active', 'word-fill-complete');
                                 wSpan.classList.remove('word-passed');
                             }
                             for (let c = 0; c < word.chars.length; c++) {
@@ -28799,7 +28806,10 @@ window.setLyricsStyle = function(style) {
                         }
                     }
                 } else {
-                    word.lastState = 'active';
+                    if (word.lastState !== 'active') {
+                        word.lastState = 'active';
+                        if (wSpan) wSpan.classList.remove('word-fill-complete');
+                    }
                     const wordElapsed = adjustedMs - word.startMs;
                     const wordProgress = word.duration > 0 ? Math.min(1, Math.max(0, wordElapsed / word.duration)) : 1;
                     const fillPercent = Math.round(wordProgress * 100) + '%';
@@ -29032,23 +29042,38 @@ window.setLyricsStyle = function(style) {
                 }
             }
         }
+        function requestLyricFrame() {
+          const lowPowerMode = document.body.classList.contains('low-end') || !!window.matchMedia?.('(pointer: coarse)').matches;
+          if (lowPowerMode) {
+            lyricFrameTimeout = setTimeout(() => {
+              lyricFrameTimeout = null;
+              lyricAnimFrame = requestAnimationFrame(animateLoop);
+            }, 1000 / 30);
+            return;
+          }
+          lyricAnimFrame = requestAnimationFrame(animateLoop);
+        }
+        function cancelLyricFrame() {
+          if (lyricAnimFrame) cancelAnimationFrame(lyricAnimFrame);
+          if (lyricFrameTimeout) clearTimeout(lyricFrameTimeout);
+          lyricAnimFrame = null;
+          lyricFrameTimeout = null;
+        }
         function animateLoop(now) {
+          lyricAnimFrame = null;
             if (!trackIsPlaying) {
                 isAnimating = false;
-                lyricAnimFrame = null;
                 return;
             }
             // NEU: In StandBy rAF-Loop komplett pausieren - verhindert 120Hz Dauerlast & Erhitzung auf OLED-Displays
             if (typeof standByActive !== 'undefined' && standByActive) {
                 isAnimating = false;
-                lyricAnimFrame = null;
                 return;
             }
             // PERF/HITZE-FIX: Wenn Lyrics nicht aktiv geöffnet sind, rAF-Loop sofort beenden!
             // Spart 120Hz/60Hz Dauerlast, verhindert Smartphone-Überhitzung und Akku-Drain.
             if (!mainMusicCard || !mainMusicCard.classList.contains('lyrics-open')) {
                 isAnimating = false;
-                lyricAnimFrame = null;
                 return;
             }
             // PERF/GPU-FIX (v24.203.0): Wenn keine synchronisierten Lyrics geladen sind (z.B. Platzhalter oder Unsynced Fallback),
@@ -29056,7 +29081,6 @@ window.setLyricsStyle = function(style) {
             // Beseitigt die 90%-95% GPU-Dauerlast bei statischem Platzhalter vollständig!
             if (!parsedLyrics || parsedLyrics.length === 0) {
                 isAnimating = false;
-                lyricAnimFrame = null;
                 if (!progressTickerInterval) {
                     progressTickerInterval = setInterval(() => {
                         if (!trackIsPlaying) return;
@@ -29065,12 +29089,11 @@ window.setLyricsStyle = function(style) {
                 }
                 return;
             }
-            // Smart rAF Throttling: Auf 120Hz/144Hz-Displays (z.B. Google Pixel 8 Pro)
-            // halbiert das die Last auf schonende 60 FPS, während Standard-60Hz-Displays zu 100% flüssig bleiben.
+            // Desktop bleibt bei 60 FPS; Touch- und Low-End-Geraete werden mit 30 FPS aktualisiert.
             const frameNow = performance.now();
             const frameDelta = frameNow - lastLyricFrameTime;
             if (frameDelta < 11.5) {
-                lyricAnimFrame = requestAnimationFrame(animateLoop);
+              requestLyricFrame();
                 return;
             }
             lastLyricFrameTime = frameNow;
@@ -29111,16 +29134,13 @@ window.setLyricsStyle = function(style) {
             } catch (syncErr) {
                 console.error('[Lyrics] Error during syncLyricsUI in animateLoop:', (syncErr && (syncErr.message || syncErr.stack)) || syncErr);
             }
-            lyricAnimFrame = requestAnimationFrame(animateLoop);
+            requestLyricFrame();
         }
         window.animateLoop = animateLoop;
         window.syncLyricsUI = syncLyricsUI;
         function startProgressTracking() {
             if (typeof standByActive !== 'undefined' && standByActive) {
-                if (lyricAnimFrame) {
-                    cancelAnimationFrame(lyricAnimFrame);
-                    lyricAnimFrame = null;
-                }
+            cancelLyricFrame();
                 isAnimating = false;
                 if (progressTickerInterval) clearInterval(progressTickerInterval);
                 progressTickerInterval = setInterval(() => {
@@ -29145,16 +29165,13 @@ window.setLyricsStyle = function(style) {
                     clearInterval(progressTickerInterval);
                     progressTickerInterval = null;
                 }
-                if (!isAnimating || !lyricAnimFrame) {
+                if (!isAnimating || (!lyricAnimFrame && !lyricFrameTimeout)) {
+                    cancelLyricFrame();
                     isAnimating = true;
-                    if (lyricAnimFrame) cancelAnimationFrame(lyricAnimFrame);
                     lyricAnimFrame = requestAnimationFrame(animateLoop);
                 }
             } else {
-                if (lyricAnimFrame) {
-                    cancelAnimationFrame(lyricAnimFrame);
-                    lyricAnimFrame = null;
-                }
+                cancelLyricFrame();
                 isAnimating = false;
                 if (!progressTickerInterval) {
                     progressTickerInterval = setInterval(() => {
@@ -29166,10 +29183,7 @@ window.setLyricsStyle = function(style) {
         }
         function stopProgressTracking() {
             isAnimating = false;
-            if (lyricAnimFrame) {
-                cancelAnimationFrame(lyricAnimFrame);
-                lyricAnimFrame = null;
-            }
+            cancelLyricFrame();
             if (progressTickerInterval) {
                 clearInterval(progressTickerInterval);
                 progressTickerInterval = null;
@@ -31751,13 +31765,24 @@ window.setLyricsStyle = function(style) {
         // ==============================================================================
         // KÜNSTLER-INFO & BILDER-DIASHOW SYSTEM (v24.225.36)
         // Vollständig zentriertes Modal, Ambilight Glow, unbeschnittene Dual-Layer Diashow,
-        // sanfte Einflug-Animationen, direkte Spotify-CDN HD-Fotos & Alben, robuste Song-Cover
-        // mit automatischem Fallback & vollständige Spotify-Künstler-Galerie
+        // Sanfte Einflug-Animationen, Artist-Profilbilder und robuste Song-Cover mit Fallback
         // ==============================================================================
         const trackArtistInfoCache = new Map();
         let currentArtistSlideImages = [];
         let currentArtistSlideIndex = 0;
         let artistSlideshowTimer = null;
+
+        function extractSpotifyArtistProfileImages(source) {
+          const urls = String(source || '').match(/https?:\/\/i\.scdn\.co\/image\/ab676161[0-9a-f]{32}/gi) || [];
+          const photos = new Map();
+          urls.forEach(url => {
+            const match = url.match(/ab676161[0-9a-f]{8}([0-9a-f]{24})$/i);
+            if (match && !photos.has(match[1])) {
+              photos.set(match[1], `https://i.scdn.co/image/ab6761610000e5eb${match[1]}`);
+            }
+          });
+          return Array.from(photos.values());
+        }
 
         const BUNDLED_ARTISTS_INFO_DB = {
             "ilko": {
@@ -31853,6 +31878,7 @@ window.setLyricsStyle = function(style) {
         };
 
         window.openArtistModal = function(customArtist) {
+          const requestId = ++artistRequestSequence;
             haptic(15);
             let artistName = customArtist || currentRawArtist || (mArtist ? mArtist.innerText : '');
             if (!artistName || artistName.includes('Genieße die Stille') || artistName.includes('Unknown') || artistName.includes('Offline')) {
@@ -31904,17 +31930,17 @@ window.setLyricsStyle = function(style) {
             const wikiLink = document.getElementById('artist-link-wiki');
             if (wikiLink) { wikiLink.classList.add('hidden'); wikiLink.classList.remove('flex'); wikiLink.href = '#'; }
 
-            // Basis-Cover für Diashow
-            const fallbackCover = currentResolvedArtUrl || (mArtwork ? mArtwork.src : null) || fallbackImg;
-            currentArtistSlideImages = fallbackCover ? [fallbackCover] : [];
+            stopArtistSlideshowTimer();
+            currentArtistSlideImages = [];
             currentArtistSlideIndex = 0;
             renderArtistSlideshow();
 
             // Verifizierte Künstler-Daten laden
-            fetchArtistDetails(artistName);
+            fetchArtistDetails(artistName, requestId);
         };
 
         window.closeArtistModal = function() {
+            artistRequestSequence++;
             haptic(10);
             stopArtistSlideshowTimer();
             const modal = document.getElementById('artist-info-modal');
@@ -31992,6 +32018,9 @@ window.setLyricsStyle = function(style) {
                         bgEl.classList.add('opacity-40');
                     }
                 }, 150);
+            } else {
+                imgEl.removeAttribute('src');
+                if (bgEl) bgEl.removeAttribute('src');
             }
 
             if (counterEl) {
@@ -32011,11 +32040,15 @@ window.setLyricsStyle = function(style) {
             }
         }
 
-        async function fetchArtistDetails(artistName) {
+        async function fetchArtistDetails(artistName, requestId) {
             const cleanKey = artistName.toLowerCase().trim();
             // 1. Prüfe Bundled Artists DB (0ms First-Paint)
             if (BUNDLED_ARTISTS_INFO_DB[cleanKey]) {
-                applyArtistData(BUNDLED_ARTISTS_INFO_DB[cleanKey]);
+                const bundledData = BUNDLED_ARTISTS_INFO_DB[cleanKey];
+                const profileImages = Array.isArray(bundledData.images)
+                    ? bundledData.images.filter(url => /^https:\/\/i\.scdn\.co\/image\/ab676161/i.test(url))
+                    : [];
+                applyArtistData({ ...bundledData, images: profileImages });
                 return;
             }
 
@@ -32042,13 +32075,8 @@ window.setLyricsStyle = function(style) {
                 followersText: null
             };
 
-            // Aktuelles Albumcover vorab übernehmen
-            if (currentResolvedArtUrl && !artistData.images.includes(currentResolvedArtUrl)) {
-                artistData.images.push(currentResolvedArtUrl);
-            }
-
             try {
-                // A. stats.fm Artist Search API: Echte Spotify-Daten + Offizielle Spotify-Alben & Fotos
+                // A. stats.fm Artist Search API: Spotify-Kuenstlerdaten und Profilbild(er)
                 const statsFmPromise = (async () => {
                     try {
                         const sUrl = `https://api.stats.fm/api/v1/search?query=${encodeURIComponent(primaryArtist)}&type=artist`;
@@ -32058,49 +32086,40 @@ window.setLyricsStyle = function(style) {
                             const artists = d?.items?.artists || [];
                             const match = artists.find(a => (a.name || '').toLowerCase() === primaryLower) || artists[0];
                             if (match && (match.name || '').toLowerCase().includes(primaryLower.slice(0, 4))) {
-                                // Echtes Spotify Artist-Avatar in hoher Auflösung (640x640)
-                                if (match.image) {
-                                    const hdAvatar = match.image.replace('ab67616100005174', 'ab6761610000e5eb');
-                                    if (!artistData.images.includes(hdAvatar)) {
-                                        artistData.images.unshift(hdAvatar);
-                                    }
-                                }
+                                const profileImages = Array.isArray(match.images) ? match.images.slice() : [];
+                                if (match.image) profileImages.unshift(match.image);
+                                const profileImageSources = profileImages.map(image => typeof image === 'string' ? image : (image?.url || image?.src)).filter(Boolean);
+                                artistData.images.push(...extractSpotifyArtistProfileImages(profileImageSources.join('\n')));
                                 if (match.followers) {
                                     artistData.followersText = `${Number(match.followers).toLocaleString('de-DE')} Follower • Verifiziertes Spotify-Profil`;
                                 }
-                                if (match.externalIds?.spotify?.[0]) {
-                                    artistData.spotifyUrl = `https://open.spotify.com/artist/${match.externalIds.spotify[0]}`;
+                                const spotifyArtistId = match.externalIds?.spotify?.[0];
+                                if (spotifyArtistId) {
+                                    artistData.spotifyUrl = `https://open.spotify.com/artist/${spotifyArtistId}`;
+                                    const controller = new AbortController();
+                                    const timeoutId = setTimeout(() => controller.abort(), 8000);
+                                    try {
+                                        const profileRes = await fetch(`https://r.jina.ai/http://open.spotify.com/artist/${spotifyArtistId}`, { signal: controller.signal });
+                                        if (profileRes.ok) {
+                                            const profileText = await profileRes.text();
+                                            const knownPhotoIds = new Set(artistData.images.map(url => url.slice(-24)));
+                                            extractSpotifyArtistProfileImages(profileText).forEach(imageUrl => {
+                                                const photoId = imageUrl.slice(-24);
+                                                if (!knownPhotoIds.has(photoId)) {
+                                                    knownPhotoIds.add(photoId);
+                                                    artistData.images.push(imageUrl);
+                                                }
+                                            });
+                                        }
+                                    } catch (_) {
+                                    } finally {
+                                        clearTimeout(timeoutId);
+                                    }
                                 }
                                 if (match.genres?.length && !artistData.genre) {
                                     artistData.genre = match.genres[0].charAt(0).toUpperCase() + match.genres[0].slice(1);
                                 }
 
-                                // Alle offiziellen Spotify-Alben & Release-Fotos direkt aus dem Spotify-CDN abrufen
-                                if (match.id) {
-                                    try {
-                                        const albRes = await fetch(`https://api.stats.fm/api/v1/artists/${match.id}/albums`);
-                                        if (albRes.ok) {
-                                            const albData = await albRes.json();
-                                            (albData.items || []).forEach(alb => {
-                                                const albImg = alb.image;
-                                                if (albImg && !artistData.images.includes(albImg) && artistData.images.length < 12) {
-                                                    artistData.images.push(albImg);
-                                                }
-                                                if (alb.name && albImg && artistData.topTracks.length < 5) {
-                                                    const alreadyHas = artistData.topTracks.some(x => x.title === alb.name);
-                                                    if (!alreadyHas) {
-                                                        artistData.topTracks.push({
-                                                            title: alb.name,
-                                                            subtitle: 'Single / Album',
-                                                            art: albImg,
-                                                            trackUrl: artistData.spotifyUrl || null
-                                                        });
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    } catch (_) {}
-                                }
                             }
                         }
                     } catch (_) {}
@@ -32134,10 +32153,6 @@ window.setLyricsStyle = function(style) {
                                         if (exactTitleMatch && isMusician) {
                                             if (page.extract && !artistData.bio) {
                                                 artistData.bio = page.extract;
-                                            }
-                                            const pic = page.original?.source || page.thumbnail?.source;
-                                            if (pic && !artistData.images.includes(pic) && artistData.images.length < 12) {
-                                                artistData.images.push(pic);
                                             }
                                             if (page.fullurl && !artistData.wikiUrl) {
                                                 artistData.wikiUrl = page.fullurl;
@@ -32183,9 +32198,6 @@ window.setLyricsStyle = function(style) {
                                             trackUrl: t.trackViewUrl
                                         });
                                     }
-                                    if (art && !artistData.images.includes(art) && artistData.images.length < 12) {
-                                        artistData.images.push(art);
-                                    }
                                 });
                             }
                         }
@@ -32200,10 +32212,12 @@ window.setLyricsStyle = function(style) {
                 }
 
                 trackArtistInfoCache.set(cleanKey, artistData);
+                if (requestId !== artistRequestSequence) return;
                 applyArtistData(artistData);
 
             } catch (err) {
                 console.warn('[ArtistInfo] Error fetching details:', err);
+                if (requestId !== artistRequestSequence) return;
                 if (!artistData.bio) {
                     artistData.bio = `${artistName} ist auf Spotify vertreten.`;
                 }
@@ -32289,15 +32303,14 @@ window.setLyricsStyle = function(style) {
                 }
             }
 
-            // Diashow mit allen echten Künstler-Bildern aktualisieren
-            if (data.images && data.images.length) {
-                currentArtistSlideImages = data.images;
-                currentArtistSlideIndex = 0;
-                renderArtistSlideshow();
-                startArtistSlideshowTimer();
-            }
+            currentArtistSlideImages = Array.isArray(data.images) ? [...new Set(data.images)] : [];
+            currentArtistSlideIndex = 0;
+            stopArtistSlideshowTimer();
+            renderArtistSlideshow();
+            startArtistSlideshowTimer();
         }
 
+        let artistRequestSequence = 0;
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const artistModal = document.getElementById('artist-info-modal');

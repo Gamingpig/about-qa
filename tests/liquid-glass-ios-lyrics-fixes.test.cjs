@@ -65,10 +65,11 @@ test('Liquid Glass Transparency Harmonization', async (t) => {
 
 test('Liquid Glass Normal Lyrics Backdrop Contrast', async (t) => {
     await t.test('Y1: Normal lyrics animation styles have high-contrast protective dark glass backdrop', () => {
-        assert.match(indexHtml, /body\.liquid-glass-active #main-music-card\.lyrics-open #lyrics-overlay:not\(\.apple-ambient-active\)\s*\{[^}]*rgba\(15,\s*23,\s*42,\s*0\.94\)/s);
+        assert.match(indexHtml, /body\.liquid-glass-active #main-music-card:not\(\.canvas-active\)\.lyrics-open #lyrics-overlay:not\(\.apple-ambient-active\)\s*\{[^}]*rgba\(15,\s*23,\s*42,\s*0\.94\)/s);
     });
 
-    await t.test('Y2: Apple Ambient mode maintains transparent lyrics overlay', () => {
+    await t.test('Y2: Canvas and Apple Ambient modes maintain transparent lyrics overlay', () => {
         assert.match(indexHtml, /body\.liquid-glass-active #main-music-card\.lyrics-open #lyrics-overlay\s*\{[^}]*background:\s*transparent\s*!important/s);
+        assert.match(indexHtml, /body\.liquid-glass-active #main-music-card\.canvas-active\.lyrics-open #lyrics-overlay\s*\{[^}]*background:\s*transparent\s*!important/s);
     });
 });

@@ -481,27 +481,27 @@ describe('Tier 1: Feature Coverage (F1 to F13)', () => {
         const dom = new JSDOM(file.exists ? file.content : ARCADE_SPEC.html);
         const doc = dom.window.document;
 
-        it('F1.1: Uses Dark OLED background theme (#020617)', () => {
+        it('F1.1: Uses the current dark arcade palette', () => {
             const raw = file.exists ? file.content : ARCADE_SPEC.html;
             assert.ok(
-                raw.includes('#020617') || raw.includes('bg-slate-950') || raw.includes('--bg-oled'),
-                'Must declare Dark OLED background styling (#020617)'
+                raw.includes('#030712') || raw.includes('#050814') || raw.includes('bg-slate-950') || raw.includes('--bg-oled'),
+                'Must declare a dark arcade background'
             );
         });
 
-        it('F1.2: Contains frosted liquid glass HUD element', () => {
-            const hud = doc.getElementById('arcade-hud') || doc.querySelector('.glass-stage');
-            assert.ok(hud, 'Must contain a liquid glass HUD element');
+        it('F1.2: Contains the frosted arcade navigation HUD', () => {
+            const hud = doc.querySelector('header.backdrop-blur-xl') || doc.getElementById('arcade-hud') || doc.querySelector('.glass-stage');
+            assert.ok(hud, 'Must contain a frosted arcade HUD element');
             const raw = file.exists ? file.content : ARCADE_SPEC.html;
             assert.ok(
-                raw.includes('backdrop-filter') || raw.includes('glass-stage'),
+                raw.includes('backdrop-filter') || raw.includes('backdrop-blur-xl') || raw.includes('glass-stage'),
                 'Must use glassmorphic blur backdrop styling'
             );
         });
 
         it('F1.3: Contains dedicated score and highscore display indicators', () => {
-            const scoreEl = doc.getElementById('score-display') || doc.querySelector('[id*="score"]');
-            const highscoreEl = doc.getElementById('highscore-display') || doc.querySelector('[id*="highscore"]');
+            const scoreEl = doc.getElementById('overlay-score-val') || doc.getElementById('score-display') || doc.querySelector('[id*="score"]');
+            const highscoreEl = doc.getElementById('overlay-best-val') || doc.getElementById('best-score-footer') || doc.getElementById('highscore-display') || doc.querySelector('[id*="highscore"]');
             assert.ok(scoreEl, 'Must contain score display element');
             assert.ok(highscoreEl, 'Must contain highscore display element');
         });

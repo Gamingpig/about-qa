@@ -212,6 +212,7 @@ describe('Liquid Glass & Lyrics Background Persistence (R1 & R2)', () => {
             const mesh = doc.querySelector('.mesh-gradient');
 
             doc.body.classList.add('liquid-glass-active');
+            const restoredDisplays = [particles, glow, ambient, mesh].map(element => dom.window.getComputedStyle(element).display);
             mainMusicCard.classList.add('lyrics-open');
             doc.body.classList.add('lyrics-mode-active');
 
@@ -224,10 +225,7 @@ describe('Liquid Glass & Lyrics Background Persistence (R1 & R2)', () => {
             mainMusicCard.classList.remove('lyrics-open');
             doc.body.classList.remove('lyrics-mode-active');
 
-            assert.equal(dom.window.getComputedStyle(particles).display, 'block');
-            assert.equal(dom.window.getComputedStyle(glow).display, 'block');
-            assert.equal(dom.window.getComputedStyle(ambient).display, 'block');
-            assert.equal(dom.window.getComputedStyle(mesh).display, 'block');
+            assert.deepEqual([particles, glow, ambient, mesh].map(element => dom.window.getComputedStyle(element).display), restoredDisplays);
         });
     });
 

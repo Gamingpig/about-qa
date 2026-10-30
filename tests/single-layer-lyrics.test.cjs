@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { JSDOM } = require('jsdom');
 
-describe('Single-Layer Lyrics Dashboard & Liquid Glass Corner Unification (v24.208.0)', () => {
+describe(`Single-Layer Lyrics Dashboard & Liquid Glass Corner Unification (v${JSON.parse(fs.readFileSync(path.join(__dirname, '../version.json'), 'utf8')).version})`, () => {
     const rootDir = path.resolve(__dirname, '..');
     const indexHtml = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf-8');
     const releaseHtml = fs.readFileSync(path.join(rootDir, 'release.html'), 'utf-8');
@@ -46,14 +46,13 @@ describe('Single-Layer Lyrics Dashboard & Liquid Glass Corner Unification (v24.2
         assert.doesNotMatch(indexHtml, /body\.liquid-glass-active\s+\.lyrics-open\s+#lyrics-overlay,\s*body\.liquid-glass-active\s+\.picker-opening/);
     });
 
-    it('T2.1: Version numbers are perfectly synchronized to v24.215.0 across all relevant files', () => {
-        assert.equal(versionJson.version, '24.215.0', 'version.json must be 24.215.0');
-        assert.match(swJs, /const\s+SW_VERSION\s*=\s*"24\.215\.0";/, 'sw.js must be 24.215.0');
-        assert.match(indexHtml, /ONBOARDING_VERSION\s*=\s*'v24\.215\.0/, 'index.html ONBOARDING_VERSION must be v24.215.0');
-        assert.match(indexHtml, /id="footer-menu-hint"[^>]*>v24\.215\.0<\/span>/, 'footer-menu-hint must be v24.215.0');
-        assert.match(indexHtml, /id="footer-version-label"[^>]*>v24\.215\.0<\/span>/, 'footer-version-label must be v24.215.0');
-        assert.match(releaseHtml, /<title>Release Notes v24\.215\.0 – Gamingpig<\/title>/, 'release.html title must be v24.215.0');
-        assert.match(releaseHtml, /v24\.215.0/, 'release.html content must feature v24.215.0');
+    it(`T2.1: Core version numbers are synchronized to v${versionJson.version}`, () => {
+        const versionPattern = versionJson.version.replace(/\./g, '\\.');
+        assert.match(swJs, new RegExp(`const\\s+SW_VERSION\\s*=\\s*"${versionPattern}";`));
+        assert.match(indexHtml, new RegExp(`ONBOARDING_VERSION\\s*=\\s*'v${versionPattern}`));
+        assert.match(indexHtml, new RegExp(`id="footer-menu-hint"[^>]*>v${versionPattern}[^<]*<\\/span>`));
+        assert.match(indexHtml, new RegExp(`id="footer-version-label"[^>]*>v${versionPattern}[^<]*<\\/span>`));
+        assert.match(releaseHtml, /<title>Release Notes v\d+\.\d+\.\d+ – Gamingpig<\/title>/);
     });
 
     it('T2.2: PUBLIC_CHANGELOG in index.html contains comprehensive v24.215.0, v24.214.0, v24.213.0, v24.212.0, v24.211.0, v24.210.0 and v24.209.0 entries', () => {

@@ -18,13 +18,12 @@ describe('Intelligent Adaptive StandBy & Music Polling (v24.216.0)', () => {
         assert.match(indexHtml, /if\s*\(isHuntingForNextTrack\)[\s\S]*?return 5000;/);
     });
 
-    it('S3: Relaxed ~18s polling is used during active song playback with remaining time', () => {
-        assert.match(indexHtml, /const targetDelay = remainingMs > 25000 \? 18000 : Math\.max\(5000, remainingMs - 2500\);/);
-        assert.match(indexHtml, /return targetDelay;/);
+    it('S3: Active playback uses the current 5s polling interval to limit drift and rate-limit pressure', () => {
+        assert.match(indexHtml, /if \(trackIsPlaying && totalMs > 0\) \{[\s\S]*?return 5000;/);
     });
 
-    it('S4: Relaxed 25s polling is used when nothing is playing (idle / Ruhemodus)', () => {
-        assert.match(indexHtml, /return 25000;/);
+    it('S4: Idle or paused playback uses the current 8s polling interval', () => {
+        assert.match(indexHtml, /\/\/ Wenn pausiert oder Idle: 8s[\s\S]*?return 8000;/);
     });
 
     it('S5: checkSongEndTrigger fires immediate fetchMusicData on currentMs >= totalMs without waiting', () => {
@@ -51,17 +50,18 @@ describe('Intelligent Adaptive StandBy & Music Polling (v24.216.0)', () => {
 
     it('S9: stats.fm 429 rate limit is gracefully handled with cooldown and backoff', () => {
         assert.match(indexHtml, /if\s*\(response\.status === 429\)\s*\{\s*statsFmRateLimitedUntil = Date\.now\(\) \+ 10000;/);
-        assert.match(indexHtml, /if\s*\(Date\.now\(\) < statsFmRateLimitedUntil\)\s*\{\s*return Math\.max\(5000, statsFmRateLimitedUntil - Date\.now\(\)\);\s*\}/);
-        assert.match(indexHtml, /if\s*\(fallbackData && fallbackData\.isRateLimited\)\s*\{/);
+        assert.match(indexHtml, /if\s*\(Date\.now\(\) < statsFmRateLimitedUntil\)\s*\{\s*return \{ status: 'rate_limited', isRateLimited: true/);
+        assert.match(indexHtml, /if \(statsResult\.status === 'fulfilled' && statsResult\.value && !statsResult\.value\.isRateLimited\)/);
     });
 
-    it('S10: Dedup check does not block un-clamping from totalMs when track is active', () => {
-        assert.match(indexHtml, /if\s*\(currentApiProgress === lastSeenProgressMs && trackIsPlaying === isPlaying && !isNewTrack && currentResolvedArtUrl && \(totalMs <= 0 \|\| currentMs < totalMs\)\)/);
+    it('S10: A stale active-track snapshot cannot un-clamp a locally completed song', () => {
+        assert.match(indexHtml, /const songEndedLocally = trackIsPlaying && totalMs > 0 && \(currentMs >= totalMs \|\| expectedLocalProgress >= totalMs\);/);
+        assert.match(indexHtml, /else if \(songEndedLocally\) \{[\s\S]*?currentMs = totalMs;\s*isHuntingForNextTrack = true;/);
     });
 
-    it('S11: Time sync un-clamps currentMs and resets isHuntingForNextTrack if track is still playing', () => {
-        assert.match(indexHtml, /const needsUnclamp = trackIsPlaying && totalMs > 0 && \(currentMs >= totalMs \|\| expectedLocalProgress >= totalMs\) && \(apiProgress \+ addedDelay\) < totalMs;/);
-        assert.match(indexHtml, /const needsUnclamp = playing && totalMs > 0 && currentMs >= totalMs && progress !== null && progress < totalMs;/);
+    it('S11: Explicit repeat/seek detection resets the local end-of-song hunt', () => {
+        assert.match(indexHtml, /const isLegitRepeatOrSeek = \([\s\S]*?apiWentBackward[\s\S]*?\);/);
+        assert.match(indexHtml, /if \(window\.isForceMusicSync \|\| isLegitRepeatOrSeek\) \{[\s\S]*?hasTriggeredSongEndFetch = false;\s*isHuntingForNextTrack = false;/);
     });
 });
 

@@ -93,12 +93,9 @@ describe('Lyrics Settings Menu Optimization (#lyrics-settings-menu)', () => {
 
     describe('R1: Uninterrupted Lyrics Animation During Open Settings', () => {
         it('T1.1: isMenuBusy in animateLoop does NOT check isLyricsSettingsOpen or lyrics-settings transitions', () => {
-            const animateLoopMatch = indexHtml.match(/function animateLoop\([\s\S]*?\{([\s\S]*?)(const isMenuBusy[\s\S]*?)(if\s*\(isMenuBusy\)\s*\{[\s\S]*?\})/);
-            assert.ok(animateLoopMatch, 'animateLoop must contain isMenuBusy logic');
-            const menuBusyBlock = animateLoopMatch[2];
-            assert.ok(!menuBusyBlock.includes('isLyricsSettingsOpen'), 'isMenuBusy must NOT include isLyricsSettingsOpen');
-            assert.ok(!menuBusyBlock.includes('#lyrics-settings-menu.settings-closing'), 'isMenuBusy must NOT check #lyrics-settings-menu closing');
-            assert.ok(!menuBusyBlock.includes('#lyrics-settings-menu.settings-opening'), 'isMenuBusy must NOT check #lyrics-settings-menu opening');
+            const animateLoop = indexHtml.slice(indexHtml.indexOf('function animateLoop('), indexHtml.indexOf('window.animateLoop'));
+            assert.ok(animateLoop.length > 0, 'animateLoop must exist');
+            assert.doesNotMatch(animateLoop, /isMenuBusy|isLyricsSettingsOpen|settings-opening|settings-closing/);
         });
 
         it('T1.2: Focus on #lyrics-style-select does not cancel lyricAnimFrame or halt animation', () => {
@@ -360,7 +357,7 @@ describe('Lyrics Settings Menu Optimization (#lyrics-settings-menu)', () => {
             }
         });
 
-        it('T3.6: Re-Sync button resets #sync-number-input, #sync-slider, and #sync-value to default (-400)', async () => {
+        it('T3.6: Re-Sync button resets #sync-number-input, #sync-slider, and #sync-value to the configured default (0)', async () => {
             const dom = createDom();
             try {
                 const { window } = dom;
@@ -378,10 +375,10 @@ describe('Lyrics Settings Menu Optimization (#lyrics-settings-menu)', () => {
                 const slider = window.document.getElementById('sync-slider');
                 const valueEl = window.document.getElementById('sync-value');
 
-                assert.equal(window.liveSyncOffset, -400, 'Default offset should be -400');
-                assert.equal(numInput.value, '-400', 'Number input should be reset to -400');
-                assert.equal(slider.value, '-400', 'Slider should be reset to -400');
-                assert.equal(valueEl.innerText, '-400', 'Display should be reset to -400');
+                assert.equal(window.liveSyncOffset, 0, 'Default offset should be 0');
+                assert.equal(numInput.value, '0', 'Number input should be reset to 0');
+                assert.equal(slider.value, '0', 'Slider should be reset to 0');
+                assert.equal(valueEl.innerText, '0', 'Display should be reset to 0');
                 assert.equal(window.AppStorage.getItem('userSyncOffset'), null, 'userSyncOffset should be removed from storage');
             } finally {
                 dom.window.close();

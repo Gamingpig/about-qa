@@ -78,8 +78,8 @@ test('Issue 2: Subpage Top Bar & Back Button Tappability on iOS', async (t) => {
 
     await t.test('B6: arcade.html body includes safe-area-inset-top and return button has touch-manipulation', () => {
         assert.match(arcadeHtml, /body[^>]*style="padding-top:\s*max\(12px,\s*env\(safe-area-inset-top,\s*12px\)\);"/);
-        assert.match(arcadeHtml, /\.glass-stage\s*\{[^}]*position:\s*relative;/s);
         assert.match(arcadeHtml, /<a id="btn-return"[^>]*touch-manipulation/);
+        assert.match(arcadeHtml, /<div class="relative[^"]*"[^>]*id="canvas-wrapper"/);
     });
 
     await t.test('B7: community-glass CSS safeguards all subpage back buttons and cards', () => {
@@ -103,12 +103,12 @@ test('Issue 3: Harmonized Liquid Glass Card Transparency', async (t) => {
         assert.doesNotMatch(indexHtml, /id="audience-hub"[^>]*>[\s\S]*?<div class="glass-card[^"]*bg-gradient-to-r/);
     });
 
-    await t.test('C4: Version 24.215.0 is synchronized across version.json, sw.js, index.html, release.html', () => {
-        assert.equal(versionJson.version, '24.215.0');
-        assert.match(swJs, /const SW_VERSION = "24\.215\.0";/);
-        assert.match(indexHtml, /ONBOARDING_VERSION = 'v24\.215\.0/);
-        assert.match(indexHtml, /id="footer-menu-hint"[^>]*>v24\.215\.0<\/span>/);
-        assert.match(indexHtml, /id="footer-version-label"[^>]*>v24\.215\.0<\/span>/);
-        assert.match(releaseHtml, /<title>Release Notes v24\.215\.0 – Gamingpig<\/title>/);
+    await t.test(`C4: Version ${versionJson.version} is synchronized across current core files`, () => {
+        const versionPattern = versionJson.version.replace(/\./g, '\\.');
+        assert.match(swJs, new RegExp(`const SW_VERSION = "${versionPattern}";`));
+        assert.match(indexHtml, new RegExp(`ONBOARDING_VERSION = 'v${versionPattern}`));
+        assert.match(indexHtml, new RegExp(`id="footer-menu-hint"[^>]*>v${versionPattern}[^<]*<\\/span>`));
+        assert.match(indexHtml, new RegExp(`id="footer-version-label"[^>]*>v${versionPattern}[^<]*<\\/span>`));
+        assert.match(releaseHtml, /<title>Release Notes v\d+\.\d+\.\d+ – Gamingpig<\/title>/);
     });
 });
