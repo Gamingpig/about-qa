@@ -7,6 +7,10 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
+    [PERFORMANCE] Release v24.225.37 · 2026-10-30: QA-Update für Spotify-Profilbilder, mobile Lyrics-Animation, Timing und CSS-Kompatibilität
+      - Artist-Galerien laden alle distincten offiziellen Spotify-Profilfotos ohne feste Obergrenze; Trackcover werden nicht als Profilbilder verwendet.
+      - Lyrics-Fill-Blitz, Satzzeichen-Timing, mobile Frame-Last und CSS-Kompatibilitätswarnungen korrigiert.
+      - Version v24.225.37 in Service Worker, version.json, App-Labels und Update-Watcher synchronisiert.
     [BUGFIX] Release v24.225.36 · 2026-10-28: Canvas-Aura wächst in beide Achsen, eigener Karten-Blur-Regler (Standard AUS), YouTube-/Musikvideo-Features komplett abgeschaltet, Canvas-Abruf für jeden Track
       - Symptom: Der Aura-Radius machte die Leuchtfläche nur "länger" (vertikal), nicht "breiter" (horizontal).
         Ursache: Tailwind-Preflight setzt auf <video> `max-width: 100%`, wodurch #canvas-glow-video trotz
@@ -3335,7 +3339,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.225.36 · 2026-10-28';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.225.37 · 2026-10-30';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -9065,7 +9069,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.36</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.37</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -9102,7 +9106,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.36 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.36 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.37 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.37 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -19390,6 +19394,18 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+        { version: "v24.225.37", date: "30. Oktober 2026", type: "fix", items: {
+          de: [
+            "🖼️ Spotify-Künstlergalerien zeigen jetzt alle verfügbaren Profilfotos ohne künstliches 12-Bilder-Limit",
+            "🎤 Lyrics-Animationen auf Smartphones benötigen weniger Renderarbeit; Timing und Fill-Darstellung wurden stabilisiert",
+            "📱 iOS-Safe-Area, Service-Worker-Update-Erkennung und CSS-Kompatibilität verbessert"
+          ],
+          en: [
+            "🖼️ Spotify artist galleries now show every available profile photo without an artificial 12-image cap",
+            "🎤 Lyrics animation performs less rendering work on phones; timing and fill rendering are more stable",
+            "📱 Improved iOS safe-area handling, service-worker update detection, and CSS compatibility"
+          ]
+        }},
         { version: "v24.225.36", date: "28. Oktober 2026", type: "fix", items: {
             de: [
                 "↔️ Canvas-Glow wächst jetzt wirklich in die Breite: Der Aura-Radius dehnt die Leuchtfläche horizontal UND vertikal aus, statt nur nach oben/unten zu wachsen",
