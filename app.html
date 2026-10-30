@@ -7,6 +7,18 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
+    [BUGFIX] Release v24.225.39 · 2026-10-30: Artist-First-Paint, sichtbare Galerie-Fades und weniger grelle Lyrics-Füllanimation
+      - Artist-Avatar wird direkt aus stats.fm angezeigt; vollständige Spotify-Profilbilder werden mit Cache und mehreren Proxy-Fallbacks nachgeladen.
+      - Galerie blendet nach erfolgreichem Bild-Decode ein und verwirft veraltete Lade-Callbacks.
+      - Klassischer Fill-Stil nutzt gedämpfte Farben; alte automatisch gespeicherte Fill-Defaults wechseln einmalig zu Apple Music Pro.
+      - Version v24.225.39 ist mit Service Worker, Footer und Update-Watcher synchronisiert.
+    [FEATURE] Release v24.225.38 · 2026-10-30: Apple Music Pro als Standard-Lyrics-Stil außerhalb des Low-End-Modus
+      - Erststarts ohne gespeicherte Stilwahl verwenden Apple Music Pro auf normalen Geräten und den sparsamen Fill-Stil im Low-End-Modus.
+      - Gespeicherte persönliche Lyrics-Stile bleiben unverändert erhalten.
+      - Alte automatisch gespeicherte Fill-Defaults werden einmalig zu Apple Music Pro migriert; manuelle Stilwahlen bleiben erhalten.
+      - Artist-Avatare erscheinen sofort; zusätzliche Profilfotos blockieren den Modal-First-Paint nicht.
+      - Galerie-Fades starten nach dem Bild-Decode, und Fill-Highlights verwenden gedämpfte Farben.
+      - Version v24.225.38 ist mit Service Worker, Footer und Update-Watcher synchronisiert.
     [PERFORMANCE] Release v24.225.37 · 2026-10-30: QA-Update für Spotify-Profilbilder, mobile Lyrics-Animation, Timing und CSS-Kompatibilität
       - Artist-Galerien laden alle distincten offiziellen Spotify-Profilfotos ohne feste Obergrenze; Trackcover werden nicht als Profilbilder verwendet.
       - Lyrics-Fill-Blitz, Satzzeichen-Timing, mobile Frame-Last und CSS-Kompatibilitätswarnungen korrigiert.
@@ -3339,7 +3351,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.225.37 · 2026-10-30';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.225.39 · 2026-10-30';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -6031,9 +6043,9 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
            gesetzt - dort ist es tatsächlich nötig (max. 1 Wort gleichzeitig aktiv). */
         .lyric-word { position: relative; display: inline-block; margin-right: 0; white-space: nowrap; font-size: 14px; font-size: clamp(0.75rem, 4vw, 2.2rem); font-weight: 800; letter-spacing: -0.02em; transition: color 0.1s linear, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), text-shadow 0.1s linear, filter 0.1s linear, opacity 0.1s linear; }
         .lyric-word.word-active { will-change: transform, opacity, color; }
-        .lyrics-style-fill .lyric-word { background: linear-gradient(90deg, #ffffff 0%, #ffffff min(var(--fill-percent, 0%), 90%), rgba(255, 255, 255, 0.75) min(calc(var(--fill-percent, 0%) + 4%), 95%), rgba(255, 255, 255, 0.22) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .lyrics-style-fill .lyric-word.word-passed,
-        .lyrics-style-fill .lyric-word.word-fill-complete { background: none; color: #ffffff; -webkit-text-fill-color: #ffffff; }
+        .lyrics-style-fill .lyric-word { background: linear-gradient(90deg, rgba(148, 163, 184, 0.38) 0%, rgba(148, 163, 184, 0.38) min(var(--fill-percent, 0%), 90%), #38bdf8 min(calc(var(--fill-percent, 0%) + 4%), 95%), rgba(56, 189, 248, 0.35) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .lyrics-style-fill .lyric-word.word-passed { background: none; color: rgba(203, 213, 225, 0.68); -webkit-text-fill-color: rgba(203, 213, 225, 0.68); }
+        .lyrics-style-fill .lyric-word.word-fill-complete { background: none; color: #7dd3fc; -webkit-text-fill-color: #7dd3fc; }
         body.low-end .lyrics-style-applemusic .lyric-word,
         body.low-end .lyrics-style-applemusicpro .lyric-word {
             background: linear-gradient(90deg, #ffffff 0%, #ffffff var(--fill-percent, 0%), rgba(255, 255, 255, 0.75) calc(var(--fill-percent, 0%) + 4%), rgba(255, 255, 255, 0.28) calc(var(--fill-percent, 0%) + 10%));
@@ -9069,7 +9081,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.37</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.39</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -9106,7 +9118,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.37 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.37 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.39 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.39 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -14403,7 +14415,8 @@ html.gp-android:not(.dark) #ui-controls {
         let overlayHistoryDepth = 0;
         let suppressPopHandling = false;
         let isLyricsSettingsOpen = false;
-        let currentLyricsStyle = AppStorage.getItem('lyricsStyle') || 'fill';
+        const savedLyricsStyle = AppStorage.getItem('lyricsStyle');
+        let currentLyricsStyle = savedLyricsStyle || 'fill';
         // PERF-FIX v24.17 (radikal): Nur diese 8 von 61 Songtext-Stilen nutzen überhaupt
         // .lyric-char-Selektoren in ihrem CSS - für alle anderen 53 Stile (87%!) wurden bisher
         // trotzdem für JEDES einzelne Zeichen des kompletten Songtexts eigene <span>-Elemente
@@ -16047,6 +16060,14 @@ html.gp-android:not(.dark) #ui-controls {
                 applyPerformanceMode(true);
             }
         }
+        const lyricsStyleMigrationKey = 'lyricsStyleDefaultMigration_v24.225.38';
+        const hasMigratedLegacyFill = AppStorage.getItem(lyricsStyleMigrationKey) === 'true';
+        const isLowEndLyricsMode = document.body.classList.contains('low-end');
+        if (!savedLyricsStyle || (savedLyricsStyle === 'fill' && !hasMigratedLegacyFill && !isLowEndLyricsMode)) {
+            currentLyricsStyle = isLowEndLyricsMode ? 'fill' : 'applemusicpro';
+            AppStorage.setItem('lyricsStyle', currentLyricsStyle);
+        }
+        AppStorage.setItem(lyricsStyleMigrationKey, 'true');
         function runPerfSelfTest() {
             // FIX v24.125: Automatischen nervigen Toast komplett deaktiviert (Nutzerwunsch: "will man nicht immer sehen").
             // Low-End-Modus bleibt oben rechts manuell schaltbar, falls jemand ihn aktiv aktivieren möchte.
@@ -19394,6 +19415,32 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+        { version: "v24.225.39", date: "30. Oktober 2026", type: "fix", items: {
+          de: [
+            "🖼️ Artist-Avatare erscheinen sofort; zusätzliche Spotify-Profilfotos werden im Hintergrund mit Proxy-Fallback geladen",
+            "✨ Artist-Fotos blenden nach erfolgreichem Laden weich ein und bleiben beim Wechsel nicht mehr leer",
+            "🌙 Die klassische Lyrics-Füllanimation ist weniger grell; automatische alte Fill-Defaults wechseln zu Apple Music Pro"
+          ],
+          en: [
+            "🖼️ Artist avatars appear immediately while additional Spotify profile photos load with proxy fallbacks",
+            "✨ Artist photos fade in after decoding and no longer disappear during slide changes",
+            "🌙 The classic lyrics fill animation is less glaring; legacy automatic Fill defaults migrate to Apple Music Pro"
+          ]
+        }},
+        { version: "v24.225.38", date: "30. Oktober 2026", type: "feature", items: {
+          de: [
+            "🎤 Apple Music Pro ist jetzt der Standard-Lyrics-Stil auf normalen Geräten, wenn noch kein eigener Stil gespeichert wurde",
+            "⚡ Im Low-End-Modus bleibt der sparsame Fill-Stil als Standard erhalten; gespeicherte persönliche Einstellungen haben Vorrang",
+            "🖼️ Artist-Avatare erscheinen sofort, zusätzliche Spotify-Profilfotos laden im Hintergrund nach und die Galerie blendet sie weich ein",
+            "🌙 Die Standard-Füllanimation ist weniger grell; alte automatische Fill-Defaults wechseln einmalig zu Apple Music Pro"
+          ],
+          en: [
+            "🎤 Apple Music Pro is now the default lyrics style on regular devices when no personal style is saved",
+            "⚡ Low-end devices keep the lightweight Fill style; saved personal preferences always take priority",
+            "🖼️ Artist avatars appear immediately while extra Spotify profile photos load and fade in behind the scenes",
+            "🌙 The default Fill animation is less glaring; legacy auto-selected Fill styles migrate once to Apple Music Pro"
+          ]
+        }},
         { version: "v24.225.37", date: "30. Oktober 2026", type: "fix", items: {
           de: [
             "🖼️ Spotify-Künstlergalerien zeigen jetzt alle verfügbaren Profilfotos ohne künstliches 12-Bilder-Limit",
@@ -31785,21 +31832,82 @@ window.setLyricsStyle = function(style) {
         // Sanfte Einflug-Animationen, Artist-Profilbilder und robuste Song-Cover mit Fallback
         // ==============================================================================
         const trackArtistInfoCache = new Map();
+        const spotifyArtistImageCache = new Map();
+        const spotifyArtistImageRequests = new Map();
         let currentArtistSlideImages = [];
         let currentArtistSlideIndex = 0;
         let artistSlideshowTimer = null;
+        let artistSlideRenderId = 0;
 
         function extractSpotifyArtistProfileImages(source) {
           const urls = String(source || '').match(/https?:\/\/i\.scdn\.co\/image\/ab676161[0-9a-f]{32}/gi) || [];
           const photos = new Map();
           urls.forEach(url => {
             const match = url.match(/ab676161[0-9a-f]{8}([0-9a-f]{24})$/i);
-            if (match && !photos.has(match[1])) {
-              photos.set(match[1], `https://i.scdn.co/image/ab6761610000e5eb${match[1]}`);
+            if (match) {
+              const variant = url.match(/ab676161([0-9a-f]{8})/i)?.[1]?.toLowerCase();
+              const quality = variant === '0000e5eb' ? 3 : variant === '0000939b' ? 2 : 1;
+              const existing = photos.get(match[1]);
+              if (!existing || quality > existing.quality) photos.set(match[1], { url, quality });
             }
           });
-          return Array.from(photos.values());
+          return Array.from(photos.values(), photo => photo.url);
         }
+
+          function fetchSpotifyArtistProfileImages(spotifyArtistId) {
+            if (spotifyArtistImageCache.has(spotifyArtistId)) {
+              return Promise.resolve(spotifyArtistImageCache.get(spotifyArtistId));
+            }
+            if (spotifyArtistImageRequests.has(spotifyArtistId)) {
+              return spotifyArtistImageRequests.get(spotifyArtistId);
+            }
+
+            const profileUrl = `https://open.spotify.com/artist/${spotifyArtistId}`;
+            const proxyUrls = [
+              `https://r.jina.ai/http://open.spotify.com/artist/${spotifyArtistId}`,
+              `https://api.allorigins.win/raw?url=${encodeURIComponent(profileUrl)}`,
+              `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(profileUrl)}`
+            ];
+            const request = Promise.any(proxyUrls.map(async proxyUrl => {
+              const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 7000);
+              try {
+                const response = await fetch(proxyUrl, { signal: controller.signal, cache: 'no-store' });
+                if (!response.ok) throw new Error(`Artist profile proxy returned ${response.status}`);
+                const photos = extractSpotifyArtistProfileImages(await response.text());
+                if (!photos.length) throw new Error('No Spotify artist profile photos found');
+                return photos;
+              } finally {
+                clearTimeout(timeoutId);
+              }
+            })).then(photos => {
+              spotifyArtistImageCache.set(spotifyArtistId, photos);
+              return photos;
+            }).catch(error => {
+              console.info('[ArtistInfo] Additional Spotify profile photos unavailable:', error?.message || error);
+              return [];
+            }).finally(() => {
+              spotifyArtistImageRequests.delete(spotifyArtistId);
+            });
+
+            spotifyArtistImageRequests.set(spotifyArtistId, request);
+            return request;
+          }
+
+          function loadAdditionalSpotifyArtistImages(artistData, cleanKey, requestId) {
+            const spotifyArtistId = artistData.spotifyUrl?.match(/open\.spotify\.com\/artist\/([A-Za-z0-9]+)/)?.[1];
+            if (!spotifyArtistId) return;
+            fetchSpotifyArtistProfileImages(spotifyArtistId).then(photos => {
+              if (!photos.length) return;
+              artistData.images = [...new Set([...(artistData.images || []), ...photos])];
+              trackArtistInfoCache.set(cleanKey, artistData);
+              if (requestId !== artistRequestSequence) return;
+              currentArtistSlideImages = artistData.images;
+              currentArtistSlideIndex = 0;
+              renderArtistSlideshow();
+              startArtistSlideshowTimer();
+            });
+          }
 
         const BUNDLED_ARTISTS_INFO_DB = {
             "ilko": {
@@ -32021,23 +32129,50 @@ window.setLyricsStyle = function(style) {
             const dotsContainer = document.getElementById('artist-gallery-dots');
 
             if (!imgEl) return;
+          const renderId = ++artistSlideRenderId;
             const currentImg = currentArtistSlideImages[currentArtistSlideIndex];
             if (currentImg) {
                 imgEl.classList.add('opacity-0', 'scale-95');
                 if (bgEl) bgEl.classList.add('opacity-20');
-                setTimeout(() => {
+            const preloadedImage = new Image();
+            const revealImage = () => {
+              if (renderId !== artistSlideRenderId) return;
                     imgEl.src = currentImg;
                     if (bgEl) bgEl.src = currentImg;
-                    imgEl.classList.remove('opacity-0', 'scale-95');
-                    imgEl.classList.add('opacity-100', 'scale-100');
-                    if (bgEl) {
-                        bgEl.classList.remove('opacity-20');
-                        bgEl.classList.add('opacity-40');
-                    }
-                }, 150);
+              requestAnimationFrame(() => {
+                if (renderId !== artistSlideRenderId) return;
+                imgEl.classList.remove('opacity-0', 'scale-95');
+                imgEl.classList.add('opacity-100', 'scale-100');
+                if (bgEl) {
+                  bgEl.classList.remove('opacity-20');
+                  bgEl.classList.add('opacity-40');
+                }
+              });
+            };
+            preloadedImage.onload = () => {
+              if (typeof preloadedImage.decode === 'function') {
+                preloadedImage.decode().then(revealImage, revealImage);
+              } else {
+                revealImage();
+              }
+            };
+            preloadedImage.onerror = () => {
+              if (renderId !== artistSlideRenderId) return;
+              imgEl.removeAttribute('src');
+              if (bgEl) bgEl.removeAttribute('src');
+              imgEl.classList.remove('opacity-0', 'scale-95');
+              if (bgEl) bgEl.classList.remove('opacity-20');
+            };
+            preloadedImage.src = currentImg;
             } else {
                 imgEl.removeAttribute('src');
                 if (bgEl) bgEl.removeAttribute('src');
+            imgEl.classList.remove('opacity-0', 'scale-95');
+            imgEl.classList.add('opacity-100', 'scale-100');
+            if (bgEl) {
+              bgEl.classList.remove('opacity-20');
+              bgEl.classList.add('opacity-40');
+            }
             }
 
             if (counterEl) {
@@ -32065,13 +32200,17 @@ window.setLyricsStyle = function(style) {
                 const profileImages = Array.isArray(bundledData.images)
                     ? bundledData.images.filter(url => /^https:\/\/i\.scdn\.co\/image\/ab676161/i.test(url))
                     : [];
-                applyArtistData({ ...bundledData, images: profileImages });
+            const artistData = { ...bundledData, images: profileImages };
+            applyArtistData(artistData);
+            loadAdditionalSpotifyArtistImages(artistData, cleanKey, requestId);
                 return;
             }
 
             // 2. Prüfe Memory Cache
             if (trackArtistInfoCache.has(cleanKey)) {
-                applyArtistData(trackArtistInfoCache.get(cleanKey));
+            const artistData = trackArtistInfoCache.get(cleanKey);
+            applyArtistData(artistData);
+            loadAdditionalSpotifyArtistImages(artistData, cleanKey, requestId);
                 return;
             }
 
@@ -32091,13 +32230,21 @@ window.setLyricsStyle = function(style) {
                 spotifyUrl: null,
                 followersText: null
             };
+              let spotifyArtistId = null;
 
             try {
                 // A. stats.fm Artist Search API: Spotify-Kuenstlerdaten und Profilbild(er)
                 const statsFmPromise = (async () => {
                     try {
                         const sUrl = `https://api.stats.fm/api/v1/search?query=${encodeURIComponent(primaryArtist)}&type=artist`;
-                        const res = await fetch(sUrl);
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 5000);
+                        let res;
+                        try {
+                          res = await fetch(sUrl, { signal: controller.signal });
+                        } finally {
+                          clearTimeout(timeoutId);
+                        }
                         if (res.ok) {
                             const d = await res.json();
                             const artists = d?.items?.artists || [];
@@ -32110,28 +32257,9 @@ window.setLyricsStyle = function(style) {
                                 if (match.followers) {
                                     artistData.followersText = `${Number(match.followers).toLocaleString('de-DE')} Follower • Verifiziertes Spotify-Profil`;
                                 }
-                                const spotifyArtistId = match.externalIds?.spotify?.[0];
+                                spotifyArtistId = match.externalIds?.spotify?.[0] || null;
                                 if (spotifyArtistId) {
                                     artistData.spotifyUrl = `https://open.spotify.com/artist/${spotifyArtistId}`;
-                                    const controller = new AbortController();
-                                    const timeoutId = setTimeout(() => controller.abort(), 8000);
-                                    try {
-                                        const profileRes = await fetch(`https://r.jina.ai/http://open.spotify.com/artist/${spotifyArtistId}`, { signal: controller.signal });
-                                        if (profileRes.ok) {
-                                            const profileText = await profileRes.text();
-                                            const knownPhotoIds = new Set(artistData.images.map(url => url.slice(-24)));
-                                            extractSpotifyArtistProfileImages(profileText).forEach(imageUrl => {
-                                                const photoId = imageUrl.slice(-24);
-                                                if (!knownPhotoIds.has(photoId)) {
-                                                    knownPhotoIds.add(photoId);
-                                                    artistData.images.push(imageUrl);
-                                                }
-                                            });
-                                        }
-                                    } catch (_) {
-                                    } finally {
-                                        clearTimeout(timeoutId);
-                                    }
                                 }
                                 if (match.genres?.length && !artistData.genre) {
                                     artistData.genre = match.genres[0].charAt(0).toUpperCase() + match.genres[0].slice(1);
@@ -32221,7 +32349,17 @@ window.setLyricsStyle = function(style) {
                     } catch (_) {}
                 })();
 
-                await Promise.allSettled([statsFmPromise, wikiPromise, itunesPromise]);
+                await statsFmPromise;
+                if (requestId !== artistRequestSequence) return;
+                if (!artistData.bio) {
+                  const statsInfo = artistData.followersText ? ` mit ${artistData.followersText}` : '';
+                  artistData.bio = `${artistName} ist ein verifizierter Musik-Künstler auf Spotify${statsInfo}. Entdecke die offiziellen Singles, Alben und Diskografie direkt auf Spotify oder Apple Music.`;
+                }
+                trackArtistInfoCache.set(cleanKey, artistData);
+                applyArtistData(artistData);
+                loadAdditionalSpotifyArtistImages(artistData, cleanKey, requestId);
+
+                await Promise.allSettled([wikiPromise, itunesPromise]);
 
                 if (!artistData.bio) {
                     const statsInfo = artistData.followersText ? ` mit ${artistData.followersText}` : '';

@@ -1,9 +1,9 @@
 {
-  "version": "24.225.37",
-  "buildTime": "2026-10-30T12:00:00.000Z",
+  "version": "24.225.39",
+  "buildTime": "2026-10-30T12:16:44.000Z",
   "shortNotes": [
-    "QA-Update: Spotify-Künstlergalerien zeigen alle verfügbaren offiziellen Profilfotos ohne 12-Bilder-Limit",
-    "Lyrics-Animationen auf Smartphones laufen mit reduzierter Last; Füllblitz und Silben-Timing wurden korrigiert",
-    "Canvas-, Sync-, iOS-Safe-Area- und CSS-Kompatibilitätsfixes"
+    "Apple Music Pro ist jetzt der Standard-Lyrics-Stil auf Geräten ohne Low-End-Modus",
+    "Artist-Avatare erscheinen sofort; Spotify-Profilfotos laden mit Proxy-Fallback und sichtbarer Galerie-Animation",
+    "Die Standard-Füllanimation ist weniger grell; alte automatische Fill-Defaults werden einmalig migriert"
   ]
 }
