@@ -7,11 +7,11 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
-    [BUGFIX] Release v24.225.39 · 2026-10-30: Artist-First-Paint, sichtbare Galerie-Fades und weniger grelle Lyrics-Füllanimation
+    [BUGFIX] Release v24.225.40 · 2026-10-30: Artist-First-Paint, sichtbare Galerie-Fades und weniger grelle Lyrics-Füllanimation
       - Artist-Avatar wird direkt aus stats.fm angezeigt; vollständige Spotify-Profilbilder werden mit Cache und mehreren Proxy-Fallbacks nachgeladen.
       - Galerie blendet nach erfolgreichem Bild-Decode ein und verwirft veraltete Lade-Callbacks.
       - Klassischer Fill-Stil nutzt gedämpfte Farben; alte automatisch gespeicherte Fill-Defaults wechseln einmalig zu Apple Music Pro.
-      - Version v24.225.39 ist mit Service Worker, Footer und Update-Watcher synchronisiert.
+      - Version v24.225.40 ist mit Service Worker, Footer und Update-Watcher synchronisiert.
     [FEATURE] Release v24.225.38 · 2026-10-30: Apple Music Pro als Standard-Lyrics-Stil außerhalb des Low-End-Modus
       - Erststarts ohne gespeicherte Stilwahl verwenden Apple Music Pro auf normalen Geräten und den sparsamen Fill-Stil im Low-End-Modus.
       - Gespeicherte persönliche Lyrics-Stile bleiben unverändert erhalten.
@@ -3351,7 +3351,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.225.39 · 2026-10-30';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.225.40 · 2026-10-30';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -6043,9 +6043,11 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
            gesetzt - dort ist es tatsächlich nötig (max. 1 Wort gleichzeitig aktiv). */
         .lyric-word { position: relative; display: inline-block; margin-right: 0; white-space: nowrap; font-size: 14px; font-size: clamp(0.75rem, 4vw, 2.2rem); font-weight: 800; letter-spacing: -0.02em; transition: color 0.1s linear, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), text-shadow 0.1s linear, filter 0.1s linear, opacity 0.1s linear; }
         .lyric-word.word-active { will-change: transform, opacity, color; }
-        .lyrics-style-fill .lyric-word { background: linear-gradient(90deg, rgba(148, 163, 184, 0.38) 0%, rgba(148, 163, 184, 0.38) min(var(--fill-percent, 0%), 90%), #38bdf8 min(calc(var(--fill-percent, 0%) + 4%), 95%), rgba(56, 189, 248, 0.35) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .lyrics-style-fill .lyric-word.word-passed { background: none; color: rgba(203, 213, 225, 0.68); -webkit-text-fill-color: rgba(203, 213, 225, 0.68); }
-        .lyrics-style-fill .lyric-word.word-fill-complete { background: none; color: #7dd3fc; -webkit-text-fill-color: #7dd3fc; }
+        .lyrics-style-fill .lyric-word { background: linear-gradient(90deg, #ffffff 0%, #ffffff min(var(--fill-percent, 0%), 90%), rgba(255, 255, 255, 0.78) min(calc(var(--fill-percent, 0%) + 4%), 95%), rgba(255, 255, 255, 0.24) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .lyrics-style-fill .lyric-word:not(.word-active):not(.word-passed):not(.word-fill-complete) { background: none; color: rgba(255, 255, 255, 0.24); -webkit-text-fill-color: rgba(255, 255, 255, 0.24); }
+        .lyrics-style-fill .lyric-word.word-passed, .lyrics-style-fill .lyric-word.word-fill-complete { background: none; color: #ffffff; -webkit-text-fill-color: #ffffff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.28); }
+        @keyframes artistKenBurns { 0% { transform: scale(1) translate3d(0, 0, 0); } 50% { transform: scale(1.045) translate3d(0, -2px, 0); } 100% { transform: scale(1) translate3d(0, 0, 0); } }
+        #artist-gallery-img.artist-slide-animate { animation: artistKenBurns 6.4s ease-in-out infinite; }
         body.low-end .lyrics-style-applemusic .lyric-word,
         body.low-end .lyrics-style-applemusicpro .lyric-word {
             background: linear-gradient(90deg, #ffffff 0%, #ffffff var(--fill-percent, 0%), rgba(255, 255, 255, 0.75) calc(var(--fill-percent, 0%) + 4%), rgba(255, 255, 255, 0.28) calc(var(--fill-percent, 0%) + 10%));
@@ -9081,7 +9083,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.39</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.40</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -9118,7 +9120,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.39 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.39 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.40 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.40 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -10440,10 +10442,10 @@ html.gp-android:not(.dark) #ui-controls {
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/30 pointer-events-none z-10"></div>
                 
                 <!-- Diashow Navigations-Pfeile -->
-                <button onclick="prevArtistSlide(event)" class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/65 hover:bg-black/90 text-white/90 hover:text-white flex items-center justify-center border border-white/20 opacity-0 group-hover:opacity-100 transition-all shadow-lg active:scale-90 hover:scale-110 z-20" title="Vorheriges Foto">
+                <button id="artist-prev-btn" onclick="prevArtistSlide(event)" class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/65 hover:bg-black/90 text-white/90 hover:text-white flex items-center justify-center border border-white/20 opacity-85 hover:opacity-100 transition-all shadow-lg active:scale-90 hover:scale-110 z-20" title="Vorheriges Foto">
                     ‹
                 </button>
-                <button onclick="nextArtistSlide(event)" class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/65 hover:bg-black/90 text-white/90 hover:text-white flex items-center justify-center border border-white/20 opacity-0 group-hover:opacity-100 transition-all shadow-lg active:scale-90 hover:scale-110 z-20" title="Nächstes Foto">
+                <button id="artist-next-btn" onclick="nextArtistSlide(event)" class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/65 hover:bg-black/90 text-white/90 hover:text-white flex items-center justify-center border border-white/20 opacity-85 hover:opacity-100 transition-all shadow-lg active:scale-90 hover:scale-110 z-20" title="Nächstes Foto">
                     ›
                 </button>
 
@@ -14620,7 +14622,7 @@ html.gp-android:not(.dark) #ui-controls {
                         }
                 }
             }
-                    // Word-level stepper (word by word)
+                    // Word-level stepper (word by word with smooth progressive fill sweep)
                     function tickWordStep(step) {
                       for (let wi = 0; wi < totalWords; wi++) {
                         const wSpan = document.getElementById(`prev-word-${wi}`);
@@ -14628,22 +14630,24 @@ html.gp-android:not(.dark) #ui-controls {
                         if (step < totalWords) {
                           if (wi < step) {
                             wSpan.classList.remove('word-active');
-                            wSpan.classList.add('word-passed');
+                            wSpan.classList.add('word-passed', 'word-fill-complete');
                             wSpan.style.setProperty('--fill-percent', '100%');
                           } else if (wi === step) {
-                            wSpan.classList.remove('word-passed');
+                            wSpan.classList.remove('word-passed', 'word-fill-complete');
                             wSpan.classList.add('word-active');
-                            wSpan.style.setProperty('--fill-percent', '100%');
+                            wSpan.style.setProperty('--fill-percent', '28%');
+                            setTimeout(() => { if (wSpan.classList.contains('word-active')) wSpan.style.setProperty('--fill-percent', '68%'); }, 150);
+                            setTimeout(() => { if (wSpan.classList.contains('word-active')) wSpan.style.setProperty('--fill-percent', '100%'); }, 310);
                           } else {
-                            wSpan.classList.remove('word-active', 'word-passed');
+                            wSpan.classList.remove('word-active', 'word-passed', 'word-fill-complete');
                             wSpan.style.setProperty('--fill-percent', '0%');
                           }
                         } else if (step === totalWords) {
                           wSpan.classList.remove('word-active');
-                          wSpan.classList.add('word-passed');
+                          wSpan.classList.add('word-passed', 'word-fill-complete');
                           wSpan.style.setProperty('--fill-percent', '100%');
                         } else {
-                          wSpan.classList.remove('word-active', 'word-passed');
+                          wSpan.classList.remove('word-active', 'word-passed', 'word-fill-complete');
                           wSpan.style.setProperty('--fill-percent', '0%');
                         }
                       }
@@ -16060,14 +16064,11 @@ html.gp-android:not(.dark) #ui-controls {
                 applyPerformanceMode(true);
             }
         }
-        const lyricsStyleMigrationKey = 'lyricsStyleDefaultMigration_v24.225.38';
-        const hasMigratedLegacyFill = AppStorage.getItem(lyricsStyleMigrationKey) === 'true';
         const isLowEndLyricsMode = document.body.classList.contains('low-end');
-        if (!savedLyricsStyle || (savedLyricsStyle === 'fill' && !hasMigratedLegacyFill && !isLowEndLyricsMode)) {
+        if (!savedLyricsStyle) {
             currentLyricsStyle = isLowEndLyricsMode ? 'fill' : 'applemusicpro';
             AppStorage.setItem('lyricsStyle', currentLyricsStyle);
         }
-        AppStorage.setItem(lyricsStyleMigrationKey, 'true');
         function runPerfSelfTest() {
             // FIX v24.125: Automatischen nervigen Toast komplett deaktiviert (Nutzerwunsch: "will man nicht immer sehen").
             // Low-End-Modus bleibt oben rechts manuell schaltbar, falls jemand ihn aktiv aktivieren möchte.
@@ -19415,7 +19416,7 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
-        { version: "v24.225.39", date: "30. Oktober 2026", type: "fix", items: {
+        { version: "v24.225.40", date: "30. Oktober 2026", type: "fix", items: {
           de: [
             "🖼️ Artist-Avatare erscheinen sofort; zusätzliche Spotify-Profilfotos werden im Hintergrund mit Proxy-Fallback geladen",
             "✨ Artist-Fotos blenden nach erfolgreichem Laden weich ein und bleiben beim Wechsel nicht mehr leer",
@@ -28141,7 +28142,9 @@ window.setLyricsStyle = function(style) {
                         hasTriggeredSongEndFetch = true;
                         isHuntingForNextTrack = true;
                         songTransitionStartedAt = Date.now();
-                        // Der reguläre 5s-Scheduler fragt den neuen Song geordnet ab ohne API-Spam
+                        if (typeof scheduleNextMusicPoll === 'function') {
+                            scheduleNextMusicPoll(600);
+                        }
                     }
                 } else if (currentMs < totalMs - 3000) {
                     hasTriggeredSongEndFetch = false;
@@ -29524,14 +29527,14 @@ window.setLyricsStyle = function(style) {
         // hinweg, auch wenn Schreibweisen wie 'feat.', 'with', Radio Edit oder Zusatzkünstler leicht abweichen.
         function isSameSongTrack(titleA, artistA, idA, titleB, artistB, idB) {
             if (!titleA || !titleB) return false;
-            const sIdA = (idA && !String(idA).includes('|')) ? String(idA).trim() : '';
-            const sIdB = (idB && !String(idB).includes('|')) ? String(idB).trim() : '';
-            if (sIdA && sIdB && sIdA === sIdB) return true;
-
             const normT1 = normLyricsStr(titleA);
             const normT2 = normLyricsStr(titleB);
             if (!normT1 || !normT2) return false;
             if (normT1 !== normT2 && !normT1.includes(normT2) && !normT2.includes(normT1)) return false;
+
+            const sIdA = (idA && !String(idA).includes('|')) ? String(idA).trim() : '';
+            const sIdB = (idB && !String(idB).includes('|')) ? String(idB).trim() : '';
+            if (sIdA && sIdB && sIdA === sIdB) return true;
 
             const normA1 = normLyricsStr(artistA || '');
             const normA2 = normLyricsStr(artistB || '');
@@ -30795,8 +30798,13 @@ window.setLyricsStyle = function(style) {
                     // Bei echtem Songwechsel vorherige Songtexte IMMER restlos leeren!
                     parsedLyrics = [];
                     currentLyricIndex = -1;
+                    currentLeadInIndex = -1;
+                    parallelLyricIndex = -1;
                     currentLyricsProvider = "";
                     currentLyricsWriter = "";
+                    if (lyricsContainer) {
+                        lyricsContainer.scrollTop = 0;
+                    }
                     if (hasSyncedInCache) {
                         // Neuen Songtext direkt aus dem Cache oder der Bundled-DB laden und rendern
                         currentLyricsProvider = cachedLyricsEntry.provider || "LRCLIB";
@@ -30861,9 +30869,10 @@ window.setLyricsStyle = function(style) {
                     currentNoLyricsMessage = fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
                 }
                 // AUTOMATISCHER FETCH:
-                // Ausschließlich am Anfang eines neuen Songs einmalig laden.
-                if (lyricsNeedFetch) {
-                    fetchExternalLyrics(trackTitle, cleanArtist, trackDuration, false);
+                // Am Anfang jedes neuen Songs sofort nach dem neuen Songtext suchen (insb. bei geöffneten Lyrics).
+                const isLyricsPanelCurrentlyOpen = Boolean(mainMusicCard && mainMusicCard.classList.contains('lyrics-open'));
+                if (lyricsNeedFetch || (isNewTrack && !hasLyricsInCache)) {
+                    fetchExternalLyrics(trackTitle, cleanArtist, trackDuration, isNewTrack && isLyricsPanelCurrentlyOpen);
                 }
                 if (!isNewTrack) {
                     if (!trackIsPlaying && isPlaying) {
@@ -30902,10 +30911,10 @@ window.setLyricsStyle = function(style) {
                         let absDrift = Math.abs(drift);
                         const songEndedLocally = trackIsPlaying && totalMs > 0 && (currentMs >= totalMs || expectedLocalProgress >= totalMs);
                         const newProgressVal = apiProgress + addedDelay;
-                        const apiWentBackward = previousApiProgress >= 0 && newProgressVal < previousApiProgress - 3000;
+                        const apiWentBackward = previousApiProgress >= 0 && newProgressVal < previousApiProgress - 5000;
                         const isLegitRepeatOrSeek = (
-                            (songEndedLocally && newProgressVal < Math.max(25000, totalMs * 0.4)) ||
-                            apiWentBackward
+                            (songEndedLocally && newProgressVal < 15000 && previousApiProgress > 25000) ||
+                            (!songEndedLocally && apiWentBackward)
                         );
                         if (window.isForceMusicSync || isLegitRepeatOrSeek) {
                             serverBaseProgress = newProgressVal;
@@ -31106,7 +31115,7 @@ window.setLyricsStyle = function(style) {
                 if (sameTrack) {
                     // Beide Plattformen sind synchron auf demselben Track:
                     // Wir nutzen den hochpräzisen Spotify-Cloud-Progress von stats.fm und reichern ihn mit NPC-Metadaten an.
-                    const merged = { ...statsFmData };
+                    const merged = { ...statsFmData, track: { ...statsFmData.track } };
                     if (npcData.track.platform_links) merged.track.platform_links = npcData.track.platform_links;
                     if (npcData.track.track_url) merged.track.track_url = npcData.track.track_url;
                     if (npcData.track.canvas_url || npcData.track.canvasUrl) merged.track.canvas_url = npcData.track.canvas_url || npcData.track.canvasUrl;
@@ -31129,8 +31138,7 @@ window.setLyricsStyle = function(style) {
 
                     if (statsMatchesPrevious && !npcMatchesPrevious) {
                         // stats.fm hängt noch auf dem alten, beendeten Song -> NPC hat die Führung!
-                        const merged = { ...npcData, source: 'npc' };
-                    if (statsFmData?.track?.spotifyId) merged.track.spotifyId = statsFmData.track.spotifyId;
+                        const merged = { ...npcData, track: { ...npcData.track }, source: 'npc' };
                         if (npcData.timestamp && npcServerDate) {
                             const srvNow = new Date(npcServerDate).getTime();
                             const snapTime = new Date(npcData.timestamp).getTime();
@@ -31142,8 +31150,7 @@ window.setLyricsStyle = function(style) {
                         updateMusicUI(statsFmData, latency);
                     } else if (npcMatchesCurrent && !statsMatchesCurrent) {
                         // NPC ist bereits auf dem aktuellen Song, stats.fm ist noch woanders -> bei NPC bleiben!
-                        const merged = { ...npcData, source: 'npc' };
-                    if (statsFmData?.track?.spotifyId) merged.track.spotifyId = statsFmData.track.spotifyId;
+                        const merged = { ...npcData, track: { ...npcData.track }, source: 'npc' };
                         if (npcData.timestamp && npcServerDate) {
                             const srvNow = new Date(npcServerDate).getTime();
                             const snapTime = new Date(npcData.timestamp).getTime();
@@ -31155,8 +31162,7 @@ window.setLyricsStyle = function(style) {
                         updateMusicUI(statsFmData, latency);
                     } else {
                         // Komplett neuer Songwechsel (beide neu oder Erstanlauf) -> Standard-Auswahl
-                        const merged = { ...npcData, source: 'npc' };
-                    if (statsFmData?.track?.spotifyId) merged.track.spotifyId = statsFmData.track.spotifyId;
+                        const merged = { ...npcData, track: { ...npcData.track }, source: 'npc' };
                         if (npcData.timestamp && npcServerDate) {
                             const srvNow = new Date(npcServerDate).getTime();
                             const snapTime = new Date(npcData.timestamp).getTime();
@@ -31169,8 +31175,7 @@ window.setLyricsStyle = function(style) {
                 if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
                 return;
             } else if (npcPlaying) {
-                const merged = { ...npcData, source: 'npc' };
-                    if (statsFmData?.track?.spotifyId) merged.track.spotifyId = statsFmData.track.spotifyId;
+                const merged = { ...npcData, track: { ...npcData.track }, source: 'npc' };
                 if (npcData.timestamp && npcServerDate) {
                     const srvNow = new Date(npcServerDate).getTime();
                     const snapTime = new Date(npcData.timestamp).getTime();
@@ -31834,24 +31839,124 @@ window.setLyricsStyle = function(style) {
         const trackArtistInfoCache = new Map();
         const spotifyArtistImageCache = new Map();
         const spotifyArtistImageRequests = new Map();
+        const spotifyArtistBioCache = new Map();
         let currentArtistSlideImages = [];
         let currentArtistSlideIndex = 0;
         let artistSlideshowTimer = null;
         let artistSlideRenderId = 0;
 
         function extractSpotifyArtistProfileImages(source) {
-          const urls = String(source || '').match(/https?:\/\/i\.scdn\.co\/image\/ab676161[0-9a-f]{32}/gi) || [];
+          const rawStr = String(source || '');
+          // NIEMALS "Fans also like" (relatedArtists) oder "Discovered on" fremde Künstler-Avatare mitnehmen!
+          const cutoffPattern = /(?:##\s*\[?Fans also like\]?|##\s*\[?Ähnliche Künstler|##\s*\[?Discovered on\]?|"relatedArtists"|"relatedContent")/i;
+          const cutoffMatch = rawStr.search(cutoffPattern);
+          const safeSource = cutoffMatch !== -1 ? rawStr.slice(0, cutoffMatch) : rawStr;
+          const isFullProfilePage = safeSource.length > 400 || /open\.spotify\.com\/artist\//i.test(safeSource);
+
           const photos = new Map();
-          urls.forEach(url => {
-            const match = url.match(/ab676161[0-9a-f]{8}([0-9a-f]{24})$/i);
+          const addPhoto = (hashKey, url, quality) => {
+            const existing = photos.get(hashKey);
+            if (!existing || quality > existing.quality) {
+              photos.set(hashKey, { url, quality });
+            }
+          };
+
+          // 1. Echte Spotify-Profil-Avatare (ab676161) -> nur vor dem "Fans also like" Cutoff, bevorzugt in 640x640 (0000e5eb)
+          const avatarMatches = safeSource.match(/https?:\/\/i\.scdn\.co\/image\/ab676161[0-9a-f]{32}/gi) || [];
+          avatarMatches.forEach(url => {
+            const match = url.match(/ab676161([0-9a-f]{8})([0-9a-f]{24})$/i);
             if (match) {
-              const variant = url.match(/ab676161([0-9a-f]{8})/i)?.[1]?.toLowerCase();
+              const variant = match[1].toLowerCase();
+              const hash = match[2].toLowerCase();
               const quality = variant === '0000e5eb' ? 3 : variant === '0000939b' ? 2 : 1;
-              const existing = photos.get(match[1]);
-              if (!existing || quality > existing.quality) photos.set(match[1], { url, quality });
+              const hiResUrl = isFullProfilePage ? `https://i.scdn.co/image/ab6761610000e5eb${hash}` : url;
+              addPhoto('6161_' + hash, hiResUrl, isFullProfilePage ? 3 : quality);
             }
           });
+
+          // 2. Offizielle Spotify "About"-Galerie-Fotos (ab676167) & Header-Banner (ab676186) & Artist Pick (ab676170)
+          const galleryAndHeaderMatches = safeSource.match(/https?:\/\/(?:i\.scdn\.co|image-cdn-[a-z0-9-]+\.spotifycdn\.com)\/image\/ab67(?:6167|6186|6170|706c)[0-9a-f]{24,32}/gi) || [];
+          galleryAndHeaderMatches.forEach(url => {
+            const cleanUrl = url.trim();
+            const tail = cleanUrl.slice(-24).toLowerCase();
+            addPhoto('gal_' + tail, cleanUrl, 3);
+          });
+
+          // 3. Auf echten Spotify-Künstlerseiten zusätzlich alle dort gelisteten Künstler-Release-Bilder (ab67616d in 640x640 0000b273) aufnehmen
+          if (isFullProfilePage) {
+            const releaseMatches = safeSource.match(/https?:\/\/i\.scdn\.co\/image\/ab67616d[0-9a-f]{32}/gi) || [];
+            releaseMatches.forEach(url => {
+              const match = url.match(/ab67616d([0-9a-f]{8})([0-9a-f]{24})$/i);
+              if (match) {
+                const hash = match[2].toLowerCase();
+                addPhoto('616d_' + hash, `https://i.scdn.co/image/ab67616d0000b273${hash}`, 2);
+              }
+            });
+          }
+
           return Array.from(photos.values(), photo => photo.url);
+        }
+
+        async function fetchSpotifyPathfinderArtistOverview(spotifyArtistId) {
+          if (typeof fetch !== 'function' || !spotifyArtistId) return [];
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6500);
+          try {
+            const embedRes = await fetch(`https://r.jina.ai/https://open.spotify.com/embed/artist/${spotifyArtistId}`, {
+              headers: { 'X-Return-Format': 'html' },
+              signal: controller.signal,
+              cache: 'no-store'
+            });
+            if (!embedRes || !embedRes.ok) return [];
+            const embedHtml = await embedRes.text();
+            const tokenMatch = embedHtml.match(/"accessToken":"([^"]+)"/);
+            if (!tokenMatch || !tokenMatch[1]) return [];
+            const variables = JSON.stringify({ uri: `spotify:artist:${spotifyArtistId}`, locale: '' });
+            const extensions = JSON.stringify({ persistedQuery: { version: 1, sha256Hash: '35648a112beb1794e39ab931365f6ae4a8d45e65396d641eeda94e4003d41497' } });
+            const pfUrl = `https://api-partner.spotify.com/pathfinder/v1/query?operationName=queryArtistOverview&variables=${encodeURIComponent(variables)}&extensions=${encodeURIComponent(extensions)}`;
+            const pfRes = await fetch(pfUrl, {
+              headers: { 'Authorization': `Bearer ${tokenMatch[1]}` },
+              signal: controller.signal,
+              cache: 'no-store'
+            });
+            if (!pfRes || !pfRes.ok) return [];
+            const pfJson = await pfRes.json();
+            const union = pfJson?.data?.artistUnion;
+            if (!union) return [];
+
+            if (union.profile?.biography?.text) {
+              const plainBio = String(union.profile.biography.text).replace(/<[^>]+>/g, '').trim();
+              if (plainBio) spotifyArtistBioCache.set(spotifyArtistId, plainBio);
+            }
+
+            const collected = [];
+            const pushBestSource = (sources) => {
+              if (!Array.isArray(sources) || !sources.length) return;
+              const sorted = sources.slice().sort((a, b) => (Number(b?.width) || 0) - (Number(a?.width) || 0));
+              if (sorted[0]?.url) collected.push(sorted[0].url);
+            };
+
+            pushBestSource(union.visuals?.avatarImage?.sources);
+            if (Array.isArray(union.visuals?.gallery?.items)) {
+              union.visuals.gallery.items.forEach(item => pushBestSource(item?.sources));
+            }
+            pushBestSource(union.visuals?.headerImage?.sources);
+            pushBestSource(union.profile?.pinnedItem?.thumbnailImage?.sources);
+            pushBestSource(union.profile?.pinnedItem?.backgroundImageV2?.sources);
+
+            const releaseGroups = [
+              ...(union.discography?.popularReleasesAlbums?.items || []),
+              ...(union.discography?.singles?.items?.flatMap(g => g?.releases?.items || []) || []),
+              ...(union.discography?.albums?.items?.flatMap(g => g?.releases?.items || []) || [])
+            ];
+            releaseGroups.forEach(rel => pushBestSource(rel?.coverArt?.sources));
+
+            return [...new Set(collected.filter(Boolean))];
+          } catch (_) {
+            return [];
+          } finally {
+            clearTimeout(timeoutId);
+          }
         }
 
           function fetchSpotifyArtistProfileImages(spotifyArtistId) {
@@ -31868,9 +31973,9 @@ window.setLyricsStyle = function(style) {
               `https://api.allorigins.win/raw?url=${encodeURIComponent(profileUrl)}`,
               `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(profileUrl)}`
             ];
-            const request = Promise.any(proxyUrls.map(async proxyUrl => {
+            const proxyPromise = Promise.any(proxyUrls.map(async proxyUrl => {
               const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 7000);
+              const timeoutId = setTimeout(() => controller.abort(), 7000);
               try {
                 const response = await fetch(proxyUrl, { signal: controller.signal, cache: 'no-store' });
                 if (!response.ok) throw new Error(`Artist profile proxy returned ${response.status}`);
@@ -31880,9 +31985,25 @@ window.setLyricsStyle = function(style) {
               } finally {
                 clearTimeout(timeoutId);
               }
-            })).then(photos => {
-              spotifyArtistImageCache.set(spotifyArtistId, photos);
+            }));
+
+            const pathfinderPromise = fetchSpotifyPathfinderArtistOverview(spotifyArtistId).then(photos => {
+              if (!photos.length) throw new Error('No Pathfinder artist overview photos');
               return photos;
+            });
+
+            const request = Promise.allSettled([pathfinderPromise, proxyPromise]).then(results => {
+              const merged = [];
+              results.forEach(res => {
+                if (res.status === 'fulfilled' && Array.isArray(res.value)) {
+                  merged.push(...res.value);
+                }
+              });
+              const uniquePhotos = [...new Set(merged.filter(Boolean))];
+              if (uniquePhotos.length) {
+                spotifyArtistImageCache.set(spotifyArtistId, uniquePhotos);
+              }
+              return uniquePhotos;
             }).catch(error => {
               console.info('[ArtistInfo] Additional Spotify profile photos unavailable:', error?.message || error);
               return [];
@@ -31899,11 +32020,20 @@ window.setLyricsStyle = function(style) {
             if (!spotifyArtistId) return;
             fetchSpotifyArtistProfileImages(spotifyArtistId).then(photos => {
               if (!photos.length) return;
+              const prevCount = Array.isArray(artistData.images) ? artistData.images.length : 0;
               artistData.images = [...new Set([...(artistData.images || []), ...photos])];
+              const pfBio = spotifyArtistBioCache.get(spotifyArtistId);
+              if (pfBio && (!artistData.bio || artistData.bio.includes('Entdecke die offiziellen Singles'))) {
+                artistData.bio = pfBio;
+                const bioEl = document.getElementById('artist-modal-bio');
+                if (bioEl && requestId === artistRequestSequence) bioEl.innerText = pfBio;
+              }
               trackArtistInfoCache.set(cleanKey, artistData);
               if (requestId !== artistRequestSequence) return;
               currentArtistSlideImages = artistData.images;
-              currentArtistSlideIndex = 0;
+              if (currentArtistSlideIndex >= currentArtistSlideImages.length || prevCount === 0) {
+                currentArtistSlideIndex = 0;
+              }
               renderArtistSlideshow();
               startArtistSlideshowTimer();
             });
@@ -31917,21 +32047,25 @@ window.setLyricsStyle = function(style) {
                 origin: "2.178 Follower • 6.713 monatliche Hörer*innen",
                 bio: "ILKO is a finalist of The Voice Kids 2026, 2nd place winner at Sanremo Junior 2025, and a finalist of the Eurovision National Selection 2024. Despite his young age, he already performs confidently on international stages, captivating audiences with his original songs, powerful voice, and magnetic energy. His music is honest, emotional, and full of drive — connecting people and inspiring young listeners to believe in themselves, set bold goals, and follow their own path. ILKO has a clear mission: to make the world a better place through music and inspire a new generation to dream big and stay real.\n\nThis is just the beginning.",
                 images: [
-                    "https://i.scdn.co/image/ab6761610000e5eb161e04f848e2b5413fe61b84", // 640x640 Spotify Artist Avatar (Original Spotify-Profil)
-                    "https://i.scdn.co/image/ab67616d0000b2732e8054501db584c0923aec65", // Faster Than Light (Spotify CDN)
-                    "https://i.scdn.co/image/ab67616d0000b273f9126d8611311f0f49c8f66a", // I Never Lose (Spotify CDN)
-                    "https://i.scdn.co/image/ab67616d0000b2738b2dbe815acbb16978b27c6c", // Turn It Up (Spotify CDN)
-                    "https://i.scdn.co/image/ab67616d0000b273ecb1d4aca2f70adbf71fb551", // Unfollowed (Spotify CDN)
-                    "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/2e/33/8d/2e338d9f-df78-0fbd-83c5-392d7d6736ed/859745836326_cover.jpg/1000x1000bb.jpg", // Tell Me (Studio-Foto)
-                    "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ba/78/d7/ba78d7ea-3354-8447-2f52-764e79df9594/859740010165_cover.jpg/1000x1000bb.jpg", // Hold the Light (Porträt)
-                    "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/35/18/38/351838d6-7120-f2e7-33e1-a0c6fb2785c7/859796733971_cover.jpg/1000x1000bb.jpg"  // One Step at a Time
+                    "https://i.scdn.co/image/ab6761610000e5eb161e04f848e2b5413fe61b84", // Offizielles Spotify-Profilbild (Avatar 640x640)
+                    "https://i.scdn.co/image/ab6761670000ecd4687b5b8707a7fbca1f937926", // Offizielles Spotify-"About"-Galerie-Foto (640x640)
+                    "https://i.scdn.co/image/ab6761860000101608ec5fec2affe08b77eabcb5", // Offizielles Spotify-Header-Banner (2660x1140)
+                    "https://i.scdn.co/image/ab6761700000c52caa013a94e585337342bb4b01", // Offizielles Spotify Artist-Pick Foto
+                    "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da844ee6d97a7fa277d3911c7b95", // This is ILKO (Spotify Profil-Playlist)
+                    "https://i.scdn.co/image/ab67616d0000b2734fe722615930440b5ec6f23e", // Tell Me (Spotify Release-Foto)
+                    "https://i.scdn.co/image/ab67616d0000b273f9126d8611311f0f49c8f66a", // I Never Lose (Spotify Release-Foto)
+                    "https://i.scdn.co/image/ab67616d0000b273ef9f83effeb6d5630e793848", // Hold the Light (Spotify Release-Foto)
+                    "https://i.scdn.co/image/ab67616d0000b2732e8054501db584c0923aec65", // Faster Than Light (Spotify Release-Foto)
+                    "https://i.scdn.co/image/ab67616d0000b2733235a26f218a680d160877d0", // One Step at a Time (Spotify Release-Foto)
+                    "https://i.scdn.co/image/ab67616d0000b2738b2dbe815acbb16978b27c6c", // Turn It Up (Spotify Release-Foto)
+                    "https://i.scdn.co/image/ab67616d0000b273ecb1d4aca2f70adbf71fb551"  // Unfollowed (Spotify Release-Foto)
                 ],
                 topTracks: [
                     { title: "I Never Lose", subtitle: "I Never Lose - Single", art: "https://i.scdn.co/image/ab67616d0000b273f9126d8611311f0f49c8f66a", trackUrl: "https://open.spotify.com/search/ILKO%20I%20Never%20Lose" },
                     { title: "Faster Than Light", subtitle: "Faster Than Light - Single", art: "https://i.scdn.co/image/ab67616d0000b2732e8054501db584c0923aec65", trackUrl: "https://open.spotify.com/search/ILKO%20Faster%20Than%20Light" },
                     { title: "Turn It Up", subtitle: "Turn It Up - Single", art: "https://i.scdn.co/image/ab67616d0000b2738b2dbe815acbb16978b27c6c", trackUrl: "https://open.spotify.com/search/ILKO%20Turn%20It%20Up" },
                     { title: "Unfollowed", subtitle: "Unfollowed - Single", art: "https://i.scdn.co/image/ab67616d0000b273ecb1d4aca2f70adbf71fb551", trackUrl: "https://open.spotify.com/search/ILKO%20Unfollowed" },
-                    { title: "One Step at a Time", subtitle: "One Step at a Time - Single", art: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/35/18/38/351838d6-7120-f2e7-33e1-a0c6fb2785c7/859796733971_cover.jpg/768x768bb.jpg", trackUrl: "https://open.spotify.com/search/ILKO%20One%20Step%20at%20a%20Time" }
+                    { title: "One Step at a Time", subtitle: "One Step at a Time - Single", art: "https://i.scdn.co/image/ab67616d0000b2733235a26f218a680d160877d0", trackUrl: "https://open.spotify.com/search/ILKO%20One%20Step%20at%20a%20Time" }
                 ],
                 spotifyUrl: "https://open.spotify.com/artist/5rsvzcAhQMySGItH0IOd4z",
                 wikiUrl: null
@@ -31943,13 +32077,13 @@ window.setLyricsStyle = function(style) {
                 origin: "Trofors, Norwegen • Aktiv seit 2012",
                 bio: "Marcus und Martinus Gunnarsen (* 21. Februar 2002 in Elverum, Norwegen) sind ein international gefeiertes norwegisches Pop-Duo. Bekannt wurden die Zwillingsbrüder durch ihren Sieg beim Melodi Grand Prix Junior (2012) und Megahits wie 'Elektrisk', 'Heartbeat' und 'Girls'. 2024 gewannen sie das schwedische Melodifestivalen und vertraten Schweden beim Eurovision Song Contest mit 'Unforgettable'.",
                 images: [
-                    "https://i.scdn.co/image/ab6761610000e5eb8d6b3fc0af95b43747b0f166", // 640x640 Spotify Artist Avatar
-                    "https://upload.wikimedia.org/wikipedia/commons/a/a4/Marcus_%26_Martinus_01_%28cropped%29.jpg",
-                    "https://upload.wikimedia.org/wikipedia/commons/e/ea/Marcus_%26_Martinus_in_2024.jpg",
-                    "https://upload.wikimedia.org/wikipedia/commons/6/65/Marcus_%26_Martinus_Eurovision_2024_02.jpg",
-                    "https://i.scdn.co/image/ab67616d0000b273c7413771a2f36990d4c79fce",
-                    "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/bf/f4/bf/bff4bf53-7a13-8cfd-ce47-51c33b8a8b13/886446030128.jpg/600x600bb.jpg",
-                    "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/3b/04/2e/3b042e19-ffec-b1b0-638a-6db47e10d547/24UMGIM00229.rgb.jpg/600x600bb.jpg"
+                    "https://i.scdn.co/image/ab6761610000e5eb8d6b3fc0af95b43747b0f166", // Spotify Avatar
+                    "https://i.scdn.co/image/ab6761670000ecd406ce4dc70db7d071941f0fd3", // Spotify Galerie #1
+                    "https://i.scdn.co/image/ab6761670000ecd456f2c24868b6568fc48fe3d6", // Spotify Galerie #2
+                    "https://i.scdn.co/image/ab6761670000ecd40b6ee3cdc10ffeceb9d67c19", // Spotify Galerie #3
+                    "https://i.scdn.co/image/ab6761670000ecd498acfc3fa6d5b4dad4d6e61c", // Spotify Galerie #4
+                    "https://i.scdn.co/image/ab67618600001016059992ced23a427b3c3f6a01", // Spotify Header-Banner
+                    "https://i.scdn.co/image/ab67616d0000b273c7413771a2f36990d4c79fce"
                 ],
                 topTracks: [
                     { title: "Elektrisk", subtitle: "Together (2016)", art: "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/bf/f4/bf/bff4bf53-7a13-8cfd-ce47-51c33b8a8b13/886446030128.jpg/300x300bb.jpg" },
@@ -31958,7 +32092,7 @@ window.setLyricsStyle = function(style) {
                     { title: "Girls (feat. Madcon)", subtitle: "Together (2016)", art: "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/08/72/b2/0872b2ff-7c8c-769d-fc58-6a3399b84845/886446030128.jpg/300x300bb.jpg" },
                     { title: "Air", subtitle: "Air (2023)", art: "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/1e/8a/7e/1e8a7e08-9df5-aa84-5f8e-d9ea9825b2a0/23UM1IM02206.rgb.jpg/300x300bb.jpg" }
                 ],
-                spotifyUrl: "https://open.spotify.com/artist/551127180",
+                spotifyUrl: "https://open.spotify.com/artist/3N4FiTxpPQRsrihmTMN349",
                 wikiUrl: "https://de.wikipedia.org/wiki/Marcus_%26_Martinus"
             },
             "alan walker": {
@@ -31968,11 +32102,15 @@ window.setLyricsStyle = function(style) {
                 origin: "Bergen, Norwegen • Aktiv seit 2012",
                 bio: "Alan Olav Walker (* 24. August 1997 in Northampton, England) ist ein britisch-norwegischer Musikproduzent und DJ. Seinen weltweiten Durchbruch feierte er 2015 mit der Diamant-Single 'Faded'. Zu seinen weiteren Megahits zählen 'Alone', 'Sing Me to Sleep', 'The Spectre' und 'Darkside'.",
                 images: [
-                    "https://i.scdn.co/image/ab6761610000e5eb572a8eae56feae217f618078", // 640x640 Spotify Artist Avatar
-                    "https://upload.wikimedia.org/wikipedia/commons/e/e0/Alan_Walker_Stavernfestivalen_2017_%28231526%29.jpg",
-                    "https://upload.wikimedia.org/wikipedia/commons/5/53/Alan_Walker_Tinderbox_2017.jpg",
-                    "https://i.scdn.co/image/ab67616d0000b273883495a45c68c09e51556985",
-                    "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/7c/49/71/7c497120-7f28-cf16-c73e-3f7cb49514e0/886445657807.jpg/600x600bb.jpg"
+                    "https://i.scdn.co/image/ab6761610000e5eb572a8eae56feae217f618078", // Spotify Avatar
+                    "https://i.scdn.co/image/ab6761670000ecd425dca3e18a916f09b5c6e9b5", // Spotify Galerie #1
+                    "https://i.scdn.co/image/ab6761670000ecd425164923bdf8876f1bd4e55b", // Spotify Galerie #2
+                    "https://i.scdn.co/image/ab6761670000ecd47145333607578eb5c6caea1f", // Spotify Galerie #3
+                    "https://i.scdn.co/image/ab6761670000ecd4e6af41af7e930c532960d53a", // Spotify Galerie #4
+                    "https://i.scdn.co/image/ab6761670000ecd41b0422ac0f452d57e61c60e8", // Spotify Galerie #5
+                    "https://i.scdn.co/image/ab6761670000ecd452635d738353cb6a22fa81f4", // Spotify Galerie #6
+                    "https://i.scdn.co/image/ab67618600001016a81444a7133f22b9f4f70333", // Spotify Header-Banner
+                    "https://i.scdn.co/image/ab67616d0000b273883495a45c68c09e51556985"
                 ],
                 topTracks: [
                     { title: "Faded", subtitle: "Different World (2018)", art: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/7c/49/71/7c497120-7f28-cf16-c73e-3f7cb49514e0/886445657807.jpg/300x300bb.jpg" },
@@ -31989,15 +32127,17 @@ window.setLyricsStyle = function(style) {
                 origin: "Chichester, England",
                 bio: "Thomas 'Tom' Peter Odell (* 24. November 1990 in Chichester) ist ein britischer Singer-Songwriter und Pianist. Er wurde 2012 mit seinem zeitlosen Welthit 'Another Love' berühmt und gewann 2013 den prestigeträchtigen BRIT Critics' Choice Award.",
                 images: [
+                    "https://i.scdn.co/image/ab6761610000e5eb89633578648b0b51f53d167f", // Spotify Avatar
+                    "https://i.scdn.co/image/ab6761670000ecd4400daa4431e7854f9e77c6cf", // Spotify Galerie #1
+                    "https://i.scdn.co/image/ab676186000010167d9dded5860d3e6018c024a5", // Spotify Header-Banner
                     "https://upload.wikimedia.org/wikipedia/commons/7/7c/Tom_Odell-2140.jpg",
-                    "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/c3/91/36/c39136c1-ff37-a1e4-ee66-3d712217f0a9/886443834378.jpg/600x600bb.jpg",
-                    "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/9f/c7/2b/9fc72b38-2a81-d10d-2b4a-a434c38d3fe7/5056167179047_1.jpg/600x600bb.jpg"
+                    "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/c3/91/36/c39136c1-ff37-a1e4-ee66-3d712217f0a9/886443834378.jpg/600x600bb.jpg"
                 ],
                 topTracks: [
                     { title: "Another Love", subtitle: "Long Way Down (2013)", art: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/c3/91/36/c39136c1-ff37-a1e4-ee66-3d712217f0a9/886443834378.jpg/300x300bb.jpg" },
                     { title: "Black Friday", subtitle: "Black Friday (2024)", art: "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/9f/c7/2b/9fc72b38-2a81-d10d-2b4a-a434c38d3fe7/5056167179047_1.jpg/300x300bb.jpg" }
                 ],
-                spotifyUrl: "https://open.spotify.com/artist/2txHhyCwHjvuej6Ouw07wo",
+                spotifyUrl: "https://open.spotify.com/artist/2txHhyCwHjUEpJjWrEyqyX",
                 wikiUrl: "https://de.wikipedia.org/wiki/Tom_Odell"
             }
         };
@@ -32089,7 +32229,7 @@ window.setLyricsStyle = function(style) {
             if (currentArtistSlideImages.length > 1) {
                 artistSlideshowTimer = setInterval(() => {
                     nextArtistSlide();
-                }, 4500);
+                }, 3200);
             }
         }
 
@@ -32101,21 +32241,21 @@ window.setLyricsStyle = function(style) {
         }
 
         window.nextArtistSlide = function(e) {
-            if (e) { e.stopPropagation(); haptic(10); stopArtistSlideshowTimer(); }
+            if (e) { e.stopPropagation(); haptic(10); startArtistSlideshowTimer(); }
             if (currentArtistSlideImages.length <= 1) return;
             currentArtistSlideIndex = (currentArtistSlideIndex + 1) % currentArtistSlideImages.length;
             renderArtistSlideshow();
         };
 
         window.prevArtistSlide = function(e) {
-            if (e) { e.stopPropagation(); haptic(10); stopArtistSlideshowTimer(); }
+            if (e) { e.stopPropagation(); haptic(10); startArtistSlideshowTimer(); }
             if (currentArtistSlideImages.length <= 1) return;
             currentArtistSlideIndex = (currentArtistSlideIndex - 1 + currentArtistSlideImages.length) % currentArtistSlideImages.length;
             renderArtistSlideshow();
         };
 
         window.goToArtistSlide = function(idx, e) {
-            if (e) { e.stopPropagation(); haptic(10); stopArtistSlideshowTimer(); }
+            if (e) { e.stopPropagation(); haptic(10); startArtistSlideshowTimer(); }
             if (idx >= 0 && idx < currentArtistSlideImages.length) {
                 currentArtistSlideIndex = idx;
                 renderArtistSlideshow();
@@ -32132,6 +32272,7 @@ window.setLyricsStyle = function(style) {
           const renderId = ++artistSlideRenderId;
             const currentImg = currentArtistSlideImages[currentArtistSlideIndex];
             if (currentImg) {
+                imgEl.classList.remove('artist-slide-animate');
                 imgEl.classList.add('opacity-0', 'scale-95');
                 if (bgEl) bgEl.classList.add('opacity-20');
             const preloadedImage = new Image();
@@ -32142,7 +32283,7 @@ window.setLyricsStyle = function(style) {
               requestAnimationFrame(() => {
                 if (renderId !== artistSlideRenderId) return;
                 imgEl.classList.remove('opacity-0', 'scale-95');
-                imgEl.classList.add('opacity-100', 'scale-100');
+                imgEl.classList.add('opacity-100', 'scale-100', 'artist-slide-animate');
                 if (bgEl) {
                   bgEl.classList.remove('opacity-20');
                   bgEl.classList.add('opacity-40');
@@ -32158,16 +32299,24 @@ window.setLyricsStyle = function(style) {
             };
             preloadedImage.onerror = () => {
               if (renderId !== artistSlideRenderId) return;
+              if (currentArtistSlideImages.length > 1) {
+                currentArtistSlideImages.splice(currentArtistSlideIndex, 1);
+                if (currentArtistSlideIndex >= currentArtistSlideImages.length) {
+                  currentArtistSlideIndex = 0;
+                }
+                renderArtistSlideshow();
+                return;
+              }
               imgEl.removeAttribute('src');
               if (bgEl) bgEl.removeAttribute('src');
-              imgEl.classList.remove('opacity-0', 'scale-95');
+              imgEl.classList.remove('opacity-0', 'scale-95', 'artist-slide-animate');
               if (bgEl) bgEl.classList.remove('opacity-20');
             };
             preloadedImage.src = currentImg;
             } else {
                 imgEl.removeAttribute('src');
                 if (bgEl) bgEl.removeAttribute('src');
-            imgEl.classList.remove('opacity-0', 'scale-95');
+            imgEl.classList.remove('opacity-0', 'scale-95', 'artist-slide-animate');
             imgEl.classList.add('opacity-100', 'scale-100');
             if (bgEl) {
               bgEl.classList.remove('opacity-20');
@@ -32198,7 +32347,7 @@ window.setLyricsStyle = function(style) {
             if (BUNDLED_ARTISTS_INFO_DB[cleanKey]) {
                 const bundledData = BUNDLED_ARTISTS_INFO_DB[cleanKey];
                 const profileImages = Array.isArray(bundledData.images)
-                    ? bundledData.images.filter(url => /^https:\/\/i\.scdn\.co\/image\/ab676161/i.test(url))
+                    ? bundledData.images.filter(Boolean)
                     : [];
             const artistData = { ...bundledData, images: profileImages };
             applyArtistData(artistData);

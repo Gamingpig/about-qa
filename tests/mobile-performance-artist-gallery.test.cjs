@@ -7,20 +7,20 @@ const vm = require('node:vm');
 const appHtml = fs.readFileSync(path.join(__dirname, '../app.html'), 'utf8');
 const artistFetch = appHtml.slice(appHtml.indexOf('async function fetchArtistDetails'), appHtml.indexOf('function applyArtistData'));
 const artistSlideshow = appHtml.slice(appHtml.indexOf('function renderArtistSlideshow'), appHtml.indexOf('async function fetchArtistDetails'));
-const imageExtractorSource = appHtml.match(/function extractSpotifyArtistProfileImages\(source\) \{[\s\S]*?\n        \}/)?.[0];
-const profileFetcherSource = appHtml.match(/function fetchSpotifyArtistProfileImages\(spotifyArtistId\) \{[\s\S]*?\n        \}/)?.[0];
+const imageExtractorSource = appHtml.match(/function extractSpotifyArtistProfileImages\(source\) \{[\s\S]*?\r?\n        \}/)?.[0];
+const pathfinderSource = appHtml.match(/async function fetchSpotifyPathfinderArtistOverview\(spotifyArtistId\) \{[\s\S]*?\r?\n        \}/)?.[0];
+const profileFetcherSource = appHtml.match(/function fetchSpotifyArtistProfileImages\(spotifyArtistId\) \{[\s\S]*?\r?\n          \}/)?.[0];
 const extractSpotifyArtistProfileImages = vm.runInNewContext(`(${imageExtractorSource.trim()})`);
 
 describe('Mobile lyrics performance and Spotify artist gallery', () => {
-    it('defaults to Apple Music Pro unless low-end mode is enabled, preserving saved styles', () => {
+    it('defaults to Apple Music Pro unless low-end mode is enabled, preserving saved styles including fill', () => {
         assert.match(appHtml, /const savedLyricsStyle = AppStorage\.getItem\('lyricsStyle'\);/);
-        const migrationStart = appHtml.indexOf("const lyricsStyleMigrationKey = 'lyricsStyleDefaultMigration_v24.225.38';");
+        const migrationStart = appHtml.indexOf("const isLowEndLyricsMode = document.body.classList.contains('low-end');");
         const migrationEnd = appHtml.indexOf('function runPerfSelfTest()', migrationStart);
         const migrationSource = appHtml.slice(migrationStart, migrationEnd);
-        const initializeStyle = (savedStyle, lowEnd, migrated = false) => {
+        const initializeStyle = (savedStyle, lowEnd) => {
             const storage = new Map();
             if (savedStyle) storage.set('lyricsStyle', savedStyle);
-            if (migrated) storage.set('lyricsStyleDefaultMigration_v24.225.38', 'true');
             const context = {
                 savedLyricsStyle: savedStyle,
                 currentLyricsStyle: savedStyle || 'fill',
@@ -36,11 +36,21 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
 
         assert.deepEqual(initializeStyle(null, false), { style: 'applemusicpro', saved: 'applemusicpro' });
         assert.deepEqual(initializeStyle(null, true), { style: 'fill', saved: 'fill' });
-        assert.deepEqual(initializeStyle('fill', false), { style: 'applemusicpro', saved: 'applemusicpro' });
+        assert.deepEqual(initializeStyle('fill', false), { style: 'fill', saved: 'fill' });
         assert.deepEqual(initializeStyle('bounce', false), { style: 'bounce', saved: 'bounce' });
-        assert.deepEqual(initializeStyle('fill', false, true), { style: 'fill', saved: 'fill' });
         const fillRule = appHtml.match(/\.lyrics-style-fill \.lyric-word \{([^}]+)\}/)?.[1] || '';
-        assert.doesNotMatch(fillRule, /#fff|255,\s*255,\s*255/);
+        assert.match(fillRule, /#ffffff 0%, #ffffff min\(var\(--fill-percent, 0%\), 90%\)/);
+    });
+
+    it('detects song changes reliably even if a provider carries a stale spotifyId', () => {
+        const normSource = appHtml.match(/function normLyricsStr\(s\) \{[\s\S]*?\r?\n        \}/)?.[0];
+        const sameSongSource = appHtml.match(/function isSameSongTrack\(titleA, artistA, idA, titleB, artistB, idB\) \{[\s\S]*?\r?\n        \}/)?.[0];
+        const isSameSongTrack = vm.runInNewContext(`(() => { ${normSource}; ${sameSongSource}; return isSameSongTrack; })()`);
+
+        assert.equal(isSameSongTrack('I Never Lose', 'ILKO', 'sp123', 'Faster Than Light', 'ILKO', 'sp123'), false);
+        assert.equal(isSameSongTrack('I Never Lose', 'ILKO', 'sp123', 'I Never Lose - Single Version', 'ILKO', 'sp123'), true);
+        const fetchMusicSource = appHtml.slice(appHtml.indexOf('async function fetchMusicData()'), appHtml.indexOf('// FIX v24.68'));
+        assert.doesNotMatch(fetchMusicSource, /const merged = \{ \.\.\.npcData[^\n]*\r?\n\s*if \(statsFmData\?\.track\?\.spotifyId\) merged\.track\.spotifyId = statsFmData\.track\.spotifyId/);
     });
 
     it('schedules touch/low-end lyrics updates at 30fps and cancels pending work', () => {
@@ -49,12 +59,12 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         assert.match(appHtml, /function stopProgressTracking\(\)[\s\S]*?cancelLyricFrame\(\)/);
     });
 
-    it('uses only artist profile image URLs in the gallery, without album/track caps', () => {
+    it('uses artist profile image URLs in the gallery and loads additional Spotify profile images', () => {
         assert.match(artistFetch, /Array\.isArray\(match\.images\)/);
         assert.match(artistFetch, /extractSpotifyArtistProfileImages\(profileImageSources\.join/);
         assert.ok(artistFetch.indexOf('await statsFmPromise') < artistFetch.indexOf('await Promise.allSettled([wikiPromise, itunesPromise])'));
         assert.match(artistFetch, /loadAdditionalSpotifyArtistImages\(artistData, cleanKey, requestId\)/);
-        assert.match(artistFetch, /bundledData\.images\.filter/);
+        assert.match(artistFetch, /bundledData\.images\.filter\(Boolean\)/);
         assert.doesNotMatch(artistFetch, /artists\/\$\{match\.id\}\/albums/);
         assert.doesNotMatch(artistFetch, /artistData\.images\.push\((?:currentResolvedArtUrl|albImg|art|pic)\)/);
         assert.doesNotMatch(artistFetch, /artistData\.images\.length\s*<\s*12/);
@@ -85,7 +95,7 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         assert.match(artistSlideshow, /requestAnimationFrame\(\(\) => \{\s*if \(renderId !== artistSlideRenderId\) return;/);
     });
 
-    it('preloads each slide and fades it in after decode', async () => {
+    it('preloads each slide and fades it in after decode with Ken Burns animation', async () => {
         const makeElement = () => {
             const classes = new Set();
             return {
@@ -115,7 +125,7 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
             decode() { return Promise.resolve(); }
         }
         const render = vm.runInNewContext(`(() => { ${artistSlideshow}; return renderArtistSlideshow; })()`, {
-            currentArtistSlideImages: ['https://i.scdn.co/image/ab67616100005174' + 'a'.repeat(32)],
+            currentArtistSlideImages: ['https://i.scdn.co/image/ab67616100005174' + 'a'.repeat(24)],
             currentArtistSlideIndex: 0,
             artistSlideRenderId: 0,
             document: {
@@ -132,23 +142,32 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
 
         assert.equal(foreground.src, background.src);
         assert.equal(foreground.classList.contains('opacity-100'), true);
+        assert.equal(foreground.classList.contains('artist-slide-animate'), true);
         assert.equal(foreground.classList.contains('opacity-0'), false);
         assert.equal(counter.innerText, '1 / 1');
     });
 
-    it('keeps every distinct Spotify profile photo above twelve and ignores album covers', () => {
+    it('extracts official Spotify gallery/header/avatar/release photos and excludes Fans Also Like strangers', () => {
         const photoIds = Array.from({ length: 16 }, (_, index) => index.toString(16).padStart(24, '0'));
-        const profileMarkup = photoIds.flatMap(id => [
-            `https://i.scdn.co/image/ab67616100005174${id}`,
-            `https://i.scdn.co/image/ab6761610000939b${id}`,
-            `https://i.scdn.co/image/ab6761610000e5eb${id}`
-        ]).join('\n');
-        const mixedMarkup = `${profileMarkup}\nhttps://i.scdn.co/image/ab67616d0000b273${'0'.repeat(24)}`;
-        const photos = extractSpotifyArtistProfileImages(mixedMarkup);
+        const profileMarkup = [
+            ...photoIds.flatMap(id => [
+                `https://i.scdn.co/image/ab67616100005174${id}`,
+                `https://i.scdn.co/image/ab6761610000939b${id}`,
+                `https://i.scdn.co/image/ab6761610000e5eb${id}`
+            ]),
+            `https://i.scdn.co/image/ab6761670000ecd4${'a'.repeat(24)}`,
+            `https://i.scdn.co/image/ab67618600001016${'b'.repeat(24)}`,
+            `https://i.scdn.co/image/ab67616d00001e02${'c'.repeat(24)}`,
+            '## [Fans also like](https://open.spotify.com/artist/xyz/related)',
+            `https://i.scdn.co/image/ab6761610000e5eb${'f'.repeat(24)}`
+        ].join('\n');
+        const photos = extractSpotifyArtistProfileImages(profileMarkup);
 
-        assert.equal(photos.length, 16);
-        assert.ok(photos.every(url => url.includes('ab6761610000e5eb')));
-        assert.equal(photos.filter(url => url.includes('ab67616d')).length, 0);
+        assert.equal(photos.length, 19);
+        assert.ok(photos.includes(`https://i.scdn.co/image/ab6761670000ecd4${'a'.repeat(24)}`));
+        assert.ok(photos.includes(`https://i.scdn.co/image/ab67618600001016${'b'.repeat(24)}`));
+        assert.ok(photos.includes(`https://i.scdn.co/image/ab67616d0000b273${'c'.repeat(24)}`));
+        assert.ok(!photos.includes(`https://i.scdn.co/image/ab6761610000e5eb${'f'.repeat(24)}`));
     });
 
     it('falls back between profile proxies and caches the full image set', async () => {
@@ -158,7 +177,9 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         const loadImages = vm.runInNewContext(`(() => {
             const spotifyArtistImageCache = new Map();
             const spotifyArtistImageRequests = new Map();
+            const spotifyArtistBioCache = new Map();
             ${imageExtractorSource}
+            ${pathfinderSource}
             ${profileFetcherSource}
             return fetchSpotifyArtistProfileImages;
         })()`, {
