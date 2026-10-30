@@ -7,11 +7,11 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
-    [BUGFIX] Release v24.225.40 · 2026-10-30: Artist-First-Paint, sichtbare Galerie-Fades und weniger grelle Lyrics-Füllanimation
+    [BUGFIX] Release v24.225.41 · 2026-10-30: Artist-First-Paint, sichtbare Galerie-Fades und weniger grelle Lyrics-Füllanimation
       - Artist-Avatar wird direkt aus stats.fm angezeigt; vollständige Spotify-Profilbilder werden mit Cache und mehreren Proxy-Fallbacks nachgeladen.
       - Galerie blendet nach erfolgreichem Bild-Decode ein und verwirft veraltete Lade-Callbacks.
       - Klassischer Fill-Stil nutzt gedämpfte Farben; alte automatisch gespeicherte Fill-Defaults wechseln einmalig zu Apple Music Pro.
-      - Version v24.225.40 ist mit Service Worker, Footer und Update-Watcher synchronisiert.
+      - Version v24.225.41 ist mit Service Worker, Footer und Update-Watcher synchronisiert.
     [FEATURE] Release v24.225.38 · 2026-10-30: Apple Music Pro als Standard-Lyrics-Stil außerhalb des Low-End-Modus
       - Erststarts ohne gespeicherte Stilwahl verwenden Apple Music Pro auf normalen Geräten und den sparsamen Fill-Stil im Low-End-Modus.
       - Gespeicherte persönliche Lyrics-Stile bleiben unverändert erhalten.
@@ -3351,7 +3351,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.225.40 · 2026-10-30';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.225.41 · 2026-10-30';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -5741,6 +5741,28 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         }
         #main-music-card.canvas-active #lyrics-canvas-tint {
             opacity: 1 !important;
+        }
+        #main-music-card.canvas-active #lyrics-ambient-bg,
+        #main-music-card.canvas-active #lyrics-ambient-tint {
+            opacity: 0 !important;
+        }
+        #main-music-card.canvas-active #lyrics-container .lyric-line.active {
+            color: #ffffff !important;
+            text-shadow: 0 2px 14px rgba(0, 0, 0, 0.72), 0 0 24px rgba(255, 255, 255, 0.35);
+        }
+        #main-music-card.canvas-active #lyrics-container .lyric-line.active .lyric-word.word-passed,
+        #main-music-card.canvas-active #lyrics-container .lyric-line.active .lyric-word.word-fill-complete,
+        #main-music-card.canvas-active #lyrics-container .lyric-line.active .lyric-char.char-passed,
+        #main-music-card.canvas-active #lyrics-container .lyric-line.active .lyric-char.char-active {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+        #main-music-card.canvas-active #lyrics-container.lyrics-style-fill .lyric-line.active .lyric-word.word-active {
+            background-image: linear-gradient(90deg, #ffffff 0%, #ffffff var(--fill-percent, 0%), rgba(255, 255, 255, 0.35) calc(var(--fill-percent, 0%) + 0.1%), rgba(255, 255, 255, 0.35) 100%) !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            color: transparent !important;
+            -webkit-text-fill-color: transparent !important;
         }
         #ambilight-glow {
             position: absolute; inset: -35px; z-index: -1; background-size: cover; background-position: center;
@@ -9083,7 +9105,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.40</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.41</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -9120,7 +9142,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.40 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.40 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.41 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.41 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9846,8 +9868,8 @@ html.gp-android:not(.dark) #ui-controls {
                                 </div>
                             </div>
                         </div>
-                            <div class="relative flex-1 overflow-hidden mask-image-gradient w-full max-w-2xl mx-auto">
-                                <div id="lyrics-container" class="absolute inset-0 overflow-y-auto overflow-x-hidden text-left w-full h-full pb-6 sm:pb-10 lyrics-style-fill">
+                            <div class="relative z-10 flex-1 overflow-hidden mask-image-gradient w-full max-w-2xl mx-auto">
+                                <div id="lyrics-container" class="absolute inset-0 z-10 overflow-y-auto overflow-x-hidden text-left w-full h-full pb-6 sm:pb-10 lyrics-style-fill">
                                     <div id="lyrics-content" class="transition-all flex flex-col items-start w-full min-h-full"></div>
                                 </div>
                                 <!-- NEW: Tipp-zum-Springen - Uhr-Icon aktiviert einen Modus, in dem ein
@@ -19416,7 +19438,7 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
-        { version: "v24.225.40", date: "30. Oktober 2026", type: "fix", items: {
+        { version: "v24.225.41", date: "30. Oktober 2026", type: "fix", items: {
           de: [
             "🖼️ Artist-Avatare erscheinen sofort; zusätzliche Spotify-Profilfotos werden im Hintergrund mit Proxy-Fallback geladen",
             "✨ Artist-Fotos blenden nach erfolgreichem Laden weich ein und bleiben beim Wechsel nicht mehr leer",
@@ -26433,7 +26455,8 @@ window.setLyricsStyle = function(style) {
             currentLyricsStyle = style;
             AppStorage.setItem('lyricsStyle', style);
             if (lyricsContainer) {
-                lyricsContainer.className = `absolute inset-0 overflow-y-auto overflow-x-hidden text-left w-full h-full lyrics-style-${style}`;
+                const dimClass = lyricsContainer.classList.contains('lyrics-dim-deep') ? 'lyrics-dim-deep' : 'lyrics-dim-soft';
+                lyricsContainer.className = `absolute inset-0 z-10 overflow-y-auto overflow-x-hidden text-left w-full h-full pb-6 sm:pb-10 ${dimClass} lyrics-style-${style}`;
             }
             const lyricsOverlayEl = document.getElementById('lyrics-overlay');
             const isAppleStyle = (style === 'applemusic' || style === 'applemusicpro');
@@ -27973,9 +27996,18 @@ window.setLyricsStyle = function(style) {
                 // Performance + Sync: Lyrics-Canvas auf Master-Zeit synchronisieren und starten
                 if (canvasEnabled && currentCanvasUrl) {
                     const lcvOpen = document.getElementById('lyrics-canvas-video');
+                    const lctOpen = document.getElementById('lyrics-canvas-tint');
                     if (lcvOpen && canvasVideo) {
-                        syncCanvasPlayback(lcvOpen, canvasVideo);
-                        lcvOpen.play().catch(()=>{});
+                        if (trackIsPlaying) {
+                            lcvOpen.classList.remove('opacity-0');
+                            lcvOpen.classList.add('opacity-100');
+                            if (lctOpen) {
+                                lctOpen.classList.remove('opacity-0');
+                                lctOpen.classList.add('opacity-100');
+                            }
+                            syncCanvasPlayback(lcvOpen, canvasVideo);
+                            lcvOpen.play().catch(()=>{});
+                        }
                     }
                 }
                 // Cover im Lyrics-Header direkt synchronisieren
@@ -29110,7 +29142,8 @@ window.setLyricsStyle = function(style) {
             }
         }
         function requestLyricFrame() {
-          const lowPowerMode = document.body.classList.contains('low-end') || !!window.matchMedia?.('(pointer: coarse)').matches;
+          // Volle 60fps rAF-Präzision auch auf Touch-Displays ((pointer: coarse)); 30fps-Timer nur im expliziten low-end Modus
+          const lowPowerMode = document.body.classList.contains('low-end');
           if (lowPowerMode) {
             lyricFrameTimeout = setTimeout(() => {
               lyricFrameTimeout = null;
@@ -30575,21 +30608,23 @@ window.setLyricsStyle = function(style) {
             }
             // ── Progress-Extraktion und Dedup-Check ─────────────────────────────────
             let currentApiProgress = data.progress_ms !== undefined ? data.progress_ms : (data.track && data.track.progress_ms) || 0;
+            const trackDuration = (data.track && data.track.duration_ms) || data.duration_ms || 0;
+            const serverElapsedMs = (isPlaying && data.serverElapsed && data.serverElapsed > 0 && data.serverElapsed < (trackDuration || 600000)) ? data.serverElapsed : 0;
+            const effectiveApiProgress = currentApiProgress + serverElapsedMs;
             // Auf keinen Fall bei erstem Laden abbrechen (fehlendes Cover immer durchlassen)
-            // Bei identischem Snapshot und gleichem Song nicht stören (verhindert Zurückspringen)
-            if (!window.isForceMusicSync && currentApiProgress === lastSeenProgressMs && trackIsPlaying === isPlaying && !isNewTrack && currentResolvedArtUrl) {
-                return;
+            // Bei identischem Snapshot (oder gecachtem stats.fm-Wert) und gleichem Song nicht stören (verhindert Zurückspringen)
+            if (!window.isForceMusicSync && trackIsPlaying === isPlaying && !isNewTrack && currentResolvedArtUrl) {
+                if (effectiveApiProgress === lastSeenProgressMs || (data.source === 'statsfm' && currentApiProgress === lastSeenStatsFmProgressMs)) {
+                    return;
+                }
             }
             const previousApiProgress = lastSeenProgressMs;
-            lastSeenProgressMs = currentApiProgress;
-            const trackDuration = (data.track && data.track.duration_ms) || data.duration_ms || 0;
-            let apiProgress = currentApiProgress;
+            lastSeenProgressMs = effectiveApiProgress;
+            if (data.source === 'statsfm') {
+                lastSeenStatsFmProgressMs = currentApiProgress;
+            }
+            let apiProgress = effectiveApiProgress;
             if (isPlaying) {
-                // Präziser Zeit-Sync: Falls die API (z.B. NPC) ein Server-internes Snapshot-Alter
-                // via HTTP Date-Header übermittelt hat, dieses skew-frei anwenden
-                if (data.serverElapsed && data.serverElapsed > 0 && data.serverElapsed < (trackDuration || 600000)) {
-                    apiProgress += data.serverElapsed;
-                }
                 // Präzise Latenzkompensation: gemessene One-Way-Netzwerklatenz + Spotify Cloud Reporting Delay (~120ms)
                 // Garantiert exakt lippensynchronen Songtext-Vorlauf auf Kopfhörern (Kabel/BT) und Lautsprechern
                 const measuredTransit = Math.min(250, Math.max(25, dynamicLatency || 50));
@@ -31099,6 +31134,14 @@ window.setLyricsStyle = function(style) {
             recordFetchLatency((performance.now() - pStart) / 2);
             const latency = getSmoothedLatency();
 
+            const computeNpcElapsedMs = (npcPayload) => {
+                if (!npcPayload || !npcPayload.timestamp) return 0;
+                const srvNow = npcServerDate ? new Date(npcServerDate).getTime() : Date.now();
+                const snapTime = new Date(npcPayload.timestamp).getTime();
+                if (!Number.isFinite(srvNow) || !Number.isFinite(snapTime)) return 0;
+                return Math.max(0, srvNow - snapTime);
+            };
+
             const npcPlaying = Boolean(npcData && npcData.status === 'playing' && npcData.track && (npcData.track.title || npcData.track.name));
             const statsPlaying = Boolean(statsFmData && statsFmData.status === 'playing' && statsFmData.track && (statsFmData.track.title || statsFmData.track.name));
 
@@ -31114,8 +31157,19 @@ window.setLyricsStyle = function(style) {
 
                 if (sameTrack) {
                     // Beide Plattformen sind synchron auf demselben Track:
-                    // Wir nutzen den hochpräzisen Spotify-Cloud-Progress von stats.fm und reichern ihn mit NPC-Metadaten an.
+                    // Wir nutzen den hochpräzisen Spotify-Cloud-Progress von stats.fm (oder NPC mit Snapshot-Extrapolation,
+                    // falls stats.fm einen gecachten, unveränderten Wert liefert) und reichern ihn mit NPC-Metadaten an.
                     const merged = { ...statsFmData, track: { ...statsFmData.track } };
+                    const npcElapsed = computeNpcElapsedMs(npcData);
+                    const npcBase = npcData.progress_ms !== undefined ? npcData.progress_ms : (npcData.track && npcData.track.progress_ms) || 0;
+                    const statsStale = (statsFmData.progress_ms === lastSeenStatsFmProgressMs && lastSeenStatsFmProgressMs > 0);
+                    if (statsStale && npcBase > 0 && npcElapsed < 30000) {
+                        merged.progress_ms = npcBase;
+                        merged.serverElapsed = npcElapsed;
+                        merged.source = 'npc';
+                    } else {
+                        delete merged.serverElapsed;
+                    }
                     if (npcData.track.platform_links) merged.track.platform_links = npcData.track.platform_links;
                     if (npcData.track.track_url) merged.track.track_url = npcData.track.track_url;
                     if (npcData.track.canvas_url || npcData.track.canvasUrl) merged.track.canvas_url = npcData.track.canvas_url || npcData.track.canvasUrl;
@@ -31125,7 +31179,6 @@ window.setLyricsStyle = function(style) {
                     if (npcData.track.artwork_url && !npcData.track.artwork_url.includes('npc-api.aikins.xyz/v1/artwork/')) {
                         merged.track.artwork_url = npcData.track.artwork_url;
                     }
-                    delete merged.serverElapsed;
                     updateMusicUI(merged, latency);
                 } else {
                     // EINER der beiden Provider hat bereits den neuen Song, während der andere noch nachhängt.
@@ -31138,36 +31191,21 @@ window.setLyricsStyle = function(style) {
 
                     if (statsMatchesPrevious && !npcMatchesPrevious) {
                         // stats.fm hängt noch auf dem alten, beendeten Song -> NPC hat die Führung!
-                        const merged = { ...npcData, track: { ...npcData.track }, source: 'npc' };
-                        if (npcData.timestamp && npcServerDate) {
-                            const srvNow = new Date(npcServerDate).getTime();
-                            const snapTime = new Date(npcData.timestamp).getTime();
-                            merged.serverElapsed = Math.max(0, srvNow - snapTime);
-                        }
+                        const merged = { ...npcData, track: { ...npcData.track }, source: 'npc', serverElapsed: computeNpcElapsedMs(npcData) };
                         updateMusicUI(merged, latency);
                     } else if (npcMatchesPrevious && !statsMatchesPrevious) {
                         // NPC hängt noch auf dem alten, beendeten Song -> stats.fm hat die Führung!
                         updateMusicUI(statsFmData, latency);
                     } else if (npcMatchesCurrent && !statsMatchesCurrent) {
                         // NPC ist bereits auf dem aktuellen Song, stats.fm ist noch woanders -> bei NPC bleiben!
-                        const merged = { ...npcData, track: { ...npcData.track }, source: 'npc' };
-                        if (npcData.timestamp && npcServerDate) {
-                            const srvNow = new Date(npcServerDate).getTime();
-                            const snapTime = new Date(npcData.timestamp).getTime();
-                            merged.serverElapsed = Math.max(0, srvNow - snapTime);
-                        }
+                        const merged = { ...npcData, track: { ...npcData.track }, source: 'npc', serverElapsed: computeNpcElapsedMs(npcData) };
                         updateMusicUI(merged, latency);
                     } else if (statsMatchesCurrent && !npcMatchesCurrent) {
                         // stats.fm ist bereits auf dem aktuellen Song -> bei stats.fm bleiben!
                         updateMusicUI(statsFmData, latency);
                     } else {
                         // Komplett neuer Songwechsel (beide neu oder Erstanlauf) -> Standard-Auswahl
-                        const merged = { ...npcData, track: { ...npcData.track }, source: 'npc' };
-                        if (npcData.timestamp && npcServerDate) {
-                            const srvNow = new Date(npcServerDate).getTime();
-                            const snapTime = new Date(npcData.timestamp).getTime();
-                            merged.serverElapsed = Math.max(0, srvNow - snapTime);
-                        }
+                        const merged = { ...npcData, track: { ...npcData.track }, source: 'npc', serverElapsed: computeNpcElapsedMs(npcData) };
                         updateMusicUI(merged, latency);
                     }
                 }
@@ -31175,12 +31213,7 @@ window.setLyricsStyle = function(style) {
                 if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
                 return;
             } else if (npcPlaying) {
-                const merged = { ...npcData, track: { ...npcData.track }, source: 'npc' };
-                if (npcData.timestamp && npcServerDate) {
-                    const srvNow = new Date(npcServerDate).getTime();
-                    const snapTime = new Date(npcData.timestamp).getTime();
-                    merged.serverElapsed = Math.max(0, srvNow - snapTime);
-                }
+                const merged = { ...npcData, track: { ...npcData.track }, source: 'npc', serverElapsed: computeNpcElapsedMs(npcData) };
                 updateMusicUI(merged, latency);
                 if (typeof lastSuccessfulFetchAt !== 'undefined') lastSuccessfulFetchAt = Date.now();
                 if (typeof consecutiveFetchFailures !== 'undefined') consecutiveFetchFailures = 0;
