@@ -1,9 +1,9 @@
 {
-  "version": "24.225.44",
-  "buildTime": "2026-10-31T12:55:00.000Z",
+  "version": "24.225.45",
+  "buildTime": "2026-10-31T13:04:00.000Z",
   "shortNotes": [
+    "Hotfix: Behebung des Script-Parser-Abbruchs und vollständige Wiederherstellung aller Seitenfunktionen",
     "Spotify-Künstlerbilder: Gezielte Extraktion der verifizierten About-Galerie- & Profilfotos ohne fremde Künstler",
-    "Wort- & Ticks-Synchronisationsalgorithmus aus der stabilen Live-Version für flüssige, jitterfreie Textdarstellung wiederhergestellt",
-    "Bundled Artists DB (ILKO, Marcus & Martinus, Alan Walker, Tom Odell) mit exakten, verifizierten Profilbildern aktualisiert"
+    "Wort- & Ticks-Synchronisationsalgorithmus aus der stabilen Live-Version aktiv"
   ]
 }
