@@ -1,9 +1,9 @@
 {
-  "version": "24.225.43",
-  "buildTime": "2026-10-31T12:35:00.000Z",
+  "version": "24.225.44",
+  "buildTime": "2026-10-31T12:55:00.000Z",
   "shortNotes": [
-    "Spotify About-Galerie-Fotos haben absolute Priorität – alle vorhandenen Galerie-Bilder werden geladen",
-    "Strikte Hash-basierte Deduplizierung verhindert doppelte oder mehrfache Bildanzeigen in der Diashow",
-    "Header-Banner und Cover-Art sind strikt verbannt; Avatar dient nur als Fallback ohne About-Bilder"
+    "Spotify-Künstlerbilder: Gezielte Extraktion der verifizierten About-Galerie- & Profilfotos ohne fremde Künstler",
+    "Wort- & Ticks-Synchronisationsalgorithmus aus der stabilen Live-Version für flüssige, jitterfreie Textdarstellung wiederhergestellt",
+    "Bundled Artists DB (ILKO, Marcus & Martinus, Alan Walker, Tom Odell) mit exakten, verifizierten Profilbildern aktualisiert"
   ]
 }
