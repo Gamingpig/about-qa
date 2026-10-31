@@ -39,7 +39,7 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         assert.deepEqual(initializeStyle('fill', false), { style: 'fill', saved: 'fill' });
         assert.deepEqual(initializeStyle('bounce', false), { style: 'bounce', saved: 'bounce' });
         const fillRule = appHtml.match(/\.lyrics-style-fill \.lyric-word \{([^}]+)\}/)?.[1] || '';
-        assert.match(fillRule, /#ffffff 0%, #ffffff min\(var\(--fill-percent, 0%\), 90%\)/);
+        assert.match(fillRule, /linear-gradient\(to right, #ffffff var\(--fill-percent, 0%\), rgba\(255,\s*255,\s*255,\s*0\.2\) var\(--fill-percent, 0%\)\)/);
     });
 
     it('detects song changes reliably even if a provider carries a stale spotifyId', () => {
@@ -95,7 +95,7 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         assert.match(artistSlideshow, /requestAnimationFrame\(\(\) => \{\s*if \(renderId !== artistSlideRenderId\) return;/);
     });
 
-    it('preloads each slide and fades it in after decode with Ken Burns animation', async () => {
+    it('preloads each slide and fades it in after decode with smooth transition', async () => {
         const makeElement = () => {
             const classes = new Set();
             return {
@@ -142,12 +142,12 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
 
         assert.equal(foreground.src, background.src);
         assert.equal(foreground.classList.contains('opacity-100'), true);
-        assert.equal(foreground.classList.contains('artist-slide-animate'), true);
         assert.equal(foreground.classList.contains('opacity-0'), false);
         assert.equal(counter.innerText, '1 / 1');
+        assert.match(appHtml, /#artist-gallery-img\.artist-slide-animate \{\s*animation:\s*none\s*!important;/);
     });
 
-    it('extracts official Spotify gallery/header/avatar/release photos and excludes Fans Also Like strangers', () => {
+    it('extracts official Spotify gallery/header/avatar photos and strictly excludes release/album covers and Fans Also Like strangers', () => {
         const photoIds = Array.from({ length: 16 }, (_, index) => index.toString(16).padStart(24, '0'));
         const profileMarkup = [
             ...photoIds.flatMap(id => [
@@ -163,10 +163,11 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         ].join('\n');
         const photos = extractSpotifyArtistProfileImages(profileMarkup);
 
-        assert.equal(photos.length, 19);
+        assert.equal(photos.length, 18);
         assert.ok(photos.includes(`https://i.scdn.co/image/ab6761670000ecd4${'a'.repeat(24)}`));
         assert.ok(photos.includes(`https://i.scdn.co/image/ab67618600001016${'b'.repeat(24)}`));
-        assert.ok(photos.includes(`https://i.scdn.co/image/ab67616d0000b273${'c'.repeat(24)}`));
+        assert.ok(!photos.includes(`https://i.scdn.co/image/ab67616d0000b273${'c'.repeat(24)}`));
+        assert.ok(!photos.includes(`https://i.scdn.co/image/ab67616d00001e02${'c'.repeat(24)}`));
         assert.ok(!photos.includes(`https://i.scdn.co/image/ab6761610000e5eb${'f'.repeat(24)}`));
     });
 
@@ -204,8 +205,8 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         assert.ok(firstRequestCount > 1);
     });
 
-    it('clamps the default fill gradient and avoids character timing outside character styles', () => {
-        assert.match(appHtml, /lyrics-style-fill \.lyric-word \{[^}]*min\(calc\(var\(--fill-percent, 0%\) \+ 4%\), 95%\)/s);
+    it('restores the classic live fill gradient and avoids character timing outside character styles', () => {
+        assert.match(appHtml, /lyrics-style-fill \.lyric-word \{[^}]*linear-gradient\(to right, #ffffff var\(--fill-percent, 0%\)/s);
         const lineCache = appHtml.slice(appHtml.indexOf('function buildLineAnimCache'), appHtml.indexOf('function animateLineWords'));
         assert.match(lineCache, /if \(lyricsDomHasCharSplit\) \{[\s\S]*?getCharWeight/);
 

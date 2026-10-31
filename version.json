@@ -1,9 +1,10 @@
 {
-  "version": "24.225.41",
-  "buildTime": "2026-10-30T12:16:44.000Z",
+  "version": "24.225.42",
+  "buildTime": "2026-10-31T11:55:00.000Z",
   "shortNotes": [
-    "Apple Music Pro ist jetzt der Standard-Lyrics-Stil auf Geräten ohne Low-End-Modus",
-    "Artist-Avatare erscheinen sofort; Spotify-Profilfotos laden mit Proxy-Fallback und sichtbarer Galerie-Animation",
-    "Die Standard-Füllanimation ist weniger grell; alte automatische Fill-Defaults werden einmalig migriert"
+    "Klassische Fill-Animation wieder 1:1 wie in der Live-Version für scharfe, fehlerfreie Textfüllung",
+    "Künstler-Galerie zeigt exklusiv Spotify-Profilfotos, Header und Avatare – Song-Cover strikt ausgeschlossen",
+    "Galerie-Fotoanimation als sanfte Überblendung ohne Eigenbewegung im Standbild",
+    "Zeitsynchronisation standardmäßig mit -400ms Vorlauf für exaktes Timing zu den Vocals"
   ]
 }
