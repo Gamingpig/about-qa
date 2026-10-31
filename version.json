@@ -1,9 +1,9 @@
 {
-  "version": "24.225.46",
-  "buildTime": "2026-10-31T13:20:00.000Z",
+  "version": "24.225.47",
+  "buildTime": "2026-10-31T17:50:00.000Z",
   "shortNotes": [
-    "100% verifizierte Künstlerbilder: stats.fm Originalporträt in 640x640 und verifizierte About-Galeriefotos",
-    "Strikte Aussperrung von Fans also like, Related Artists und Fremd-Avataren aus der Diashow",
-    "Wort- & Ticks-Synchronisationsalgorithmus aus der stabilen Live-Version voll aktiv"
+    "Vollständige Spotify-Künstlergalerie (About-Bereich) mit allen Bildern in Maximalauflösung",
+    "Automatischer Bilder-Slider mit sanfter Übergangsanimation und Pause bei Hover/Touch",
+    "Custom Dark-Theme Scrollbar für das Künstler-Info-Fenster (ohne nativen Browser-Scrollbalken)"
   ]
 }
