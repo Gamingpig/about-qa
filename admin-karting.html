@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go-Kart Telemetrie • Admin- & QA-Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#090d16',
+                        cardbg: '#0f172a'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body {
+            background-color: #060910;
+            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+        }
+        .pin-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 9999px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .pin-dot.filled {
+            background-color: #06b6d4;
+            border-color: #06b6d4;
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.6);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-start min-h-screen text-slate-100 p-3 sm:p-6 select-none">
+
+    <!-- 1. PIN AUTHENTIFIZIERUNGS-GATE (Vor Freischaltung) -->
+    <div id="pin-auth-screen" class="fixed inset-0 z-50 bg-[#060910] flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-sm rounded-3xl bg-slate-900/90 border border-white/10 p-6 flex flex-col items-center text-center shadow-2xl backdrop-blur-xl">
+            <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-3xl mb-4 shadow-inner">
+                🏎️
+            </div>
+            <h1 class="text-xl font-bold text-white mb-1">Admin Go-Kart Gate</h1>
+            <p class="text-xs text-slate-400 mb-6">Bitte 4-stellige QA-Admin-PIN eingeben:</p>
+
+            <!-- PIN Dots Indikator -->
+            <div id="pin-dots-container" class="flex items-center gap-3 mb-6">
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+            </div>
+
+            <!-- Numpad -->
+            <div class="grid grid-cols-3 gap-3 w-full mb-4">
+                <button onclick="pressPin('1')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">1</button>
+                <button onclick="pressPin('2')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">2</button>
+                <button onclick="pressPin('3')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">3</button>
+                <button onclick="pressPin('4')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">4</button>
+                <button onclick="pressPin('5')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">5</button>
+                <button onclick="pressPin('6')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">6</button>
+                <button onclick="pressPin('7')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">7</button>
+                <button onclick="pressPin('8')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">8</button>
+                <button onclick="pressPin('9')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">9</button>
+                <button onclick="clearPin()" class="h-12 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 active:scale-95 text-xs font-bold transition-all border border-red-500/20">C</button>
+                <button onclick="pressPin('0')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">0</button>
+                <button onclick="quickAuth()" class="h-12 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 active:scale-95 text-xs font-bold transition-all border border-cyan-500/30" title="Mit PIN 2957 entsperren">⚡ 2957</button>
+            </div>
+
+            <p id="pin-feedback" class="text-xs text-slate-500 h-4 transition-colors">Hinterlegte Admin-PIN: 2957</p>
+        </div>
+    </div>
+
+    <!-- 2. HAUPT DASHBOARD (Nach erfolgreicher PIN-Verifikation) -->
+    <div id="karting-main-container" class="w-full max-w-4xl flex flex-col items-center opacity-0 transition-opacity duration-300">
+        
+        <!-- Header -->
+        <header class="w-full flex items-center justify-between py-4 mb-4 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-xl shadow-inner">
+                    🏎️
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white flex items-center gap-2">
+                        Activity-Box Live Telemetrie
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[10px] font-mono font-bold tracking-wide">ONLINE</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Echtzeit Go-Kart Dashboard • Exklusiver Admin-Modus</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="app.html" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-medium text-slate-200 border border-white/10 transition-all flex items-center gap-1.5">
+                    <span>←</span><span>Portfolio App</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Strecken-Karte & Rekord -->
+        <div class="w-full rounded-2xl bg-slate-900/80 border border-white/10 p-4 mb-4 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-cyan-400 font-mono uppercase tracking-wider font-semibold">Aktuelle Rennstrecke</span>
+                    <span class="text-slate-500">•</span>
+                    <span class="text-xs text-slate-400" id="admin-track-layout">Grand Prix Layout (840m)</span>
+                </div>
+                <h2 class="text-xl font-bold text-white" id="admin-track-name">ProKart Racing Arena</h2>
+                <p class="text-xs text-slate-400" id="admin-track-weather">Trocken • Asphalttemperatur 24°C</p>
+            </div>
+            <div class="flex sm:flex-col items-baseline sm:items-end justify-between w-full sm:w-auto p-3 rounded-xl bg-black/40 border border-white/5">
+                <span class="text-[10px] uppercase tracking-wider text-slate-400">Streckenrekord</span>
+                <span class="text-lg font-mono font-black text-purple-400" id="admin-track-record">31.984s</span>
+                <span class="text-[10px] text-slate-500" id="admin-track-record-holder">M. Schumacher Jr.</span>
+            </div>
+        </div>
+
+        <!-- Telemetrie Kacheln (Live Stats) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full mb-4">
+            <div class="rounded-xl bg-slate-900/60 border border-white/10 p-3 flex flex-col items-center text-center">
+                <span class="text-[10px] uppercase font-bold text-slate-400 mb-1">Letzte Runde</span>
+                <span class="text-xl sm:text-2xl font-mono font-black text-cyan-300" id="admin-stat-last-lap">32.228s</span>
+                <span class="text-[10px] font-mono text-emerald-400 mt-1" id="admin-stat-last-delta">+0.244s zum Rekord</span>
+            </div>
+            <div class="rounded-xl bg-slate-900/60 border border-white/10 p-3 flex flex-col items-center text-center">
+                <span class="text-[10px] uppercase font-bold text-slate-400 mb-1">Persönliche Bestzeit</span>
+                <span class="text-xl sm:text-2xl font-mono font-black text-emerald-400" id="admin-stat-best-lap">32.088s</span>
+                <span class="text-[10px] font-mono text-slate-400 mt-1" id="admin-stat-best-delta">Runde 9</span>
+            </div>
+            <div class="rounded-xl bg-slate-900/60 border border-white/10 p-3 flex flex-col items-center text-center">
+                <span class="text-[10px] uppercase font-bold text-slate-400 mb-1">Top Speed</span>
+                <span class="text-xl sm:text-2xl font-mono font-black text-yellow-300" id="admin-stat-speed">68.4 km/h</span>
+                <span class="text-[10px] text-slate-400 mt-1">Sektor 2 Topspeed</span>
+            </div>
+            <div class="rounded-xl bg-slate-900/60 border border-white/10 p-3 flex flex-col items-center text-center">
+                <span class="text-[10px] uppercase font-bold text-slate-400 mb-1">Runden absolviert</span>
+                <span class="text-xl sm:text-2xl font-mono font-black text-white" id="admin-stat-laps">14</span>
+                <span class="text-[10px] text-slate-400 mt-1">Stint 1 (Session)</span>
+            </div>
+        </div>
+
+        <!-- Sektoren-Strip & Live Simulation Button -->
+        <div class="w-full rounded-2xl bg-slate-900/80 border border-white/10 p-4 mb-4 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <div class="flex-1 sm:flex-initial px-3 py-2 rounded-xl bg-black/40 border border-white/5 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase block font-bold">Sektor 1</span>
+                    <span class="font-mono text-sm font-bold text-emerald-400" id="admin-sec-1">10.420s</span>
+                </div>
+                <div class="flex-1 sm:flex-initial px-3 py-2 rounded-xl bg-black/40 border border-white/5 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase block font-bold">Sektor 2</span>
+                    <span class="font-mono text-sm font-bold text-purple-400" id="admin-sec-2">11.080s</span>
+                </div>
+                <div class="flex-1 sm:flex-initial px-3 py-2 rounded-xl bg-black/40 border border-white/5 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase block font-bold">Sektor 3</span>
+                    <span class="font-mono text-sm font-bold text-emerald-400" id="admin-sec-3">10.728s</span>
+                </div>
+            </div>
+
+            <!-- Interaktiver Simulations-Button -->
+            <button onclick="triggerSimulateLap()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 active:scale-95 text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2">
+                <span>⚡</span><span>Nächste Runde simulieren</span>
+            </button>
+        </div>
+
+        <!-- Rundenzeiten Historie (Tabelle) -->
+        <div class="w-full rounded-2xl bg-slate-900/80 border border-white/10 p-4 shadow-xl">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                    <span>⏱️</span><span>Runden-Telemetrie & Sektoren</span>
+                </h3>
+                <span class="text-[10px] font-mono text-slate-500">Live-Sync: 2.5s</span>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-white/10 text-slate-400 font-mono text-[10px] uppercase">
+                            <th class="py-2 px-3">Runde</th>
+                            <th class="py-2 px-3">S1</th>
+                            <th class="py-2 px-3">S2</th>
+                            <th class="py-2 px-3">S3</th>
+                            <th class="py-2 px-3">Rundenzeit</th>
+                            <th class="py-2 px-3">Delta</th>
+                            <th class="py-2 px-3 text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-laps-tbody" class="divide-y divide-white/5 font-mono">
+                        <!-- Dynamisch befüllt -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer class="mt-8 mb-6 text-center text-xs text-slate-500">
+            Activity-Box API v1 • Entwickelt für Gamingpig Portfolio • Authentifiziert mit PIN 2957
+        </footer>
+    </div>
+
+    <!-- Einbindung des Kern-Telemetrie-Services -->
+    <script src="js/services/kartingService.js"></script>
+
+    <script>
+        const QA_VALID_PIN = '2957';
+        let enteredPin = '';
+
+        function updateDots() {
+            const dots = document.querySelectorAll('#pin-dots-container .pin-dot');
+            dots.forEach((dot, idx) => {
+                if (idx < enteredPin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            });
+        }
+
+        function pressPin(digit) {
+            if (enteredPin.length >= 4) return;
+            enteredPin += digit;
+            updateDots();
+            if (enteredPin.length === 4) {
+                verifyPin();
+            }
+        }
+
+        function clearPin() {
+            enteredPin = '';
+            updateDots();
+            const fb = document.getElementById('pin-feedback');
+            if (fb) {
+                fb.innerText = 'PIN zurückgesetzt.';
+                fb.className = 'text-xs text-slate-500 h-4 transition-colors';
+            }
+        }
+
+        function quickAuth() {
+            enteredPin = QA_VALID_PIN;
+            updateDots();
+            verifyPin();
+        }
+
+        function verifyPin() {
+            const fb = document.getElementById('pin-feedback');
+            if (enteredPin === QA_VALID_PIN) {
+                if (fb) {
+                    fb.innerText = '✅ PIN korrekt! Lade Dashboard...';
+                    fb.className = 'text-xs text-emerald-400 font-bold h-4 transition-colors';
+                }
+                try {
+                    sessionStorage.setItem('gp_qa_auth', 'true');
+                    localStorage.setItem('gp_debug_karting', 'true');
+                } catch(e) {}
+                setTimeout(unlockDashboard, 300);
+            } else {
+                if (fb) {
+                    fb.innerText = '❌ Falsche PIN! Bitte erneut versuchen.';
+                    fb.className = 'text-xs text-red-400 font-bold h-4 transition-colors';
+                }
+                setTimeout(() => {
+                    enteredPin = '';
+                    updateDots();
+                }, 700);
+            }
+        }
+
+        // Tastatur-Eingabe (0-9, Backspace, Enter)
+        document.addEventListener('keydown', (e) => {
+            const authScreen = document.getElementById('pin-auth-screen');
+            if (!authScreen || authScreen.classList.contains('hidden')) return;
+            if (e.key >= '0' && e.key <= '9') {
+                pressPin(e.key);
+            } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                clearPin();
+            } else if (e.key === 'Enter' && enteredPin.length === 4) {
+                verifyPin();
+            }
+        });
+
+        function unlockDashboard() {
+            const authScreen = document.getElementById('pin-auth-screen');
+            const mainContainer = document.getElementById('karting-main-container');
+            if (authScreen) authScreen.classList.add('hidden');
+            if (mainContainer) {
+                mainContainer.classList.remove('opacity-0');
+                mainContainer.classList.add('opacity-100');
+            }
+            initDashboardData();
+        }
+
+        let currentSessionLaps = [
+            { lap: 14, s1: '10.420', s2: '11.080', s3: '10.728', lapTime: '32.228', delta: '+0.244', status: 'Gültig' },
+            { lap: 13, s1: '10.490', s2: '11.150', s3: '10.810', lapTime: '32.450', delta: '+0.466', status: 'Gültig' },
+            { lap: 12, s1: '10.510', s2: '11.200', s3: '10.840', lapTime: '32.550', delta: '+0.566', status: 'Gültig' },
+            { lap: 11, s1: '10.440', s2: '11.100', s3: '10.760', lapTime: '32.300', delta: '+0.316', status: 'Gültig' },
+            { lap: 10, s1: '10.600', s2: '11.350', s3: '10.950', lapTime: '32.900', delta: '+0.916', status: 'Gültig' },
+            { lap: 9,  s1: '10.380', s2: '10.990', s3: '10.718', lapTime: '32.088', delta: '+0.104', status: 'BEST' },
+            { lap: 8,  s1: '10.480', s2: '11.120', s3: '10.790', lapTime: '32.390', delta: '+0.406', status: 'Gültig' }
+        ];
+
+        function renderTable() {
+            const tbody = document.getElementById('admin-laps-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            currentSessionLaps.forEach((l) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-white/5 transition-colors';
+                const isBest = l.status === 'BEST';
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 font-bold ${isBest ? 'text-emerald-400' : 'text-slate-300'}">#${l.lap}</td>
+                    <td class="py-2.5 px-3 text-slate-400">${l.s1}s</td>
+                    <td class="py-2.5 px-3 text-slate-400">${l.s2}s</td>
+                    <td class="py-2.5 px-3 text-slate-400">${l.s3}s</td>
+                    <td class="py-2.5 px-3 font-bold ${isBest ? 'text-emerald-400' : 'text-white'}">${l.lapTime}s</td>
+                    <td class="py-2.5 px-3 ${isBest ? 'text-emerald-400 font-bold' : 'text-slate-400'}">${l.delta}s</td>
+                    <td class="py-2.5 px-3 text-right">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${isBest ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-white/5 text-slate-400'}">
+                            ${l.status}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function initDashboardData() {
+            if (typeof KartingService !== 'undefined') {
+                try {
+                    const session = await KartingService.fetchLiveSession();
+                    if (session && session.track) {
+                        document.getElementById('admin-track-name').innerText = session.track.name || 'ProKart Racing Arena';
+                        document.getElementById('admin-track-layout').innerText = session.track.layout || 'Grand Prix Layout (840m)';
+                        document.getElementById('admin-track-record').innerText = (session.track.trackRecord || '31.984') + 's';
+                        document.getElementById('admin-track-record-holder').innerText = session.track.trackRecordHolder || 'Streckenrekord';
+                    }
+                } catch (_) {}
+            }
+            renderTable();
+        }
+
+        async function triggerSimulateLap() {
+            let nextLapData = null;
+            if (typeof KartingService !== 'undefined' && typeof KartingService.simulateNextLap === 'function') {
+                nextLapData = await KartingService.simulateNextLap();
+            } else {
+                const lapNum = currentSessionLaps.length + 1;
+                const s1 = (10.35 + Math.random() * 0.25).toFixed(3);
+                const s2 = (11.00 + Math.random() * 0.30).toFixed(3);
+                const s3 = (10.65 + Math.random() * 0.25).toFixed(3);
+                const total = (parseFloat(s1) + parseFloat(s2) + parseFloat(s3)).toFixed(3);
+                const delta = (parseFloat(total) - 31.984).toFixed(3);
+                nextLapData = {
+                    lap: lapNum,
+                    s1: s1,
+                    s2: s2,
+                    s3: s3,
+                    lapTime: total,
+                    delta: (delta > 0 ? '+' : '') + delta,
+                    status: delta < 0.15 ? 'BEST' : 'Gültig'
+                };
+            }
+
+            if (nextLapData) {
+                currentSessionLaps.unshift(nextLapData);
+                document.getElementById('admin-stat-last-lap').innerText = nextLapData.lapTime + 's';
+                document.getElementById('admin-stat-last-delta').innerText = nextLapData.delta + 's zum Rekord';
+                document.getElementById('admin-sec-1').innerText = nextLapData.s1 + 's';
+                document.getElementById('admin-sec-2').innerText = nextLapData.s2 + 's';
+                document.getElementById('admin-sec-3').innerText = nextLapData.s3 + 's';
+                document.getElementById('admin-stat-laps').innerText = currentSessionLaps.length;
+                renderTable();
+            }
+        }
+
+        // Auto-Check bei Seitenaufruf: wenn ?pin=2957 in URL oder schon authentifiziert
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('pin') === QA_VALID_PIN || sessionStorage.getItem('gp_qa_auth') === 'true') {
+                quickAuth();
+            }
+        });
+    </script>
+</body>
+</html>

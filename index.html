@@ -6110,13 +6110,18 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             scrollbar-gutter: stable;
             padding-left: 6px; /* gleicht Scrollbar-Breite rechts horizontal millimetergenau aus */
         }
-        /* Performance-Freeze bei geöffnetem Artist-Modal: 0% GPU-Hintergrundlast */
+        /* Performance-Freeze & Fullscreen-Lock bei geöffnetem Artist-Modal: 0% GPU-Hintergrundlast & kein Body-Scroll */
+        body.artist-modal-open {
+            overflow: hidden !important;
+        }
         body.artist-modal-open #liquid-blobs,
         body.artist-modal-open #liquid-canvas,
         body.artist-modal-open #mesh-gradient-canvas,
         body.artist-modal-open #canvas-container,
         body.artist-modal-open #main-music-card .ambient-glow,
-        body.artist-modal-open .blob-container {
+        body.artist-modal-open .blob-container,
+        body.artist-modal-open main,
+        body.artist-modal-open #main-content {
             display: none !important;
             animation-play-state: paused !important;
         }
@@ -10509,13 +10514,13 @@ html.gp-android:not(.dark) #ui-controls {
 </div>
 
 <!-- NEU v24.225.36: Interaktives Künstler-Info & Bilder-Diashow Modal (Zentriert, Vollbild-Galerie ohne Schnitt, Ambilight Glow, sanfte Animationen) -->
-<div id="artist-info-modal" class="fixed inset-0 z-[100000] bg-black !backdrop-blur-none hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300 select-none" onclick="if(event.target === this) closeArtistModal()">
+<div id="artist-info-modal" class="fixed inset-0 z-50 bg-black !backdrop-blur-none hidden flex flex-col items-center justify-start sm:justify-center p-0 sm:p-4 opacity-0 transition-opacity duration-300 select-none overflow-hidden" onclick="if(event.target === this) closeArtistModal()">
     
     <!-- Ambilight Ambient Glow hinter der Karte -->
     <div id="artist-modal-glow" class="absolute inset-0 max-w-lg mx-auto my-auto h-[85vh] rounded-[3.5rem] bg-gradient-to-tr from-cyan-500/25 via-purple-500/30 to-pink-500/25 blur-3xl opacity-80 pointer-events-none scale-105 transition-all duration-700 z-0"></div>
 
     <!-- Zentrierte Modal Karte mit Einflug-Animation -->
-    <div id="artist-modal-card" class="relative z-10 w-full max-w-lg rounded-[2.5rem] bg-gradient-to-b from-slate-900/95 via-slate-950/98 to-black text-white border border-white/20 flex flex-col items-center text-center shadow-2xl overflow-hidden max-h-[92vh] transform scale-95 opacity-0 translate-y-3 transition-all duration-300 ease-out">
+    <div id="artist-modal-card" class="relative z-10 w-full max-w-xl h-full sm:h-auto sm:max-h-[92vh] rounded-none sm:rounded-[2.5rem] bg-black sm:bg-gradient-to-b sm:from-slate-900/95 sm:via-slate-950/98 sm:to-black text-white border-0 sm:border sm:border-white/20 flex flex-col items-center text-center shadow-2xl overflow-hidden transform scale-95 opacity-0 translate-y-3 transition-all duration-300 ease-out">
         
         <!-- Schließen-Button oben rechts -->
         <button onclick="closeArtistModal()" class="absolute top-4 right-4 z-30 w-9 h-9 rounded-full bg-black/65 hover:bg-black/90 text-white/80 hover:text-white border border-white/20 flex items-center justify-center transition-all shadow-lg active:scale-90 hover:scale-105" title="Schließen (Esc)">
@@ -32609,7 +32614,7 @@ window.setLyricsStyle = function(style) {
 
         window.openArtistModal = function(customArtist) {
             const requestId = ++artistRequestSequence;
-            document.body.classList.add('artist-modal-open');
+            document.body.classList.add('artist-modal-open'); document.body.style.overflow = 'hidden';
             playUISound('pop');
             haptic(15);
             haptic(15);
@@ -32674,7 +32679,7 @@ window.setLyricsStyle = function(style) {
 
         window.closeArtistModal = function() {
             artistRequestSequence++;
-            document.body.classList.remove('artist-modal-open');
+            document.body.classList.remove('artist-modal-open'); document.body.style.overflow = '';
             if (typeof closeArtistLightbox === 'function') closeArtistLightbox();
             haptic(10);
             isArtistSlideshowPaused = false;
@@ -33101,18 +33106,41 @@ window.setLyricsStyle = function(style) {
                 }
             }
 
-            // Top-Tracks rendern (Zentriert mit ausfallsicherem Cover)
+            // Top-Tracks rendern (Zentriert mit robustem Cover-Fallback & voller Artwork-Unterstützung)
             const tracksList = document.getElementById('artist-top-tracks-list');
+            const ARTIST_TRACK_FALLBACK_SVG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='12' fill='%231e293b'/%3E%3Ccircle cx='50' cy='50' r='24' fill='%230f172a' stroke='%23334155' stroke-width='3'/%3E%3Ccircle cx='50' cy='50' r='7' fill='%2310b981'/%3E%3Cpath d='M47 38v16a5 5 0 1 1-3-4.5V40h10v10a5 5 0 1 1-3-4.5V38H47z' fill='%23f8fafc' opacity='0.85'/%3E%3C/svg%3E";
+
+            function resolveArtistTrackCover(trackItem) {
+                if (!trackItem) return ARTIST_TRACK_FALLBACK_SVG;
+                if (typeof trackItem === 'string' && trackItem.startsWith('http')) return trackItem;
+                if (trackItem.album?.images?.length) {
+                    const u = trackItem.album.images[0]?.url || (typeof trackItem.album.images[0] === 'string' ? trackItem.album.images[0] : null);
+                    if (u) return u;
+                }
+                if (trackItem.album?.image) {
+                    const u = typeof trackItem.album.image === 'string' ? trackItem.album.image : trackItem.album.image?.url;
+                    if (u) return u;
+                }
+                if (trackItem.images?.length) {
+                    const u = trackItem.images[0]?.url || (typeof trackItem.images[0] === 'string' ? trackItem.images[0] : null);
+                    if (u) return u;
+                }
+                const direct = trackItem.art || trackItem.artwork || trackItem.image || trackItem.cover || trackItem.coverUrl || trackItem.artworkUrl100 || trackItem.artworkUrl60;
+                if (typeof direct === 'string' && direct.trim().length > 0) return direct.trim();
+                if (direct?.url) return direct.url;
+                return ARTIST_TRACK_FALLBACK_SVG;
+            }
+
             if (tracksList) {
                 tracksList.innerHTML = '';
                 if (data.topTracks && data.topTracks.length) {
                     data.topTracks.slice(0, 5).forEach((t, i) => {
                         const row = document.createElement('div');
-                        row.className = 'flex items-center gap-3 p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-left';
-                        const coverSrc = t.art || fallbackImg;
+                        row.className = 'flex items-center gap-3 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-all text-left';
+                        const coverSrc = resolveArtistTrackCover(t);
                         row.innerHTML = `
                             <span class="text-xs font-mono font-bold text-slate-500 w-4 text-center shrink-0">${i + 1}</span>
-                            <img src="${coverSrc}" onerror="this.onerror=null; this.src='${fallbackImg}';" alt="" class="w-10 h-10 rounded-lg object-cover shadow-sm shrink-0 bg-white/5">
+                            <img src="${coverSrc}" onerror="this.onerror=null; this.src='${ARTIST_TRACK_FALLBACK_SVG}';" alt="" class="w-10 h-10 rounded-lg object-cover shadow-sm shrink-0 bg-slate-800">
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-white truncate">${t.title || 'Track'}</p>
                                 <p class="text-[10px] text-slate-400 truncate">${t.subtitle || ''}</p>
@@ -33125,6 +33153,7 @@ window.setLyricsStyle = function(style) {
                     tracksList.innerHTML = '<p class="text-xs text-slate-500 italic text-center">Keine Top-Tracks hinterlegt.</p>';
                 }
             }
+
 
             currentArtistSlideImages = Array.isArray(data.images) ? dedupeArtistImages(data.images) : [];
             currentArtistSlideIndex = 0;
@@ -33229,6 +33258,155 @@ window.setLyricsStyle = function(style) {
             KARTING_DASHBOARD: false // Default: FALSE. Nach Voting-Ende auf true schalten!
         };
         window.FEATURE_FLAGS = FEATURE_FLAGS;
+
+        
+        // ==============================================================================
+        // FULLSCREEN LIGHTBOX CONTROLLER (v24.225.48)
+        // Zoom-Slider (100%-300%), Touch-Pinch & Pan, Escape & Pfeiltasten-Steuerung
+        // ==============================================================================
+        let currentLightboxZoom = 100;
+        let lightboxPanX = 0;
+        let lightboxPanY = 0;
+        let isLightboxDragging = false;
+        let lightboxDragStartX = 0;
+        let lightboxDragStartY = 0;
+
+        window.openArtistLightbox = function() {
+            if (!currentArtistSlideImages || currentArtistSlideImages.length === 0) return;
+            const modal = document.getElementById('artist-lightbox-modal');
+            const img = document.getElementById('lightbox-img');
+            const counter = document.getElementById('lightbox-counter');
+            const artistNameEl = document.getElementById('lightbox-artist-name');
+            if (!modal || !img) return;
+
+            if (typeof playUISound === 'function') playUISound('pop');
+            if (typeof haptic === 'function') haptic(20);
+
+            stopArtistSlideshowTimer();
+            isArtistSlideshowPaused = true;
+
+            img.src = currentArtistSlideImages[currentArtistSlideIndex];
+            if (counter) counter.innerText = (currentArtistSlideIndex + 1) + ' / ' + currentArtistSlideImages.length;
+            const nameEl = document.getElementById('artist-modal-name');
+            if (artistNameEl && nameEl) artistNameEl.innerText = nameEl.innerText || 'Künstler';
+
+            resetLightboxZoom();
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+            });
+        };
+
+        window.closeArtistLightbox = function() {
+            const modal = document.getElementById('artist-lightbox-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            if (typeof haptic === 'function') haptic(10);
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                resetLightboxZoom();
+                isArtistSlideshowPaused = false;
+                startArtistSlideshowTimer();
+            }, 300);
+        };
+
+        window.setLightboxZoom = function(val) {
+            const zoom = Math.min(300, Math.max(100, Number(val) || 100));
+            currentLightboxZoom = zoom;
+            const img = document.getElementById('lightbox-img');
+            const label = document.getElementById('lightbox-zoom-val');
+            const range = document.getElementById('lightbox-zoom-range');
+            if (label) label.innerText = zoom + '%';
+            if (range) range.value = zoom;
+            if (img) {
+                if (zoom === 100) {
+                    lightboxPanX = 0;
+                    lightboxPanY = 0;
+                }
+                img.style.transform = 'translate(' + lightboxPanX + 'px, ' + lightboxPanY + 'px) scale(' + (zoom / 100) + ')';
+            }
+        };
+
+        window.adjustLightboxZoom = function(delta) {
+            window.setLightboxZoom(currentLightboxZoom + delta);
+        };
+
+        window.resetLightboxZoom = function() {
+            lightboxPanX = 0;
+            lightboxPanY = 0;
+            window.setLightboxZoom(100);
+        };
+
+        window.prevLightboxSlide = function(e) {
+            if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+            if (!currentArtistSlideImages || currentArtistSlideImages.length <= 1) return;
+            currentArtistSlideIndex = (currentArtistSlideIndex - 1 + currentArtistSlideImages.length) % currentArtistSlideImages.length;
+            renderArtistSlideshow();
+            const img = document.getElementById('lightbox-img');
+            const counter = document.getElementById('lightbox-counter');
+            if (img) img.src = currentArtistSlideImages[currentArtistSlideIndex];
+            if (counter) counter.innerText = (currentArtistSlideIndex + 1) + ' / ' + currentArtistSlideImages.length;
+            resetLightboxZoom();
+            if (typeof haptic === 'function') haptic(12);
+        };
+
+        window.nextLightboxSlide = function(e) {
+            if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+            if (!currentArtistSlideImages || currentArtistSlideImages.length <= 1) return;
+            currentArtistSlideIndex = (currentArtistSlideIndex + 1) % currentArtistSlideImages.length;
+            renderArtistSlideshow();
+            const img = document.getElementById('lightbox-img');
+            const counter = document.getElementById('lightbox-counter');
+            if (img) img.src = currentArtistSlideImages[currentArtistSlideIndex];
+            if (counter) counter.innerText = (currentArtistSlideIndex + 1) + ' / ' + currentArtistSlideImages.length;
+            resetLightboxZoom();
+            if (typeof haptic === 'function') haptic(12);
+        };
+
+        // Lightbox Keyboard Navigation (Esc, Arrow Left, Arrow Right)
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('artist-lightbox-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            if (e.key === 'Escape') {
+                closeArtistLightbox();
+            } else if (e.key === 'ArrowLeft') {
+                prevLightboxSlide(e);
+            } else if (e.key === 'ArrowRight') {
+                nextLightboxSlide(e);
+            }
+        });
+
+        // Lightbox Drag & Pan Support für gezoomte Ansicht
+        (function() {
+            const viewport = document.getElementById('lightbox-viewport');
+            if (!viewport) return;
+
+            viewport.addEventListener('mousedown', function(e) {
+                if (currentLightboxZoom <= 100) return;
+                isLightboxDragging = true;
+                lightboxDragStartX = e.clientX - lightboxPanX;
+                lightboxDragStartY = e.clientY - lightboxPanY;
+            });
+
+            window.addEventListener('mousemove', function(e) {
+                if (!isLightboxDragging || currentLightboxZoom <= 100) return;
+                lightboxPanX = e.clientX - lightboxDragStartX;
+                lightboxPanY = e.clientY - lightboxDragStartY;
+                const img = document.getElementById('lightbox-img');
+                if (img) {
+                    img.style.transform = 'translate(' + lightboxPanX + 'px, ' + lightboxPanY + 'px) scale(' + (currentLightboxZoom / 100) + ')';
+                }
+            });
+
+            window.addEventListener('mouseup', function() {
+                isLightboxDragging = false;
+            });
+        })();
 
         window.isKartingDashboardAccessible = function() {
             if (FEATURE_FLAGS.KARTING_DASHBOARD) return true;
