@@ -147,28 +147,49 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         assert.match(appHtml, /#artist-gallery-img\.artist-slide-animate \{\s*animation:\s*none\s*!important;/);
     });
 
-    it('extracts official Spotify gallery/header/avatar photos and strictly excludes release/album covers and Fans Also Like strangers', () => {
+    it('extracts official Spotify About section gallery photos exclusively and falls back to avatars if none exist, strictly excluding release/album covers and Fans Also Like strangers', () => {
         const photoIds = Array.from({ length: 16 }, (_, index) => index.toString(16).padStart(24, '0'));
-        const profileMarkup = [
+        const profileMarkupWithAbout = [
             ...photoIds.flatMap(id => [
                 `https://i.scdn.co/image/ab67616100005174${id}`,
                 `https://i.scdn.co/image/ab6761610000939b${id}`,
                 `https://i.scdn.co/image/ab6761610000e5eb${id}`
             ]),
             `https://i.scdn.co/image/ab6761670000ecd4${'a'.repeat(24)}`,
+            `https://i.scdn.co/image/ab6761670000ecd4${'d'.repeat(24)}`,
+            `https://i.scdn.co/image/ab67618600001016${'b'.repeat(24)}`,
+            `https://i.scdn.co/image/ab67616d00001e02${'c'.repeat(24)}`,
+            '## [Fans also like](https://open.spotify.com/artist/xyz/related)',
+            `https://i.scdn.co/image/ab6761670000ecd4${'e'.repeat(24)}`,
+            `https://i.scdn.co/image/ab6761610000e5eb${'f'.repeat(24)}`
+        ].join('\n');
+        const aboutPhotos = extractSpotifyArtistProfileImages(profileMarkupWithAbout);
+
+        // When About section photos are present, take all of them without duplicates and without header/album covers/avatars
+        assert.equal(aboutPhotos.length, 2);
+        assert.ok(aboutPhotos.includes(`https://i.scdn.co/image/ab6761670000ecd4${'a'.repeat(24)}`));
+        assert.ok(aboutPhotos.includes(`https://i.scdn.co/image/ab6761670000ecd4${'d'.repeat(24)}`));
+        assert.ok(!aboutPhotos.includes(`https://i.scdn.co/image/ab67618600001016${'b'.repeat(24)}`));
+        assert.ok(!aboutPhotos.includes(`https://i.scdn.co/image/ab67616d00001e02${'c'.repeat(24)}`));
+        assert.ok(!aboutPhotos.includes(`https://i.scdn.co/image/ab6761670000ecd4${'e'.repeat(24)}`)); // after Fans also like
+
+        // Fallback: If no About section photos exist, fallback to avatar photos (excluding related artists and duplicates)
+        const profileMarkupWithoutAbout = [
+            ...photoIds.flatMap(id => [
+                `https://i.scdn.co/image/ab67616100005174${id}`,
+                `https://i.scdn.co/image/ab6761610000939b${id}`,
+                `https://i.scdn.co/image/ab6761610000e5eb${id}`
+            ]),
             `https://i.scdn.co/image/ab67618600001016${'b'.repeat(24)}`,
             `https://i.scdn.co/image/ab67616d00001e02${'c'.repeat(24)}`,
             '## [Fans also like](https://open.spotify.com/artist/xyz/related)',
             `https://i.scdn.co/image/ab6761610000e5eb${'f'.repeat(24)}`
         ].join('\n');
-        const photos = extractSpotifyArtistProfileImages(profileMarkup);
-
-        assert.equal(photos.length, 18);
-        assert.ok(photos.includes(`https://i.scdn.co/image/ab6761670000ecd4${'a'.repeat(24)}`));
-        assert.ok(photos.includes(`https://i.scdn.co/image/ab67618600001016${'b'.repeat(24)}`));
-        assert.ok(!photos.includes(`https://i.scdn.co/image/ab67616d0000b273${'c'.repeat(24)}`));
-        assert.ok(!photos.includes(`https://i.scdn.co/image/ab67616d00001e02${'c'.repeat(24)}`));
-        assert.ok(!photos.includes(`https://i.scdn.co/image/ab6761610000e5eb${'f'.repeat(24)}`));
+        const fallbackPhotos = extractSpotifyArtistProfileImages(profileMarkupWithoutAbout);
+        assert.equal(fallbackPhotos.length, 16);
+        assert.ok(!fallbackPhotos.includes(`https://i.scdn.co/image/ab67618600001016${'b'.repeat(24)}`));
+        assert.ok(!fallbackPhotos.includes(`https://i.scdn.co/image/ab67616d00001e02${'c'.repeat(24)}`));
+        assert.ok(!fallbackPhotos.includes(`https://i.scdn.co/image/ab6761610000e5eb${'f'.repeat(24)}`));
     });
 
     it('falls back between profile proxies and caches the full image set', async () => {

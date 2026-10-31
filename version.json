@@ -1,10 +1,9 @@
 {
-  "version": "24.225.42",
-  "buildTime": "2026-10-31T11:55:00.000Z",
+  "version": "24.225.43",
+  "buildTime": "2026-10-31T12:35:00.000Z",
   "shortNotes": [
-    "Klassische Fill-Animation wieder 1:1 wie in der Live-Version für scharfe, fehlerfreie Textfüllung",
-    "Künstler-Galerie zeigt exklusiv Spotify-Profilfotos, Header und Avatare – Song-Cover strikt ausgeschlossen",
-    "Galerie-Fotoanimation als sanfte Überblendung ohne Eigenbewegung im Standbild",
-    "Zeitsynchronisation standardmäßig mit -400ms Vorlauf für exaktes Timing zu den Vocals"
+    "Spotify About-Galerie-Fotos haben absolute Priorität – alle vorhandenen Galerie-Bilder werden geladen",
+    "Strikte Hash-basierte Deduplizierung verhindert doppelte oder mehrfache Bildanzeigen in der Diashow",
+    "Header-Banner und Cover-Art sind strikt verbannt; Avatar dient nur als Fallback ohne About-Bilder"
   ]
 }

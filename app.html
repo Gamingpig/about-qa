@@ -7,6 +7,12 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
+    [BUGFIX / PERF] Release v24.225.43 · 2026-10-31: Spotify About-Galerie-Fotos priorisiert & strikte Bild-Deduplizierung
+      - Artist-Diashow lädt primär die echten Galerie-Fotos aus der Spotify "About"-Sektion (ab676167) und nimmt bei mehreren Fotos alle auf.
+      - Striktes Deduplizieren über den 24-stelligen Spotify-Content-Hash verhindert doppelte Bilder unabhängig von CDN oder Auflösung.
+      - Top-Header-Banner und Song-Cover werden konsequent ausgeschlossen; Avatar dient nur als Notfall-Fallback bei Künstlern ohne About-Galerie.
+      - Bundled Artists DB (Ilko, Marcus & Martinus, Alan Walker, Tom Odell) auf verifizierte About-Fotos bereinigt.
+      - Version v24.225.43 ist mit Service Worker, version.json, Footer und Update-Watcher synchronisiert.
     [BUGFIX / PERF] Release v24.225.42 · 2026-10-31: Spotify-Profilbilder pur, sanfte Übergänge ohne Ken Burns & klassische Live-Fill-Lyrics
       - Song- und Albumcover werden strikt aus der Künstler-Diashow ausgeschlossen; nur verifizierte Spotify-Profilfotos, Header und Avatare werden geladen.
       - Galerie nutzt sanfte Überblendung (Crossfade/Scale) ohne permanente Ken-Burns-Bewegung im Standbild zur Entlastung der mobilen GPU.
@@ -3357,7 +3363,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.225.42 · 2026-10-31';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.225.43 · 2026-10-31';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -9110,7 +9116,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.42</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.43</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -9147,7 +9153,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.42 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.42 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.43 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.43 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -19443,6 +19449,18 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+        { version: "v24.225.43", date: "31. Oktober 2026", type: "fix", items: {
+          de: [
+            "🖼️ Spotify About-Galerie: Verwendet exklusiv die echten Fotos aus der About-Sektion (alle vorhandenen Fotos)",
+            "🚫 Strikte Bild-Deduplizierung verhindert doppelte oder mehrfache Anzeige des gleichen Motivs",
+            "✨ Top-Header-Banner und Cover-Art komplett verbannt; Avatar nur als Ausweichoption wenn keine About-Bilder existieren"
+          ],
+          en: [
+            "🖼️ Spotify About Gallery: Exclusively loads official photos from the About section (including all gallery images)",
+            "🚫 Strict deduplication prevents identical images from repeating across CDN domains and resolutions",
+            "✨ Top header banners and covers completely eliminated; avatar used purely as fallback if no About gallery photos exist"
+          ]
+        }},
         { version: "v24.225.42", date: "31. Oktober 2026", type: "fix", items: {
           de: [
             "✨ Klassische Fill-Animation wieder exakt wie in der Live-Version für scharfe, fehlerfreie Textfüllung",
@@ -31897,6 +31915,32 @@ window.setLyricsStyle = function(style) {
         let artistSlideshowTimer = null;
         let artistSlideRenderId = 0;
 
+        function getSpotifyImageContentKey(url) {
+          if (!url || typeof url !== 'string') return '';
+          const hex24Match = url.match(/[0-9a-f]{24}(?=[/?#]|$)/i);
+          if (hex24Match) return hex24Match[0].toLowerCase();
+          try {
+            const parsed = new URL(url, 'https://i.scdn.co');
+            return parsed.pathname.toLowerCase();
+          } catch (_) {
+            return url.split('?')[0].trim().toLowerCase();
+          }
+        }
+
+        function dedupeArtistImages(images) {
+          if (!Array.isArray(images)) return [];
+          const seen = new Set();
+          const result = [];
+          for (const url of images) {
+            if (!url) continue;
+            const key = getSpotifyImageContentKey(url);
+            if (!key || seen.has(key)) continue;
+            seen.add(key);
+            result.push(url);
+          }
+          return result;
+        }
+
         function extractSpotifyArtistProfileImages(source) {
           const rawStr = String(source || '');
           // NIEMALS "Fans also like" (relatedArtists) oder "Discovered on" fremde Künstler-Avatare mitnehmen!
@@ -31905,15 +31949,24 @@ window.setLyricsStyle = function(style) {
           const safeSource = cutoffMatch !== -1 ? rawStr.slice(0, cutoffMatch) : rawStr;
           const isFullProfilePage = safeSource.length > 400 || /open\.spotify\.com\/artist\//i.test(safeSource);
 
-          const photos = new Map();
-          const addPhoto = (hashKey, url, quality) => {
-            const existing = photos.get(hashKey);
-            if (!existing || quality > existing.quality) {
-              photos.set(hashKey, { url, quality });
+          // 1. Offizielle Spotify "About"-Galerie-Fotos (ab676167) unten aus der About-Sektion
+          const galleryMatches = safeSource.match(/https?:\/\/(?:i\.scdn\.co|image-cdn-[a-z0-9-]+\.spotifycdn\.com)\/image\/ab676167[0-9a-f]{24,32}/gi) || [];
+          const aboutPhotos = new Map();
+          galleryMatches.forEach(url => {
+            const cleanUrl = url.trim();
+            const key = (cleanUrl.match(/[0-9a-f]{24}(?=[/?#]|$)/i)?.[0] || cleanUrl).toLowerCase();
+            if (key && !aboutPhotos.has(key)) {
+              aboutPhotos.set(key, cleanUrl);
             }
-          };
+          });
 
-          // 1. Echte Spotify-Profil-Avatare (ab676161) -> nur vor dem "Fans also like" Cutoff, bevorzugt in 640x640 (0000e5eb)
+          // Wenn in der About-Section Galerie-Fotos vorhanden sind: Nimm GENAU diese (alle vorhandenen, ohne Duplikate)!
+          if (aboutPhotos.size > 0) {
+            return Array.from(aboutPhotos.values());
+          }
+
+          // 2. Fallback: Nur wenn gar keine About-Fotos existieren -> Profil-Avatar (ab676161)
+          const avatarPhotos = new Map();
           const avatarMatches = safeSource.match(/https?:\/\/i\.scdn\.co\/image\/ab676161[0-9a-f]{32}/gi) || [];
           avatarMatches.forEach(url => {
             const match = url.match(/ab676161([0-9a-f]{8})([0-9a-f]{24})$/i);
@@ -31922,19 +31975,14 @@ window.setLyricsStyle = function(style) {
               const hash = match[2].toLowerCase();
               const quality = variant === '0000e5eb' ? 3 : variant === '0000939b' ? 2 : 1;
               const hiResUrl = isFullProfilePage ? `https://i.scdn.co/image/ab6761610000e5eb${hash}` : url;
-              addPhoto('6161_' + hash, hiResUrl, isFullProfilePage ? 3 : quality);
+              const existing = avatarPhotos.get(hash);
+              if (!existing || quality > existing.quality) {
+                avatarPhotos.set(hash, { url: hiResUrl, quality });
+              }
             }
           });
 
-          // 2. Offizielle Spotify "About"-Galerie-Fotos (ab676167) & Header-Banner (ab676186) & Artist Pick (ab676170)
-          const galleryAndHeaderMatches = safeSource.match(/https?:\/\/(?:i\.scdn\.co|image-cdn-[a-z0-9-]+\.spotifycdn\.com)\/image\/ab67(?:6167|6186|6170|706c)[0-9a-f]{24,32}/gi) || [];
-          galleryAndHeaderMatches.forEach(url => {
-            const cleanUrl = url.trim();
-            const tail = cleanUrl.slice(-24).toLowerCase();
-            addPhoto('gal_' + tail, cleanUrl, 3);
-          });
-
-          return Array.from(photos.values(), photo => photo.url);
+          return Array.from(avatarPhotos.values(), photo => photo.url);
         }
 
         async function fetchSpotifyPathfinderArtistOverview(spotifyArtistId) {
@@ -31969,22 +32017,31 @@ window.setLyricsStyle = function(style) {
               if (plainBio) spotifyArtistBioCache.set(spotifyArtistId, plainBio);
             }
 
-            const collected = [];
-            const pushBestSource = (sources) => {
+            const gallerySources = [];
+            const pushGallerySource = (sources) => {
               if (!Array.isArray(sources) || !sources.length) return;
               const sorted = sources.slice().sort((a, b) => (Number(b?.width) || 0) - (Number(a?.width) || 0));
-              if (sorted[0]?.url) collected.push(sorted[0].url);
+              if (sorted[0]?.url) gallerySources.push(sorted[0].url);
             };
 
-            pushBestSource(union.visuals?.avatarImage?.sources);
-            if (Array.isArray(union.visuals?.gallery?.items)) {
-              union.visuals.gallery.items.forEach(item => pushBestSource(item?.sources));
+            // 1. Priorität: Fotos aus der About-Sektion (visuals.gallery.items)
+            if (Array.isArray(union.visuals?.gallery?.items) && union.visuals.gallery.items.length) {
+              union.visuals.gallery.items.forEach(item => pushGallerySource(item?.sources));
             }
-            pushBestSource(union.visuals?.headerImage?.sources);
-            pushBestSource(union.profile?.pinnedItem?.thumbnailImage?.sources);
-            pushBestSource(union.profile?.pinnedItem?.backgroundImageV2?.sources);
 
-            return [...new Set(collected.filter(Boolean))];
+            if (gallerySources.length > 0) {
+              return dedupeArtistImages(gallerySources);
+            }
+
+            // 2. Nur Fallback auf Avatar falls keine About-Galeriefotos existieren
+            const avatarSources = [];
+            const pushAvatarSource = (sources) => {
+              if (!Array.isArray(sources) || !sources.length) return;
+              const sorted = sources.slice().sort((a, b) => (Number(b?.width) || 0) - (Number(a?.width) || 0));
+              if (sorted[0]?.url) avatarSources.push(sorted[0].url);
+            };
+            pushAvatarSource(union.visuals?.avatarImage?.sources);
+            return dedupeArtistImages(avatarSources);
           } catch (_) {
             return [];
           } finally {
@@ -32054,7 +32111,13 @@ window.setLyricsStyle = function(style) {
             fetchSpotifyArtistProfileImages(spotifyArtistId).then(photos => {
               if (!photos.length) return;
               const prevCount = Array.isArray(artistData.images) ? artistData.images.length : 0;
-              artistData.images = [...new Set([...(artistData.images || []), ...photos])];
+              const hasAboutPhotos = photos.some(p => p.includes('ab676167') || !p.includes('ab676161'));
+              if (hasAboutPhotos) {
+                // About-Fotos aus der About-Sektion haben Vorrang und ersetzen den vorübergehenden Avatar
+                artistData.images = dedupeArtistImages(photos);
+              } else {
+                artistData.images = dedupeArtistImages([...(artistData.images || []), ...photos]);
+              }
               const pfBio = spotifyArtistBioCache.get(spotifyArtistId);
               if (pfBio && (!artistData.bio || artistData.bio.includes('Entdecke die offiziellen Singles'))) {
                 artistData.bio = pfBio;
@@ -32063,8 +32126,8 @@ window.setLyricsStyle = function(style) {
               }
               trackArtistInfoCache.set(cleanKey, artistData);
               if (requestId !== artistRequestSequence) return;
-              currentArtistSlideImages = artistData.images;
-              if (currentArtistSlideIndex >= currentArtistSlideImages.length || prevCount === 0) {
+              currentArtistSlideImages = dedupeArtistImages(artistData.images);
+              if (currentArtistSlideIndex >= currentArtistSlideImages.length || prevCount <= 1) {
                 currentArtistSlideIndex = 0;
               }
               renderArtistSlideshow();
@@ -32080,18 +32143,7 @@ window.setLyricsStyle = function(style) {
                 origin: "2.178 Follower • 6.713 monatliche Hörer*innen",
                 bio: "ILKO is a finalist of The Voice Kids 2026, 2nd place winner at Sanremo Junior 2025, and a finalist of the Eurovision National Selection 2024. Despite his young age, he already performs confidently on international stages, captivating audiences with his original songs, powerful voice, and magnetic energy. His music is honest, emotional, and full of drive — connecting people and inspiring young listeners to believe in themselves, set bold goals, and follow their own path. ILKO has a clear mission: to make the world a better place through music and inspire a new generation to dream big and stay real.\n\nThis is just the beginning.",
                 images: [
-                    "https://i.scdn.co/image/ab6761610000e5eb161e04f848e2b5413fe61b84", // Offizielles Spotify-Profilbild (Avatar 640x640)
-                    "https://i.scdn.co/image/ab6761670000ecd4687b5b8707a7fbca1f937926", // Offizielles Spotify-"About"-Galerie-Foto (640x640)
-                    "https://i.scdn.co/image/ab6761860000101608ec5fec2affe08b77eabcb5", // Offizielles Spotify-Header-Banner (2660x1140)
-                    "https://i.scdn.co/image/ab6761700000c52caa013a94e585337342bb4b01", // Offizielles Spotify Artist-Pick Foto
-                    "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da844ee6d97a7fa277d3911c7b95", // This is ILKO (Spotify Profil-Playlist)
-                    "https://i.scdn.co/image/ab67616d0000b2734fe722615930440b5ec6f23e", // Tell Me (Spotify Release-Foto)
-                    "https://i.scdn.co/image/ab67616d0000b273f9126d8611311f0f49c8f66a", // I Never Lose (Spotify Release-Foto)
-                    "https://i.scdn.co/image/ab67616d0000b273ef9f83effeb6d5630e793848", // Hold the Light (Spotify Release-Foto)
-                    "https://i.scdn.co/image/ab67616d0000b2732e8054501db584c0923aec65", // Faster Than Light (Spotify Release-Foto)
-                    "https://i.scdn.co/image/ab67616d0000b2733235a26f218a680d160877d0", // One Step at a Time (Spotify Release-Foto)
-                    "https://i.scdn.co/image/ab67616d0000b2738b2dbe815acbb16978b27c6c", // Turn It Up (Spotify Release-Foto)
-                    "https://i.scdn.co/image/ab67616d0000b273ecb1d4aca2f70adbf71fb551"  // Unfollowed (Spotify Release-Foto)
+                    "https://i.scdn.co/image/ab6761670000ecd4687b5b8707a7fbca1f937926" // Offizielles Spotify-"About"-Galerie-Foto (640x640)
                 ],
                 topTracks: [
                     { title: "I Never Lose", subtitle: "I Never Lose - Single", art: "https://i.scdn.co/image/ab67616d0000b273f9126d8611311f0f49c8f66a", trackUrl: "https://open.spotify.com/search/ILKO%20I%20Never%20Lose" },
@@ -32110,13 +32162,10 @@ window.setLyricsStyle = function(style) {
                 origin: "Trofors, Norwegen • Aktiv seit 2012",
                 bio: "Marcus und Martinus Gunnarsen (* 21. Februar 2002 in Elverum, Norwegen) sind ein international gefeiertes norwegisches Pop-Duo. Bekannt wurden die Zwillingsbrüder durch ihren Sieg beim Melodi Grand Prix Junior (2012) und Megahits wie 'Elektrisk', 'Heartbeat' und 'Girls'. 2024 gewannen sie das schwedische Melodifestivalen und vertraten Schweden beim Eurovision Song Contest mit 'Unforgettable'.",
                 images: [
-                    "https://i.scdn.co/image/ab6761610000e5eb8d6b3fc0af95b43747b0f166", // Spotify Avatar
-                    "https://i.scdn.co/image/ab6761670000ecd406ce4dc70db7d071941f0fd3", // Spotify Galerie #1
-                    "https://i.scdn.co/image/ab6761670000ecd456f2c24868b6568fc48fe3d6", // Spotify Galerie #2
-                    "https://i.scdn.co/image/ab6761670000ecd40b6ee3cdc10ffeceb9d67c19", // Spotify Galerie #3
-                    "https://i.scdn.co/image/ab6761670000ecd498acfc3fa6d5b4dad4d6e61c", // Spotify Galerie #4
-                    "https://i.scdn.co/image/ab67618600001016059992ced23a427b3c3f6a01", // Spotify Header-Banner
-                    "https://i.scdn.co/image/ab67616d0000b273c7413771a2f36990d4c79fce"
+                    "https://i.scdn.co/image/ab6761670000ecd406ce4dc70db7d071941f0fd3", // Spotify About-Galerie #1
+                    "https://i.scdn.co/image/ab6761670000ecd456f2c24868b6568fc48fe3d6", // Spotify About-Galerie #2
+                    "https://i.scdn.co/image/ab6761670000ecd40b6ee3cdc10ffeceb9d67c19", // Spotify About-Galerie #3
+                    "https://i.scdn.co/image/ab6761670000ecd498acfc3fa6d5b4dad4d6e61c"  // Spotify About-Galerie #4
                 ],
                 topTracks: [
                     { title: "Elektrisk", subtitle: "Together (2016)", art: "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/bf/f4/bf/bff4bf53-7a13-8cfd-ce47-51c33b8a8b13/886446030128.jpg/300x300bb.jpg" },
@@ -32135,15 +32184,12 @@ window.setLyricsStyle = function(style) {
                 origin: "Bergen, Norwegen • Aktiv seit 2012",
                 bio: "Alan Olav Walker (* 24. August 1997 in Northampton, England) ist ein britisch-norwegischer Musikproduzent und DJ. Seinen weltweiten Durchbruch feierte er 2015 mit der Diamant-Single 'Faded'. Zu seinen weiteren Megahits zählen 'Alone', 'Sing Me to Sleep', 'The Spectre' und 'Darkside'.",
                 images: [
-                    "https://i.scdn.co/image/ab6761610000e5eb572a8eae56feae217f618078", // Spotify Avatar
-                    "https://i.scdn.co/image/ab6761670000ecd425dca3e18a916f09b5c6e9b5", // Spotify Galerie #1
-                    "https://i.scdn.co/image/ab6761670000ecd425164923bdf8876f1bd4e55b", // Spotify Galerie #2
-                    "https://i.scdn.co/image/ab6761670000ecd47145333607578eb5c6caea1f", // Spotify Galerie #3
-                    "https://i.scdn.co/image/ab6761670000ecd4e6af41af7e930c532960d53a", // Spotify Galerie #4
-                    "https://i.scdn.co/image/ab6761670000ecd41b0422ac0f452d57e61c60e8", // Spotify Galerie #5
-                    "https://i.scdn.co/image/ab6761670000ecd452635d738353cb6a22fa81f4", // Spotify Galerie #6
-                    "https://i.scdn.co/image/ab67618600001016a81444a7133f22b9f4f70333", // Spotify Header-Banner
-                    "https://i.scdn.co/image/ab67616d0000b273883495a45c68c09e51556985"
+                    "https://i.scdn.co/image/ab6761670000ecd425dca3e18a916f09b5c6e9b5", // Spotify About-Galerie #1
+                    "https://i.scdn.co/image/ab6761670000ecd425164923bdf8876f1bd4e55b", // Spotify About-Galerie #2
+                    "https://i.scdn.co/image/ab6761670000ecd47145333607578eb5c6caea1f", // Spotify About-Galerie #3
+                    "https://i.scdn.co/image/ab6761670000ecd4e6af41af7e930c532960d53a", // Spotify About-Galerie #4
+                    "https://i.scdn.co/image/ab6761670000ecd41b0422ac0f452d57e61c60e8", // Spotify About-Galerie #5
+                    "https://i.scdn.co/image/ab6761670000ecd452635d738353cb6a22fa81f4"  // Spotify About-Galerie #6
                 ],
                 topTracks: [
                     { title: "Faded", subtitle: "Different World (2018)", art: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/7c/49/71/7c497120-7f28-cf16-c73e-3f7cb49514e0/886445657807.jpg/300x300bb.jpg" },
@@ -32160,11 +32206,7 @@ window.setLyricsStyle = function(style) {
                 origin: "Chichester, England",
                 bio: "Thomas 'Tom' Peter Odell (* 24. November 1990 in Chichester) ist ein britischer Singer-Songwriter und Pianist. Er wurde 2012 mit seinem zeitlosen Welthit 'Another Love' berühmt und gewann 2013 den prestigeträchtigen BRIT Critics' Choice Award.",
                 images: [
-                    "https://i.scdn.co/image/ab6761610000e5eb89633578648b0b51f53d167f", // Spotify Avatar
-                    "https://i.scdn.co/image/ab6761670000ecd4400daa4431e7854f9e77c6cf", // Spotify Galerie #1
-                    "https://i.scdn.co/image/ab676186000010167d9dded5860d3e6018c024a5", // Spotify Header-Banner
-                    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Tom_Odell-2140.jpg",
-                    "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/c3/91/36/c39136c1-ff37-a1e4-ee66-3d712217f0a9/886443834378.jpg/600x600bb.jpg"
+                    "https://i.scdn.co/image/ab6761670000ecd4400daa4431e7854f9e77c6cf" // Spotify About-Galerie #1
                 ],
                 topTracks: [
                     { title: "Another Love", subtitle: "Long Way Down (2013)", art: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/c3/91/36/c39136c1-ff37-a1e4-ee66-3d712217f0a9/886443834378.jpg/300x300bb.jpg" },
@@ -32640,7 +32682,7 @@ window.setLyricsStyle = function(style) {
                 }
             }
 
-            currentArtistSlideImages = Array.isArray(data.images) ? [...new Set(data.images)] : [];
+            currentArtistSlideImages = Array.isArray(data.images) ? dedupeArtistImages(data.images) : [];
             currentArtistSlideIndex = 0;
             stopArtistSlideshowTimer();
             renderArtistSlideshow();
