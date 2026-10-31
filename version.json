@@ -1,9 +1,9 @@
 {
-  "version": "24.225.45",
-  "buildTime": "2026-10-31T13:04:00.000Z",
+  "version": "24.225.46",
+  "buildTime": "2026-10-31T13:20:00.000Z",
   "shortNotes": [
-    "Hotfix: Behebung des Script-Parser-Abbruchs und vollständige Wiederherstellung aller Seitenfunktionen",
-    "Spotify-Künstlerbilder: Gezielte Extraktion der verifizierten About-Galerie- & Profilfotos ohne fremde Künstler",
-    "Wort- & Ticks-Synchronisationsalgorithmus aus der stabilen Live-Version aktiv"
+    "100% verifizierte Künstlerbilder: stats.fm Originalporträt in 640x640 und verifizierte About-Galeriefotos",
+    "Strikte Aussperrung von Fans also like, Related Artists und Fremd-Avataren aus der Diashow",
+    "Wort- & Ticks-Synchronisationsalgorithmus aus der stabilen Live-Version voll aktiv"
   ]
 }

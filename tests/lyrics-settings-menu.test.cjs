@@ -357,7 +357,7 @@ describe('Lyrics Settings Menu Optimization (#lyrics-settings-menu)', () => {
             }
         });
 
-        it('T3.6: Re-Sync button resets #sync-number-input, #sync-slider, and #sync-value to the configured default (0)', async () => {
+        it('T3.6: Re-Sync button resets #sync-number-input, #sync-slider, and #sync-value to the configured default (-400)', async () => {
             const dom = createDom();
             try {
                 const { window } = dom;
@@ -375,10 +375,11 @@ describe('Lyrics Settings Menu Optimization (#lyrics-settings-menu)', () => {
                 const slider = window.document.getElementById('sync-slider');
                 const valueEl = window.document.getElementById('sync-value');
 
-                assert.equal(window.liveSyncOffset, 0, 'Default offset should be 0');
-                assert.equal(numInput.value, '0', 'Number input should be reset to 0');
-                assert.equal(slider.value, '0', 'Slider should be reset to 0');
-                assert.equal(valueEl.innerText, '0', 'Display should be reset to 0');
+                const expectedDefault = typeof window.DEFAULT_SYNC_OFFSET !== 'undefined' ? window.DEFAULT_SYNC_OFFSET : -400;
+                assert.equal(window.liveSyncOffset, expectedDefault, 'Default offset should match configured default');
+                assert.equal(numInput.value, String(expectedDefault), 'Number input should be reset to configured default');
+                assert.equal(slider.value, String(expectedDefault), 'Slider should be reset to configured default');
+                assert.equal(valueEl.innerText, String(expectedDefault), 'Display should be reset to configured default');
                 assert.equal(window.AppStorage.getItem('userSyncOffset'), null, 'userSyncOffset should be removed from storage');
             } finally {
                 dom.window.close();

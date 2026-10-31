@@ -7,6 +7,11 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
+    [BUGFIX] Release v24.225.46 · 2026-10-31: 100% verifizierte Künstlerbilder-Architektur ohne jegliche Fremdkünstler
+      - stats.fm API liefert direkt das verifizierte 640x640 Spotify-Originalporträt des Künstlers; kein Anhängen fremder Künstler mehr.
+      - Zusätzliche Galerie-Bilder werden ausschließlich akzeptiert, wenn es sich um echte Spotify-About-Fotos (ab676167) handelt.
+      - Scraper schneidet bei /related und Fremdkünstler-Abschnitten radikal ab; Null Fremd-Avatare in der Galerie.
+      - Version v24.225.46 ist mit Service Worker, version.json, Footer und Update-Watcher synchronisiert.
     [BUGFIX] Release v24.225.45 · 2026-10-31: Behebung des vorzeitigen Script-Endes im HTML-Parser & vollständige Seitenwiederherstellung
       - Das unescapte Schließ-Tag im Stringliteral von initialState wurde durch '<' + '/script>' ersetzt, wodurch der HTML-Parser den Haupt-Scriptblock nicht mehr vorzeitig abbricht.
       - Vollständige Funktionsfähigkeit der Seite, des Musik-Players und der UI-Komponenten wiederhergestellt.
@@ -3372,7 +3377,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.225.45 · 2026-10-31';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.225.46 · 2026-10-31';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -9125,7 +9130,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.45</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.46</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -9162,7 +9167,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.45 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.45 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.46 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.46 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -19458,6 +19463,18 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+        { version: "v24.225.46", date: "31. Oktober 2026", type: "fix", items: {
+          de: [
+            "🛡️ 100% verifizierte Künstlerbilder: Garantiert nur noch das echte Originalporträt und echte About-Galeriefotos des Künstlers",
+            "🚫 Strikte Aussperrung von 'Fans also like' / Related Artists aus der Künstler-Diashow",
+            "✨ Höchste 640x640 Bildauflösung für alle Künstlerporträts standardmäßig aktiv"
+          ],
+          en: [
+            "🛡️ 100% verified artist imagery: Strictly loads the artist's genuine profile portrait and verified About gallery photos",
+            "🚫 Complete elimination of 'Fans also like' and related artist strangers from artist slides",
+            "✨ Full 640x640 high-resolution portrait quality applied across all artists"
+          ]
+        }},
         { version: "v24.225.45", date: "31. Oktober 2026", type: "fix", items: {
           de: [
             "🩹 Notfall-Hotfix: Behebung des Script-Parser-Abbruchs; Seite und Player wieder 100% funktionsfähig",
@@ -31983,11 +32000,10 @@ window.setLyricsStyle = function(style) {
           }
 
           // 2. Fallback für Markdown / Plain-Text / einfaches HTML:
-          // STRIKTES Abschneiden vor jeglichen fremden Künstlern (Fans also like, Related Artists, andere Künstler-Links)!
-          const cutoffPattern = /(?:##\s*\[?Fans also like\]?|##\s*\[?Ähnliche Künstler|##\s*\[?Discovered on\]?|"relatedArtists"|"relatedContent"|<a[^>]+href="\/artist\/)/i;
+          // STRIKTES Abschneiden vor jeglichen fremden Künstlern (Fans also like, Related Artists, /related)!
+          const cutoffPattern = /(?:##\s*\[?Fans also like\]?|##\s*\[?Ähnliche Künstler|##\s*\[?Discovered on\]?|"relatedArtists"|"relatedContent"|https?:\/\/[^\s"'<>\)]+\/related\b|\[Show all\]\(https?:\/\/[^\)]+\/related\))/i;
           const cutoffMatch = rawStr.search(cutoffPattern);
           const safeSource = cutoffMatch !== -1 ? rawStr.slice(0, cutoffMatch) : rawStr;
-          const isFullProfilePage = safeSource.length > 400 || /open\.spotify\.com\/artist\//i.test(safeSource);
 
           // A. Offizielle Spotify "About"-Galerie-Fotos (ab676167)
           const galleryMatches = safeSource.match(/https?:\/\/(?:i\.scdn\.co|image-cdn-[a-z0-9-]+\.spotifycdn\.com)\/image\/ab676167[0-9a-f]{24,32}/gi) || [];
@@ -32004,24 +32020,27 @@ window.setLyricsStyle = function(style) {
             return Array.from(aboutPhotos.values());
           }
 
-          // B. Fallback: Nur wenn gar keine About-Fotos existieren -> Profil-Avatar (ab676161)
-          const avatarPhotos = new Map();
+          // B. Fallback: Wenn keine About-Galerie-Fotos da sind -> Profil-Avatare (ab676161)
           const avatarMatches = safeSource.match(/https?:\/\/i\.scdn\.co\/image\/ab676161[0-9a-f]{32}/gi) || [];
-          avatarMatches.forEach(url => {
-            const match = url.match(/ab676161([0-9a-f]{8})([0-9a-f]{24})$/i);
-            if (match) {
-              const variant = match[1].toLowerCase();
-              const hash = match[2].toLowerCase();
-              const quality = variant === '0000e5eb' ? 3 : variant === '0000939b' ? 2 : 1;
-              const hiResUrl = isFullProfilePage ? `https://i.scdn.co/image/ab6761610000e5eb${hash}` : url;
-              const existing = avatarPhotos.get(hash);
-              if (!existing || quality > existing.quality) {
-                avatarPhotos.set(hash, { url: hiResUrl, quality });
+          if (avatarMatches.length > 0) {
+            const avatarPhotos = new Map();
+            avatarMatches.forEach(url => {
+              const match = url.match(/ab676161([0-9a-f]{8})([0-9a-f]{24})$/i);
+              if (match) {
+                const variant = match[1].toLowerCase();
+                const hash = match[2].toLowerCase();
+                const quality = variant === '0000e5eb' ? 3 : variant === '0000939b' ? 2 : 1;
+                const hiResUrl = `https://i.scdn.co/image/ab6761610000e5eb${hash}`;
+                const existing = avatarPhotos.get(hash);
+                if (!existing || quality > existing.quality) {
+                  avatarPhotos.set(hash, { url: hiResUrl, quality });
+                }
               }
-            }
-          });
+            });
+            return Array.from(avatarPhotos.values(), photo => photo.url);
+          }
 
-          return Array.from(avatarPhotos.values(), photo => photo.url);
+          return [];
         }
 
         async function fetchSpotifyPathfinderArtistOverview(spotifyArtistId) {
@@ -32148,14 +32167,15 @@ window.setLyricsStyle = function(style) {
             const spotifyArtistId = artistData.spotifyUrl?.match(/open\.spotify\.com\/artist\/([A-Za-z0-9]+)/)?.[1];
             if (!spotifyArtistId) return;
             fetchSpotifyArtistProfileImages(spotifyArtistId).then(photos => {
-              if (!photos.length) return;
+              if (!photos || !photos.length) return;
               const prevCount = Array.isArray(artistData.images) ? artistData.images.length : 0;
-              const hasAboutPhotos = photos.some(p => p.includes('ab676167') || !p.includes('ab676161'));
+              const hasAboutPhotos = photos.some(p => p.includes('ab676167'));
               if (hasAboutPhotos) {
-                // About-Fotos aus der About-Sektion haben Vorrang und ersetzen den vorübergehenden Avatar
-                artistData.images = dedupeArtistImages(photos);
-              } else {
-                artistData.images = dedupeArtistImages([...(artistData.images || []), ...photos]);
+                // About-Fotos aus der About-Sektion haben absolute Priorität und ersetzen das vorübergehende Porträt
+                const filteredAbout = photos.filter(p => p.includes('ab676167'));
+                artistData.images = dedupeArtistImages(filteredAbout.length ? filteredAbout : photos);
+              } else if (!artistData.images || !artistData.images.length) {
+                artistData.images = dedupeArtistImages(photos.slice(0, 1));
               }
               const pfBio = spotifyArtistBioCache.get(spotifyArtistId);
               if (pfBio && (!artistData.bio || artistData.bio.includes('Entdecke die offiziellen Singles'))) {
@@ -32513,10 +32533,16 @@ window.setLyricsStyle = function(style) {
                             const artists = d?.items?.artists || [];
                             const match = artists.find(a => (a.name || '').toLowerCase() === primaryLower) || artists[0];
                             if (match && (match.name || '').toLowerCase().includes(primaryLower.slice(0, 4))) {
-                                const profileImages = Array.isArray(match.images) ? match.images.slice() : [];
-                                if (match.image) profileImages.unshift(match.image);
-                                const profileImageSources = profileImages.map(image => typeof image === 'string' ? image : (image?.url || image?.src)).filter(Boolean);
-                                artistData.images.push(...extractSpotifyArtistProfileImages(profileImageSources.join('\n')));
+                                const rawAvatar = match.image || (match.images && match.images[0]);
+                                const avatarSrc = typeof rawAvatar === 'string' ? rawAvatar : (rawAvatar?.url || rawAvatar?.src);
+                                if (avatarSrc && avatarSrc.includes('ab676161')) {
+                                    artistData.images = [avatarSrc.replace(/ab676161[0-9a-f]{8}/, 'ab6761610000e5eb')];
+                                } else {
+                                    const profileImages = Array.isArray(match.images) ? match.images.slice() : [];
+                                    if (match.image) profileImages.unshift(match.image);
+                                    const profileImageSources = profileImages.map(image => typeof image === 'string' ? image : (image?.url || image?.src)).filter(Boolean);
+                                    artistData.images.push(...extractSpotifyArtistProfileImages(profileImageSources.join('\n'), spotifyArtistId));
+                                }
                                 if (match.followers) {
                                     artistData.followersText = `${Number(match.followers).toLocaleString('de-DE')} Follower • Verifiziertes Spotify-Profil`;
                                 }
