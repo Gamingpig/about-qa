@@ -7,11 +7,11 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
-    [FEATURE/UI] Release v24.225.47 · 2026-10-31: Vollständige Spotify-Künstlergalerie (About-Bereich), Auto-Slideshow mit Hover/Touch-Pause & Custom Dark Scrollbar
+    [FEATURE/UI] Release v24.225.48 · 2026-10-31: Vollständige Spotify-Künstlergalerie (About-Bereich), Auto-Slideshow mit Hover/Touch-Pause & Custom Dark Scrollbar
       - Pathfinder GraphQL-Abfrage um includePrerelease: true erweitert, sodass die vollständige 16-Bilder-Galerie von Gus Jeffers und allen weiteren Künstlern zuverlässig in Maximalauflösung (640x640) extrahiert wird.
       - Automatischer Bilder-Slider mit 4.5s-Intervall, weichen Crossfades via CSS cubic-bezier und Pause-Zustand bei Hover/Touch.
       - Custom Scrollbar (#artist-modal-scroll): Nativer weißer Browser-Scrollbalken entfernt und durch konsistente, dezente Dark-Theme-Glas-Scrollleiste ersetzt.
-      - Version v24.225.47 ist mit Service Worker, version.json, Footer und Update-Watcher synchronisiert.
+      - Version v24.225.48 ist mit Service Worker, version.json, Footer und Update-Watcher synchronisiert.
     [BUGFIX] Release v24.225.46 · 2026-10-31: 100% verifizierte Künstlerbilder-Architektur ohne jegliche Fremdkünstler
       - stats.fm API liefert direkt das verifizierte 640x640 Spotify-Originalporträt des Künstlers; kein Anhängen fremder Künstler mehr.
       - Zusätzliche Galerie-Bilder werden ausschließlich akzeptiert, wenn es sich um echte Spotify-About-Fotos (ab676167) handelt.
@@ -3357,7 +3357,7 @@
     <link rel="preconnect" href="https://r.jina.ai" crossorigin>
     <link rel="preconnect" href="https://api.allorigins.win" crossorigin>
     <link rel="dns-prefetch" href="https://i.scdn.co">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.225.47</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.225.48</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3382,7 +3382,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.225.47 · 2026-10-31';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.225.48 · 2026-10-31';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -6098,14 +6098,27 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         .lyric-word.word-active { will-change: transform, opacity, color; }
         .lyrics-style-fill .lyric-word { background: linear-gradient(to right, #ffffff var(--fill-percent, 0%), rgba(255, 255, 255, 0.2) var(--fill-percent, 0%)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .lyrics-style-fill .lyric-word.word-passed { color: #ffffff; }
-        #artist-gallery-img { transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); will-change: opacity, transform; }
+        #artist-gallery-img { transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
+        #artist-gallery-img-prev { transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity; }
         #artist-gallery-img.artist-slide-animate { animation: none !important; }
-        #artist-gallery-bg { transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.7s cubic-bezier(0.22, 1, 0.36, 1); will-change: opacity, filter; }
-        /* Custom Dark-Theme Scrollbar für Artist-Info Modal (#artist-modal-scroll) */
+        #artist-gallery-bg { transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity; }
+        /* Custom Dark-Theme Scrollbar & Zentrierung (#artist-modal-scroll) */
         #artist-modal-scroll,
         #artist-modal-card .overflow-y-auto {
             scrollbar-width: thin;
             scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+            scrollbar-gutter: stable;
+            padding-left: 6px; /* gleicht Scrollbar-Breite rechts horizontal millimetergenau aus */
+        }
+        /* Performance-Freeze bei geöffnetem Artist-Modal: 0% GPU-Hintergrundlast */
+        body.artist-modal-open #liquid-blobs,
+        body.artist-modal-open #liquid-canvas,
+        body.artist-modal-open #mesh-gradient-canvas,
+        body.artist-modal-open #canvas-container,
+        body.artist-modal-open #main-music-card .ambient-glow,
+        body.artist-modal-open .blob-container {
+            display: none !important;
+            animation-play-state: paused !important;
         }
         #artist-modal-scroll::-webkit-scrollbar,
         #artist-modal-card .overflow-y-auto::-webkit-scrollbar {
@@ -8982,10 +8995,9 @@ html.gp-android:not(.dark) #ui-controls {
             const modal = document.getElementById('qa-pin-gate-modal');
             const fb = document.getElementById('qa-pin-feedback');
             if (currentEnteredPin === QA_VALID_PIN) {
-                // Keine Persistierung in sessionStorage/localStorage: bei Reload MUSS der PIN neu eingegeben werden!
+                // UX-Persistenz: In der aktuellen Browsersitzung freigeschaltet bleiben
                 try {
-                    sessionStorage.removeItem('gp_qa_auth');
-                    localStorage.removeItem('gp_qa_auth');
+                    sessionStorage.setItem('gp_qa_auth', 'true');
                 } catch(e) {}
                 if (typeof haptic === 'function') haptic([30, 40, 50]);
                 if (fb) {
@@ -9022,12 +9034,17 @@ html.gp-android:not(.dark) #ui-controls {
         window.submitPinCheck = submitPinCheck;
         (function checkPinGateImmediate() {
             try {
-                // Bei jedem Seitenstart / Reload den Auth-Status bewusst löschen
-                sessionStorage.removeItem('gp_qa_auth');
-                localStorage.removeItem('gp_qa_auth');
+                // UX-Persistenz: Session-Status prüfen
+                if (sessionStorage.getItem('gp_qa_auth') === 'true') {
+                    const modal = document.getElementById('qa-pin-gate-modal');
+                    if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
+                    document.documentElement.classList.remove('overflow-hidden');
+                    return;
+                }
                 const params = new URLSearchParams(window.location.search);
                 const urlPin = params.get('pin');
                 if (urlPin === QA_VALID_PIN) {
+                    sessionStorage.setItem('gp_qa_auth', 'true');
                     const modal = document.getElementById('qa-pin-gate-modal');
                     if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
                     document.documentElement.classList.remove('overflow-hidden');
@@ -9160,7 +9177,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.47</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.48</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -9197,7 +9214,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.47 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.47 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.48 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.48 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9429,7 +9446,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <div class="flex items-center gap-2 flex-wrap">
                         <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
                         <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
-                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.225.47</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.225.48</span>
                     </div>
                     <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
                 </div>
@@ -9453,7 +9470,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.225.47</span>
+                <span>🧪 QA TESTUMGEBUNG v24.225.48</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -10491,7 +10508,7 @@ html.gp-android:not(.dark) #ui-controls {
 </div>
 
 <!-- NEU v24.225.36: Interaktives Künstler-Info & Bilder-Diashow Modal (Zentriert, Vollbild-Galerie ohne Schnitt, Ambilight Glow, sanfte Animationen) -->
-<div id="artist-info-modal" class="fixed inset-0 z-[100000] bg-black/85 backdrop-blur-2xl hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300 select-none" onclick="if(event.target === this) closeArtistModal()">
+<div id="artist-info-modal" class="fixed inset-0 z-[100000] bg-black !backdrop-blur-none hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300 select-none" onclick="if(event.target === this) closeArtistModal()">
     
     <!-- Ambilight Ambient Glow hinter der Karte -->
     <div id="artist-modal-glow" class="absolute inset-0 max-w-lg mx-auto my-auto h-[85vh] rounded-[3.5rem] bg-gradient-to-tr from-cyan-500/25 via-purple-500/30 to-pink-500/25 blur-3xl opacity-80 pointer-events-none scale-105 transition-all duration-700 z-0"></div>
@@ -10508,12 +10525,15 @@ html.gp-android:not(.dark) #ui-controls {
         <div id="artist-modal-scroll" class="overflow-y-auto flex-1 w-full flex flex-col items-center">
             
             <!-- 1. Hero Bilder-Diashow / Galerie (Dual-Layer: Unscharfer Hintergrund + 100% unbeschnittenes zentriertes Bild, Auto-Pause bei Hover/Touch) -->
-            <div id="artist-gallery-container" onmouseenter="pauseArtistSlideshow()" onmouseleave="resumeArtistSlideshow()" ontouchstart="pauseArtistSlideshow()" ontouchend="resumeArtistSlideshow()" class="relative w-full h-64 sm:h-72 bg-slate-950/90 overflow-hidden flex items-center justify-center group select-none shrink-0 border-b border-white/10">
-                <!-- Dual-Layer Hintergrund Weichzeichner (Füllt die Fläche aus) -->
-                <img id="artist-gallery-bg" src="" alt="" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 pointer-events-none transition-all duration-700">
+            <div id="artist-gallery-container" class="relative w-full h-64 sm:h-72 bg-slate-950/90 overflow-hidden flex items-center justify-center group select-none shrink-0 border-b border-white/10" style="touch-action: pan-y;">
+                <!-- Dual-Layer Hintergrund Weichzeichner (Füllt die Fläche aus, statischer Blur) -->
+                <img id="artist-gallery-bg" src="" alt="" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 pointer-events-none transition-opacity duration-600">
                 
-                <!-- Dual-Layer Vordergrund: 100% Vollständiges Bild (object-contain, kein Abschneiden von Köpfen/Rändern) -->
-                <img id="artist-gallery-img" src="" alt="Künstler Foto" class="relative z-10 max-h-full max-w-full object-contain p-2 sm:p-3 transition-all duration-500 drop-shadow-2xl">
+                <!-- Dual-Layer Crossfade Transition: Vorheriges Bild fadet sanft aus -->
+                <img id="artist-gallery-img-prev" src="" alt="" class="absolute inset-0 max-h-full max-w-full m-auto object-contain p-2 sm:p-3 pointer-events-none transition-opacity duration-600 z-10 opacity-0 drop-shadow-2xl">
+                
+                <!-- Dual-Layer Vordergrund: 100% Vollständiges Bild mit Klick zur Fullscreen-Lightbox -->
+                <img id="artist-gallery-img" onclick="openArtistLightbox()" src="" alt="Künstler Foto" class="relative z-10 max-h-full max-w-full object-contain p-2 sm:p-3 transition-all duration-600 drop-shadow-2xl cursor-pointer hover:scale-102" title="Klicken für Vollbild-Zoom">
                 
                 <!-- Sanfter Gradient-Übergang nach unten -->
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/30 pointer-events-none z-10"></div>
@@ -10584,6 +10604,50 @@ html.gp-android:not(.dark) #ui-controls {
 
             </div>
         </div>
+    </div>
+</div>
+
+<!-- NEU v24.225.48: Fullscreen-Lightbox mit Zoom-Slider (100%-300%), Touch-Pinch & Pan -->
+<div id="artist-lightbox-modal" class="fixed inset-0 z-[1000000] bg-black/95 backdrop-blur-2xl hidden flex-col items-center justify-between select-none opacity-0 transition-opacity duration-300" style="touch-action: none;">
+    <!-- Top Bar -->
+    <div class="w-full max-w-4xl px-4 py-3 flex items-center justify-between z-30 border-b border-white/10 bg-black/60 backdrop-blur-md">
+        <div class="flex items-center gap-2.5">
+            <span class="px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-mono font-bold text-emerald-400">
+                <span id="lightbox-counter">1 / 1</span>
+            </span>
+            <span class="text-xs text-slate-300 font-medium hidden sm:inline" id="lightbox-artist-name">Künstler</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <span id="lightbox-zoom-val" class="font-mono text-xs font-bold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/30">100%</span>
+            <button onclick="closeArtistLightbox()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-sm transition-all active:scale-90" title="Schließen (Esc)">
+                ✕
+            </button>
+        </div>
+    </div>
+
+    <!-- Center Viewport -->
+    <div id="lightbox-viewport" class="relative flex-1 w-full overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing">
+        <img id="lightbox-img" src="" alt="Detailansicht" class="max-h-[82vh] max-w-[92vw] object-contain drop-shadow-2xl transition-transform duration-75 select-none pointer-events-auto" style="transform-origin: center center; transform: translate(0px, 0px) scale(1);" draggable="false">
+        
+        <!-- Navigation in Lightbox -->
+        <button onclick="prevLightboxSlide(event)" class="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center border border-white/20 text-xl transition-all shadow-lg active:scale-90 z-20" title="Vorheriges Bild">
+            ‹
+        </button>
+        <button onclick="nextLightboxSlide(event)" class="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center border border-white/20 text-xl transition-all shadow-lg active:scale-90 z-20" title="Nächstes Bild">
+            ›
+        </button>
+    </div>
+
+    <!-- Bottom Controls (Zoom Slider & Buttons) -->
+    <div class="w-full max-w-md px-4 py-3 flex items-center justify-center gap-3 z-30 border-t border-white/10 bg-black/60 backdrop-blur-md mb-2 sm:mb-4 rounded-2xl mx-auto">
+        <button onclick="adjustLightboxZoom(-25)" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-all active:scale-90" title="Herauszoomen">−</button>
+        <div class="flex-1 flex items-center gap-2">
+            <span class="text-[10px] font-mono text-slate-400">100%</span>
+            <input type="range" id="lightbox-zoom-range" min="100" max="300" value="100" step="5" oninput="setLightboxZoom(this.value)" class="w-full accent-cyan-400 h-1.5 bg-slate-800 rounded-lg cursor-pointer">
+            <span class="text-[10px] font-mono text-slate-400">300%</span>
+        </div>
+        <button onclick="adjustLightboxZoom(25)" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-all active:scale-90" title="Heranzoomen">+</button>
+        <button onclick="resetLightboxZoom()" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white font-mono text-[10px] font-bold transition-all active:scale-90" title="Zoom zurücksetzen">1:1</button>
     </div>
 </div>
 <!-- Global Standalone Website Settings Modal (Android Settings Style with Drilldown) -->
@@ -10724,7 +10788,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.225.47</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.225.48</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -11041,7 +11105,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.225.47</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.225.48</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -11052,7 +11116,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.225.47</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.225.48</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -11095,7 +11159,7 @@ html.gp-android:not(.dark) #ui-controls {
         </div>
     </div>
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.225.47</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.225.48</p>
 </div>
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
@@ -11351,7 +11415,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <a href="checklist.html" target="_blank" class="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500 text-teal-300 hover:text-slate-950 font-bold text-[11px] transition-all border border-teal-500/30 inline-flex items-center gap-1">
                         <span>📋</span> <span>QA Checkliste</span>
                     </a>
-                    <span class="text-pink-400 font-mono">v24.225.47</span>
+                    <span class="text-pink-400 font-mono">v24.225.48</span>
                 </div>
             </div>
         </div>
@@ -19493,6 +19557,20 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+        { version: "v24.225.48", date: "31. Oktober 2026", type: "feature", items: {
+          de: [
+            "🎨 Flüssige Galerie-Crossfade-Animation & Fullscreen-Lightbox mit 100-300% Zoom und Touch-Pinch/Pan",
+            "🚀 Maximaler Performance-Freeze: Blickdichter schwarzer Hintergrund & 0% GPU-Hintergrundlast bei geöffnetem Modal",
+            "🛡️ Resiliente Lyrics-Suche mit autonomer Retry-Kette, 2.5s-Statusmeldung und False-Positive-Schutz",
+            "🔐 PIN-Sicherheit mit Session-Persistenz und strikter Trennung von Live- und Test-Release-Notes"
+          ],
+          en: [
+            "🎨 Fluid gallery crossfade transition & fullscreen lightbox with 100-300% zoom and touch pinch/pan",
+            "🚀 Maximum performance freeze: Opaque black background & 0% background GPU load while modal is open",
+            "🛡️ Resilient lyrics search with autonomous retry chain, 2.5s status update, and false-positive shield",
+            "🔐 PIN security with session persistence and strict separation of live and internal release notes"
+          ]
+        }},
         { version: "v24.225.47", date: "31. Oktober 2026", type: "feature", items: {
           de: [
             "🖼️ Vollständiges Scraping aller 16 Spotify-Galeriebilder im About-Bereich in Maximalauflösung",
@@ -29775,6 +29853,7 @@ window.setLyricsStyle = function(style) {
                         ${cleanT ? `<h3 class="text-xl sm:text-2xl font-bold text-white/90 tracking-tight leading-snug">${escapeHTML(cleanT)}</h3>` : ''}
                         ${cleanA ? `<p class="text-xs sm:text-sm font-medium text-white/40 mt-1">${escapeHTML(cleanA)}</p>` : ''}
                     </div>` : ''}
+                    <p id="lyrics-loading-status" class="text-xs text-blue-300/80 italic mb-4 transition-opacity duration-300 opacity-0 min-h-[16px]"></p>
                     <div class="gp-load-skel flex flex-col gap-3.5 w-full">
                         <div class="gp-load-shimmer bg-white/[0.06] rounded-xl h-6 sm:h-7 w-[72%]"></div>
                         <div class="gp-load-shimmer bg-white/[0.06] rounded-xl h-6 sm:h-7 w-[88%]"></div>
@@ -29890,7 +29969,17 @@ window.setLyricsStyle = function(style) {
             inFlightLyricsKey = cacheKey;
             const doFetch = async () => {
                 let wasRateLimited = false;
-                let wasServerBusy = false; // 503/502/504/Netzwerkfehler: NICHT als „kein Text" negativ cachen
+                let wasServerBusy = false;
+                // 2.5s Beruhigende Statusmeldung bei hoher Latenz
+                const statusTimer = setTimeout(() => {
+                    if (fetchId !== currentFetchId) return;
+                    const statusEl = document.getElementById('lyrics-loading-status');
+                    if (statusEl) {
+                        statusEl.innerText = 'Suche dauert etwas länger als erwartet, wir prüfen alternative Quellen...';
+                        statusEl.classList.remove('opacity-0');
+                        statusEl.classList.add('opacity-100');
+                    }
+                }, 2500);
                 try {
                     const hasExistingVisuals = parsedLyrics && parsedLyrics.length > 0 && normLyricsStr(currentTrackTitle) === normLyricsStr(fetchTrackTitle);
                     if (!hasExistingVisuals) {
@@ -30326,6 +30415,7 @@ window.setLyricsStyle = function(style) {
                     currentLyricIndex = -1;
                     renderLyrics(currentNoLyricsMessage);
                 } finally {
+                    clearTimeout(statusTimer);
                     if (inFlightLyricsKey === cacheKey) {
                         inFlightLyricsKey = null;
                         inFlightLyricsPromise = null;
@@ -32353,7 +32443,10 @@ window.setLyricsStyle = function(style) {
         };
 
         window.openArtistModal = function(customArtist) {
-          const requestId = ++artistRequestSequence;
+            const requestId = ++artistRequestSequence;
+            document.body.classList.add('artist-modal-open');
+            playUISound('pop');
+            haptic(15);
             haptic(15);
             let artistName = customArtist || currentRawArtist || (mArtist ? mArtist.innerText : '');
             if (!artistName || artistName.includes('Genieße die Stille') || artistName.includes('Unknown') || artistName.includes('Offline')) {
@@ -32416,9 +32509,13 @@ window.setLyricsStyle = function(style) {
 
         window.closeArtistModal = function() {
             artistRequestSequence++;
+            document.body.classList.remove('artist-modal-open');
+            if (typeof closeArtistLightbox === 'function') closeArtistLightbox();
             haptic(10);
             isArtistSlideshowPaused = false;
             stopArtistSlideshowTimer();
+            if (typeof closeArtistLightbox === 'function') closeArtistLightbox();
+            document.body.classList.remove('artist-modal-open');
             const modal = document.getElementById('artist-info-modal');
             const card = document.getElementById('artist-modal-card');
             if (!modal) return;
@@ -32450,7 +32547,8 @@ window.setLyricsStyle = function(style) {
             if (isArtistSlideshowPaused) return;
             if (currentArtistSlideImages.length > 1) {
                 artistSlideshowTimer = setInterval(() => {
-                    if (!isArtistSlideshowPaused) {
+                    // Page-Visibility-Guard & Focus Protection
+                    if (!isArtistSlideshowPaused && !document.hidden && !document.body.classList.contains('page-hidden')) {
                         nextArtistSlide();
                     }
                 }, 4500);
@@ -32488,64 +32586,82 @@ window.setLyricsStyle = function(style) {
 
         function renderArtistSlideshow() {
             const imgEl = document.getElementById('artist-gallery-img');
+            const prevImgEl = document.getElementById('artist-gallery-img-prev');
             const bgEl = document.getElementById('artist-gallery-bg');
             const counterEl = document.getElementById('artist-slide-counter');
             const dotsContainer = document.getElementById('artist-gallery-dots');
 
             if (!imgEl) return;
-          const renderId = ++artistSlideRenderId;
+            const renderId = ++artistSlideRenderId;
             const currentImg = currentArtistSlideImages[currentArtistSlideIndex];
             if (currentImg) {
+                const prevSrc = imgEl.src;
+                if (prevImgEl && prevSrc && prevSrc !== currentImg && !imgEl.classList.contains('opacity-0')) {
+                    prevImgEl.src = prevSrc;
+                    prevImgEl.style.opacity = '1';
+                }
                 imgEl.classList.remove('artist-slide-animate');
                 imgEl.classList.add('opacity-0', 'scale-95');
                 if (bgEl) bgEl.classList.add('opacity-20');
-            const preloadedImage = new Image();
-            const revealImage = () => {
-              if (renderId !== artistSlideRenderId) return;
+                const preloadedImage = new Image();
+                const revealImage = () => {
+                    if (renderId !== artistSlideRenderId) return;
                     imgEl.src = currentImg;
                     if (bgEl) bgEl.src = currentImg;
-              requestAnimationFrame(() => {
-                if (renderId !== artistSlideRenderId) return;
-                imgEl.classList.remove('opacity-0', 'scale-95');
-                imgEl.classList.add('opacity-100', 'scale-100', 'artist-slide-animate');
-                if (bgEl) {
-                  bgEl.classList.remove('opacity-20');
-                  bgEl.classList.add('opacity-40');
-                }
-              });
-            };
-            preloadedImage.onload = () => {
-              if (typeof preloadedImage.decode === 'function') {
-                preloadedImage.decode().then(revealImage, revealImage);
-              } else {
-                revealImage();
-              }
-            };
-            preloadedImage.onerror = () => {
-              if (renderId !== artistSlideRenderId) return;
-              if (currentArtistSlideImages.length > 1) {
-                currentArtistSlideImages.splice(currentArtistSlideIndex, 1);
-                if (currentArtistSlideIndex >= currentArtistSlideImages.length) {
-                  currentArtistSlideIndex = 0;
-                }
-                renderArtistSlideshow();
-                return;
-              }
-              imgEl.removeAttribute('src');
-              if (bgEl) bgEl.removeAttribute('src');
-              imgEl.classList.remove('opacity-0', 'scale-95', 'artist-slide-animate');
-              if (bgEl) bgEl.classList.remove('opacity-20');
-            };
-            preloadedImage.src = currentImg;
+                    requestAnimationFrame(() => {
+                        if (renderId !== artistSlideRenderId) return;
+                        imgEl.classList.remove('opacity-0', 'scale-95');
+                        imgEl.classList.add('opacity-100', 'scale-100', 'artist-slide-animate');
+                        if (prevImgEl) prevImgEl.style.opacity = '0';
+                        if (bgEl) {
+                            bgEl.classList.remove('opacity-20');
+                            bgEl.classList.add('opacity-40');
+                        }
+                    });
+                    if (currentArtistSlideImages.length > 1 && typeof Image !== 'undefined') {
+                        const nextIdx = (currentArtistSlideIndex + 1) % currentArtistSlideImages.length;
+                        const nextUrl = currentArtistSlideImages[nextIdx];
+                        if (nextUrl) {
+                            const pImg = new Image();
+                            pImg.src = nextUrl;
+                            if (typeof pImg.decode === 'function') pImg.decode().catch(() => {});
+                        }
+                    }
+                };
+                preloadedImage.onload = () => {
+                    if (typeof preloadedImage.decode === 'function') {
+                        preloadedImage.decode().then(revealImage, revealImage);
+                    } else {
+                        revealImage();
+                    }
+                };
+                preloadedImage.onerror = () => {
+                    if (renderId !== artistSlideRenderId) return;
+                    if (currentArtistSlideImages.length > 1) {
+                        currentArtistSlideImages.splice(currentArtistSlideIndex, 1);
+                        if (currentArtistSlideIndex >= currentArtistSlideImages.length) {
+                            currentArtistSlideIndex = 0;
+                        }
+                        renderArtistSlideshow();
+                        return;
+                    }
+                    imgEl.removeAttribute('src');
+                    if (bgEl) bgEl.removeAttribute('src');
+                    imgEl.classList.remove('opacity-0', 'scale-95', 'artist-slide-animate');
+                    if (bgEl) bgEl.classList.remove('opacity-20');
+                    if (prevImgEl) prevImgEl.style.opacity = '0';
+                };
+                preloadedImage.src = currentImg;
             } else {
                 imgEl.removeAttribute('src');
                 if (bgEl) bgEl.removeAttribute('src');
-            imgEl.classList.remove('opacity-0', 'scale-95', 'artist-slide-animate');
-            imgEl.classList.add('opacity-100', 'scale-100');
-            if (bgEl) {
-              bgEl.classList.remove('opacity-20');
-              bgEl.classList.add('opacity-40');
-            }
+                imgEl.classList.remove('opacity-0', 'scale-95', 'artist-slide-animate');
+                imgEl.classList.add('opacity-100', 'scale-100');
+                if (bgEl) {
+                    bgEl.classList.remove('opacity-20');
+                    bgEl.classList.add('opacity-40');
+                }
+                if (prevImgEl) prevImgEl.style.opacity = '0';
             }
 
             if (counterEl) {
@@ -32553,13 +32669,21 @@ window.setLyricsStyle = function(style) {
             }
 
             if (dotsContainer) {
-                dotsContainer.innerHTML = '';
-                if (currentArtistSlideImages.length > 1) {
-                    currentArtistSlideImages.forEach((_, idx) => {
-                        const dot = document.createElement('button');
+                if (currentArtistSlideImages.length <= 1) {
+                    dotsContainer.innerHTML = '';
+                } else {
+                    if (dotsContainer.children.length !== currentArtistSlideImages.length) {
+                        dotsContainer.innerHTML = '';
+                        currentArtistSlideImages.forEach((_, idx) => {
+                            const dot = document.createElement('button');
+                            dot.type = 'button';
+                            dot.setAttribute('aria-label', `Foto ${idx + 1}`);
+                            dot.onclick = (e) => goToArtistSlide(idx, e);
+                            dotsContainer.appendChild(dot);
+                        });
+                    }
+                    Array.from(dotsContainer.children).forEach((dot, idx) => {
                         dot.className = `h-2 rounded-full transition-all duration-300 ${idx === currentArtistSlideIndex ? 'bg-emerald-400 w-6' : 'bg-white/40 hover:bg-white/70 w-2'}`;
-                        dot.onclick = (ev) => goToArtistSlide(idx, ev);
-                        dotsContainer.appendChild(dot);
                     });
                 }
             }
@@ -33380,7 +33504,7 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.225.47</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.225.48</span>
         </a>
     </div>
 

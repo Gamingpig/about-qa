@@ -1,9 +1,10 @@
 {
-  "version": "24.225.47",
-  "buildTime": "2026-10-31T17:50:00.000Z",
+  "version": "24.225.48",
+  "buildTime": "2026-10-31T19:05:00.000Z",
   "shortNotes": [
-    "Vollständige Spotify-Künstlergalerie (About-Bereich) mit allen Bildern in Maximalauflösung",
-    "Automatischer Bilder-Slider mit sanfter Übergangsanimation und Pause bei Hover/Touch",
-    "Custom Dark-Theme Scrollbar für das Künstler-Info-Fenster (ohne nativen Browser-Scrollbalken)"
+    "Flüssige Galerie-Crossfades & Fullscreen-Lightbox mit 100-300% Zoom und Touch-Pinch/Pan",
+    "Maximaler Performance-Freeze: 0% GPU-Hintergrundlast bei geöffnetem Künstler-Modal",
+    "Resiliente Lyrics-Suche mit autonomer Retry-Kette und Statusmeldung",
+    "PIN-Sicherheit mit Session-Persistenz und strikter Trennung der Release Notes"
   ]
 }

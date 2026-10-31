@@ -79,6 +79,63 @@
         }
     </style>
     <link rel="stylesheet" href="assets/community-glass.20260910.css?v=v24.213.0" data-gp-glass-engine="true">
+    <script>
+        (function initAdminSessionPinGate() {
+            try {
+                if (sessionStorage.getItem('gp_qa_auth') === 'true') return;
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('pin') === '2957') {
+                    sessionStorage.setItem('gp_qa_auth', 'true');
+                    return;
+                }
+                document.documentElement.classList.add('overflow-hidden');
+                document.addEventListener('DOMContentLoaded', () => {
+                    if (sessionStorage.getItem('gp_qa_auth') === 'true') return;
+                    const overlay = document.createElement('div');
+                    overlay.id = 'admin-pin-gate-modal';
+                    overlay.className = 'fixed inset-0 z-[999999] bg-[#030612]/98 backdrop-blur-3xl flex items-center justify-center p-4 text-center select-none';
+                    overlay.innerHTML = `
+                        <div class="w-full max-w-sm rounded-3xl bg-slate-900/95 border border-purple-500/40 shadow-[0_0_50px_rgba(139,92,246,0.3)] p-6 text-center text-white relative">
+                            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-3xl">
+                                🔐
+                            </div>
+                            <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-mono font-bold border border-purple-400/30 mb-2 uppercase">
+                                Admin Master-Dossier
+                            </div>
+                            <h2 class="text-xl font-black text-white">Tester-PIN eingeben</h2>
+                            <p class="text-xs text-slate-300 mt-1 mb-5">Dieser interne Bereich ist geschützt. Bitte gib deinen 4-stelligen Tester-PIN ein.</p>
+                            <input type="password" id="admin-pin-input" maxlength="8" placeholder="••••" class="w-full px-4 py-3 rounded-xl bg-black/60 border border-purple-500/30 text-center font-mono text-xl tracking-widest text-white mb-3 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20 transition-all">
+                            <div id="admin-pin-err" class="text-xs font-semibold text-rose-400 min-h-[20px] mb-4"></div>
+                            <div class="flex gap-2.5">
+                                <a href="index.html" class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold text-slate-300 transition-all text-center">Zurück</a>
+                                <button id="admin-pin-btn" type="button" class="flex-1 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 active:scale-95 text-xs font-bold text-white shadow-lg shadow-purple-600/30 transition-all">Entsperren</button>
+                            </div>
+                        </div>`;
+                    document.body.appendChild(overlay);
+                    const inp = document.getElementById('admin-pin-input');
+                    const btn = document.getElementById('admin-pin-btn');
+                    const err = document.getElementById('admin-pin-err');
+                    const verify = () => {
+                        if (inp.value.trim() === '2957') {
+                            sessionStorage.setItem('gp_qa_auth', 'true');
+                            overlay.classList.add('opacity-0', 'pointer-events-none');
+                            setTimeout(() => {
+                                overlay.remove();
+                                document.documentElement.classList.remove('overflow-hidden');
+                            }, 300);
+                        } else {
+                            err.innerText = '❌ Falscher PIN. Bitte autorisierten Tester-PIN eingeben.';
+                            inp.value = '';
+                            inp.focus();
+                        }
+                    };
+                    btn.onclick = verify;
+                    inp.onkeydown = (e) => { if (e.key === 'Enter') verify(); };
+                    setTimeout(() => inp.focus(), 100);
+                });
+            } catch(e) {}
+        })();
+    </script>
 </head>
 <body class="selection:bg-purple-500/30 selection:text-purple-200">
 

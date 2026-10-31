@@ -5,7 +5,7 @@
   <script src="./js/core/storage.e856be99df567fd2.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Release Notes v24.222.7 – Gamingpig</title>
+  <title>Release Notes v24.225.48 – Gamingpig</title>
   <meta name="description" content="Offizielle Release Notes für Gamingpig v24.222.7: Der große Lyrics-Synchronisations-Durchbruch, 100% autonome Songtext-Erkennung, HTTP 429 Rate-Limit Shield und Multi-DB Vorbereitung.">
   <meta name="theme-color" content="#090a0f">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -98,12 +98,8 @@
         <span class="font-semibold text-sm tracking-wide">Zurück zu Gamingpig</span>
       </a>
 
-      <!-- Right controls: Admin Deep Dive + TTS Reader + Language Selector -->
+      <!-- Right controls: TTS Reader + Language Selector -->
       <div class="flex items-center gap-2 sm:gap-3">
-        <a href="release-admin.html" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 transition-all">
-          <span>🔬</span> <span>Admin Deep-Dive</span>
-        </a>
-
         <!-- Audio TTS Briefing Button -->
         <button id="tts-btn" onclick="toggleAudioBriefing()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 transition-all active:scale-95">
           <svg id="tts-icon" class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,20 +122,6 @@
   </header>
 
   <main class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-    <!-- Admin Deep-Dive Announcement Banner -->
-    <div class="mb-8 p-4 rounded-2xl bg-purple-950/40 border border-purple-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-      <div class="flex items-center gap-2.5 text-purple-200">
-        <span class="text-xl">🔬</span>
-        <div>
-          <strong class="text-white block font-bold">Für Administratoren &amp; Entwickler:</strong>
-          <span>Ausführliche Architektur-Details zum Lyrics-Durchbruch &amp; Multi-DB-System verfügbar.</span>
-        </div>
-      </div>
-      <a href="release-admin.html" class="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-all shrink-0 active:scale-95">
-        Admin-Dossier öffnen →
-      </a>
-    </div>
-
     <!-- Hero Header -->
     <div class="text-center space-y-4 mb-14">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold badge-pill">
@@ -266,9 +248,6 @@
         Gamingpig Web App • Built with ❤️, Web Audio API & Tailwind CSS.
       </div>
       <div class="flex items-center gap-3">
-        <a href="release-admin.html" class="px-4 py-2.5 rounded-full bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-200 font-semibold text-xs transition-all">
-          Admin Deep-Dive
-        </a>
         <a href="index.html" class="px-5 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95">
           App jetzt öffnen
         </a>
