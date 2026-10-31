@@ -5908,6 +5908,37 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             background-size: 200% 100%;
             background-repeat: no-repeat;
             animation: gpLoadShimmer 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform: translateZ(0);
+            overflow: hidden;
+            contain: paint;
+        }
+        .gp-load-skel {
+            overflow: hidden;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+        /* No-Lyrics Idle Fade-Out State */
+        #no-lyrics-container {
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity;
+        }
+        #no-lyrics-container.idle-faded {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        #no-lyrics-container.idle-faded #no-lyrics-resync-btn {
+            opacity: 0.45;
+            pointer-events: auto !important;
+            transition: opacity 0.3s ease, background 0.2s ease;
+        }
+        #no-lyrics-container.idle-faded #no-lyrics-resync-btn:hover {
+            opacity: 1 !important;
+        }
+        #artist-lightbox-modal {
+            z-index: 9999999 !important;
         }
         @keyframes gpLoadShimmer {
             0% { background-position: 150% 0; }
@@ -10536,10 +10567,8 @@ html.gp-android:not(.dark) #ui-controls {
                 <img id="artist-gallery-bg" src="" alt="" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 pointer-events-none transition-opacity duration-600">
                 
                 <!-- Dual-Layer Crossfade Transition: Vorheriges Bild fadet sanft aus -->
-                <img id="artist-gallery-img-prev" src="" alt="" class="absolute inset-0 max-h-full max-w-full m-auto object-contain p-2 sm:p-3 pointer-events-none transition-opacity duration-600 z-10 opacity-0 drop-shadow-2xl">
-                
-                <!-- Dual-Layer Vordergrund: 100% Vollständiges Bild mit Klick zur Fullscreen-Lightbox -->
-                <img id="artist-gallery-img" onclick="openArtistLightbox()" src="" alt="Künstler Foto" class="relative z-10 max-h-full max-w-full object-contain p-2 sm:p-3 transition-all duration-600 drop-shadow-2xl cursor-pointer hover:scale-102" title="Klicken für Vollbild-Zoom">
+                                <img id="artist-gallery-img-prev" src="" alt="" class="absolute inset-0 max-h-full max-w-full m-auto object-contain p-2 sm:p-3 pointer-events-none drop-shadow-2xl z-10 opacity-0" style="will-change: opacity, transform;">
+                <img id="artist-gallery-img" onclick="openArtistLightbox()" src="" alt="Künstler Foto" class="absolute inset-0 max-h-full max-w-full m-auto object-contain p-2 sm:p-3 drop-shadow-2xl z-20 cursor-pointer hover:scale-102 opacity-100" style="will-change: opacity, transform;" title="Klicken für Vollbild-Zoom">
                 
                 <!-- Sanfter Gradient-Übergang nach unten -->
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/30 pointer-events-none z-10"></div>
@@ -10614,7 +10643,7 @@ html.gp-android:not(.dark) #ui-controls {
 </div>
 
 <!-- NEU v24.225.49: Fullscreen-Lightbox mit Zoom-Slider (100%-300%), Touch-Pinch & Pan -->
-<div id="artist-lightbox-modal" class="fixed inset-0 z-[1000000] bg-black/95 backdrop-blur-2xl hidden flex-col items-center justify-between select-none opacity-0 transition-opacity duration-300" style="touch-action: none;">
+<div id="artist-lightbox-modal" class="fixed inset-0 z-[9999999] bg-black/95 backdrop-blur-2xl hidden flex-col items-center justify-between select-none opacity-0 transition-opacity duration-300" style="touch-action: none; z-index: 9999999;">
     <!-- Top Bar -->
     <div class="w-full max-w-4xl px-4 py-3 flex items-center justify-between z-30 border-b border-white/10 bg-black/60 backdrop-blur-md">
         <div class="flex items-center gap-2.5">
@@ -10645,7 +10674,7 @@ html.gp-android:not(.dark) #ui-controls {
     </div>
 
     <!-- Bottom Controls (Zoom Slider & Buttons) -->
-    <div class="w-full max-w-md px-4 py-3 flex items-center justify-center gap-3 z-30 border-t border-white/10 bg-black/60 backdrop-blur-md mb-2 sm:mb-4 rounded-2xl mx-auto">
+    <div class="w-full max-w-md px-4 py-3 flex items-center justify-center gap-3 z-30 border-t border-white/10 bg-black/60 backdrop-blur-md mb-2 sm:mb-4 rounded-2xl mx-auto" style="touch-action: pan-x;">
         <button onclick="adjustLightboxZoom(-25)" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-all active:scale-90" title="Herauszoomen">−</button>
         <div class="flex-1 flex items-center gap-2">
             <span class="text-[10px] font-mono text-slate-400">100%</span>
@@ -29027,15 +29056,16 @@ window.setLyricsStyle = function(style) {
                 } else if (isCustomFallback) {
                     if (syncBadge) syncBadge.style.display = 'none';
                     lyricsContent.innerHTML = `
-                        <div class="w-full flex-1 flex flex-col justify-center min-h-full py-8 px-2 sm:px-4 md:px-8">
+                        <div id="no-lyrics-container" class="w-full flex-1 flex flex-col justify-center min-h-full py-8 px-2 sm:px-4 md:px-8">
                             <h2 class="text-sm xxs:text-lg xs:text-xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-[1.2] text-left break-words">${escapeHTML(displayMsg)}</h2>
                             <div class="mt-6 flex items-center gap-3">
-                                <button type="button" onclick="if (typeof fetchExternalLyrics === 'function') fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs, true);" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-xs sm:text-sm font-semibold text-white/90 border border-white/15">
+                                <button id="no-lyrics-resync-btn" type="button" onclick="if (typeof fetchExternalLyrics === 'function') fetchExternalLyrics(currentTrackTitle, currentRawArtist, totalMs, true);" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-xs sm:text-sm font-semibold text-white/90 border border-white/15 cursor-pointer">
                                     <svg class="w-3.5 h-3.5 text-blue-400 animate-spin-reverse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
                                     <span>${t('btn_resync') || 'Erneut suchen'}</span>
                                 </button>
                             </div>
                         </div>`;
+                    if (typeof resetNoLyricsIdleTimer === 'function') resetNoLyricsIdleTimer();
                 } else {
                     if (syncBadge) syncBadge.style.display = 'none';
                     lyricsContent.innerHTML = `<div class="w-full flex-1 pt-[10vh] pb-[50vh] px-2 sm:px-4 md:px-8"><p class="text-xs xxs:text-sm xs:text-base sm:text-2xl md:text-3xl font-bold text-white/80 leading-relaxed whitespace-pre-wrap text-left break-words">${escapeHTML(displayMsg.trim())}</p></div>`;
@@ -30000,6 +30030,33 @@ window.setLyricsStyle = function(style) {
             return true;
         }
         const lyricsMemoryCache = new Map();
+        // --- NO-LYRICS IDLE FADE-OUT LOGIK (5s Timer & Wakeup) ---
+        let noLyricsIdleTimer = null;
+        function resetNoLyricsIdleTimer() {
+            const el = document.getElementById('no-lyrics-container');
+            if (!el) return;
+            el.classList.remove('idle-faded');
+            if (noLyricsIdleTimer) {
+                clearTimeout(noLyricsIdleTimer);
+                noLyricsIdleTimer = null;
+            }
+            noLyricsIdleTimer = setTimeout(() => {
+                const container = document.getElementById('no-lyrics-container');
+                if (container) {
+                    container.classList.add('idle-faded');
+                }
+            }, 5000);
+        }
+        if (typeof window !== 'undefined') {
+            ['mousemove', 'pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(evt => {
+                window.addEventListener(evt, () => {
+                    const el = document.getElementById('no-lyrics-container');
+                    if (el) resetNoLyricsIdleTimer();
+                }, { passive: true });
+            });
+        }
+        const lyricsSessionSearchedTracks = new Set();
+
         let inFlightLyricsKey = null;
         let inFlightLyricsPromise = null;
         function renderLyricsLoading(title = '', artist = '') {
@@ -30070,12 +30127,18 @@ window.setLyricsStyle = function(style) {
             const cacheKey = (title + '---' + (artist || '')).toLowerCase().trim();
             if (force) {
                 lyricsMemoryCache.delete(cacheKey);
+                lyricsSessionSearchedTracks.delete(cacheKey);
                 lrclibRateLimitedUntil = 0;
                 if (lrclibAutoRetryTimeout) {
                     clearTimeout(lrclibAutoRetryTimeout);
                     lrclibAutoRetryTimeout = null;
                 }
+            } else if (lyricsSessionSearchedTracks.has(cacheKey) && lyricsMemoryCache.get(cacheKey)?.noLyricsFound) {
+                // Song wurde in dieser Session bereits durchsucht und hat keinen Text -> stoppe sofort ohne Neusuche!
+                renderLyrics(currentNoLyricsMessage);
+                return;
             }
+            lyricsSessionSearchedTracks.add(cacheKey);
             // Deduplizierung: Wenn derselbe Song bereits geladen wird, keinen neuen Fetch starten!
             if (!force && inFlightLyricsKey === cacheKey && inFlightLyricsPromise) {
                 return inFlightLyricsPromise;
@@ -31212,15 +31275,13 @@ window.setLyricsStyle = function(style) {
                 }
                 // 2. Automatischer Lyrics-Fetch:
                 // Nur wenn nicht im Cache vorhanden, nicht kürzlich fehlgeschlagen/rate-limited und kein laufender Request aktiv ist
-                const hasNegativeCache = cachedLyricsEntry && (cachedLyricsEntry.provider === 'none' || cachedLyricsEntry.noLyricsFound === true) && (Date.now() - (cachedLyricsEntry.cachedAt || 0) < 60000);
+                // STRIKTER EINZELDURCHLAUF (v24.225.54):
+                // Genau EIN kohärenter Such-Lifecycle pro Songwechsel.
+                // Kein automatisches Dauer-Polling bei laufendem Song / fehlendem Text!
+                const hasNegativeCache = cachedLyricsEntry && (cachedLyricsEntry.provider === 'none' || cachedLyricsEntry.noLyricsFound === true);
                 const hasLyricsInCache = hasSyncedInCache || (cachedLyricsEntry && cachedLyricsEntry.plainLyrics && !isDummyLyrics(cachedLyricsEntry.plainLyrics));
-                // AUTOMATISCHER FETCH & AUTONOMER HEILUNGS-RETRY (v24.225.28):
-                // 1. Am Anfang jedes neuen Songs sofort laden.
-                // 2. Falls während des Abspielens noch kein Text vorliegt (z.B. durch vorübergehende LTE-Latenz),
-                //    nach 10s autonom erneut versuchen – der Nutzer muss NIEMALS manuell "Re-Sync" klicken!
-                const isMissingLyricsWhilePlaying = trackIsPlaying && currentTrackTitle && (!parsedLyrics || parsedLyrics.length === 0) && !inFlightLyricsKey;
-                const canRetryMissing = isMissingLyricsWhilePlaying && (!hasNegativeCache || Date.now() - (cachedLyricsEntry?.cachedAt || 0) > 10000);
-                const lyricsNeedFetch = (isNewTrack || canRetryMissing) && !hasLyricsInCache && (!hasNegativeCache || canRetryMissing) && (inFlightLyricsKey !== currentTrackCacheKey);
+                const isAlreadySearchedForCurrentSong = lyricsSessionSearchedTracks.has(currentTrackCacheKey);
+                const lyricsNeedFetch = isNewTrack && !hasLyricsInCache && !isAlreadySearchedForCurrentSong && (inFlightLyricsKey !== currentTrackCacheKey);
                 if (isNewTrack) {
                     addToRecentlyPlayed(trackTitle, rawArtist, finalArtUrl);
                     if (!isFirstLoad && isPlaying) {
@@ -33290,9 +33351,13 @@ window.setLyricsStyle = function(style) {
 
             resetLightboxZoom();
 
+            modal.style.display = 'flex';
+            modal.style.zIndex = '9999999';
+            modal.style.pointerEvents = 'auto';
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             requestAnimationFrame(() => {
+                modal.style.opacity = '1';
                 modal.classList.remove('opacity-0');
                 modal.classList.add('opacity-100');
             });
@@ -33302,9 +33367,11 @@ window.setLyricsStyle = function(style) {
             const modal = document.getElementById('artist-lightbox-modal');
             if (!modal || modal.classList.contains('hidden')) return;
             if (typeof haptic === 'function') haptic(10);
+            modal.style.opacity = '0';
             modal.classList.remove('opacity-100');
             modal.classList.add('opacity-0');
             setTimeout(() => {
+                modal.style.display = 'none';
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 resetLightboxZoom();
