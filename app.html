@@ -8914,6 +8914,7 @@ html.gp-android:not(.dark) #ui-controls {
   border-top: 1px solid rgba(255,255,255,0.22) !important;
 }
 </style>
+    <script src="./js/services/kartingService.js"></script>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen selection:bg-blue-500/30 overflow-x-hidden">
     <!-- ========================================================= -->
@@ -10650,6 +10651,170 @@ html.gp-android:not(.dark) #ui-controls {
         <button onclick="resetLightboxZoom()" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white font-mono text-[10px] font-bold transition-all active:scale-90" title="Zoom zurücksetzen">1:1</button>
     </div>
 </div>
+
+<!-- ============================================================================== -->
+<!-- ECHTZEIT GO-KART TELEMETRIE DASHBOARD (v24.225.48)                             -->
+<!-- Feature-Flag: FEATURE_FLAGS.KARTING_DASHBOARD (Admin-Protected / QA Override)   -->
+<!-- ============================================================================== -->
+<div id="karting-dashboard-modal" class="fixed inset-0 z-[100000] bg-black/90 backdrop-blur-2xl hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300 select-none" onclick="if(event.target === this) closeKartingDashboard()">
+    
+    <!-- Ambilight Ambient Glow -->
+    <div class="absolute inset-0 max-w-2xl mx-auto my-auto h-[85vh] rounded-[3.5rem] bg-gradient-to-tr from-red-600/20 via-amber-500/15 to-purple-600/20 blur-3xl opacity-70 pointer-events-none z-0"></div>
+
+    <!-- Centered Card -->
+    <div id="karting-modal-card" class="relative z-10 w-full max-w-2xl rounded-[2.5rem] bg-gradient-to-b from-slate-900/98 via-slate-950/98 to-black text-white border border-red-500/30 flex flex-col items-center shadow-[0_0_50px_rgba(239,68,68,0.2)] overflow-hidden max-h-[92vh]">
+        
+        <!-- Header Strip -->
+        <div class="w-full px-5 sm:px-7 py-4 border-b border-white/10 flex items-center justify-between bg-black/40 backdrop-blur-md shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-xl shadow-inner shadow-red-500/30 shrink-0">
+                    🏎️
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-mono font-bold text-red-400 uppercase tracking-wider">Activity-Box Live Telemetrie</span>
+                        <span id="kart-live-status-pill" class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE
+                        </span>
+                    </div>
+                    <h2 class="text-base sm:text-lg font-black text-white tracking-tight" id="kart-track-name">ProKart Racing Arena</h2>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="triggerKartLapSimulation()" class="px-3 py-1.5 rounded-xl bg-red-600/30 hover:bg-red-600/50 border border-red-500/40 text-red-200 text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5" title="Neue Runde simulieren">
+                    <span>⚡</span><span class="hidden sm:inline">Runde +</span>
+                </button>
+                <button type="button" onclick="closeKartingDashboard()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold text-sm transition-all active:scale-90" title="Schließen (Esc)">
+                    ✕
+                </button>
+            </div>
+        </div>
+
+        <!-- Scrollable Dashboard Content -->
+        <div class="overflow-y-auto flex-1 w-full p-4 sm:p-6 space-y-4" style="scrollbar-width: thin; scrollbar-color: rgba(239, 68, 68, 0.3) transparent;">
+            
+            <!-- Hero Stats Grid (P1 / Bestzeit / Delta / Speed) -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+                <!-- Position -->
+                <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-center">
+                    <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider font-semibold">Position</span>
+                    <span id="kart-stat-position" class="text-2xl sm:text-3xl font-black text-amber-400 mt-0.5">P1</span>
+                    <span class="text-[9px] text-slate-500 font-mono">von 14 Karts</span>
+                </div>
+                <!-- Best Lap -->
+                <div class="p-3.5 rounded-2xl bg-white/5 border border-purple-500/30 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 w-12 h-12 bg-purple-500/15 rounded-full blur-xl pointer-events-none"></div>
+                    <span class="text-[10px] font-mono text-purple-300 uppercase tracking-wider font-semibold">Beste Runde</span>
+                    <span id="kart-stat-bestlap" class="text-2xl sm:text-3xl font-mono font-black text-purple-400 mt-0.5">32.314s</span>
+                    <span class="text-[9px] text-purple-300/70 font-mono">Rekord: 31.984s</span>
+                </div>
+                <!-- Delta PB -->
+                <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-center">
+                    <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider font-semibold">Delta zu PB</span>
+                    <span id="kart-stat-delta" class="text-xl sm:text-2xl font-mono font-bold text-emerald-400 mt-1">±0.000s 🚀</span>
+                    <span class="text-[9px] text-slate-500 font-mono" id="kart-stat-lapcount">Runde 12 / 18</span>
+                </div>
+                <!-- Kart # & Top Speed -->
+                <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-center">
+                    <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider font-semibold">Kart &amp; Speed</span>
+                    <span id="kart-stat-kart" class="text-xl sm:text-2xl font-mono font-black text-cyan-400 mt-1">#14</span>
+                    <span class="text-[9px] text-cyan-300/70 font-mono" id="kart-stat-speed">64.8 km/h Vmax</span>
+                </div>
+            </div>
+
+            <!-- Sector Times Strip -->
+            <div class="p-4 rounded-2xl bg-gradient-to-r from-purple-950/30 via-slate-900 to-red-950/30 border border-white/10 space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="font-bold text-slate-300 flex items-center gap-1.5">
+                        <span>⏱️</span><span>Sektor-Zeiten (Aktuelle Runde)</span>
+                    </span>
+                    <span class="font-mono text-[10px] text-purple-300 font-bold" id="kart-optimal-lap">Ideale Runde: 32.210s</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center font-mono">
+                    <div class="p-2 rounded-xl bg-purple-500/15 border border-purple-500/30">
+                        <span class="text-[9px] text-purple-300 block">SEKTOR 1</span>
+                        <span id="kart-sector-1" class="text-sm font-bold text-white">10.120s</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30">
+                        <span class="text-[9px] text-emerald-300 block">SEKTOR 2</span>
+                        <span id="kart-sector-2" class="text-sm font-bold text-white">11.458s</span>
+                    </div>
+                    <div class="p-2 rounded-xl bg-purple-500/15 border border-purple-500/30">
+                        <span class="text-[9px] text-purple-300 block">SEKTOR 3</span>
+                        <span id="kart-sector-3" class="text-sm font-bold text-white">10.736s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lap Times Table -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between text-xs px-1">
+                    <h3 class="font-bold text-white flex items-center gap-1.5">
+                        <span>📋</span><span>Runden-Protokoll</span>
+                    </h3>
+                    <span class="text-[10px] text-slate-400 font-mono">Neueste oben</span>
+                </div>
+                
+                <div class="overflow-x-auto rounded-2xl border border-white/10 bg-black/30">
+                    <table class="w-full text-left border-collapse text-xs font-mono">
+                        <thead>
+                            <tr class="border-b border-white/10 bg-white/5 text-slate-400 text-[10px] uppercase">
+                                <th class="py-2.5 px-3">Rnd</th>
+                                <th class="py-2.5 px-3">Zeit</th>
+                                <th class="py-2.5 px-3">Diff</th>
+                                <th class="py-2.5 px-3 hidden sm:table-cell">S1</th>
+                                <th class="py-2.5 px-3 hidden sm:table-cell">S2</th>
+                                <th class="py-2.5 px-3 hidden sm:table-cell">S3</th>
+                                <th class="py-2.5 px-3 text-right">Vmax</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kart-laps-tbody" class="divide-y divide-white/5 text-slate-300">
+                            <!-- Dynamische Runden-Zeilen -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Fahrer-Profil & Historie -->
+            <div class="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-lg">🏆</span>
+                        <div>
+                            <h4 class="text-xs font-bold text-white" id="kart-driver-name">Gamingpig (The Piggy Racer)</h4>
+                            <p class="text-[10px] text-slate-400 font-mono" id="kart-driver-class">Rotax Max Senior / Rimo Alpha 390cc</p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono font-bold">Rang 1 • 2.450 Pkt</span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 text-center text-xs font-mono border-t border-white/10 pt-3">
+                    <div>
+                        <span class="text-[9px] text-slate-400 block">RENNEN</span>
+                        <span class="font-bold text-white" id="kart-stat-totalraces">42</span>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-slate-400 block">SIEGE</span>
+                        <span class="font-bold text-emerald-400" id="kart-stat-wins">17</span>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-slate-400 block">PODIEN</span>
+                        <span class="font-bold text-amber-400" id="kart-stat-podiums">31</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer / Hint -->
+        <div class="w-full px-5 py-3 border-t border-white/10 bg-black/60 flex items-center justify-between text-[10px] text-slate-400 font-mono shrink-0">
+            <span>🔒 Admin-QA Vorabversion • Feature-Flag aktiv</span>
+            <span>Abstimmung läuft bis 01.12.2026</span>
+        </div>
+    </div>
+</div>
+
 <!-- Global Standalone Website Settings Modal (Android Settings Style with Drilldown) -->
 <div id="global-settings-menu" class="fixed top-[calc(env(safe-area-inset-top,0px)+4.5rem)] right-2 xs:right-4 sm:right-6 bg-slate-900/95 border border-slate-700/80 rounded-3xl p-3.5 sm:p-5 shadow-2xl backdrop-blur-2xl hidden flex flex-col gap-3.5 w-[94vw] xs:w-[390px] sm:w-[440px] md:w-[470px] max-w-[calc(100vw-1rem)] z-[10000] origin-top-right max-h-[85vh] overflow-y-auto" style="-webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;" onclick="event.stopPropagation()">
     <!-- Header -->
@@ -33054,7 +33219,165 @@ window.setLyricsStyle = function(style) {
         if (previewBoxElInit) previewBoxElInit.className = `w-full bg-black/40 rounded-lg p-2.5 mb-1 overflow-hidden text-center min-h-[52px] flex items-center justify-center lyrics-style-${currentLyricsStyle}`;
         renderLanguagePicker();
         positionDynamicIsland();
-        setTimeout(positionDynamicIsland, 400); // Nachlauf, falls Fonts/Layout sich noch verschieben
+        setTimeout(positionDynamicIsland, 400);
+
+        // ==============================================================================
+        // ECHTZEIT GO-KART TELEMETRIE & ACTIVITY-BOX CONTROLLER (v24.225.48)
+        // Feature-Flag Steuerung: Standard 'disabled', einziger Schalter schaltet frei!
+        // ==============================================================================
+        const FEATURE_FLAGS = {
+            KARTING_DASHBOARD: false // Default: FALSE. Nach Voting-Ende auf true schalten!
+        };
+        window.FEATURE_FLAGS = FEATURE_FLAGS;
+
+        window.isKartingDashboardAccessible = function() {
+            if (FEATURE_FLAGS.KARTING_DASHBOARD) return true;
+            try {
+                const isAuthed = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('gp_qa_auth') === 'true');
+                const params = (typeof window !== 'undefined' && window.location) ? new URLSearchParams(window.location.search) : null;
+                const hasUrlOverride = params && (params.get('karting') === 'true' || params.get('debug_karting') === 'true');
+                const hasStorageOverride = (typeof localStorage !== 'undefined' && localStorage.getItem('gp_debug_karting') === 'true');
+                return isAuthed && (hasUrlOverride || hasStorageOverride);
+            } catch (_) {
+                return false;
+            }
+        };
+
+        window.openKartingDashboard = function() {
+            if (!window.isKartingDashboardAccessible()) {
+                if (typeof showToast === 'function') {
+                    showToast('🔒 Karting-Tracker gesperrt • Abstimmung läuft bis 01.12.26 im Discord!', 'error');
+                } else {
+                    alert('🔒 Das Echtzeit Go-Kart Dashboard befindet sich aktuell in der Abstimmung und ist für reguläre Nutzer gesperrt.');
+                }
+                return false;
+            }
+
+            playUISound('pop');
+            haptic(20);
+            const modal = document.getElementById('karting-dashboard-modal');
+            if (!modal) return false;
+
+            document.body.classList.add('karting-modal-open');
+            renderKartingDashboardUI();
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+            });
+            return true;
+        };
+
+        window.closeKartingDashboard = function() {
+            const modal = document.getElementById('karting-dashboard-modal');
+            if (!modal) return;
+            playUISound('click');
+            document.body.classList.remove('karting-modal-open');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }, 300);
+        };
+
+        window.triggerKartLapSimulation = function() {
+            playUISound('pop');
+            haptic(15);
+            if (window.KartingService && typeof window.KartingService.simulateNextLap === 'function') {
+                window.KartingService.simulateNextLap();
+                renderKartingDashboardUI();
+                if (typeof showToast === 'function') {
+                    showToast('⚡ Runde simuliert & Telemetrie aktualisiert!', 'success');
+                }
+            }
+        };
+
+        async function renderKartingDashboardUI() {
+            if (!window.KartingService) return;
+            const live = await window.KartingService.getLiveTiming();
+            const driver = await window.KartingService.getDriverProfile();
+            const track = await window.KartingService.getTrackInfo();
+
+            const trackEl = document.getElementById('kart-track-name');
+            if (trackEl && track) trackEl.innerText = track.name + ' • ' + track.layout;
+
+            const posEl = document.getElementById('kart-stat-position');
+            if (posEl) posEl.innerText = 'P' + (live.currentPosition || 1);
+
+            const bestEl = document.getElementById('kart-stat-bestlap');
+            if (bestEl) bestEl.innerText = (live.bestLapTime || '32.314') + 's';
+
+            const deltaEl = document.getElementById('kart-stat-delta');
+            if (deltaEl) deltaEl.innerText = live.deltaToPersonalBest || '±0.000s 🚀';
+
+            const lapCountEl = document.getElementById('kart-stat-lapcount');
+            if (lapCountEl) lapCountEl.innerText = 'Runde ' + live.currentLap + ' / ' + live.totalLaps;
+
+            const kartEl = document.getElementById('kart-stat-kart');
+            if (kartEl) kartEl.innerText = '#' + (live.kartNumber || 14);
+
+            const speedEl = document.getElementById('kart-stat-speed');
+            if (speedEl) speedEl.innerText = (live.topSpeedKmh || 64.8) + ' km/h Vmax';
+
+            const s1El = document.getElementById('kart-sector-1');
+            const s2El = document.getElementById('kart-sector-2');
+            const s3El = document.getElementById('kart-sector-3');
+            if (s1El && live.sectorTimes) s1El.innerText = live.sectorTimes.s1 + 's';
+            if (s2El && live.sectorTimes) s2El.innerText = live.sectorTimes.s2 + 's';
+            if (s3El && live.sectorTimes) s3El.innerText = live.sectorTimes.s3 + 's';
+
+            const optEl = document.getElementById('kart-optimal-lap');
+            if (optEl && live.sectorTimes) optEl.innerText = 'Ideale Runde: ' + live.sectorTimes.optimalLap + 's';
+
+            const tbody = document.getElementById('kart-laps-tbody');
+            if (tbody && Array.isArray(live.laps)) {
+                tbody.innerHTML = '';
+                live.laps.forEach(l => {
+                    const tr = document.createElement('tr');
+                    tr.className = l.isBest ? 'bg-purple-500/15 font-bold text-purple-300' : 'hover:bg-white/5 transition-colors';
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-3 font-mono ${l.isBest ? 'text-purple-400 font-black' : 'text-slate-400'}">R${l.lap}</td>
+                        <td class="py-2.5 px-3 font-mono ${l.isBest ? 'text-purple-300 font-black' : 'text-white'}">${l.time}s ${l.isBest ? '🟣' : ''}</td>
+                        <td class="py-2.5 px-3 font-mono text-xs ${l.isBest ? 'text-purple-400' : (l.gap.startsWith('+') ? 'text-slate-400' : 'text-emerald-400')}">${l.gap}</td>
+                        <td class="py-2.5 px-3 font-mono hidden sm:table-cell text-slate-400">${l.s1}s</td>
+                        <td class="py-2.5 px-3 font-mono hidden sm:table-cell text-slate-400">${l.s2}s</td>
+                        <td class="py-2.5 px-3 font-mono hidden sm:table-cell text-slate-400">${l.s3}s</td>
+                        <td class="py-2.5 px-3 font-mono text-right text-slate-400">${l.speed}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            const driverEl = document.getElementById('kart-driver-name');
+            if (driverEl && driver) driverEl.innerText = driver.name + ' (' + driver.nickname + ')';
+
+            const classEl = document.getElementById('kart-driver-class');
+            if (classEl && driver) classEl.innerText = driver.racingClass;
+
+            const racesEl = document.getElementById('kart-stat-totalraces');
+            if (racesEl && driver) racesEl.innerText = driver.totalRaces;
+
+            const winsEl = document.getElementById('kart-stat-wins');
+            if (winsEl && driver) winsEl.innerText = driver.victories;
+
+            const podiumsEl = document.getElementById('kart-stat-podiums');
+            if (podiumsEl && driver) podiumsEl.innerText = driver.podiums;
+        }
+
+        // Spotlight Integration für autorisierte Tester
+        if (typeof window !== 'undefined') {
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const km = document.getElementById('karting-dashboard-modal');
+                    if (km && !km.classList.contains('hidden')) {
+                        closeKartingDashboard();
+                    }
+                }
+            });
+        }
+ // Nachlauf, falls Fonts/Layout sich noch verschieben
         const _urlParams = new URLSearchParams(window.location.search);
         const _forceOnboarding = _urlParams.has('first_visit') || _urlParams.has('onboarding') || _urlParams.has('tutorial');
         if (window.OnboardingTracker) {
