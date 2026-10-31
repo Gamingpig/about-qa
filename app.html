@@ -10531,7 +10531,7 @@ html.gp-android:not(.dark) #ui-controls {
         <div id="artist-modal-scroll" class="overflow-y-auto flex-1 w-full flex flex-col items-center">
             
             <!-- 1. Hero Bilder-Diashow / Galerie (Dual-Layer: Unscharfer Hintergrund + 100% unbeschnittenes zentriertes Bild, Auto-Pause bei Hover/Touch) -->
-            <div id="artist-gallery-container" class="relative w-full h-64 sm:h-72 bg-slate-950/90 overflow-hidden flex items-center justify-center group select-none shrink-0 border-b border-white/10" style="touch-action: pan-y;">
+            <div id="artist-gallery-container" onclick="handleGalleryClick(event)" class="relative w-full h-64 sm:h-72 bg-slate-950/90 overflow-hidden flex items-center justify-center group select-none shrink-0 border-b border-white/10 cursor-pointer" style="touch-action: pan-y;">
                 <!-- Dual-Layer Hintergrund Weichzeichner (Füllt die Fläche aus, statischer Blur) -->
                 <img id="artist-gallery-bg" src="" alt="" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 pointer-events-none transition-opacity duration-600">
                 
@@ -32601,11 +32601,11 @@ window.setLyricsStyle = function(style) {
                     "https://i.scdn.co/image/ab6761670000ecd4992f52c5fe96f890240c17a6"
                 ],
                 topTracks: [
-                    { title: "Big Dreams", subtitle: "Big Dreams - Single", art: "https://i.scdn.co/image/ab67616d0000b273b400936fc4e30ea288db3d04", trackUrl: "https://open.spotify.com/search/Gus%20Jeffers%20Big%20Dreams" },
+                    { title: "Be Alright", subtitle: "Be Alright - Single", art: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/14/6e/d1/146ed113-ada7-c824-515d-1543793e4f77/662291.jpg/300x300bb.jpg", trackUrl: "https://music.apple.com/us/album/be-alright/1803704137?i=1803704140" },
+                    { title: "Stick Up", subtitle: "Stick Up - Single", art: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/fe/2f/60/fe2f6059-1f3c-97a0-7998-138b8f756a64/660651.jpg/300x300bb.jpg", trackUrl: "https://music.apple.com/us/album/stick-up/1802144634?i=1802144635" },
                     { title: "Kids Don't Wanna Grow Up", subtitle: "Kids Don't Wanna Grow Up - Single", art: "https://i.scdn.co/image/ab67616d0000b273809d7de0c2ea5fced0226d6a", trackUrl: "https://open.spotify.com/search/Gus%20Jeffers%20Kids%20Don%27t%20Wanna%20Grow%20Up" },
-                    { title: "Ambiguous", subtitle: "Ambiguous - Single", art: "https://i.scdn.co/image/ab67616d0000b27329ad4ffc20fbfbcba0236a0f", trackUrl: "https://open.spotify.com/search/Gus%20Jeffers%20Ambiguous" },
-                    { title: "Moment", subtitle: "Moment - Single", art: "https://i.scdn.co/image/ab67616d0000b273ce96f12255743a6d71b3e81a", trackUrl: "https://open.spotify.com/search/Gus%20Jeffers%20Moment" },
-                    { title: "Stick Up", subtitle: "Stick Up - Single", art: "https://i.scdn.co/image/ab67616d0000b27329a67a0364f89d46c879ffc4", trackUrl: "https://open.spotify.com/search/Gus%20Jeffers%20Stick%20Up" }
+                    { title: "Stuck", subtitle: "Stuck - Single", art: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/12/64/fc/1264fcb4-f764-0863-ef57-10291e3d9be3/654724.jpg/300x300bb.jpg", trackUrl: "https://music.apple.com/us/album/stuck/1800082069?i=1800082290" },
+                    { title: "You Love U", subtitle: "You Love U - Single", art: "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/db/f5/8a/dbf58a25-b1e3-7e8c-05f6-0e0cf52711b6/654725.jpg/300x300bb.jpg", trackUrl: "https://music.apple.com/us/album/you-love-u/1800082634?i=1800082639" }
                 ],
                 spotifyUrl: "https://open.spotify.com/artist/5uOGFWzEcgMwZw3dxXdCJX",
                 wikiUrl: null
@@ -32768,11 +32768,12 @@ window.setLyricsStyle = function(style) {
                 const prevSrc = imgEl.src;
                 if (prevImgEl && prevSrc && prevSrc !== currentImg && !imgEl.classList.contains('opacity-0')) {
                     prevImgEl.src = prevSrc;
-                    prevImgEl.style.opacity = '1';
+                    if (prevImgEl.style) prevImgEl.style.opacity = '1';
                 }
-                imgEl.classList.remove('artist-slide-animate');
-                imgEl.classList.add('opacity-0', 'scale-95');
-                if (bgEl) bgEl.classList.add('opacity-20');
+                imgEl.classList.remove('opacity-100');
+                imgEl.classList.add('opacity-0');
+                if (bgEl && bgEl.classList) bgEl.classList.add('opacity-20');
+
                 const preloadedImage = new Image();
                 const revealImage = () => {
                     if (renderId !== artistSlideRenderId) return;
@@ -32780,24 +32781,19 @@ window.setLyricsStyle = function(style) {
                     if (bgEl) bgEl.src = currentImg;
                     requestAnimationFrame(() => {
                         if (renderId !== artistSlideRenderId) return;
-                        imgEl.classList.remove('opacity-0', 'scale-95');
-                        imgEl.classList.add('opacity-100', 'scale-100', 'artist-slide-animate');
-                        if (prevImgEl) prevImgEl.style.opacity = '0';
-                        if (bgEl) {
+                        imgEl.classList.remove('opacity-0');
+                        imgEl.classList.add('opacity-100');
+                        if (prevImgEl && prevImgEl.style) prevImgEl.style.opacity = '0';
+                        if (bgEl && bgEl.classList) {
                             bgEl.classList.remove('opacity-20');
                             bgEl.classList.add('opacity-40');
                         }
                     });
-                    if (currentArtistSlideImages.length > 1 && typeof Image !== 'undefined') {
-                        const nextIdx = (currentArtistSlideIndex + 1) % currentArtistSlideImages.length;
-                        const nextUrl = currentArtistSlideImages[nextIdx];
-                        if (nextUrl) {
-                            const pImg = new Image();
-                            pImg.src = nextUrl;
-                            if (typeof pImg.decode === 'function') pImg.decode().catch(() => {});
-                        }
+                    if (currentArtistSlideImages.length > 1 && !isArtistSlideshowPaused) {
+                        startArtistSlideshowTimer();
                     }
                 };
+
                 preloadedImage.onload = () => {
                     if (typeof preloadedImage.decode === 'function') {
                         preloadedImage.decode().then(revealImage, revealImage);
@@ -32805,56 +32801,39 @@ window.setLyricsStyle = function(style) {
                         revealImage();
                     }
                 };
-                preloadedImage.onerror = () => {
-                    if (renderId !== artistSlideRenderId) return;
-                    if (currentArtistSlideImages.length > 1) {
-                        currentArtistSlideImages.splice(currentArtistSlideIndex, 1);
-                        if (currentArtistSlideIndex >= currentArtistSlideImages.length) {
-                            currentArtistSlideIndex = 0;
-                        }
-                        renderArtistSlideshow();
-                        return;
-                    }
-                    imgEl.removeAttribute('src');
-                    if (bgEl) bgEl.removeAttribute('src');
-                    imgEl.classList.remove('opacity-0', 'scale-95', 'artist-slide-animate');
-                    if (bgEl) bgEl.classList.remove('opacity-20');
-                    if (prevImgEl) prevImgEl.style.opacity = '0';
-                };
+                preloadedImage.onerror = () => revealImage();
                 preloadedImage.src = currentImg;
             } else {
-                imgEl.removeAttribute('src');
-                if (bgEl) bgEl.removeAttribute('src');
-                imgEl.classList.remove('opacity-0', 'scale-95', 'artist-slide-animate');
-                imgEl.classList.add('opacity-100', 'scale-100');
-                if (bgEl) {
-                    bgEl.classList.remove('opacity-20');
-                    bgEl.classList.add('opacity-40');
-                }
-                if (prevImgEl) prevImgEl.style.opacity = '0';
+                imgEl.src = '';
+                if (prevImgEl) prevImgEl.src = '';
+                if (bgEl) bgEl.src = '';
             }
 
+            // Slide Counter
             if (counterEl) {
-                counterEl.innerText = `${currentArtistSlideIndex + 1} / ${Math.max(1, currentArtistSlideImages.length)}`;
+                const total = currentArtistSlideImages.length || 1;
+                counterEl.innerText = (currentArtistSlideIndex + 1) + ' / ' + total;
             }
 
+            // Dots
             if (dotsContainer) {
-                if (currentArtistSlideImages.length <= 1) {
-                    dotsContainer.innerHTML = '';
-                } else {
-                    if (dotsContainer.children.length !== currentArtistSlideImages.length) {
-                        dotsContainer.innerHTML = '';
-                        currentArtistSlideImages.forEach((_, idx) => {
-                            const dot = document.createElement('button');
-                            dot.type = 'button';
-                            dot.setAttribute('aria-label', `Foto ${idx + 1}`);
-                            dot.onclick = (e) => goToArtistSlide(idx, e);
-                            dotsContainer.appendChild(dot);
-                        });
-                    }
-                    Array.from(dotsContainer.children).forEach((dot, idx) => {
-                        dot.className = `h-2 rounded-full transition-all duration-300 ${idx === currentArtistSlideIndex ? 'bg-emerald-400 w-6' : 'bg-white/40 hover:bg-white/70 w-2'}`;
+                dotsContainer.innerHTML = '';
+                if (currentArtistSlideImages.length > 1) {
+                    currentArtistSlideImages.forEach((_, idx) => {
+                        const dot = document.createElement('div');
+                        const isActive = idx === currentArtistSlideIndex;
+                        dot.className = 'w-1.5 h-1.5 rounded-full transition-all duration-300 ' + (isActive ? 'bg-cyan-400 w-3' : 'bg-white/30 hover:bg-white/60 cursor-pointer');
+                        if (!isActive) {
+                            dot.onclick = (e) => {
+                                if (e && e.stopPropagation) e.stopPropagation();
+                                goToArtistSlide(idx, e);
+                            };
+                        }
+                        dotsContainer.appendChild(dot);
                     });
+                    if (dotsContainer.classList) dotsContainer.classList.remove('hidden');
+                } else {
+                    if (dotsContainer.classList) dotsContainer.classList.add('hidden');
                 }
             }
         }
@@ -33106,28 +33085,30 @@ window.setLyricsStyle = function(style) {
                 }
             }
 
-            // Top-Tracks rendern (Zentriert mit robustem Cover-Fallback & voller Artwork-Unterstützung)
+            // Top-Tracks rendern (Zentriert mit ausfallsicherem Cover, robuster Fallback-Hierarchie)
             const tracksList = document.getElementById('artist-top-tracks-list');
-            const ARTIST_TRACK_FALLBACK_SVG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='12' fill='%231e293b'/%3E%3Ccircle cx='50' cy='50' r='24' fill='%230f172a' stroke='%23334155' stroke-width='3'/%3E%3Ccircle cx='50' cy='50' r='7' fill='%2310b981'/%3E%3Cpath d='M47 38v16a5 5 0 1 1-3-4.5V40h10v10a5 5 0 1 1-3-4.5V38H47z' fill='%23f8fafc' opacity='0.85'/%3E%3C/svg%3E";
+            const ARTIST_TRACK_FALLBACK_SVG = "data:image/svg+xml;utf8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22100%22%20height=%22100%22%20viewBox=%220 0 100 100%22%3E%3Crect%20width=%22100%22%20height=%22100%22%20rx=%2212%22%20fill=%22%231e293b%22/%3E%3Ccircle%20cx=%2250%22%20cy=%2250%22%20r=%2224%22%20fill=%22%230f172a%22%20stroke=%22%23334155%22%20stroke-width=%223%22/%3E%3Ccircle%20cx=%2250%22%20cy=%2250%22%20r=%227%22%20fill=%22%2310b981%22/%3E%3Cpath%20d=%22M47%2038v16a5%205%200%201%201-3-4.5V40h10v10a5%205%200%201%201-3-4.5V38H47z%22%20fill=%22%23f8fafc%22%20opacity=%220.85%22/%3E%3C/svg%3E";
 
             function resolveArtistTrackCover(trackItem) {
                 if (!trackItem) return ARTIST_TRACK_FALLBACK_SVG;
                 if (typeof trackItem === 'string' && trackItem.startsWith('http')) return trackItem;
-                if (trackItem.album?.images?.length) {
-                    const u = trackItem.album.images[0]?.url || (typeof trackItem.album.images[0] === 'string' ? trackItem.album.images[0] : null);
-                    if (u) return u;
+                if (trackItem.album?.images && Array.isArray(trackItem.album.images) && trackItem.album.images.length > 0) {
+                    const best = trackItem.album.images[0]?.url || (typeof trackItem.album.images[0] === 'string' ? trackItem.album.images[0] : null);
+                    if (best) return best;
                 }
                 if (trackItem.album?.image) {
                     const u = typeof trackItem.album.image === 'string' ? trackItem.album.image : trackItem.album.image?.url;
                     if (u) return u;
                 }
-                if (trackItem.images?.length) {
-                    const u = trackItem.images[0]?.url || (typeof trackItem.images[0] === 'string' ? trackItem.images[0] : null);
+                if (trackItem.albums && Array.isArray(trackItem.albums) && trackItem.albums.length > 0) {
+                    const u = trackItem.albums[0]?.image || trackItem.albums[0]?.images?.[0]?.url;
                     if (u) return u;
                 }
-                const direct = trackItem.art || trackItem.artwork || trackItem.image || trackItem.cover || trackItem.coverUrl || trackItem.artworkUrl100 || trackItem.artworkUrl60;
+                if (trackItem.artworkUrl100) return trackItem.artworkUrl100.replace('100x100bb', '300x300bb');
+                if (trackItem.artworkUrl60) return trackItem.artworkUrl60;
+                const direct = trackItem.art || trackItem.artwork || trackItem.image || trackItem.cover || trackItem.coverUrl;
                 if (typeof direct === 'string' && direct.trim().length > 0) return direct.trim();
-                if (direct?.url) return direct.url;
+                if (direct && typeof direct === 'object' && direct.url) return direct.url;
                 return ARTIST_TRACK_FALLBACK_SVG;
             }
 
@@ -33140,20 +33121,26 @@ window.setLyricsStyle = function(style) {
                         const coverSrc = resolveArtistTrackCover(t);
                         row.innerHTML = `
                             <span class="text-xs font-mono font-bold text-slate-500 w-4 text-center shrink-0">${i + 1}</span>
-                            <img src="${coverSrc}" onerror="this.onerror=null; this.src='${ARTIST_TRACK_FALLBACK_SVG}';" alt="" class="w-10 h-10 rounded-lg object-cover shadow-sm shrink-0 bg-slate-800">
+                            <img src="${coverSrc}" alt="" class="w-10 h-10 rounded-lg object-cover shadow-sm shrink-0 bg-slate-800">
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-white truncate">${t.title || 'Track'}</p>
                                 <p class="text-[10px] text-slate-400 truncate">${t.subtitle || ''}</p>
                             </div>
                             ${t.trackUrl ? `<a href="${t.trackUrl}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-colors shrink-0" title="Öffnen">↗</a>` : ''}
                         `;
+                        const imgNode = row.querySelector('img');
+                        if (imgNode) {
+                            imgNode.onerror = function() {
+                                this.onerror = null;
+                                this.src = ARTIST_TRACK_FALLBACK_SVG;
+                            };
+                        }
                         tracksList.appendChild(row);
                     });
                 } else {
                     tracksList.innerHTML = '<p class="text-xs text-slate-500 italic text-center">Keine Top-Tracks hinterlegt.</p>';
                 }
             }
-
 
             currentArtistSlideImages = Array.isArray(data.images) ? dedupeArtistImages(data.images) : [];
             currentArtistSlideIndex = 0;
@@ -33271,13 +33258,23 @@ window.setLyricsStyle = function(style) {
         let lightboxDragStartX = 0;
         let lightboxDragStartY = 0;
 
+        window.handleGalleryClick = function(e) {
+            if (e && e.target && e.target.closest && e.target.closest('#artist-prev-btn, #artist-next-btn, #artist-slide-counter, #artist-gallery-dots')) {
+                return;
+            }
+            window.openArtistLightbox();
+        };
+
         window.openArtistLightbox = function() {
-            if (!currentArtistSlideImages || currentArtistSlideImages.length === 0) return;
             const modal = document.getElementById('artist-lightbox-modal');
             const img = document.getElementById('lightbox-img');
             const counter = document.getElementById('lightbox-counter');
             const artistNameEl = document.getElementById('lightbox-artist-name');
+            const galleryImg = document.getElementById('artist-gallery-img');
             if (!modal || !img) return;
+
+            const activeSrc = (currentArtistSlideImages && currentArtistSlideImages[currentArtistSlideIndex]) || (galleryImg ? galleryImg.src : '');
+            if (!activeSrc) return;
 
             if (typeof playUISound === 'function') playUISound('pop');
             if (typeof haptic === 'function') haptic(20);
@@ -33285,8 +33282,9 @@ window.setLyricsStyle = function(style) {
             stopArtistSlideshowTimer();
             isArtistSlideshowPaused = true;
 
-            img.src = currentArtistSlideImages[currentArtistSlideIndex];
-            if (counter) counter.innerText = (currentArtistSlideIndex + 1) + ' / ' + currentArtistSlideImages.length;
+            img.src = activeSrc;
+            const total = (currentArtistSlideImages && currentArtistSlideImages.length) || 1;
+            if (counter) counter.innerText = (currentArtistSlideIndex + 1) + ' / ' + total;
             const nameEl = document.getElementById('artist-modal-name');
             if (artistNameEl && nameEl) artistNameEl.innerText = nameEl.innerText || 'Künstler';
 
