@@ -1,10 +1,10 @@
 {
-  "version": "24.245.51",
-  "buildTime": "2026-11-01T11:07:46.710Z",
+  "version": "24.245.52",
+  "buildTime": "2026-11-01T11:29:36.118Z",
   "shortNotes": [
-    "Hotfix SyntaxError: noLyricsTrackKeys bereinigt & UI White-Screen behoben",
+    "Fix Lightbox-Klick: ReferenceError currentArtistSlideImages behoben & Zoom-Slider einsatzbereit",
     "Lyrics-Engine 5-Stufen-Retry-Pipeline mit NetEase & AMLL Fallback",
     "Knallharte Polling-Sperre: noLyricsTrackKeys verhindert Neusuche pro Song",
-    "Robuster Lightbox-Klick im DOM & PWA Update-Banner Priorität"
+    "PWA Update-Banner Priorität und 0% GPU Background Freeze"
   ]
 }
