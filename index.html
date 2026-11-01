@@ -7,11 +7,11 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
-    [FEATURE/UI] Release v24.245.50 · 2026-10-31: Vollständige Spotify-Künstlergalerie (About-Bereich), Auto-Slideshow mit Hover/Touch-Pause & Custom Dark Scrollbar
+    [FEATURE/UI] Release v24.245.51 · 2026-10-31: Vollständige Spotify-Künstlergalerie (About-Bereich), Auto-Slideshow mit Hover/Touch-Pause & Custom Dark Scrollbar
       - Pathfinder GraphQL-Abfrage um includePrerelease: true erweitert, sodass die vollständige 16-Bilder-Galerie von Gus Jeffers und allen weiteren Künstlern zuverlässig in Maximalauflösung (640x640) extrahiert wird.
       - Automatischer Bilder-Slider mit 4.5s-Intervall, weichen Crossfades via CSS cubic-bezier und Pause-Zustand bei Hover/Touch.
       - Custom Scrollbar (#artist-modal-scroll): Nativer weißer Browser-Scrollbalken entfernt und durch konsistente, dezente Dark-Theme-Glas-Scrollleiste ersetzt.
-      - Version v24.245.50 ist mit Service Worker, version.json, Footer und Update-Watcher synchronisiert.
+      - Version v24.245.51 ist mit Service Worker, version.json, Footer und Update-Watcher synchronisiert.
     [BUGFIX] Release v24.225.46 · 2026-10-31: 100% verifizierte Künstlerbilder-Architektur ohne jegliche Fremdkünstler
       - stats.fm API liefert direkt das verifizierte 640x640 Spotify-Originalporträt des Künstlers; kein Anhängen fremder Künstler mehr.
       - Zusätzliche Galerie-Bilder werden ausschließlich akzeptiert, wenn es sich um echte Spotify-About-Fotos (ab676167) handelt.
@@ -3357,7 +3357,7 @@
     <link rel="preconnect" href="https://r.jina.ai" crossorigin>
     <link rel="preconnect" href="https://api.allorigins.win" crossorigin>
     <link rel="dns-prefetch" href="https://i.scdn.co">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.245.50</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.245.51</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3382,7 +3382,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.245.50 • 2026-11-01';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.245.51 • 2026-11-01';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -5920,7 +5920,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             -webkit-backface-visibility: hidden;
             transform: translateZ(0);
         }
-                /* PWA Update Banner (v24.245.50 - Robuste Z-Index- & Display-Garantie) */
+                /* PWA Update Banner (v24.245.51 - Robuste Z-Index- & Display-Garantie) */
         #gp-update-banner {
             position: fixed !important;
             bottom: 24px !important;
@@ -9227,7 +9227,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.50</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.51</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -9264,7 +9264,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.50 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.50 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.51 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.51 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9496,7 +9496,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <div class="flex items-center gap-2 flex-wrap">
                         <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
                         <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
-                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.245.50</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.245.51</span>
                     </div>
                     <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
                 </div>
@@ -9520,7 +9520,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.245.50</span>
+                <span>🧪 QA TESTUMGEBUNG v24.245.51</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -10660,7 +10660,7 @@ html.gp-android:not(.dark) #ui-controls {
     </div>
 </div>
 
-<!-- NEU v24.245.50: Fullscreen-Lightbox mit Zoom-Slider (100%-300%), Touch-Pinch & Pan -->
+<!-- NEU v24.245.51: Fullscreen-Lightbox mit Zoom-Slider (100%-300%), Touch-Pinch & Pan -->
 <div id="artist-lightbox-modal" class="fixed inset-0 z-[9999999] bg-black/95 backdrop-blur-2xl hidden flex-col items-center justify-between select-none opacity-0 transition-opacity duration-300" style="touch-action: none; z-index: 9999999;">
     <!-- Top Bar -->
     <div class="w-full max-w-4xl px-4 py-3 flex items-center justify-between z-30 border-b border-white/10 bg-black/60 backdrop-blur-md">
@@ -10705,7 +10705,7 @@ html.gp-android:not(.dark) #ui-controls {
 </div>
 
 <!-- ============================================================================== -->
-<!-- ECHTZEIT GO-KART TELEMETRIE DASHBOARD (v24.245.50)                             -->
+<!-- ECHTZEIT GO-KART TELEMETRIE DASHBOARD (v24.245.51)                             -->
 <!-- Feature-Flag: FEATURE_FLAGS.KARTING_DASHBOARD (Admin-Protected / QA Override)   -->
 <!-- ============================================================================== -->
 <div id="karting-dashboard-modal" class="fixed inset-0 z-[100000] bg-black/90 backdrop-blur-2xl hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300 select-none" onclick="if(event.target === this) closeKartingDashboard()">
@@ -11005,7 +11005,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.245.50</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.245.51</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -11322,7 +11322,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.245.50</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.245.51</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -11333,7 +11333,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.245.50</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.245.51</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -11376,7 +11376,7 @@ html.gp-android:not(.dark) #ui-controls {
         </div>
     </div>
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.245.50</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.245.51</p>
 </div>
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
@@ -11632,7 +11632,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <a href="checklist.html" target="_blank" class="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500 text-teal-300 hover:text-slate-950 font-bold text-[11px] transition-all border border-teal-500/30 inline-flex items-center gap-1">
                         <span>📋</span> <span>QA Checkliste</span>
                     </a>
-                    <span class="text-pink-400 font-mono">v24.245.50</span>
+                    <span class="text-pink-400 font-mono">v24.245.51</span>
                 </div>
             </div>
         </div>
@@ -18066,9 +18066,9 @@ html.gp-android:not(.dark) #ui-controls {
                             updateSettingsSystemUpdateUI(null);
                             if (userInitiated) {
                                 if (typeof showSystemToast === 'function') {
-                                    showSystemToast('🟢 System ist auf dem neuesten Stand (v' + (currentVer || '24.245.50') + ')');
+                                    showSystemToast('🟢 System ist auf dem neuesten Stand (v' + (currentVer || '24.245.51') + ')');
                                 } else if (typeof toast === 'function') {
-                                    toast('🟢 System ist auf dem neuesten Stand (v' + (currentVer || '24.245.50') + ')');
+                                    toast('🟢 System ist auf dem neuesten Stand (v' + (currentVer || '24.245.51') + ')');
                                 }
                             }
                         }
@@ -19836,7 +19836,7 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
-        { version: "v24.245.50", date: "31. Oktober 2026", type: "feature", items: {
+        { version: "v24.245.51", date: "31. Oktober 2026", type: "feature", items: {
           de: [
             "🎨 Flüssige Galerie-Crossfade-Animation & Fullscreen-Lightbox mit 100-300% Zoom und Touch-Pinch/Pan",
             "🚀 Maximaler Performance-Freeze: Blickdichter schwarzer Hintergrund & 0% GPU-Hintergrundlast bei geöffnetem Modal",
@@ -30205,10 +30205,10 @@ window.setLyricsStyle = function(style) {
             // lyricsMemoryCache für den aktuellen Song reicht vollkommen aus.
             return;
         }
-        // Persistentes Set gegen redundantes Polling für Songs ohne Text (v24.245.50)
-        const noLyricsTrackKeys = new Set();
+        // Persistentes Set gegen redundantes Polling für Songs ohne Text (v24.245.51)
+        /* noLyricsTrackKeys already declared */
         window.noLyricsTrackKeys = noLyricsTrackKeys;
-        const lyricsSessionSearchedTracks = new Set();
+        /* lyricsSessionSearchedTracks already declared */
         window.lyricsSessionSearchedTracks = lyricsSessionSearchedTracks;
 
         async function fetchExternalLyrics(title, artist, searchDurationMs = 0, force = false, trackId = '') {
@@ -33496,7 +33496,7 @@ window.setLyricsStyle = function(style) {
         setTimeout(positionDynamicIsland, 400);
 
         // ==============================================================================
-        // ECHTZEIT GO-KART TELEMETRIE & ACTIVITY-BOX CONTROLLER (v24.245.50)
+        // ECHTZEIT GO-KART TELEMETRIE & ACTIVITY-BOX CONTROLLER (v24.245.51)
         // Feature-Flag Steuerung: Standard 'disabled', einziger Schalter schaltet frei!
         // ==============================================================================
         const FEATURE_FLAGS = {
@@ -33506,7 +33506,7 @@ window.setLyricsStyle = function(style) {
 
         
         // ==============================================================================
-        // FULLSCREEN LIGHTBOX CONTROLLER (v24.245.50)
+        // FULLSCREEN LIGHTBOX CONTROLLER (v24.245.51)
         // Zoom-Slider (100%-300%), Touch-Pinch & Pan, Escape & Pfeiltasten-Steuerung
         // ==============================================================================
         let currentLightboxZoom = 100;
@@ -34288,7 +34288,7 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.245.50</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.245.51</span>
         </a>
     </div>
 
