@@ -1,11 +1,5 @@
 {
-  "lastFailures": [
-    {
-      "id": "lyrics",
-      "name": "LrcLib Lyrics",
-      "status": 502
-    }
-  ],
-  "lastChecked": 1793493456069,
-  "lastStatus": "degraded"
+  "lastFailures": [],
+  "lastChecked": 1793515885504,
+  "lastStatus": "operational"
 }
