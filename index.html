@@ -5920,6 +5920,19 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             -webkit-backface-visibility: hidden;
             transform: translateZ(0);
         }
+                /* PWA Update Banner (v24.245.50 - Robuste Z-Index- & Display-Garantie) */
+        #gp-update-banner {
+            position: fixed !important;
+            bottom: 24px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            z-index: 9999999 !important;
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.95), 0 0 25px rgba(59, 130, 246, 0.35) !important;
+        }
         /* No-Lyrics Idle Fade-Out State */
         #no-lyrics-container {
             transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -17769,28 +17782,43 @@ html.gp-android:not(.dark) #ui-controls {
             function showUpdatePrompt(msg, newVer, shortNotes) {
                 const verKey = (newVer || 'generic').replace(/^v/, '').trim();
                 const currentVer = String(window.ONBOARDING_VERSION || '').split(' · ')[0].replace(/^v/, '').trim();
-                if (verKey && currentVer && verKey === currentVer) return;
-                const updateData = { version: verKey, shortNotes: shortNotes || [] };
+
+                // Wenn kein Service Worker wartet und die Version identisch ist und keine Aufforderung vorliegt:
+                const hasWaitingWorker = Boolean(swRegistration && swRegistration.waiting);
+                if (!hasWaitingWorker && newVer && currentVer && verKey === currentVer && !msg) {
+                    return;
+                }
+
+                const updateData = { version: verKey !== 'generic' ? verKey : currentVer, shortNotes: shortNotes || [] };
                 try {
                     AppStorage.setItem('gp_pending_update', JSON.stringify(updateData));
                 } catch(e) {}
                 updateSettingsSystemUpdateUI(updateData);
-                // Wenn Nutzer für diese Version 'Später' geklickt hat, bleibt der Banner im Dock / Settings
+
+                // Wenn Nutzer in dieser Sitzung bereits 'Später' geklickt hat (nur SessionStorage):
                 try {
-                    if (AppStorage.getItem('gp_update_snoozed_' + verKey) === 'true') {
+                    if (sessionStorage.getItem('gp_update_dismissed_' + verKey) === 'true') {
                         return;
                     }
                 } catch(e) {}
-                const existingBanner = document.getElementById('gp-update-banner');
-                if (existingBanner) {
-                    const textEl = existingBanner.querySelector('.gp-update-msg');
+
+                // Existierenden Banner aktualisieren oder neuen erzeugen
+                let banner = document.getElementById('gp-update-banner');
+                if (banner) {
+                    const textEl = banner.querySelector('.gp-update-msg');
                     if (textEl && msg) textEl.textContent = msg;
+                    banner.style.display = 'flex';
+                    banner.style.visibility = 'visible';
+                    banner.style.opacity = '1';
+                    banner.style.pointerEvents = 'auto';
                     return;
                 }
+
                 try {
-                    const banner = document.createElement('div');
+                    banner = document.createElement('div');
                     banner.id = 'gp-update-banner';
-                    banner.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 z-[100010] flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-900/95 text-white border border-blue-500/40 shadow-2xl backdrop-blur-xl transition-all duration-300 max-w-[92vw] sm:max-w-md';
+                    banner.style.cssText = 'position: fixed !important; bottom: 24px !important; left: 50% !important; transform: translateX(-50%) !important; z-index: 9999999 !important; display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; max-width: 92vw; width: max-content;';
+                    banner.className = 'flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-900/95 text-white border border-blue-500/40 shadow-2xl backdrop-blur-xl transition-all duration-300 max-w-[92vw] sm:max-w-md';
                     banner.innerHTML = `
                         <span class="text-xl shrink-0">✨</span>
                         <div class="flex flex-col xs:flex-row xs:items-center justify-between gap-2 flex-grow min-w-0">
@@ -17807,7 +17835,7 @@ html.gp-android:not(.dark) #ui-controls {
                     if (dismissBtn) {
                         dismissBtn.onclick = () => {
                             try {
-                                AppStorage.setItem('gp_update_snoozed_' + verKey, 'true');
+                                sessionStorage.setItem('gp_update_dismissed_' + verKey, 'true');
                             } catch(e) {}
                             setSettingsUpdateBadge(true);
                             banner.remove();
@@ -17819,68 +17847,77 @@ html.gp-android:not(.dark) #ui-controls {
                 }
             }
             window.showUpdatePrompt = showUpdatePrompt;
+
+            window.applyPendingUpdate = async function() {
+                try {
+                    const applyBtn = document.getElementById('btn-settings-apply-update');
+                    const reloadBtn = document.getElementById('gp-update-reload-btn');
+                    if (applyBtn) applyBtn.innerHTML = '<span>⏳</span> <span>Wird aktualisiert...</span>';
+                    if (reloadBtn) reloadBtn.innerHTML = 'Wird aktualisiert...';
+                    if (typeof playUISound === 'function') playUISound('click');
+                    if (typeof haptic === 'function') haptic(25);
+                    try {
+                        AppStorage.removeItem('gp_pending_update');
+                        AppStorage.removeItem('gp_update_snoozed');
+                        sessionStorage.removeItem('gp_update_dismissed');
+                    } catch(e) {}
+
+                    let reg = swRegistration;
+                    if (!reg && navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
+                        reg = await navigator.serviceWorker.getRegistration().catch(() => null);
+                    }
+
+                    if (reg && reg.waiting) {
+                        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    } else if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+                    }
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 350);
+                } catch(err) {
+                    window.location.reload();
+                }
+            };
+
+            let isReloadingController = false;
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 if (!hadController) {
                     hadController = true;
                     return;
                 }
+                if (isReloadingController) return;
+                isReloadingController = true;
                 console.log('[SW] Neuer Service Worker aktiv – Controller gewechselt.');
+                window.location.reload();
             });
+
             const VAPID_PUBLIC_KEY = PushConfig.vapidPublicKey;
             const PUSH_SYNC_URL = 'https://ntfy.sh/gamingpig_push_sub_vault_9f8a2b3c4d5e';
-            function urlB64ToUint8Array(base64String) {
-                const padding = '='.repeat((4 - base64String.length % 4) % 4);
-                const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
-                const rawData = window.atob(base64);
-                const outputArray = new Uint8Array(rawData.length);
-                for (let i = 0; i < rawData.length; ++i) {
-                    outputArray[i] = rawData.charCodeAt(i);
-                }
-                return outputArray;
-            }
-            async function syncPushSubscriptionToBackend(sub) {
-                if (!sub) return;
-                try { await PushRegistration.register(sub, AppStorage.getItem('app_language') || 'de'); }
-                catch (_) { console.warn('[Push] Registrierung ausstehend. Erneut auf der Statusseite aktivieren.'); }
-            }
             async function checkAndRestorePushSubscription(reg) {
                 if (!reg || !('pushManager' in reg)) return;
-                const perm = (typeof Notification !== 'undefined') ? Notification.permission : 'default';
-                const isEnabledPref = AppStorage.getItem('pushAlertsEnabled') !== 'false';
-                if (perm !== 'granted' || !isEnabledPref || !VAPID_PUBLIC_KEY) return;
                 try {
                     let sub = await reg.pushManager.getSubscription();
-                    if (sub && sub.options.applicationServerKey) {
-                        const existingKey = new Uint8Array(sub.options.applicationServerKey);
-                        const nextKey = urlB64ToUint8Array(VAPID_PUBLIC_KEY);
-                        if (existingKey.length !== nextKey.length || existingKey.some((byte, index) => byte !== nextKey[index])) {
-                            if (!await sub.unsubscribe()) throw new Error('Push key rotation requires resubscription.');
-                            sub = null;
-                        }
-                    }
-                    if (!sub) {
-                        if (perm === 'granted') {
-                            console.log('[Push] Missing push subscription detected. Self-healing re-subscription...');
-                            sub = await reg.pushManager.subscribe({
-                                userVisibleOnly: true,
-                                applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY)
+                    if (!sub && AppStorage.getItem('gp_push_auto_sub') === 'true') {
+                        console.log('[Push] Auto-Restoring push subscription...');
+                        sub = await reg.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY)
+                        });
+                        if (sub) {
+                            await fetch(PUSH_SYNC_URL, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ action: 'register', sub: sub.toJSON() })
                             });
-                            if (sub) {
-                                AppStorage.setItem('gp_last_sub_sync', Date.now().toString());
-                                await syncPushSubscriptionToBackend(sub);
-                            }
-                        }
-                    } else {
-                        const lastSync = parseInt(AppStorage.getItem('gp_last_sub_sync') || '0', 10);
-                        if (Date.now() - lastSync > 12 * 60 * 60 * 1000) {
-                            AppStorage.setItem('gp_last_sub_sync', Date.now().toString());
-                            await syncPushSubscriptionToBackend(sub);
                         }
                     }
-                } catch (err) {
+                } catch(err) {
                     console.warn('[Push] Self-healing subscription error:', err);
                 }
             }
+
             navigator.serviceWorker.addEventListener('message', (event) => {
                 if (event.data && (event.data.type === 'SW_UPDATED' || event.data.type === 'SW_ACTIVATED')) {
                     const swVer = (event.data.version || '').replace(/^v/, '').trim();
@@ -17892,6 +17929,7 @@ html.gp-android:not(.dark) #ui-controls {
                     }
                 }
             });
+
             let swRegistration = null;
             const registerSW = () => {
                 const swUrl = new URL('sw.js', window.location.href).href;
@@ -17899,19 +17937,35 @@ html.gp-android:not(.dark) #ui-controls {
                     .then((reg) => {
                         if (reg) {
                             swRegistration = reg;
-                            reg.update().catch(() => {});
+                            
+                            // FALL 1: Ein Service Worker wartet bereits im Hintergrund!
+                            if (reg.waiting) {
+                                console.log('[SW] Service Worker wartet bereits im Hintergrund.');
+                                showUpdatePrompt('Neues Update verfügbar – Jetzt neu laden', null, null);
+                            }
+
+                            // FALL 2: Neuer Service Worker wird gerade installiert / gefunden
                             reg.addEventListener('updatefound', () => {
                                 const newWorker = reg.installing;
                                 if (newWorker) {
                                     newWorker.addEventListener('statechange', () => {
-                                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                            // Neues Update wartet auf manuelle Nutzerbestätigung
-                                            console.log('[SW] Neues Update wartet auf Nutzeraktivierung.');
-                                            pollVersion();
+                                        if (newWorker.state === 'installed') {
+                                            if (navigator.serviceWorker.controller) {
+                                                console.log('[SW] Neues Update wartet auf Nutzeraktivierung.');
+                                                showUpdatePrompt('Neues Update verfügbar – Jetzt neu laden', null, null);
+                                            }
                                         }
                                     });
                                 }
                             });
+
+                            // Regelmäßige Hintergrundprüfung
+                            reg.update().then(() => {
+                                if (reg.waiting) {
+                                    showUpdatePrompt('Neues Update verfügbar – Jetzt neu laden', null, null);
+                                }
+                            }).catch(() => {});
+
                             checkAndRestorePushSubscription(reg);
                         }
                     })
@@ -17919,16 +17973,25 @@ html.gp-android:not(.dark) #ui-controls {
                         console.warn('Service Worker Registrierung fehlgeschlagen:', err);
                     });
             };
+
             // Proaktive Update-Prüfung bei Tab-Fokus und Sichtbarkeit
             function checkSWUpdates() {
                 if (document.hidden) return;
                 if (swRegistration) {
-                    swRegistration.update().catch(() => {});
+                    swRegistration.update().then(() => {
+                        if (swRegistration.waiting) {
+                            showUpdatePrompt('Neues Update verfügbar – Jetzt neu laden', null, null);
+                        }
+                    }).catch(() => {});
                 } else if ('serviceWorker' in navigator) {
                     navigator.serviceWorker.getRegistration().then(r => {
                         if (r) {
                             swRegistration = r;
-                            r.update().catch(() => {});
+                            r.update().then(() => {
+                                if (r.waiting) {
+                                    showUpdatePrompt('Neues Update verfügbar – Jetzt neu laden', null, null);
+                                }
+                            }).catch(() => {});
                         }
                     }).catch(() => {});
                 }
@@ -17938,6 +18001,7 @@ html.gp-android:not(.dark) #ui-controls {
                 if (document.visibilityState === 'visible') checkSWUpdates();
             });
             setInterval(checkSWUpdates, 60000);
+
             // Version Watcher: Prüft version.json direkt ohne Cache (nur wenn Tab aktiv)
             async function pollVersion() {
                 if (document.hidden) return;
@@ -17949,24 +18013,35 @@ html.gp-android:not(.dark) #ui-controls {
                     const currentVer = String(window.ONBOARDING_VERSION || '').split(' · ')[0].replace(/^v/, '').trim();
                     const liveNum = typeof parseVersionNum === 'function' ? parseVersionNum(liveVer) : 0;
                     const curNum = typeof parseVersionNum === 'function' ? parseVersionNum(currentVer) : 0;
-                    if (liveVer && currentVer && liveNum > curNum) {
+                    const hasWaiting = Boolean(swRegistration && swRegistration.waiting);
+                    if (hasWaiting || (liveVer && currentVer && liveNum > curNum)) {
                         console.log('[VersionWatcher] Update verfügbar:', currentVer, '->', liveVer);
                         showUpdatePrompt('Version v' + liveVer + ' verfügbar!', liveVer, data.shortNotes || []);
                     }
                 } catch(_) {}
             }
             (function setupVersionWatcher() {
-                setTimeout(pollVersion, 4000);
+                setTimeout(pollVersion, 3000);
                 setInterval(pollVersion, 60000);
             })();
+
             // Manuelle Update-Prüfung (z. B. aus Android-Style Settings-Karte)
             window.manualCheckForUpdates = async function(userInitiated = false) {
                 const spinner = document.getElementById('manual-check-spinner');
                 if (spinner) spinner.classList.add('animate-spin');
                 const lastCheckedEl = document.getElementById('settings-update-last-checked');
                 try {
+                    let hasWaiting = false;
                     if (swRegistration) {
-                        swRegistration.update().catch(() => {});
+                        await swRegistration.update().catch(() => {});
+                        hasWaiting = Boolean(swRegistration.waiting);
+                    } else if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
+                        const reg = await navigator.serviceWorker.getRegistration().catch(() => null);
+                        if (reg) {
+                            swRegistration = reg;
+                            await reg.update().catch(() => {});
+                            hasWaiting = Boolean(reg.waiting);
+                        }
                     }
                     const res = await fetch('./version.json?_t=' + Date.now(), { cache: 'no-store' });
                     if (res.ok) {
@@ -17978,17 +18053,17 @@ html.gp-android:not(.dark) #ui-controls {
                         if (lastCheckedEl) lastCheckedEl.textContent = 'Zuletzt geprüft: Heute, ' + timeStr + ' Uhr';
                         const liveNum = typeof parseVersionNum === 'function' ? parseVersionNum(liveVer) : 0;
                         const curNum = typeof parseVersionNum === 'function' ? parseVersionNum(currentVer) : 0;
-                        if (liveVer && currentVer && liveNum > curNum) {
+                        if (hasWaiting || (liveVer && currentVer && liveNum > curNum)) {
                             const notes = data.shortNotes || [];
-                            showUpdatePrompt('Version v' + liveVer + ' verfügbar!', liveVer, notes);
+                            showUpdatePrompt('Version v' + (liveVer || 'neu') + ' verfügbar!', liveVer, notes);
                             updateSettingsSystemUpdateUI({ version: liveVer, shortNotes: notes });
                         } else {
                             updateSettingsSystemUpdateUI(null);
                             if (userInitiated) {
                                 if (typeof showSystemToast === 'function') {
-                                    showSystemToast('🟢 System ist auf dem neuesten Stand (v' + (currentVer || '24.214.0') + ')');
+                                    showSystemToast('🟢 System ist auf dem neuesten Stand (v' + (currentVer || '24.245.50') + ')');
                                 } else if (typeof toast === 'function') {
-                                    toast('🟢 System ist auf dem neuesten Stand (v' + (currentVer || '24.214.0') + ')');
+                                    toast('🟢 System ist auf dem neuesten Stand (v' + (currentVer || '24.245.50') + ')');
                                 }
                             }
                         }
