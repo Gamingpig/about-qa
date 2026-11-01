@@ -1,10 +1,10 @@
 {
-  "version": "24.245.52",
-  "buildTime": "2026-11-01T11:29:36.118Z",
+  "version": "24.245.53",
+  "buildTime": "2026-11-01T12:52:00.000Z",
   "shortNotes": [
-    "Fix Lightbox-Klick: ReferenceError currentArtistSlideImages behoben & Zoom-Slider einsatzbereit",
-    "Lyrics-Engine 5-Stufen-Retry-Pipeline mit NetEase & AMLL Fallback",
-    "Knallharte Polling-Sperre: noLyricsTrackKeys verhindert Neusuche pro Song",
-    "PWA Update-Banner Priorität und 0% GPU Background Freeze"
+    "Lyrics & Canvas Layer-Entkopplung: 0% GPU-Doppeldecoder, keine Video-Überlagerung bei geöffnetem Text",
+    "Hochempfindliche Selbstheilung: Schneller Drift-Ausgleich (>800ms harter Resync, 45% Nachführung)",
+    "Tab-Rückkehr Sofort-Sync: Pausierte und übersprungene Songs werden ohne Zeitverzerrung synchronisiert",
+    "Overlay Songwechsel-Erkennung & Banner für Künstler-Modal & Vollbild-Cinema mit Auto-Update Schalter"
   ]
 }
