@@ -1,8 +1,9 @@
 /**
  * ==============================================================================
- * KARTING TELEMETRY & ACTIVITY-BOX SERVICE (v24.225.48)
- * Modulare Schnittstelle für Go-Kart-Telemetrie, Live-Rundenzeiten, Sektoren & Fahrerstatistiken.
- * Unterstützt Activity-Box / SMS-Timing APIs mit intelligentem Offline-Mock-Fallback.
+ * KARTING TELEMETRY & ACTIVITY-BOX SERVICE (v24.225.53)
+ * 100% Echte Activity-Box Telemetrie: Kartland Sinn (GP900) & Eco Kart Frankfurt (Gamingpig900).
+ * Sinn: 8 Heats, 91 Runden, 4x P3 Podien, All-Time Best: 43.922s.
+ * Frankfurt: 2 Heats, 23 Runden, All-Time Best: 54.720s.
  * ==============================================================================
  */
 
@@ -17,289 +18,1007 @@
 }(typeof self !== 'undefined' ? self : this, function () {
     'use strict';
 
-    // Konfiguration & Endpunkte
-    const CONFIG = {
-        apiBaseUrl: 'https://api.activity-box.com/v1',
-        apiKey: '',
-        defaultDriverId: 'gp-driver-911',
-        defaultTrackId: 'prokart-arena-muc',
-        pollIntervalMs: 2500,
-        requestTimeoutMs: 5000
-    };
-
-    // Robuste Mock- und Fallback-Datenbank (falls Bahn-API offline oder geschützt ist)
-    const MOCK_TELEMETRY = {
-        track: {
-            id: 'prokart-arena-muc',
-            name: 'ProKart Racing Arena',
-            layout: 'Grand Prix Layout (Indoor/Outdoor)',
-            lengthMeters: 840,
-            turns: 14,
-            trackRecord: '31.984',
-            trackRecordHolder: 'M. Schumacher Jr.',
-            currentWeather: 'Trocken • 21°C Asphalt'
-        },
-        driver: {
-            id: 'gp-driver-911',
-            name: 'Gamingpig',
-            nickname: 'The Piggy Racer 🐷🏎️',
-            racingClass: 'Rotax Max Senior / Rimo Alpha 390cc',
-            totalRaces: 42,
-            victories: 17,
-            podiums: 31,
-            personalBest: '32.314',
-            avgLapTime: '33.105',
-            rankingPosition: 1,
-            rankingPoints: 2450
-        },
-        liveSession: {
-            sessionId: 'ses-20261031-gp1',
-            status: 'LIVE', // LIVE | FINISHED | PITS
-            kartNumber: 14,
-            currentPosition: 1,
-            totalDrivers: 14,
-            currentLap: 12,
-            totalLaps: 18,
-            sessionTimeRemainingMs: 380000,
-            bestLapTime: '32.314',
-            lastLapTime: '32.482',
-            deltaToRecord: '+0.330s',
-            deltaToPersonalBest: '+0.168s',
-            topSpeedKmh: 64.8,
-            sectorTimes: {
-                s1: '10.120',
-                s2: '11.458',
-                s3: '10.904',
-                optimalLap: '32.210'
+    const SINN_SESSIONS = [
+    {
+        "id": "sinn-20261025-42",
+        "date": "25.10.2026 14:38",
+        "name": "Rennlauf 42",
+        "kartClass": "6,5 PS Leihkart",
+        "position": "P6",
+        "podium": false,
+        "bestLap": "43.922",
+        "avgLap": "45.755",
+        "totalLaps": 12,
+        "isAllTimeBest": true,
+        "laps": [
+            {
+                "lap": 12,
+                "lapTime": "43.922",
+                "diff": "-0.452",
+                "status": "BEST"
             },
-            laps: [
-                { lap: 12, time: '32.482', s1: '10.150', s2: '11.480', s3: '10.852', gap: '+0.168s', speed: 64.2, isBest: false },
-                { lap: 11, time: '32.314', s1: '10.120', s2: '11.412', s3: '10.782', gap: '±0.000s', speed: 64.8, isBest: true },
-                { lap: 10, time: '32.590', s1: '10.210', s2: '11.510', s3: '10.870', gap: '+0.276s', speed: 63.9, isBest: false },
-                { lap: 9,  time: '32.610', s1: '10.190', s2: '11.530', s3: '10.890', gap: '+0.296s', speed: 63.7, isBest: false },
-                { lap: 8,  time: '32.740', s1: '10.240', s2: '11.580', s3: '10.920', gap: '+0.426s', speed: 63.4, isBest: false },
-                { lap: 7,  time: '32.890', s1: '10.310', s2: '11.620', s3: '10.960', gap: '+0.576s', speed: 63.1, isBest: false },
-                { lap: 6,  time: '33.020', s1: '10.380', s2: '11.690', s3: '10.950', gap: '+0.706s', speed: 62.8, isBest: false },
-                { lap: 5,  time: '33.180', s1: '10.420', s2: '11.740', s3: '11.020', gap: '+0.866s', speed: 62.5, isBest: false },
-                { lap: 4,  time: '33.450', s1: '10.510', s2: '11.830', s3: '11.110', gap: '+1.136s', speed: 62.0, isBest: false },
-                { lap: 3,  time: '33.820', s1: '10.650', s2: '11.980', s3: '11.190', gap: '+1.506s', speed: 61.4, isBest: false },
-                { lap: 2,  time: '34.210', s1: '10.820', s2: '12.110', s3: '11.280', gap: '+1.896s', speed: 60.8, isBest: false },
-                { lap: 1,  time: '35.940', s1: '11.450', s2: '12.890', s3: '11.600', gap: '+3.626s', speed: 58.2, isBest: false }
-            ]
-        },
-        sessionHistory: [
-            { id: 'ses-101', date: '28.10.2026', track: 'ProKart Racing Arena', position: 'P1 🥇', bestLap: '32.314', totalLaps: 24, kart: '#14' },
-            { id: 'ses-100', date: '21.10.2026', track: 'Daytona Kartbahn Indoor', position: 'P2 🥈', bestLap: '29.870', totalLaps: 20, kart: '#07' },
-            { id: 'ses-099', date: '14.10.2026', track: 'ProKart Racing Arena', position: 'P1 🥇', bestLap: '32.480', totalLaps: 25, kart: '#14' },
-            { id: 'ses-098', date: '02.10.2026', track: 'Cologne Outdoor Circuit', position: 'P3 🥉', bestLap: '44.120', totalLaps: 16, kart: '#22' }
+            {
+                "lap": 11,
+                "lapTime": "44.374",
+                "diff": "-0.465",
+                "status": "Gültig"
+            },
+            {
+                "lap": 10,
+                "lapTime": "44.839",
+                "diff": "-1.947",
+                "status": "Gültig"
+            },
+            {
+                "lap": 9,
+                "lapTime": "46.786",
+                "diff": "+1.952",
+                "status": "Gültig"
+            },
+            {
+                "lap": 8,
+                "lapTime": "44.834",
+                "diff": "+0.157",
+                "status": "Gültig"
+            },
+            {
+                "lap": 7,
+                "lapTime": "44.677",
+                "diff": "-0.115",
+                "status": "Gültig"
+            },
+            {
+                "lap": 6,
+                "lapTime": "44.792",
+                "diff": "-0.427",
+                "status": "Gültig"
+            },
+            {
+                "lap": 5,
+                "lapTime": "45.219",
+                "diff": "+0.721",
+                "status": "Gültig"
+            },
+            {
+                "lap": 4,
+                "lapTime": "44.498",
+                "diff": "-2.982",
+                "status": "Gültig"
+            },
+            {
+                "lap": 3,
+                "lapTime": "47.480",
+                "diff": "-2.320",
+                "status": "Gültig"
+            },
+            {
+                "lap": 2,
+                "lapTime": "49.800",
+                "diff": "+1.963",
+                "status": "Gültig"
+            },
+            {
+                "lap": 1,
+                "lapTime": "47.837",
+                "diff": "-",
+                "status": "Start"
+            }
         ]
+    },
+    {
+        "id": "sinn-20261025-45",
+        "date": "25.10.2026 15:13",
+        "name": "45 - 6,5 PS",
+        "kartClass": "6,5 PS Leihkart",
+        "position": "P7",
+        "podium": false,
+        "bestLap": "44.273",
+        "avgLap": "46.136",
+        "totalLaps": 12,
+        "isAllTimeBest": false,
+        "laps": [
+            {
+                "lap": 12,
+                "lapTime": "44.668",
+                "diff": "+0.395",
+                "status": "Gültig"
+            },
+            {
+                "lap": 11,
+                "lapTime": "44.273",
+                "diff": "-1.607",
+                "status": "BEST"
+            },
+            {
+                "lap": 10,
+                "lapTime": "45.880",
+                "diff": "+0.491",
+                "status": "Gültig"
+            },
+            {
+                "lap": 9,
+                "lapTime": "45.389",
+                "diff": "+0.402",
+                "status": "Gültig"
+            },
+            {
+                "lap": 8,
+                "lapTime": "44.987",
+                "diff": "-0.623",
+                "status": "Gültig"
+            },
+            {
+                "lap": 7,
+                "lapTime": "45.610",
+                "diff": "+0.217",
+                "status": "Gültig"
+            },
+            {
+                "lap": 6,
+                "lapTime": "45.393",
+                "diff": "-0.150",
+                "status": "Gültig"
+            },
+            {
+                "lap": 5,
+                "lapTime": "45.543",
+                "diff": "+0.733",
+                "status": "Gültig"
+            },
+            {
+                "lap": 4,
+                "lapTime": "44.810",
+                "diff": "-3.159",
+                "status": "Gültig"
+            },
+            {
+                "lap": 3,
+                "lapTime": "47.969",
+                "diff": "+0.793",
+                "status": "Gültig"
+            },
+            {
+                "lap": 2,
+                "lapTime": "47.176",
+                "diff": "-4.760",
+                "status": "Gültig"
+            },
+            {
+                "lap": 1,
+                "lapTime": "51.936",
+                "diff": "-",
+                "status": "Start"
+            }
+        ]
+    },
+    {
+        "id": "sinn-20261025-39",
+        "date": "25.10.2026 14:13",
+        "name": "Rennlauf 39",
+        "kartClass": "6,5 PS Leihkart",
+        "position": "P3 🥉",
+        "podium": true,
+        "bestLap": "44.601",
+        "avgLap": "46.535",
+        "totalLaps": 12,
+        "isAllTimeBest": false,
+        "laps": [
+            {
+                "lap": 12,
+                "lapTime": "46.887",
+                "diff": "+2.286",
+                "status": "Gültig"
+            },
+            {
+                "lap": 11,
+                "lapTime": "44.601",
+                "diff": "-0.645",
+                "status": "BEST"
+            },
+            {
+                "lap": 10,
+                "lapTime": "45.246",
+                "diff": "+0.061",
+                "status": "Gültig"
+            },
+            {
+                "lap": 9,
+                "lapTime": "45.185",
+                "diff": "-0.780",
+                "status": "Gültig"
+            },
+            {
+                "lap": 8,
+                "lapTime": "45.965",
+                "diff": "+0.758",
+                "status": "Gültig"
+            },
+            {
+                "lap": 7,
+                "lapTime": "45.207",
+                "diff": "-0.464",
+                "status": "Gültig"
+            },
+            {
+                "lap": 6,
+                "lapTime": "45.671",
+                "diff": "-1.338",
+                "status": "Gültig"
+            },
+            {
+                "lap": 5,
+                "lapTime": "47.009",
+                "diff": "+0.517",
+                "status": "Gültig"
+            },
+            {
+                "lap": 4,
+                "lapTime": "46.492",
+                "diff": "+0.131",
+                "status": "Gültig"
+            },
+            {
+                "lap": 3,
+                "lapTime": "46.361",
+                "diff": "-2.053",
+                "status": "Gültig"
+            },
+            {
+                "lap": 2,
+                "lapTime": "48.414",
+                "diff": "-2.971",
+                "status": "Gültig"
+            },
+            {
+                "lap": 1,
+                "lapTime": "51.385",
+                "diff": "-",
+                "status": "Start"
+            }
+        ]
+    },
+    {
+        "id": "sinn-20260725-63",
+        "date": "25.07.2026 18:05",
+        "name": "63 - 6,5 PS",
+        "kartClass": "6,5 PS Leihkart",
+        "position": "P5",
+        "podium": false,
+        "bestLap": "45.232",
+        "avgLap": "47.456",
+        "totalLaps": 12,
+        "isAllTimeBest": false,
+        "laps": [
+            {
+                "lap": 12,
+                "lapTime": "46.711",
+                "diff": "+0.439",
+                "status": "Gültig"
+            },
+            {
+                "lap": 11,
+                "lapTime": "46.272",
+                "diff": "-3.258",
+                "status": "Gültig"
+            },
+            {
+                "lap": 10,
+                "lapTime": "49.530",
+                "diff": "+3.488",
+                "status": "Gültig"
+            },
+            {
+                "lap": 9,
+                "lapTime": "46.042",
+                "diff": "-0.608",
+                "status": "Gültig"
+            },
+            {
+                "lap": 8,
+                "lapTime": "46.650",
+                "diff": "-0.029",
+                "status": "Gültig"
+            },
+            {
+                "lap": 7,
+                "lapTime": "46.679",
+                "diff": "-0.191",
+                "status": "Gültig"
+            },
+            {
+                "lap": 6,
+                "lapTime": "46.870",
+                "diff": "+1.638",
+                "status": "Gültig"
+            },
+            {
+                "lap": 5,
+                "lapTime": "45.232",
+                "diff": "-1.009",
+                "status": "BEST"
+            },
+            {
+                "lap": 4,
+                "lapTime": "46.241",
+                "diff": "-5.270",
+                "status": "Gültig"
+            },
+            {
+                "lap": 3,
+                "lapTime": "51.511",
+                "diff": "+1.238",
+                "status": "Gültig"
+            },
+            {
+                "lap": 2,
+                "lapTime": "50.273",
+                "diff": "+2.818",
+                "status": "Gültig"
+            },
+            {
+                "lap": 1,
+                "lapTime": "47.455",
+                "diff": "-",
+                "status": "Start"
+            }
+        ]
+    },
+    {
+        "id": "sinn-20260725-60",
+        "date": "25.07.2026 17:42",
+        "name": "Rennlauf 60",
+        "kartClass": "6,5 PS Leihkart",
+        "position": "P3 🥉",
+        "podium": true,
+        "bestLap": "45.398",
+        "avgLap": "47.242",
+        "totalLaps": 12,
+        "isAllTimeBest": false,
+        "laps": [
+            {
+                "lap": 12,
+                "lapTime": "45.824",
+                "diff": "+0.426",
+                "status": "Gültig"
+            },
+            {
+                "lap": 11,
+                "lapTime": "45.398",
+                "diff": "-2.100",
+                "status": "BEST"
+            },
+            {
+                "lap": 10,
+                "lapTime": "47.498",
+                "diff": "+1.149",
+                "status": "Gültig"
+            },
+            {
+                "lap": 9,
+                "lapTime": "46.349",
+                "diff": "-0.431",
+                "status": "Gültig"
+            },
+            {
+                "lap": 8,
+                "lapTime": "46.780",
+                "diff": "+0.049",
+                "status": "Gültig"
+            },
+            {
+                "lap": 7,
+                "lapTime": "46.731",
+                "diff": "-0.559",
+                "status": "Gültig"
+            },
+            {
+                "lap": 6,
+                "lapTime": "47.290",
+                "diff": "+1.857",
+                "status": "Gültig"
+            },
+            {
+                "lap": 5,
+                "lapTime": "45.433",
+                "diff": "-1.621",
+                "status": "Gültig"
+            },
+            {
+                "lap": 4,
+                "lapTime": "47.054",
+                "diff": "-3.580",
+                "status": "Gültig"
+            },
+            {
+                "lap": 3,
+                "lapTime": "50.634",
+                "diff": "+2.289",
+                "status": "Gültig"
+            },
+            {
+                "lap": 2,
+                "lapTime": "48.345",
+                "diff": "-1.218",
+                "status": "Gültig"
+            },
+            {
+                "lap": 1,
+                "lapTime": "49.563",
+                "diff": "-",
+                "status": "Start"
+            }
+        ]
+    },
+    {
+        "id": "sinn-20260725-57",
+        "date": "25.07.2026 17:11",
+        "name": "Rennlauf 57",
+        "kartClass": "6,5 PS Leihkart",
+        "position": "P3 🥉",
+        "podium": true,
+        "bestLap": "45.470",
+        "avgLap": "47.563",
+        "totalLaps": 12,
+        "isAllTimeBest": false,
+        "laps": [
+            {
+                "lap": 12,
+                "lapTime": "45.470",
+                "diff": "-0.796",
+                "status": "BEST"
+            },
+            {
+                "lap": 11,
+                "lapTime": "46.266",
+                "diff": "-1.122",
+                "status": "Gültig"
+            },
+            {
+                "lap": 10,
+                "lapTime": "47.388",
+                "diff": "+1.281",
+                "status": "Gültig"
+            },
+            {
+                "lap": 9,
+                "lapTime": "46.107",
+                "diff": "-0.527",
+                "status": "Gültig"
+            },
+            {
+                "lap": 8,
+                "lapTime": "46.634",
+                "diff": "+0.123",
+                "status": "Gültig"
+            },
+            {
+                "lap": 7,
+                "lapTime": "46.511",
+                "diff": "-0.811",
+                "status": "Gültig"
+            },
+            {
+                "lap": 6,
+                "lapTime": "47.322",
+                "diff": "-0.185",
+                "status": "Gültig"
+            },
+            {
+                "lap": 5,
+                "lapTime": "47.507",
+                "diff": "-0.450",
+                "status": "Gültig"
+            },
+            {
+                "lap": 4,
+                "lapTime": "47.957",
+                "diff": "+1.046",
+                "status": "Gültig"
+            },
+            {
+                "lap": 3,
+                "lapTime": "46.911",
+                "diff": "-3.985",
+                "status": "Gültig"
+            },
+            {
+                "lap": 2,
+                "lapTime": "50.896",
+                "diff": "-0.893",
+                "status": "Gültig"
+            },
+            {
+                "lap": 1,
+                "lapTime": "51.789",
+                "diff": "-",
+                "status": "Start"
+            }
+        ]
+    },
+    {
+        "id": "sinn-20260719-52",
+        "date": "19.07.2026 16:22",
+        "name": "52 - 6,5 PS",
+        "kartClass": "6,5 PS Leihkart",
+        "position": "P5",
+        "podium": false,
+        "bestLap": "47.066",
+        "avgLap": "53.263",
+        "totalLaps": 11,
+        "isAllTimeBest": false,
+        "laps": [
+            {
+                "lap": 11,
+                "lapTime": "49.398",
+                "diff": "-0.084",
+                "status": "Gültig"
+            },
+            {
+                "lap": 10,
+                "lapTime": "49.482",
+                "diff": "+2.146",
+                "status": "Gültig"
+            },
+            {
+                "lap": 9,
+                "lapTime": "47.336",
+                "diff": "+0.270",
+                "status": "Gültig"
+            },
+            {
+                "lap": 8,
+                "lapTime": "47.066",
+                "diff": "-4.410",
+                "status": "BEST"
+            },
+            {
+                "lap": 7,
+                "lapTime": "51.476",
+                "diff": "-4.689",
+                "status": "Gültig"
+            },
+            {
+                "lap": 6,
+                "lapTime": "56.165",
+                "diff": "-2.516",
+                "status": "Gültig"
+            },
+            {
+                "lap": 5,
+                "lapTime": "58.681",
+                "diff": "-4.310",
+                "status": "Gültig"
+            },
+            {
+                "lap": 4,
+                "lapTime": "01:02.991",
+                "diff": "+5.451",
+                "status": "Gültig"
+            },
+            {
+                "lap": 3,
+                "lapTime": "57.540",
+                "diff": "+2.519",
+                "status": "Gültig"
+            },
+            {
+                "lap": 2,
+                "lapTime": "55.021",
+                "diff": "+4.282",
+                "status": "Gültig"
+            },
+            {
+                "lap": 1,
+                "lapTime": "50.739",
+                "diff": "-",
+                "status": "Start"
+            }
+        ]
+    },
+    {
+        "id": "sinn-20260719-49",
+        "date": "19.07.2026 15:56",
+        "name": "49 - 6,5 PS",
+        "kartClass": "6,5 PS Leihkart",
+        "position": "P3 🥉",
+        "podium": true,
+        "bestLap": "48.268",
+        "avgLap": "57.196",
+        "totalLaps": 10,
+        "isAllTimeBest": false,
+        "laps": [
+            {
+                "lap": 10,
+                "lapTime": "58.474",
+                "diff": "+8.206",
+                "status": "Gültig"
+            },
+            {
+                "lap": 9,
+                "lapTime": "50.268",
+                "diff": "+2.000",
+                "status": "Gültig"
+            },
+            {
+                "lap": 8,
+                "lapTime": "48.268",
+                "diff": "-3.374",
+                "status": "BEST"
+            },
+            {
+                "lap": 7,
+                "lapTime": "51.642",
+                "diff": "+2.277",
+                "status": "Gültig"
+            },
+            {
+                "lap": 6,
+                "lapTime": "49.365",
+                "diff": "-2.654",
+                "status": "Gültig"
+            },
+            {
+                "lap": 5,
+                "lapTime": "52.019",
+                "diff": "-1.307",
+                "status": "Gültig"
+            },
+            {
+                "lap": 4,
+                "lapTime": "53.326",
+                "diff": "-7.573",
+                "status": "Gültig"
+            },
+            {
+                "lap": 3,
+                "lapTime": "01:00.899",
+                "diff": "-0.423",
+                "status": "Gültig"
+            },
+            {
+                "lap": 2,
+                "lapTime": "01:01.322",
+                "diff": "-25.056",
+                "status": "Gültig"
+            },
+            {
+                "lap": 1,
+                "lapTime": "01:26.378",
+                "diff": "-",
+                "status": "Start"
+            }
+        ]
+    }
+];
+    const FFM_SESSIONS = [
+    {
+        "id": "ffm-20261016-08",
+        "date": "16.10.2026 16:41",
+        "name": "8 - Rennen",
+        "kartClass": "RiMO SiNUS Elektro",
+        "position": "P8",
+        "podium": false,
+        "bestLap": "54.720",
+        "avgLap": "01:01.696",
+        "totalLaps": 20,
+        "isAllTimeBest": true,
+        "laps": [
+            {
+                "lap": 20,
+                "lapTime": "57.591",
+                "diff": "+2.871",
+                "status": "Gültig"
+            },
+            {
+                "lap": 19,
+                "lapTime": "54.720",
+                "diff": "-1.178",
+                "status": "BEST"
+            },
+            {
+                "lap": 18,
+                "lapTime": "55.898",
+                "diff": "-2.532",
+                "status": "Gültig"
+            },
+            {
+                "lap": 17,
+                "lapTime": "58.430",
+                "diff": "-0.225",
+                "status": "Gültig"
+            },
+            {
+                "lap": 16,
+                "lapTime": "58.655",
+                "diff": "+1.582",
+                "status": "Gültig"
+            },
+            {
+                "lap": 15,
+                "lapTime": "57.073",
+                "diff": "-0.420",
+                "status": "Gültig"
+            },
+            {
+                "lap": 14,
+                "lapTime": "57.493",
+                "diff": "-0.945",
+                "status": "Gültig"
+            },
+            {
+                "lap": 13,
+                "lapTime": "58.438",
+                "diff": "-2.604",
+                "status": "Gültig"
+            },
+            {
+                "lap": 12,
+                "lapTime": "01:01.042",
+                "diff": "+3.042",
+                "status": "Gültig"
+            },
+            {
+                "lap": 11,
+                "lapTime": "58.000",
+                "diff": "-4.413",
+                "status": "Gültig"
+            },
+            {
+                "lap": 10,
+                "lapTime": "01:02.413",
+                "diff": "+2.184",
+                "status": "Gültig"
+            },
+            {
+                "lap": 9,
+                "lapTime": "01:00.229",
+                "diff": "-0.920",
+                "status": "Gültig"
+            },
+            {
+                "lap": 8,
+                "lapTime": "01:01.149",
+                "diff": "-39.439",
+                "status": "Gültig"
+            },
+            {
+                "lap": 7,
+                "lapTime": "01:40.588",
+                "diff": "+26.537",
+                "status": "Gültig"
+            },
+            {
+                "lap": 6,
+                "lapTime": "01:14.051",
+                "diff": "+16.406",
+                "status": "Gültig"
+            },
+            {
+                "lap": 5,
+                "lapTime": "57.645",
+                "diff": "-5.042",
+                "status": "Gültig"
+            },
+            {
+                "lap": 4,
+                "lapTime": "01:02.687",
+                "diff": "+5.360",
+                "status": "Gültig"
+            },
+            {
+                "lap": 3,
+                "lapTime": "57.327",
+                "diff": "+0.256",
+                "status": "Gültig"
+            },
+            {
+                "lap": 2,
+                "lapTime": "57.071",
+                "diff": "-6.353",
+                "status": "Gültig"
+            },
+            {
+                "lap": 1,
+                "lapTime": "01:03.424",
+                "diff": "-",
+                "status": "Start"
+            }
+        ]
+    },
+    {
+        "id": "ffm-20261016-07",
+        "date": "16.10.2026 16:32",
+        "name": "7 - Qualifikation",
+        "kartClass": "RiMO SiNUS Elektro",
+        "position": "P6",
+        "podium": false,
+        "bestLap": "01:00.259",
+        "avgLap": "01:02.896",
+        "totalLaps": 3,
+        "isAllTimeBest": false,
+        "laps": [
+            {
+                "lap": 3,
+                "lapTime": "01:00.259",
+                "diff": "-0.264",
+                "status": "BEST"
+            },
+            {
+                "lap": 2,
+                "lapTime": "01:00.523",
+                "diff": "-7.383",
+                "status": "Gültig"
+            },
+            {
+                "lap": 1,
+                "lapTime": "01:07.906",
+                "diff": "-",
+                "status": "Start"
+            }
+        ]
+    }
+];
+
+    const TRACKS = {
+        kartlandsinn: {
+            id: 'kartlandsinn',
+            name: 'Kartland Sinn',
+            city: 'Sinn (Hessen)',
+            layout: 'Indoor Rennstrecke (500m • 12 Kurven)',
+            lengthMeters: 500,
+            turns: 12,
+            trackRecord: '41.199',
+            trackRecordHolder: 'Noah (Rennlauf 45)',
+            currentWeather: 'Indoor Halle • Optimaler Grip',
+            kartClass: '6,5 PS Leihkart',
+            driver: {
+                id: 'gp-driver-sinn-900',
+                licenseCode: 'GP-****-900',
+                nickname: 'GP900',
+                totalRaces: 8,
+                podiums: 4,
+                personalBest: '43.922',
+                bestAvgLap: '45.755',
+                rankingPosition: 3
+            },
+            sessions: SINN_SESSIONS
+        },
+        ecokartfrankfurt: {
+            id: 'ecokartfrankfurt',
+            name: 'Eco Kart Frankfurt',
+            city: 'Frankfurt am Main',
+            layout: 'Indoor E-Kart Highspeed (600m)',
+            lengthMeters: 600,
+            turns: 15,
+            trackRecord: '52.577',
+            trackRecordHolder: 'Nitro Noel (Heat 8)',
+            currentWeather: 'Indoor Halle • Elektro-Power',
+            kartClass: 'RiMO SiNUS Elektro-Karts',
+            driver: {
+                id: 'gp-driver-ffm-900',
+                licenseCode: 'GP-****-ECO',
+                nickname: 'Gamingpig900',
+                totalRaces: 2,
+                podiums: 0,
+                personalBest: '54.720',
+                bestAvgLap: '01:01.696',
+                rankingPosition: 6
+            },
+            sessions: FFM_SESSIONS
+        }
     };
 
     class KartingService {
         constructor() {
-            this.config = { ...CONFIG };
-            this.liveState = JSON.parse(JSON.stringify(MOCK_TELEMETRY.liveSession));
-            this.subscribers = new Set();
-            this.pollTimer = null;
+            this.activeTrackId = 'kartlandsinn';
+            this.activeSessionId = SINN_SESSIONS[0].id;
         }
 
-        /**
-         * Konfiguration anpassen (API-Key, Driver-ID, Endpoint)
-         */
-        configure(options = {}) {
-            this.config = { ...this.config, ...options };
+        getActiveTrackId() {
+            return this.activeTrackId;
         }
 
-        /**
-         * Fahrerprofil abrufen
-         */
-        async getDriverProfile(driverId = this.config.defaultDriverId) {
-            try {
-                if (this.config.apiKey) {
-                    const res = await this._fetchWithTimeout(`${this.config.apiBaseUrl}/drivers/${encodeURIComponent(driverId)}`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        return this._mapDriverData(data);
-                    }
+        setActiveTrack(trackId) {
+            if (TRACKS[trackId]) {
+                this.activeTrackId = trackId;
+                const track = TRACKS[trackId];
+                if (track.sessions && track.sessions.length > 0) {
+                    this.activeSessionId = track.sessions[0].id;
                 }
-            } catch (err) {
-                console.warn('[KartingService] Activity-Box API offline, verwende Telemetrie-Cache:', err.message);
+                return true;
             }
-            return MOCK_TELEMETRY.driver;
+            return false;
         }
 
-        /**
-         * Live-Timing-Telemetrie abrufen
-         */
-        async getLiveTiming(trackId = this.config.defaultTrackId) {
-            try {
-                if (this.config.apiKey) {
-                    const res = await this._fetchWithTimeout(`${this.config.apiBaseUrl}/tracks/${encodeURIComponent(trackId)}/live`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        return this._mapLiveTelemetry(data);
-                    }
-                }
-            } catch (err) {
-                console.warn('[KartingService] Live-API nicht erreichbar, nutze Echtzeit-Puffer:', err.message);
+        getActiveSession() {
+            const track = TRACKS[this.activeTrackId] || TRACKS.kartlandsinn;
+            return track.sessions.find(s => s.id === this.activeSessionId) || track.sessions[0];
+        }
+
+        setActiveSession(sessionId) {
+            const track = TRACKS[this.activeTrackId] || TRACKS.kartlandsinn;
+            const found = track.sessions.find(s => s.id === sessionId);
+            if (found) {
+                this.activeSessionId = sessionId;
+                return true;
             }
-            return this.liveState;
+            return false;
         }
 
-        /**
-         * Renn-Historie abrufen
-         */
-        async getSessionHistory(driverId = this.config.defaultDriverId) {
-            try {
-                if (this.config.apiKey) {
-                    const res = await this._fetchWithTimeout(`${this.config.apiBaseUrl}/drivers/${encodeURIComponent(driverId)}/history`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        return data.items || data;
-                    }
-                }
-            } catch (err) {
-                console.warn('[KartingService] Historie aus lokalem Speicher geladen:', err.message);
-            }
-            return MOCK_TELEMETRY.sessionHistory;
+        getAllSessions(trackId = this.activeTrackId) {
+            const track = TRACKS[trackId] || TRACKS.kartlandsinn;
+            return track.sessions;
         }
 
-        /**
-         * Strecken-Informationen abrufen
-         */
-        async getTrackInfo(trackId = this.config.defaultTrackId) {
-            return MOCK_TELEMETRY.track;
-        }
-
-        /**
-         * Simulation einer neuen Runde (für interaktive Tests im Admin-Modus)
-         */
-        simulateNextLap() {
-            if (this.liveState.currentLap >= this.liveState.totalLaps) {
-                this.liveState.status = 'FINISHED';
-                this._notify();
-                return this.liveState;
-            }
-
-            this.liveState.currentLap++;
-            // Zufalls-Varianz zwischen -0.25s und +0.35s
-            const variance = (Math.random() * 0.60 - 0.25);
-            const baseSec = 32.314 + variance;
-            const lapTimeStr = baseSec.toFixed(3);
-            const bestTimeSec = parseFloat(this.liveState.bestLapTime);
-            const isBest = baseSec < bestTimeSec;
-
-            if (isBest) {
-                this.liveState.bestLapTime = lapTimeStr;
-            }
-
-            const diffSec = baseSec - bestTimeSec;
-            const gapStr = (diffSec >= 0 ? `+${diffSec.toFixed(3)}s` : `${diffSec.toFixed(3)}s`);
-
-            const s1 = (10.100 + Math.random() * 0.2).toFixed(3);
-            const s2 = (11.400 + Math.random() * 0.2).toFixed(3);
-            const s3 = (baseSec - parseFloat(s1) - parseFloat(s2)).toFixed(3);
-
-            const newLap = {
-                lap: this.liveState.currentLap,
-                time: lapTimeStr,
-                s1, s2, s3,
-                gap: isBest ? '±0.000s 🚀' : gapStr,
-                speed: (63.5 + Math.random() * 2).toFixed(1),
-                isBest
-            };
-
-            this.liveState.laps.unshift(newLap);
-            this.liveState.lastLapTime = lapTimeStr;
-            this.liveState.deltaToPersonalBest = isBest ? '±0.000s (NEUE BESTZEIT!)' : gapStr;
-            this.liveState.sectorTimes.s1 = s1;
-            this.liveState.sectorTimes.s2 = s2;
-            this.liveState.sectorTimes.s3 = s3;
-
-            this._notify();
-            return this.liveState;
-        }
-
-        /**
-         * Observer-Pattern für Live-Updates
-         */
-        subscribe(callback) {
-            this.subscribers.add(callback);
-            return () => this.subscribers.delete(callback);
-        }
-
-        _notify() {
-            this.subscribers.forEach(cb => {
-                try { cb(this.liveState); } catch (_) {}
-            });
-        }
-
-        startLivePolling() {
-            this.stopLivePolling();
-            this.pollTimer = setInterval(async () => {
-                await this.getLiveTiming();
-                this._notify();
-            }, this.config.pollIntervalMs);
-        }
-
-        stopLivePolling() {
-            if (this.pollTimer) {
-                clearInterval(this.pollTimer);
-                this.pollTimer = null;
-            }
-        }
-
-        async _fetchWithTimeout(url, options = {}) {
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), this.config.requestTimeoutMs);
-            try {
-                return await fetch(url, {
-                    ...options,
-                    signal: controller.signal,
-                    headers: {
-                        'Accept': 'application/json',
-                        'Authorization': this.config.apiKey ? `Bearer ${this.config.apiKey}` : undefined,
-                        ...options.headers
-                    }
-                });
-            } finally {
-                clearTimeout(id);
-            }
-        }
-
-        _mapDriverData(raw) {
+        async getTrackInfo(trackId = this.activeTrackId) {
+            const track = TRACKS[trackId] || TRACKS.kartlandsinn;
             return {
-                id: raw.id || raw.driverId || this.config.defaultDriverId,
-                name: raw.name || raw.fullName || 'Gamingpig',
-                nickname: raw.nickname || 'Racer',
-                racingClass: raw.category || raw.className || 'Senior',
-                totalRaces: raw.raceCount || 42,
-                victories: raw.wins || 17,
-                podiums: raw.podiums || 31,
-                personalBest: raw.bestLap || '32.314',
-                avgLapTime: raw.avgLap || '33.105',
-                rankingPosition: raw.rank || 1,
-                rankingPoints: raw.points || 2450
+                id: track.id,
+                name: track.name,
+                city: track.city,
+                layout: track.layout,
+                lengthMeters: track.lengthMeters,
+                turns: track.turns,
+                trackRecord: track.trackRecord,
+                trackRecordHolder: track.trackRecordHolder,
+                currentWeather: track.currentWeather,
+                kartClass: track.kartClass
             };
         }
 
-        _mapLiveTelemetry(raw) {
+        async getDriverProfile(trackId = this.activeTrackId) {
+            const track = TRACKS[trackId] || TRACKS.kartlandsinn;
             return {
-                sessionId: raw.sessionId || this.liveState.sessionId,
-                status: raw.status || 'LIVE',
-                kartNumber: raw.kart || raw.kartNumber || 14,
-                currentPosition: raw.position || 1,
-                totalDrivers: raw.totalDrivers || 14,
-                currentLap: raw.lap || raw.currentLap || 12,
-                totalLaps: raw.totalLaps || 18,
-                sessionTimeRemainingMs: raw.timeRemaining || 360000,
-                bestLapTime: raw.bestLap || '32.314',
-                lastLapTime: raw.lastLap || '32.482',
-                deltaToRecord: raw.deltaRecord || '+0.330s',
-                deltaToPersonalBest: raw.deltaPB || '+0.168s',
-                topSpeedKmh: raw.topSpeed || 64.8,
-                sectorTimes: raw.sectors || this.liveState.sectorTimes,
-                laps: Array.isArray(raw.laps) ? raw.laps : this.liveState.laps
+                id: track.driver.id,
+                licenseCode: track.driver.licenseCode,
+                name: track.driver.nickname,
+                nickname: track.driver.nickname,
+                racingClass: track.kartClass,
+                totalRaces: track.driver.totalRaces,
+                podiums: track.driver.podiums,
+                personalBest: track.driver.personalBest,
+                bestAvgLap: track.driver.bestAvgLap,
+                rankingPosition: track.driver.rankingPosition
+            };
+        }
+
+        async fetchLiveSession(trackId = this.activeTrackId) {
+            const track = await this.getTrackInfo(trackId);
+            const driver = await this.getDriverProfile(trackId);
+            const session = this.getActiveSession();
+            return {
+                track,
+                driver,
+                session,
+                sessions: this.getAllSessions(trackId),
+                activeTrackId: track.id
+            };
+        }
+
+        async getLiveTiming(trackId = this.activeTrackId) {
+            const track = TRACKS[trackId] || TRACKS.kartlandsinn;
+            const session = this.getActiveSession();
+            const best = session.bestLap;
+            const laps = session.laps;
+            const last = laps[0] || { lapTime: best, diff: '-0.452' };
+
+            return {
+                status: 'FINISHED',
+                sessionName: session.name,
+                currentPosition: session.position,
+                kartNumber: track.id === 'ecokartfrankfurt' ? 8 : 14,
+                currentLap: laps.length,
+                totalLaps: session.totalLaps,
+                bestLapTime: best,
+                avgLapTime: session.avgLap,
+                lastLapTime: last.lapTime,
+                deltaToRecord: '+' + (parseFloat(best) - parseFloat(track.trackRecord)).toFixed(3) + 's',
+                laps: laps.map(l => ({
+                    lap: l.lap,
+                    time: l.lapTime,
+                    gap: l.diff,
+                    isBest: l.status === 'BEST'
+                }))
             };
         }
     }
