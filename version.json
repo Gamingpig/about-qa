@@ -1,10 +1,10 @@
 {
-  "version": "24.245.54",
-  "buildTime": "2026-11-01T12:03:25.989Z",
+  "version": "24.245.55",
+  "buildTime": "2026-11-01T12:37:00.000Z",
   "shortNotes": [
-    "Mobile Lightbox: Touch-Pan Drag (1-Finger Wischen bei Zoom) & 500% Max-Zoom",
-    "Mobile Layout Fix: UI-Kontrollzentrum & Header während Artist-Modal/Lightbox ausgeblendet",
-    "Barrierefreie 44px Touch-Ziele für Schließen-Buttons mit Safe-Area-Inset Schutz",
-    "Standby Sofort-Idle bei pausierter Musik & Admin Dossier / Checkliste synchronisiert"
+    "White Screen Syntax-Fix: Doppelte isPlaying Deklaration in resyncAllCanvasVideos restlos behoben (0 Syntax-Fehler)",
+    "Mattglas-Prägung Typografie: Kontrast-Rim (Ambient Occlusion Edge) für Lyrics über 100% hellen Canvas-Videos ohne Abdunklung",
+    "Mobile UI-Lock: Header & UI-Kontrollzentrum während Artist-Modal und Lightbox vollständig ausgeblendet",
+    "Strikte Trennung der Administrator-Release-Notes von der Live-Version & automatischer Staging-Sync"
   ]
 }
