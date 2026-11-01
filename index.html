@@ -10576,6 +10576,11 @@ html.gp-android:not(.dark) #ui-controls {
             
             <!-- 1. Hero Bilder-Diashow / Galerie (Dual-Layer: Unscharfer Hintergrund + 100% unbeschnittenes zentriertes Bild, Auto-Pause bei Hover/Touch) -->
             <div id="artist-gallery-container" onclick="openArtistLightbox(event)" class="relative w-full h-64 sm:h-72 bg-slate-950/90 overflow-hidden flex items-center justify-center group select-none shrink-0 border-b border-white/10 cursor-pointer" style="touch-action: pan-y;">
+                <!-- Lade-Skeleton während des Fetch-Vorgangs (verhindert Anzeige veralteter Bilder) -->
+                <div id="artist-gallery-skeleton" class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-slate-950/80 z-0 pointer-events-none transition-opacity duration-300">
+                    <div class="w-12 h-12 rounded-full bg-slate-800/80 gp-load-shimmer flex items-center justify-center text-slate-400 text-xl">🎵</div>
+                    <span class="text-[11px] font-mono text-slate-400">Künstlerprofil wird geladen...</span>
+                </div>
                 <!-- Dual-Layer Hintergrund Weichzeichner (Füllt die Fläche aus, statischer Blur) -->
                 <img id="artist-gallery-bg" src="" alt="" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 pointer-events-none transition-opacity duration-600">
                 
@@ -32770,6 +32775,21 @@ window.setLyricsStyle = function(style) {
             stopArtistSlideshowTimer();
             currentArtistSlideImages = [];
             currentArtistSlideIndex = 0;
+            const imgEl = document.getElementById('artist-gallery-img');
+            const prevImgEl = document.getElementById('artist-gallery-img-prev');
+            const bgEl = document.getElementById('artist-gallery-bg');
+            const skeletonEl = document.getElementById('artist-gallery-skeleton');
+            if (imgEl) {
+                imgEl.classList.remove('opacity-100');
+                imgEl.classList.add('opacity-0');
+                imgEl.src = '';
+            }
+            if (prevImgEl) {
+                prevImgEl.src = '';
+                if (prevImgEl.style) prevImgEl.style.opacity = '0';
+            }
+            if (bgEl) bgEl.src = '';
+            if (skeletonEl) skeletonEl.style.opacity = '1';
             renderArtistSlideshow();
 
             // Verifizierte Künstler-Daten laden
@@ -32859,6 +32879,7 @@ window.setLyricsStyle = function(style) {
             const bgEl = document.getElementById('artist-gallery-bg');
             const counterEl = document.getElementById('artist-slide-counter');
             const dotsContainer = document.getElementById('artist-gallery-dots');
+            const skeletonEl = document.getElementById('artist-gallery-skeleton');
 
             if (!imgEl) return;
             const renderId = ++artistSlideRenderId;
@@ -32878,6 +32899,7 @@ window.setLyricsStyle = function(style) {
                     if (renderId !== artistSlideRenderId) return;
                     imgEl.src = currentImg;
                     if (bgEl) bgEl.src = currentImg;
+                    if (skeletonEl) skeletonEl.style.opacity = '0';
                     requestAnimationFrame(() => {
                         if (renderId !== artistSlideRenderId) return;
                         imgEl.classList.remove('opacity-0');
@@ -32903,9 +32925,21 @@ window.setLyricsStyle = function(style) {
                 preloadedImage.onerror = () => revealImage();
                 preloadedImage.src = currentImg;
             } else {
-                imgEl.src = '';
-                if (prevImgEl) prevImgEl.src = '';
-                if (bgEl) bgEl.src = '';
+                // Graceful Fallback-Rendering: Wenn der Künstler keine validen Bilder hat
+                const fallbackSrc = ARTIST_PROFILE_FALLBACK_SVG;
+                imgEl.src = fallbackSrc;
+                imgEl.classList.remove('opacity-0');
+                imgEl.classList.add('opacity-100');
+                if (bgEl) {
+                    bgEl.src = fallbackSrc;
+                    bgEl.classList.remove('opacity-20');
+                    bgEl.classList.add('opacity-30');
+                }
+                if (prevImgEl) {
+                    prevImgEl.src = '';
+                    if (prevImgEl.style) prevImgEl.style.opacity = '0';
+                }
+                if (skeletonEl) skeletonEl.style.opacity = '0';
             }
 
             // Slide Counter
@@ -32924,7 +32958,7 @@ window.setLyricsStyle = function(style) {
                         dot.className = 'w-1.5 h-1.5 rounded-full transition-all duration-300 ' + (isActive ? 'bg-cyan-400 w-3' : 'bg-white/30 hover:bg-white/60 cursor-pointer');
                         if (!isActive) {
                             dot.onclick = (e) => {
-                                if (e && e.stopPropagation) e.stopPropagation();
+                                e.stopPropagation();
                                 goToArtistSlide(idx, e);
                             };
                         }
@@ -32937,6 +32971,122 @@ window.setLyricsStyle = function(style) {
             }
         }
 
+        const ARTIST_PROFILE_FALLBACK_SVG = "data:image/svg+xml;utf8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22640%22%20height=%22640%22%20viewBox=%220%200%20640%20640%22%3E%3Cdefs%3E%3ClinearGradient%20id=%22g%22%20x1=%220%25%22%20y1=%220%25%22%20x2=%22100%22%20y2=%22100%25%22%3E%3Cstop%20offset=%220%25%22%20stop-color=%22%230f172a%22/%3E%3Cstop%20offset=%22100%25%22%20stop-color=%22%23020617%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width=%22100%25%22%20height=%22100%25%22%20fill=%22url(%23g)%22/%3E%3Ccircle%20cx=%22320%22%20cy=%22260%22%20r=%22110%22%20fill=%22%23334155%22%20opacity=%220.6%22/%3E%3Cpath%20d=%22M160%20520c0-88%2072-160%20160-160s160%2072%20160%20160%22%20fill=%22%23334155%22%20opacity=%220.6%22/%3E%3Ccircle%20cx=%22320%22%20cy=%22250%22%20r=%2236%22%20fill=%22%2306b6d4%22%20opacity=%220.8%22/%3E%3Cpath%20d=%22M312%20235v30l24-15z%22%20fill=%22%23ffffff%22/%3E%3C/svg%3E";
+
+        function normalizeArtistName(name) {
+            if (!name) return '';
+            return String(name)
+                .normalize('NFD')
+                .replace(/[̀-ͯ]/g, '')
+                .toLowerCase()
+                .replace(/[’'`]/g, "'")
+                .replace(/[^\w\s'&+!$.-]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function extractArtistCandidates(rawName) {
+            if (!rawName) return [];
+            const trimmed = String(rawName).replace(/\s*•\s*From Smart Shuffle/gi, '').trim();
+            const candidates = [];
+            candidates.push(trimmed);
+
+            // Featuring-Bereinigung
+            const cleanNoFeat = trimmed.replace(/\s+(?:feat\.?|ft\.?|featuring|with|pres\.)\s+.+$/i, '').trim();
+            if (cleanNoFeat && cleanNoFeat !== trimmed) {
+                candidates.push(cleanNoFeat);
+            }
+
+            // Kollaborations-Trennzeichen: Komma, Schrägstrich, Ampersand, 'x'
+            const commaSplit = trimmed.split(/[,/]\s*/)[0]?.trim();
+            if (commaSplit && commaSplit !== trimmed && commaSplit.length >= 2) {
+                candidates.push(commaSplit);
+            }
+
+            const ampSplit = trimmed.split(/\s+&\s+/)[0]?.trim();
+            if (ampSplit && ampSplit !== trimmed && ampSplit.length >= 2) {
+                candidates.push(ampSplit);
+            }
+
+            const xSplit = trimmed.split(/\s+[xX]\s+/)[0]?.trim();
+            if (xSplit && xSplit !== trimmed && xSplit.length >= 2) {
+                candidates.push(xSplit);
+            }
+
+            return [...new Set(candidates.filter(Boolean))];
+        }
+
+        function rankArtistSearchResults(artists, targetName) {
+            if (!Array.isArray(artists) || !artists.length) return null;
+            const targetNorm = normalizeArtistName(targetName);
+            const targetClean = targetNorm.replace(/[^\w\s]/g, '').trim();
+
+            const scored = artists.map((a, originalIndex) => {
+                if (!a) return { artist: null, score: -1 };
+                const aName = a.name || '';
+                const aNorm = normalizeArtistName(aName);
+                const aClean = aNorm.replace(/[^\w\s]/g, '').trim();
+
+                let score = 0;
+                if (aNorm === targetNorm) {
+                    score += 1000;
+                } else if (aClean === targetClean && aClean.length > 0) {
+                    score += 900;
+                } else if (aNorm.startsWith(targetNorm + ' ') || aNorm.endsWith(' ' + targetNorm)) {
+                    score += 600;
+                } else if (targetNorm.startsWith(aNorm + ' ') || targetNorm.endsWith(' ' + aNorm)) {
+                    score += 500;
+                } else if (aNorm.includes(targetNorm) || targetNorm.includes(aNorm)) {
+                    score += 300;
+                }
+
+                const hasImage = Boolean(a.image || (Array.isArray(a.images) && a.images.length > 0));
+                if (hasImage) score += 100;
+                if (a.verified || a.externalIds?.spotify) score += 150;
+
+                const followers = Number(a.followers || 0);
+                if (followers > 0) {
+                    score += Math.min(Math.log10(followers) * 20, 150);
+                }
+
+                score -= originalIndex * 2;
+                return { artist: a, score };
+            });
+
+            scored.sort((a, b) => b.score - a.score);
+            return (scored[0] && scored[0].score > 0) ? scored[0].artist : (artists[0] || null);
+        }
+
+        async function fetchArtistWithRetry(url, timeoutMs = 5000, maxRetries = 2, backoffDelays = [600, 1200]) {
+            let lastErr = null;
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    try { controller.abort(); } catch(_) {}
+                }, timeoutMs);
+
+                try {
+                    const res = await fetch(url, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    if (res && res.ok) return res;
+                    if (res && (res.status === 429 || res.status >= 500)) {
+                        lastErr = new Error(`HTTP ${res.status}`);
+                    } else if (res) {
+                        return res;
+                    }
+                } catch (err) {
+                    clearTimeout(timeoutId);
+                    lastErr = err;
+                }
+
+                if (attempt < maxRetries) {
+                    const delay = backoffDelays[attempt] || 800;
+                    await new Promise(r => setTimeout(r, delay));
+                }
+            }
+            throw lastErr || new Error('Fetch failed after retries');
+        }
+
         async function fetchArtistDetails(artistName, requestId) {
             const cleanKey = artistName.toLowerCase().trim();
             // 1. Prüfe Bundled Artists DB (0ms First-Paint)
@@ -32945,23 +33095,23 @@ window.setLyricsStyle = function(style) {
                 const profileImages = Array.isArray(bundledData.images)
                     ? bundledData.images.filter(Boolean)
                     : [];
-            const artistData = { ...bundledData, images: profileImages };
-            applyArtistData(artistData);
-            loadAdditionalSpotifyArtistImages(artistData, cleanKey, requestId);
+                const artistData = { ...bundledData, images: profileImages };
+                applyArtistData(artistData);
+                loadAdditionalSpotifyArtistImages(artistData, cleanKey, requestId);
                 return;
             }
 
             // 2. Prüfe Memory Cache
             if (trackArtistInfoCache.has(cleanKey)) {
-            const artistData = trackArtistInfoCache.get(cleanKey);
-            applyArtistData(artistData);
-            loadAdditionalSpotifyArtistImages(artistData, cleanKey, requestId);
+                const artistData = trackArtistInfoCache.get(cleanKey);
+                applyArtistData(artistData);
+                loadAdditionalSpotifyArtistImages(artistData, cleanKey, requestId);
                 return;
             }
 
-            // Primären Künstler isolieren (z.B. "Barun Kumar Pal, Sunni Holden" -> "Barun Kumar Pal")
-            const splitMatches = artistName.split(/[,&]|\s+(?:feat\.?|ft\.?|with|x)\s+/i);
-            const primaryArtist = (splitMatches[0] || artistName).trim();
+            // Intelligente Kandidaten-Extraktion für Duos, Kollaborationen und bereinigte Namen
+            const artistCandidates = extractArtistCandidates(artistName);
+            const primaryArtist = artistCandidates[1] || artistCandidates[0] || artistName;
             const primaryLower = primaryArtist.toLowerCase();
 
             const artistData = {
@@ -32975,53 +33125,54 @@ window.setLyricsStyle = function(style) {
                 spotifyUrl: null,
                 followersText: null
             };
-              let spotifyArtistId = null;
+            let spotifyArtistId = null;
 
             try {
-                // A. stats.fm Artist Search API: Spotify-Kuenstlerdaten und Profilbild(er)
+                // A. stats.fm Artist Search API: Resiliente Multi-Query & Retry-Pipeline
                 const statsFmPromise = (async () => {
-                    try {
-                        const sUrl = `https://api.stats.fm/api/v1/search?query=${encodeURIComponent(primaryArtist)}&type=artist`;
-                        const controller = new AbortController();
-                        const timeoutId = setTimeout(() => controller.abort(), 5000);
-                        let res;
+                    for (const candidate of artistCandidates) {
                         try {
-                          res = await fetch(sUrl, { signal: controller.signal });
-                        } finally {
-                          clearTimeout(timeoutId);
-                        }
-                        if (res.ok) {
-                            const d = await res.json();
-                            const artists = d?.items?.artists || [];
-                            const match = artists.find(a => (a.name || '').toLowerCase() === primaryLower) || artists[0];
-                            if (match && (match.name || '').toLowerCase().includes(primaryLower.slice(0, 4))) {
-                                const rawAvatar = match.image || (match.images && match.images[0]);
-                                const avatarSrc = typeof rawAvatar === 'string' ? rawAvatar : (rawAvatar?.url || rawAvatar?.src);
-                                if (avatarSrc && avatarSrc.includes('ab676161')) {
-                                    artistData.images = [avatarSrc.replace(/ab676161[0-9a-f]{8}/, 'ab6761610000e5eb')];
-                                } else {
-                                    const profileImages = Array.isArray(match.images) ? match.images.slice() : [];
-                                    if (match.image) profileImages.unshift(match.image);
-                                    const profileImageSources = profileImages.map(image => typeof image === 'string' ? image : (image?.url || image?.src)).filter(Boolean);
-                                    artistData.images.push(...extractSpotifyArtistProfileImages(profileImageSources.join('\n'), spotifyArtistId));
-                                }
-                                if (match.followers) {
-                                    artistData.followersText = `${Number(match.followers).toLocaleString('de-DE')} Follower • Verifiziertes Spotify-Profil`;
-                                }
-                                spotifyArtistId = match.externalIds?.spotify?.[0] || null;
-                                if (spotifyArtistId) {
-                                    artistData.spotifyUrl = `https://open.spotify.com/artist/${spotifyArtistId}`;
-                                }
-                                if (match.genres?.length && !artistData.genre) {
-                                    artistData.genre = match.genres[0].charAt(0).toUpperCase() + match.genres[0].slice(1);
-                                }
-
+                            const sUrl = `https://api.stats.fm/api/v1/search?query=${encodeURIComponent(candidate)}&type=artist`;
+                            let res;
+                            try {
+                                res = await fetchArtistWithRetry(sUrl, 5000, 2, [600, 1200]);
+                            } catch (_) {
+                                res = null;
                             }
-                        }
-                    } catch (_) {}
+                            if (res && res.ok) {
+                                const d = await res.json().catch(() => null);
+                                const artists = d?.items?.artists || [];
+                                if (!artists.length) continue;
+                                const match = rankArtistSearchResults(artists, candidate) || artists.find(a => (a.name || '').toLowerCase() === primaryLower) || artists[0];
+                                if (match) {
+                                    const rawAvatar = match.image || (match.images && match.images[0]);
+                                    const avatarSrc = typeof rawAvatar === 'string' ? rawAvatar : (rawAvatar?.url || rawAvatar?.src);
+                                    if (avatarSrc && avatarSrc.includes('ab676161')) {
+                                        artistData.images = [avatarSrc.replace(/ab676161[0-9a-f]{8}/, 'ab6761610000e5eb')];
+                                    } else {
+                                        const profileImages = Array.isArray(match.images) ? match.images.slice() : [];
+                                        if (match.image) profileImages.unshift(match.image);
+                                        const profileImageSources = profileImages.map(image => typeof image === 'string' ? image : (image?.url || image?.src)).filter(Boolean);
+                                        artistData.images.push(...extractSpotifyArtistProfileImages(profileImageSources.join('\n'), spotifyArtistId));
+                                    }
+                                    if (match.followers) {
+                                        artistData.followersText = `${Number(match.followers).toLocaleString('de-DE')} Follower • Verifiziertes Spotify-Profil`;
+                                    }
+                                    spotifyArtistId = match.externalIds?.spotify?.[0] || null;
+                                    if (spotifyArtistId) {
+                                        artistData.spotifyUrl = `https://open.spotify.com/artist/${spotifyArtistId}`;
+                                    }
+                                    if (match.genres?.length && !artistData.genre) {
+                                        artistData.genre = match.genres[0].charAt(0).toUpperCase() + match.genres[0].slice(1);
+                                    }
+                                    break;
+                                }
+                            }
+                        } catch (_) {}
+                    }
                 })();
 
-                // B. Strenge Wikipedia-Prüfung: NUR echte Musiker & exakte Titel-Übereinstimmung (keine Historiker oder Zufallstreffer!)
+                // B. Strenge Wikipedia-Prüfung: NUR echte Musiker & exakte Titel-Übereinstimmung
                 const wikiPromise = (async () => {
                     const musicKeywords = [
                         'musik', 'music', 'sänger', 'saenger', 'singer', 'band', 'rapper', 'dj',
@@ -33031,80 +33182,88 @@ window.setLyricsStyle = function(style) {
                     ];
 
                     for (const lang of ['de', 'en']) {
-                        try {
-                            const wUrl = `https://${lang}.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(primaryArtist)}&gsrlimit=3&prop=pageimages|extracts|info&inprop=url&exintro=1&explaintext=1&piprop=original|thumbnail&pithumbsize=800&format=json&origin=*`;
-                            const res = await fetch(wUrl);
-                            if (res.ok) {
-                                const d = await res.json();
-                                const pages = d?.query?.pages;
-                                if (pages) {
-                                    for (const page of Object.values(pages)) {
-                                        const pTitleRaw = page.title || '';
-                                        const pTitleBase = pTitleRaw.split('(')[0].trim().toLowerCase();
-                                        const pExtract = (page.extract || '').toLowerCase();
+                        for (const candidate of artistCandidates.slice(0, 2)) {
+                            try {
+                                const wUrl = `https://${lang}.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(candidate)}&gsrlimit=3&prop=pageimages|extracts|info&inprop=url&exintro=1&explaintext=1&piprop=original|thumbnail&pithumbsize=800&format=json&origin=*`;
+                                const res = await fetch(wUrl);
+                                if (res.ok) {
+                                    const d = await res.json();
+                                    const pages = d?.query?.pages;
+                                    if (pages) {
+                                        const candNorm = normalizeArtistName(candidate);
+                                        for (const page of Object.values(pages)) {
+                                            const pTitleRaw = page.title || '';
+                                            const pTitleBase = pTitleRaw.split('(')[0].trim();
+                                            const pTitleNorm = normalizeArtistName(pTitleBase);
+                                            const pExtract = (page.extract || '').toLowerCase();
 
-                                        const exactTitleMatch = (pTitleBase === primaryLower);
-                                        const isMusician = musicKeywords.some(k => pExtract.includes(k) || pTitleRaw.toLowerCase().includes(k));
+                                            const exactTitleMatch = (pTitleNorm === candNorm || pTitleBase.toLowerCase() === primaryLower);
+                                            const isMusician = musicKeywords.some(k => pExtract.includes(k) || pTitleRaw.toLowerCase().includes(k));
 
-                                        if (exactTitleMatch && isMusician) {
-                                            if (page.extract && !artistData.bio) {
-                                                artistData.bio = page.extract;
+                                            if (exactTitleMatch && isMusician) {
+                                                if (page.extract && !artistData.bio) {
+                                                    artistData.bio = page.extract;
+                                                }
+                                                if (page.fullurl && !artistData.wikiUrl) {
+                                                    artistData.wikiUrl = page.fullurl;
+                                                }
+                                                return;
                                             }
-                                            if (page.fullurl && !artistData.wikiUrl) {
-                                                artistData.wikiUrl = page.fullurl;
-                                            }
-                                            return;
                                         }
                                     }
+                                }
+                            } catch (_) {}
+                        }
+                    }
+                })();
+
+                // C. iTunes Search API (Top Hits & Alben mit ausfallsicherem Cover)
+                const itunesPromise = (async () => {
+                    for (const candidate of artistCandidates.slice(0, 2)) {
+                        try {
+                            const iUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(candidate)}&entity=song&limit=8`;
+                            const res = await fetch(iUrl);
+                            if (res.ok) {
+                                const d = await res.json();
+                                if (d?.results?.length) {
+                                    const candNorm = normalizeArtistName(candidate);
+                                    const matchingTracks = d.results.filter(t => {
+                                        const aName = normalizeArtistName(t.artistName || '');
+                                        return aName.includes(candNorm) || candNorm.includes(aName);
+                                    });
+
+                                    const effectiveTracks = matchingTracks.length ? matchingTracks : d.results;
+                                    const first = effectiveTracks[0];
+                                    if (first.primaryGenreName && !artistData.genre) artistData.genre = first.primaryGenreName;
+                                    if (first.artistViewUrl && !artistData.appleUrl) artistData.appleUrl = first.artistViewUrl;
+
+                                    effectiveTracks.slice(0, 5).forEach(t => {
+                                        const art = (t.artworkUrl100 || '').replace('100x100bb', '500x500bb') || t.artworkUrl100 || t.artworkUrl60;
+                                        const existingIdx = artistData.topTracks.findIndex(x => (x.title || '').toLowerCase() === (t.trackName || '').toLowerCase());
+                                        if (existingIdx !== -1) {
+                                            artistData.topTracks[existingIdx].trackUrl = t.trackViewUrl;
+                                            if (art && !artistData.topTracks[existingIdx].art) artistData.topTracks[existingIdx].art = art;
+                                        } else {
+                                            artistData.topTracks.push({
+                                                title: t.trackName,
+                                                subtitle: t.collectionName || '',
+                                                art: art,
+                                                trackUrl: t.trackViewUrl
+                                            });
+                                        }
+                                    });
+                                    if (artistData.topTracks.length) break;
                                 }
                             }
                         } catch (_) {}
                     }
                 })();
 
-                // C. iTunes Search API (Top Hits & Alben mit ausfallsicherem Cover)
-                const itunesPromise = (async () => {
-                    try {
-                        const iUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(primaryArtist)}&entity=song&limit=8`;
-                        const res = await fetch(iUrl);
-                        if (res.ok) {
-                            const d = await res.json();
-                            if (d?.results?.length) {
-                                const matchingTracks = d.results.filter(t => {
-                                    const aName = (t.artistName || '').toLowerCase();
-                                    return aName.includes(primaryLower) || primaryLower.includes(aName);
-                                });
-
-                                const effectiveTracks = matchingTracks.length ? matchingTracks : d.results;
-                                const first = effectiveTracks[0];
-                                if (first.primaryGenreName && !artistData.genre) artistData.genre = first.primaryGenreName;
-                                if (first.artistViewUrl && !artistData.appleUrl) artistData.appleUrl = first.artistViewUrl;
-
-                                effectiveTracks.slice(0, 5).forEach(t => {
-                                    const art = (t.artworkUrl100 || '').replace('100x100bb', '500x500bb') || t.artworkUrl100 || t.artworkUrl60;
-                                    const existingIdx = artistData.topTracks.findIndex(x => x.title.toLowerCase() === (t.trackName || '').toLowerCase());
-                                    if (existingIdx !== -1) {
-                                        artistData.topTracks[existingIdx].trackUrl = t.trackViewUrl;
-                                        if (art && !artistData.topTracks[existingIdx].art) artistData.topTracks[existingIdx].art = art;
-                                    } else {
-                                        artistData.topTracks.push({
-                                            title: t.trackName,
-                                            subtitle: t.collectionName || '',
-                                            art: art,
-                                            trackUrl: t.trackViewUrl
-                                        });
-                                    }
-                                });
-                            }
-                        }
-                    } catch (_) {}
-                })();
-
                 await statsFmPromise;
                 if (requestId !== artistRequestSequence) return;
                 if (!artistData.bio) {
-                  const statsInfo = artistData.followersText ? ` mit ${artistData.followersText}` : '';
-                  artistData.bio = `${artistName} ist ein verifizierter Musik-Künstler auf Spotify${statsInfo}. Entdecke die offiziellen Singles, Alben und Diskografie direkt auf Spotify oder Apple Music.`;
+                    const statsInfo = artistData.followersText ? ` mit ${artistData.followersText}` : '';
+                    artistData.bio = `${artistName} ist ein verifizierter Musik-Künstler auf Spotify${statsInfo}. Entdecke die offiziellen Singles, Alben und Diskografie direkt auf Spotify oder Apple Music.`;
                 }
                 trackArtistInfoCache.set(cleanKey, artistData);
                 applyArtistData(artistData);

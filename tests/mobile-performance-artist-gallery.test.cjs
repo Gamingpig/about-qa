@@ -246,4 +246,146 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         assert.equal(wordModeCache.words[0].chars.length, 0);
         assert.ok(Math.abs(charModeCache.words[0].chars.at(-1).endRatio - 1) < 1e-12);
     });
+    it('normalizes artist names and handles special characters, symbols, and punctuation', () => {
+        const normSource = appHtml.match(/function normalizeArtistName\(name\) \{[\s\S]*?\r?\n        \}/)?.[0];
+        const normalize = vm.runInNewContext(`(() => { ${normSource}; return normalizeArtistName; })()`);
+
+        assert.equal(normalize('AC/DC'), 'ac dc');
+        assert.equal(normalize('P!nk'), 'p!nk');
+        assert.equal(normalize('A$AP Rocky'), 'a$ap rocky');
+        assert.equal(normalize('Ke$ha'), 'ke$ha');
+        assert.equal(normalize('Beyoncé'), 'beyonce');
+        assert.equal(normalize('Panic! At The Disco'), 'panic! at the disco');
+        assert.equal(normalize('t.A.T.u.'), 't.a.t.u.');
+    });
+
+    it('extracts primary collaborators and featuring artists from diverse query patterns', () => {
+        const extractSource = appHtml.match(/function extractArtistCandidates\(rawName\) \{[\s\S]*?\r?\n        \}/)?.[0];
+        const extractCandidates = vm.runInNewContext(`(() => { ${extractSource}; return extractArtistCandidates; })()`);
+
+        const featResult = extractCandidates('David Guetta feat. Sia');
+        assert.ok(featResult.includes('David Guetta feat. Sia'));
+        assert.ok(featResult.includes('David Guetta'));
+
+        const ftResult = extractCandidates('Calvin Harris ft. Ellie Goulding');
+        assert.ok(ftResult.includes('Calvin Harris ft. Ellie Goulding'));
+        assert.ok(ftResult.includes('Calvin Harris'));
+
+        const withResult = extractCandidates('Post Malone with Swae Lee');
+        assert.ok(withResult.includes('Post Malone with Swae Lee'));
+        assert.ok(withResult.includes('Post Malone'));
+
+        const xResult = extractCandidates('Marshmello x Khalid');
+        assert.ok(xResult.includes('Marshmello x Khalid'));
+        assert.ok(xResult.includes('Marshmello'));
+
+        const ampResult = extractCandidates('Alan Walker & Ava Max');
+        assert.ok(ampResult.includes('Alan Walker & Ava Max'));
+        assert.ok(ampResult.includes('Alan Walker'));
+
+        const commaResult = extractCandidates('Barun Kumar Pal, Sunni Holden');
+        assert.ok(commaResult.includes('Barun Kumar Pal, Sunni Holden'));
+        assert.ok(commaResult.includes('Barun Kumar Pal'));
+
+        const duoResult = extractCandidates('Marcus & Martinus');
+        assert.equal(duoResult[0], 'Marcus & Martinus');
+    });
+
+    it('ranks multiple returned artists by exact match and popularity score rather than blind index [0]', () => {
+        const normSource = appHtml.match(/function normalizeArtistName\(name\) \{[\s\S]*?\r?\n        \}/)?.[0];
+        const rankSource = appHtml.match(/function rankArtistSearchResults\(artists, targetName\) \{[\s\S]*?\r?\n        \}/)?.[0];
+        const rankArtists = vm.runInNewContext(`(() => { ${normSource}; ${rankSource}; return rankArtistSearchResults; })()`);
+
+        const returnedMockArtists = [
+            { id: '1', name: 'Alan Walker Fan Club', followers: 250, image: null },
+            { id: '2', name: 'Alan Walker', followers: 42500000, verified: true, image: 'https://i.scdn.co/image/ab6761610000e5eb1' },
+            { id: '3', name: 'Alan', followers: 12000, image: 'https://i.scdn.co/image/ab6761610000e5eb2' }
+        ];
+
+        const winner = rankArtists(returnedMockArtists, 'Alan Walker');
+        assert.equal(winner.id, '2');
+        assert.equal(winner.name, 'Alan Walker');
+
+        // Ambiguous artist with punctuation/accents
+        const ambiguousMockArtists = [
+            { id: '10', name: 'Beyonce Tribute', followers: 500 },
+            { id: '20', name: 'Beyoncé', followers: 35000000, verified: true, image: 'https://i.scdn.co/image/ab6761610000e5eb3' }
+        ];
+        const beyonceWinner = rankArtists(ambiguousMockArtists, 'Beyonce');
+        assert.equal(beyonceWinner.id, '20');
+    });
+
+    it('retries failed network calls with exponential backoff on transient errors', async () => {
+        const retrySource = appHtml.match(/async function fetchArtistWithRetry\(url[\s\S]*?\r?\n        \}/)?.[0];
+        let callCount = 0;
+        const mockFetch = async () => {
+            callCount++;
+            if (callCount < 2) {
+                return { ok: false, status: 503 };
+            }
+            return { ok: true, json: async () => ({ success: true }) };
+        };
+
+        const fetchWithRetry = vm.runInNewContext(`(() => { ${retrySource}; return fetchArtistWithRetry; })()`, {
+            fetch: mockFetch,
+            AbortController,
+            setTimeout,
+            clearTimeout
+        });
+
+        const res = await fetchWithRetry('https://api.stats.fm/api/v1/search?query=test', 2000, 2, [10, 20]);
+        assert.ok(res.ok);
+        assert.equal(callCount, 2);
+    });
+
+    it('provides graceful fallback rendering when an artist has no valid image URL returned', async () => {
+        const fallbackSource = appHtml.match(/const ARTIST_PROFILE_FALLBACK_SVG = "[^"]+";/)?.[0] || 'const ARTIST_PROFILE_FALLBACK_SVG = "fallback.svg";';
+        const makeElement = () => {
+            const classes = new Set();
+            return {
+                src: '',
+                innerText: '',
+                innerHTML: '',
+                style: { opacity: '1' },
+                classList: {
+                    add: (...names) => names.forEach(name => classes.add(name)),
+                    remove: (...names) => names.forEach(name => classes.delete(name)),
+                    contains: name => classes.has(name)
+                }
+            };
+        };
+        const foreground = makeElement();
+        const background = makeElement();
+        const counter = makeElement();
+        const dots = makeElement();
+        const skeleton = makeElement();
+        const elements = new Map([
+            ['artist-gallery-img', foreground],
+            ['artist-gallery-bg', background],
+            ['artist-slide-counter', counter],
+            ['artist-gallery-dots', dots],
+            ['artist-gallery-skeleton', skeleton]
+        ]);
+
+        const render = vm.runInNewContext(`(() => { ${artistSlideshow}; return renderArtistSlideshow; })()`, {
+            currentArtistSlideImages: [],
+            currentArtistSlideIndex: 0,
+            artistSlideRenderId: 0,
+            document: {
+                getElementById: id => elements.get(id),
+                createElement: () => makeElement()
+            },
+            Image: class {},
+            requestAnimationFrame: cb => cb(),
+            goToArtistSlide() {}
+        });
+
+        render();
+        await new Promise(resolve => setImmediate(resolve));
+
+        assert.ok(foreground.src.includes('data:image/svg+xml') || foreground.src.includes('fallback'));
+        assert.equal(foreground.classList.contains('opacity-100'), true);
+        assert.equal(foreground.classList.contains('opacity-0'), false);
+        assert.equal(skeleton.style.opacity, '0');
+    });
 });
