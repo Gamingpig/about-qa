@@ -1,6 +1,6 @@
 {
   "version": "24.245.50",
-  "buildTime": "2026-11-01T09:43:08.771348Z",
+  "buildTime": "2026-11-01T10:58:30.000Z",
   "shortNotes": [
     "Lyrics-Engine 5-Stufen-Retry-Pipeline mit NetEase & AMLL Fallback",
     "Knallharte Polling-Sperre: noLyricsTrackKeys verhindert Neusuche pro Song",
