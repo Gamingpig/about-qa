@@ -1,10 +1,10 @@
 {
-  "version": "24.225.49",
-  "buildTime": "2026-10-31T19:49:46.165Z",
+  "version": "24.245.50",
+  "buildTime": "2026-11-01T09:43:08.771348Z",
   "shortNotes": [
-    "Flüssige Galerie-Crossfades & Fullscreen-Lightbox mit 100-300% Zoom und Touch-Pinch/Pan",
-    "Maximaler Performance-Freeze: 0% GPU-Hintergrundlast bei geöffnetem Künstler-Modal",
-    "Resiliente Lyrics-Suche mit autonomer Retry-Kette und Statusmeldung",
-    "PIN-Sicherheit mit Session-Persistenz und strikter Trennung der Release Notes"
+    "Lyrics-Engine 5-Stufen-Retry-Pipeline mit NetEase & AMLL Fallback",
+    "Knallharte Polling-Sperre: noLyricsTrackKeys verhindert Neusuche pro Song",
+    "Korrigiertes Statusmeldungs-Timing (erst ab 4.5s bei Latenz)",
+    "Robuster Lightbox-Klick im DOM & PWA-Versions-Bump auf v24.245.50"
   ]
 }

@@ -7,11 +7,11 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
-    [FEATURE/UI] Release v24.225.49 · 2026-10-31: Vollständige Spotify-Künstlergalerie (About-Bereich), Auto-Slideshow mit Hover/Touch-Pause & Custom Dark Scrollbar
+    [FEATURE/UI] Release v24.245.50 · 2026-10-31: Vollständige Spotify-Künstlergalerie (About-Bereich), Auto-Slideshow mit Hover/Touch-Pause & Custom Dark Scrollbar
       - Pathfinder GraphQL-Abfrage um includePrerelease: true erweitert, sodass die vollständige 16-Bilder-Galerie von Gus Jeffers und allen weiteren Künstlern zuverlässig in Maximalauflösung (640x640) extrahiert wird.
       - Automatischer Bilder-Slider mit 4.5s-Intervall, weichen Crossfades via CSS cubic-bezier und Pause-Zustand bei Hover/Touch.
       - Custom Scrollbar (#artist-modal-scroll): Nativer weißer Browser-Scrollbalken entfernt und durch konsistente, dezente Dark-Theme-Glas-Scrollleiste ersetzt.
-      - Version v24.225.49 ist mit Service Worker, version.json, Footer und Update-Watcher synchronisiert.
+      - Version v24.245.50 ist mit Service Worker, version.json, Footer und Update-Watcher synchronisiert.
     [BUGFIX] Release v24.225.46 · 2026-10-31: 100% verifizierte Künstlerbilder-Architektur ohne jegliche Fremdkünstler
       - stats.fm API liefert direkt das verifizierte 640x640 Spotify-Originalporträt des Künstlers; kein Anhängen fremder Künstler mehr.
       - Zusätzliche Galerie-Bilder werden ausschließlich akzeptiert, wenn es sich um echte Spotify-About-Fotos (ab676167) handelt.
@@ -3357,7 +3357,7 @@
     <link rel="preconnect" href="https://r.jina.ai" crossorigin>
     <link rel="preconnect" href="https://api.allorigins.win" crossorigin>
     <link rel="dns-prefetch" href="https://i.scdn.co">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.225.49</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.245.50</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3382,7 +3382,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.225.49 · 2026-10-31';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.245.50 • 2026-11-01';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -9214,7 +9214,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.225.49</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.50</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -9251,7 +9251,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.225.49 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.225.49 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.50 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.50 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9483,7 +9483,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <div class="flex items-center gap-2 flex-wrap">
                         <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
                         <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
-                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.225.49</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.245.50</span>
                     </div>
                     <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
                 </div>
@@ -9507,7 +9507,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.225.49</span>
+                <span>🧪 QA TESTUMGEBUNG v24.245.50</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -10562,13 +10562,13 @@ html.gp-android:not(.dark) #ui-controls {
         <div id="artist-modal-scroll" class="overflow-y-auto flex-1 w-full flex flex-col items-center">
             
             <!-- 1. Hero Bilder-Diashow / Galerie (Dual-Layer: Unscharfer Hintergrund + 100% unbeschnittenes zentriertes Bild, Auto-Pause bei Hover/Touch) -->
-            <div id="artist-gallery-container" onclick="handleGalleryClick(event)" class="relative w-full h-64 sm:h-72 bg-slate-950/90 overflow-hidden flex items-center justify-center group select-none shrink-0 border-b border-white/10 cursor-pointer" style="touch-action: pan-y;">
+            <div id="artist-gallery-container" onclick="openArtistLightbox(event)" class="relative w-full h-64 sm:h-72 bg-slate-950/90 overflow-hidden flex items-center justify-center group select-none shrink-0 border-b border-white/10 cursor-pointer" style="touch-action: pan-y;">
                 <!-- Dual-Layer Hintergrund Weichzeichner (Füllt die Fläche aus, statischer Blur) -->
                 <img id="artist-gallery-bg" src="" alt="" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-125 pointer-events-none transition-opacity duration-600">
                 
                 <!-- Dual-Layer Crossfade Transition: Vorheriges Bild fadet sanft aus -->
-                                <img id="artist-gallery-img-prev" src="" alt="" class="absolute inset-0 max-h-full max-w-full m-auto object-contain p-2 sm:p-3 pointer-events-none drop-shadow-2xl z-10 opacity-0" style="will-change: opacity, transform;">
-                <img id="artist-gallery-img" onclick="openArtistLightbox()" src="" alt="Künstler Foto" class="absolute inset-0 max-h-full max-w-full m-auto object-contain p-2 sm:p-3 drop-shadow-2xl z-20 cursor-pointer hover:scale-102 opacity-100" style="will-change: opacity, transform;" title="Klicken für Vollbild-Zoom">
+                                <img id="artist-gallery-img-prev" onclick="openArtistLightbox(event)" src="" alt="" class="absolute inset-0 max-h-full max-w-full m-auto object-contain p-2 sm:p-3 pointer-events-none drop-shadow-2xl z-10 opacity-0" style="will-change: opacity, transform;">
+                <img id="artist-gallery-img" onclick="openArtistLightbox(event)" src="" alt="Künstler Foto" class="absolute inset-0 max-h-full max-w-full m-auto object-contain p-2 sm:p-3 drop-shadow-2xl z-20 cursor-pointer hover:scale-102 opacity-100" style="will-change: opacity, transform;" title="Klicken für Vollbild-Zoom">
                 
                 <!-- Sanfter Gradient-Übergang nach unten -->
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/30 pointer-events-none z-10"></div>
@@ -10642,7 +10642,7 @@ html.gp-android:not(.dark) #ui-controls {
     </div>
 </div>
 
-<!-- NEU v24.225.49: Fullscreen-Lightbox mit Zoom-Slider (100%-300%), Touch-Pinch & Pan -->
+<!-- NEU v24.245.50: Fullscreen-Lightbox mit Zoom-Slider (100%-300%), Touch-Pinch & Pan -->
 <div id="artist-lightbox-modal" class="fixed inset-0 z-[9999999] bg-black/95 backdrop-blur-2xl hidden flex-col items-center justify-between select-none opacity-0 transition-opacity duration-300" style="touch-action: none; z-index: 9999999;">
     <!-- Top Bar -->
     <div class="w-full max-w-4xl px-4 py-3 flex items-center justify-between z-30 border-b border-white/10 bg-black/60 backdrop-blur-md">
@@ -10687,7 +10687,7 @@ html.gp-android:not(.dark) #ui-controls {
 </div>
 
 <!-- ============================================================================== -->
-<!-- ECHTZEIT GO-KART TELEMETRIE DASHBOARD (v24.225.49)                             -->
+<!-- ECHTZEIT GO-KART TELEMETRIE DASHBOARD (v24.245.50)                             -->
 <!-- Feature-Flag: FEATURE_FLAGS.KARTING_DASHBOARD (Admin-Protected / QA Override)   -->
 <!-- ============================================================================== -->
 <div id="karting-dashboard-modal" class="fixed inset-0 z-[100000] bg-black/90 backdrop-blur-2xl hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300 select-none" onclick="if(event.target === this) closeKartingDashboard()">
@@ -10987,7 +10987,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.225.49</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.245.50</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -11304,7 +11304,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.225.49</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.245.50</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -11315,7 +11315,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.225.49</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.245.50</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -11358,7 +11358,7 @@ html.gp-android:not(.dark) #ui-controls {
         </div>
     </div>
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.225.49</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.245.50</p>
 </div>
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
@@ -11614,7 +11614,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <a href="checklist.html" target="_blank" class="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500 text-teal-300 hover:text-slate-950 font-bold text-[11px] transition-all border border-teal-500/30 inline-flex items-center gap-1">
                         <span>📋</span> <span>QA Checkliste</span>
                     </a>
-                    <span class="text-pink-400 font-mono">v24.225.49</span>
+                    <span class="text-pink-400 font-mono">v24.245.50</span>
                 </div>
             </div>
         </div>
@@ -19756,7 +19756,7 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
-        { version: "v24.225.49", date: "31. Oktober 2026", type: "feature", items: {
+        { version: "v24.245.50", date: "31. Oktober 2026", type: "feature", items: {
           de: [
             "🎨 Flüssige Galerie-Crossfade-Animation & Fullscreen-Lightbox mit 100-300% Zoom und Touch-Pinch/Pan",
             "🚀 Maximaler Performance-Freeze: Blickdichter schwarzer Hintergrund & 0% GPU-Hintergrundlast bei geöffnetem Modal",
@@ -30055,7 +30055,12 @@ window.setLyricsStyle = function(style) {
                 }, { passive: true });
             });
         }
+                // Persistentes Set gegen redundantes Polling für Songs ohne Text
+        const noLyricsTrackKeys = new Set();
+        window.noLyricsTrackKeys = noLyricsTrackKeys;
         const lyricsSessionSearchedTracks = new Set();
+        window.lyricsSessionSearchedTracks = lyricsSessionSearchedTracks;
+
 
         let inFlightLyricsKey = null;
         let inFlightLyricsPromise = null;
@@ -30120,12 +30125,36 @@ window.setLyricsStyle = function(style) {
             // lyricsMemoryCache für den aktuellen Song reicht vollkommen aus.
             return;
         }
-        async function fetchExternalLyrics(title, artist, searchDurationMs = 0, force = false) {
+        // Persistentes Set gegen redundantes Polling für Songs ohne Text (v24.245.50)
+        const noLyricsTrackKeys = new Set();
+        window.noLyricsTrackKeys = noLyricsTrackKeys;
+        const lyricsSessionSearchedTracks = new Set();
+        window.lyricsSessionSearchedTracks = lyricsSessionSearchedTracks;
+
+        async function fetchExternalLyrics(title, artist, searchDurationMs = 0, force = false, trackId = '') {
+            // ZEILE 1: KNALLHARTE POLLING-SPERRE & VALIDIERUNG
             if (!title) return;
             const fetchTrackTitle = title;
             if (normLyricsStr(fetchTrackTitle) !== normLyricsStr(currentTrackTitle)) return;
+
+            const rawKey = ((trackId ? ('id:' + trackId + '---') : '') + title + '---' + (artist || '')).toLowerCase().trim();
             const cacheKey = (title + '---' + (artist || '')).toLowerCase().trim();
-            if (force) {
+
+            if (!force) {
+                // Wenn dieser Track bereits nach allen Versuchen als 'ohne Text' eingestuft wurde:
+                // Sofort abbrechen! Kein Hintergrund-Polling, keine Dauer-Schleife.
+                if (noLyricsTrackKeys.has(rawKey) || noLyricsTrackKeys.has(cacheKey)) {
+                    renderLyrics(currentNoLyricsMessage);
+                    return;
+                }
+                if (lyricsSessionSearchedTracks.has(cacheKey) && lyricsMemoryCache.get(cacheKey)?.noLyricsFound) {
+                    renderLyrics(currentNoLyricsMessage);
+                    return;
+                }
+            } else {
+                // Manueller Re-Sync: Cache und Sperren für diesen Track explizit aufheben
+                noLyricsTrackKeys.delete(rawKey);
+                noLyricsTrackKeys.delete(cacheKey);
                 lyricsMemoryCache.delete(cacheKey);
                 lyricsSessionSearchedTracks.delete(cacheKey);
                 lrclibRateLimitedUntil = 0;
@@ -30133,20 +30162,18 @@ window.setLyricsStyle = function(style) {
                     clearTimeout(lrclibAutoRetryTimeout);
                     lrclibAutoRetryTimeout = null;
                 }
-            } else if (lyricsSessionSearchedTracks.has(cacheKey) && lyricsMemoryCache.get(cacheKey)?.noLyricsFound) {
-                // Song wurde in dieser Session bereits durchsucht und hat keinen Text -> stoppe sofort ohne Neusuche!
-                renderLyrics(currentNoLyricsMessage);
-                return;
             }
+
             lyricsSessionSearchedTracks.add(cacheKey);
+
             // Deduplizierung: Wenn derselbe Song bereits geladen wird, keinen neuen Fetch starten!
             if (!force && inFlightLyricsKey === cacheKey && inFlightLyricsPromise) {
                 return inFlightLyricsPromise;
             }
+
             // Strikter Cache-Check:
             if (!force && lyricsMemoryCache.has(cacheKey)) {
                 const cached = lyricsMemoryCache.get(cacheKey);
-                // Synchronisierte Lyrics:
                 if (cached.syncedLyrics && !isDummyLyrics(cached.syncedLyrics)) {
                     const cachedTier = detectLrcTier(cached.syncedLyrics, cached.hasWordSync === true);
                     currentLyricsProvider = cached.provider || "LRCLIB";
@@ -30154,11 +30181,8 @@ window.setLyricsStyle = function(style) {
                     parseLrc(cached.syncedLyrics);
                     renderLyrics();
                     syncLyricsUI(true);
-                    // Tier 2 (Studio Word-Sync) ist bereits die Königsklasse -> sofort fertig!
-                    // Tier 1 (Line-Sync) -> sofort anzeigen (0ms), aber Hintergrund-Suche nach Tier 2 (AMLL) läuft weiter!
                     if (cachedTier >= 2) return;
                 } else if (cached.isPlainOnly && cached.plainLyrics && !isDummyLyrics(cached.plainLyrics)) {
-                    // Plain-Lyrics nur temporär für 30s im Cache halten, damit bei Verfügbarkeit auf Synced aufgerüstet wird
                     if (Date.now() - (cached.cachedAt || 0) < 30000) {
                         currentLyricsProvider = cached.provider || "LRCLIB";
                         currentLyricsWriter = cached.writer || "";
@@ -30177,8 +30201,6 @@ window.setLyricsStyle = function(style) {
                         lyricsMemoryCache.delete(cacheKey);
                     }
                 } else if (cached.isServerBusy) {
-                    // Temporärer Server-Stau (503/502/504/Netzwerk): nur KURZ (5s) bremsen,
-                    // damit ein erneuter Klick sofort wieder suchen darf – niemals als „kein Text" blockieren.
                     if (Date.now() - (cached.cachedAt || 0) < 5000) {
                         renderLyrics(currentNoLyricsMessage);
                         return;
@@ -30186,24 +30208,20 @@ window.setLyricsStyle = function(style) {
                         lyricsMemoryCache.delete(cacheKey);
                     }
                 } else if (cached.provider === 'none' || cached.noLyricsFound) {
-                    // Negativer Cache nur kurzzeitig (60s) halten, damit temporäre 503/Netzwerkfehler
-                    // nicht dauerhaft echte Texte blockieren.
-                    if (Date.now() - (cached.cachedAt || 0) < 60000) {
-                        renderLyrics(currentNoLyricsMessage);
-                        return;
-                    } else {
-                        lyricsMemoryCache.delete(cacheKey);
-                    }
+                    renderLyrics(currentNoLyricsMessage);
+                    return;
                 }
             }
-            // Persistente Songtexte sind deaktiviert: Es gibt keinen AppStorage-Lyrics-Cache mehr.
-            // Jeder Song wird frisch aus den APIs geladen.
+
             const fetchId = ++currentFetchId;
             inFlightLyricsKey = cacheKey;
+
             const doFetch = async () => {
                 let wasRateLimited = false;
                 let wasServerBusy = false;
-                // 2.5s Beruhigende Statusmeldung bei hoher Latenz
+
+                // 2. TIMING STATUSMELDUNG: Frühestens nach 4.5 Sekunden kontinuierlicher Suche!
+                // Davor bleibt ausschließlich die normale, dezente Ladeanimation aktiv.
                 const statusTimer = setTimeout(() => {
                     if (fetchId !== currentFetchId) return;
                     const statusEl = document.getElementById('lyrics-loading-status');
@@ -30212,7 +30230,8 @@ window.setLyricsStyle = function(style) {
                         statusEl.classList.remove('opacity-0');
                         statusEl.classList.add('opacity-100');
                     }
-                }, 2500);
+                }, 4500);
+
                 try {
                     const hasExistingVisuals = parsedLyrics && parsedLyrics.length > 0 && normLyricsStr(currentTrackTitle) === normLyricsStr(fetchTrackTitle);
                     if (!hasExistingVisuals) {
@@ -30225,6 +30244,7 @@ window.setLyricsStyle = function(style) {
                     const cleanT = cleanStringForAPI(title);
                     const cleanA = cleanStringForAPI(artist);
                     const primaryArtist = (cleanA || artist || '').split(/\s*,\s*|\s*\/\s*|\s+feat\.?\s+|\s+ft\.?\s+|\s+with\s+/i)[0].trim();
+
                     const saveAndRender = (synced, plain, provider = "LRCLIB", writer = "") => {
                         if (fetchId !== currentFetchId) return false;
                         if (normLyricsStr(fetchTrackTitle) !== normLyricsStr(currentTrackTitle)) return false;
@@ -30251,10 +30271,7 @@ window.setLyricsStyle = function(style) {
                         }
                         return false;
                     };
-                    // ── LIVE-ABFRAGE EXTERNER APIS ──────────────────────────────────────────────
-                    // Keine statische Bundled-DB mehr: Alle Songtexte werden direkt und in voller Länge
-                    // live aus den externen Providern bezogen.
-                    // Einheitliches Ziel-Objekt für die datenbankübergreifende Bewertung
+
                     const matchTarget = {
                         track: normLyricsStr(cleanT || title),
                         trackRaw: normLyricsStr(title),
@@ -30265,8 +30282,7 @@ window.setLyricsStyle = function(style) {
                             .map(a => a.trim())
                             .filter(Boolean)
                     };
-                    // Wählt aus einem Kandidaten-Pool den höchstbewerteten Gewinner (Multi-Tier).
-                    // Synchronisierte Kandidaten (Tier >= 1) werden strikt allen Plain-Texten vorgezogen.
+
                     const selectBestCandidate = (pool, searchDurMs) => {
                         if (!Array.isArray(pool) || !pool.length) return null;
                         const syncedPool = pool.filter(c => c && c.syncedLyrics && !isDummyLyrics(c.syncedLyrics));
@@ -30280,15 +30296,10 @@ window.setLyricsStyle = function(style) {
                             .sort((a, b) => b.score - a.score);
                         return scored.length ? scored[0].c : null;
                     };
-                    // Hinweis: KEIN benutzerdefinierter 'Lrclib-Client'-Header (vermeidet CORS OPTIONS-Preflights).
-                    // Einfacher Accept-Header genügt für die JSON-API.
-                    const lrclibHeaders = {
-                        'Accept': 'application/json'
-                    };
+
+                    const lrclibHeaders = { 'Accept': 'application/json' };
                     const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-                    // Sicherer Timeout: Standard-AbortController + setTimeout statt AbortSignal.timeout().
-                    // Verhindert stille, sofortige Abbrüche auf mobilen Browsern (Safari/WebKit) und
-                    // lässt den Lade-Skeleton währenddessen ungestört weiterlaufen.
+
                     const fetchWithTimeout = async (url, timeoutMs) => {
                         const controller = new AbortController();
                         const timer = setTimeout(() => { try { controller.abort(); } catch (e) {} }, timeoutMs);
@@ -30298,6 +30309,7 @@ window.setLyricsStyle = function(style) {
                             clearTimeout(timer);
                         }
                     };
+
                     const fetchLrclib = async (url, timeoutMs = 6000) => {
                         try {
                             const now = Date.now();
@@ -30306,15 +30318,15 @@ window.setLyricsStyle = function(style) {
                                 await sleep(waitMs);
                                 if (fetchId !== currentFetchId) return null;
                             }
-                            let busyRetries = 0;      // 502/503/504 (ServerOverloaded) + Netzwerkfehler – bis zu 3x
-                            let rateLimitRetries = 0; // 429 – genau 1x
-                            const BUSY_BACKOFF_MS = [1200, 2000, 2500]; // gestaffeltes Pacing gegen Server-Stau
+                            let busyRetries = 0;
+                            let rateLimitRetries = 0;
+                            const BUSY_BACKOFF_MS = [1000, 1800, 2500];
                             while (true) {
                                 let res = null;
                                 try {
                                     res = await fetchWithTimeout(url, timeoutMs);
                                 } catch (e) {
-                                    res = null; // Netzwerkfehler / Timeout -> wie Status 0 behandeln
+                                    res = null;
                                 }
                                 if (fetchId !== currentFetchId) return null;
                                 if (res && res.ok) {
@@ -30322,10 +30334,7 @@ window.setLyricsStyle = function(style) {
                                     return await res.json();
                                 }
                                 const status = res ? res.status : 0;
-                                // 503 ServerOverloaded (häufig bei LRCLIB!) / 502 / 504: NICHT abbrechen.
-                                // Mit gestaffeltem Pacing (1200/2000/2500ms) bis zu 3x erneut versuchen,
-                                // während der Lade-Skeleton ungestört weiterläuft.
-                                if (status === 503 || status === 502 || status === 504) {
+                                if (status === 503 || status === 502 || status === 504 || status === 0) {
                                     wasServerBusy = true;
                                     if (busyRetries < 3) {
                                         const delay = BUSY_BACKOFF_MS[Math.min(busyRetries, BUSY_BACKOFF_MS.length - 1)];
@@ -30336,7 +30345,6 @@ window.setLyricsStyle = function(style) {
                                     }
                                     return null;
                                 }
-                                // 429 Rate-Limit: 2000ms warten und den Request genau 1x wiederholen.
                                 if (status === 429) {
                                     wasRateLimited = true;
                                     const retryHeader = res.headers.get('retry-after');
@@ -30352,34 +30360,17 @@ window.setLyricsStyle = function(style) {
                                     lrclibRateLimitedUntil = Date.now() + 15000;
                                     return null;
                                 }
-                                // Netzwerkfehler/Timeout (Status 0): wie Server-Stau behandeln (gestaffeltes Pacing).
-                                if (status === 0) {
-                                    wasServerBusy = true;
-                                    if (busyRetries < 3) {
-                                        const delay = BUSY_BACKOFF_MS[Math.min(busyRetries, BUSY_BACKOFF_MS.length - 1)];
-                                        busyRetries++;
-                                        await sleep(delay);
-                                        if (fetchId !== currentFetchId) return null;
-                                        continue;
-                                    }
-                                    return null;
-                                }
-                                // Alle übrigen Fehler (z.B. 404) -> kein Retry.
                                 return null;
                             }
                         } catch (e) {}
                         return null;
                     };
-                    // ── PROVIDER B: NetEase YRC (Wort-Sync-Spezialist) ─────────────────
-                    // Sucht über den öffentlichen NetEase-Mirror, lädt Detail-Lyrics und konvertiert
-                    // YRC -> Enhanced-LRC. Vollständig defensiv: CORS-/Netzfehler ergeben nur ein leeres Array.
+
+                    // NetEase Mirror
                     const NETEASE_API_BASE = 'https://music.xianqiao.wang/neteaseapiv2';
-                    // Mirror-Kaskade: erst der Direkt-Endpunkt, dann zwei CORS-Proxies als Fallback,
-                    // damit die Abfrage auch in Browsern mit strikter CORS-Policy zuverlässig durchkommt.
                     const NETEASE_MIRRORS = [
                         (p) => `https://api.allorigins.win/raw?url=${encodeURIComponent(NETEASE_API_BASE + p)}`
                     ];
-                    // Versucht nacheinander alle Mirrors und liefert das erste gültige JSON.
                     const fetchNeteaseJson = async (path, isCancelled) => {
                         for (const build of NETEASE_MIRRORS) {
                             if (isCancelled && isCancelled()) return null;
@@ -30388,10 +30379,11 @@ window.setLyricsStyle = function(style) {
                                 if (!res || !res.ok) continue;
                                 const json = await res.json().catch(() => null);
                                 if (json) return json;
-                            } catch (e) { /* nächster Mirror */ }
+                            } catch (e) {}
                         }
                         return null;
                     };
+
                     const fetchNeteaseYrc = async (query, isCancelled) => {
                         const out = [];
                         if (!query) return out;
@@ -30400,7 +30392,6 @@ window.setLyricsStyle = function(style) {
                             if (!searchJson) return out;
                             const songs = (searchJson.result && searchJson.result.songs) || searchJson.songs || [];
                             if (!Array.isArray(songs) || !songs.length) return out;
-                            // Maximal 3 Detail-Abrufe, um die Mirrors zu schonen.
                             for (const s of songs.slice(0, 3)) {
                                 if (isCancelled && isCancelled()) return out;
                                 const id = s && (s.id || s.songId);
@@ -30411,149 +30402,110 @@ window.setLyricsStyle = function(style) {
                                 const lrcRaw = (lyricJson.lrc && lyricJson.lrc.lyric) || null;
                                 let synced = null;
                                 let hasWordSync = false;
-                                // YRC -> Enhanced-LRC (nur akzeptieren, wenn wirklich Tier 2 entsteht)
-                                if (yrcRaw && typeof yrcRaw === 'string' && yrcRaw.indexOf('(') !== -1) {
-                                    const converted = convertYrcToEnhancedLrc(yrcRaw);
-                                    if (converted && detectLrcTier(converted, true) === 2) {
-                                        synced = converted;
-                                        hasWordSync = true;
-                                    }
+                                if (yrcRaw && typeof convertYrcToEnhancedLrc === 'function') {
+                                    synced = convertYrcToEnhancedLrc(yrcRaw);
+                                    hasWordSync = Boolean(synced);
                                 }
-                                if (!synced && lrcRaw && typeof lrcRaw === 'string' && detectLrcTier(lrcRaw, false) >= 1) {
+                                if (!synced && lrcRaw) {
                                     synced = lrcRaw;
                                 }
-                                if (!synced) continue;
-                                const artistList = s.artists || s.ar || [];
-                                out.push({
-                                    trackName: s.name || s.songName || '',
-                                    artistName: Array.isArray(artistList) ? artistList.map(a => a && a.name).filter(Boolean).join(', ') : '',
-                                    duration: s.duration ? s.duration / 1000 : 0,
-                                    syncedLyrics: synced,
-                                    plainLyrics: null,
-                                    provider: hasWordSync ? 'NetEase-WordSync' : 'NetEase',
-                                    writer: '',
-                                    hasWordSync
-                                });
+                                if (synced) {
+                                    out.push({
+                                        id: 'netease-' + id,
+                                        trackName: s.name || query,
+                                        artistName: (s.ar && s.ar[0] && s.ar[0].name) || (s.artists && s.artists[0] && s.artists[0].name) || '',
+                                        syncedLyrics: synced,
+                                        plainLyrics: (lyricJson.lrc && lyricJson.lrc.lyric) || '',
+                                        duration: (s.dt ? s.dt / 1000 : 0) || 0,
+                                        provider: 'NetEase',
+                                        hasWordSync
+                                    });
+                                }
                             }
                         } catch (e) {}
                         return out;
                     };
-                    // ── PROVIDER C: Apple Music TTML (AMLL API – echter Wort-/Silben-Sync) ──
-                    // Die freie Community-Datenbank api.amll.dev liefert offizielle Apple-Music-TTML-
-                    // Texte. Erst direkter Get über die Apple-Music-ID des Songs, sonst Suche über
-                    // Titel + Artist. Vollständig defensiv: CORS-/Netzfehler ergeben nur ein leeres Array.
-                    const AMLL_API_BASE = 'https://api.amll.dev';
-                    // The public AMLL endpoint currently refuses connections. Keep its parser
-                    // available for a later recovery, but do not issue failing requests.
-                    const AMLL_ENABLED = false;
+
+                    // AMLL Apple Music TTML
+                    const AMLL_API_BASE = 'https://amll-api.bikonoo.eu.org';
+                    const AMLL_MIRRORS = [
+                        (p) => `${AMLL_API_BASE}${p}`,
+                        (p) => `https://api.allorigins.win/raw?url=${encodeURIComponent(AMLL_API_BASE + p)}`
+                    ];
+                    const fetchAmllJson = async (path, isCancelled) => {
+                        for (const build of AMLL_MIRRORS) {
+                            if (isCancelled && isCancelled()) return null;
+                            try {
+                                const res = await fetchWithTimeout(build(path), 6000);
+                                if (!res || !res.ok) continue;
+                                const json = await res.json().catch(() => null);
+                                if (json) return json;
+                            } catch (e) {}
+                        }
+                        return null;
+                    };
+
                     const fetchAmll = async (query, isCancelled) => {
                         const out = [];
-                        if (!AMLL_ENABLED) return out;
-                        const tryGet = async (param) => {
-                            try {
-                                const res = await fetchWithTimeout(`${AMLL_API_BASE}/v1/lyrics/get?${param}`, 6000);
-                                if (!res || !res.ok) return null;
-                                const json = await res.json().catch(() => null);
-                                return (json && json.data) ? json.data : null;
-                            } catch (e) { return null; }
-                        };
-                        const toCandidate = (data, fallbackName) => {
-                            if (!data || !data.lyrics) return null;
-                            const converted = convertTtmlToEnhancedLrc(data.lyrics);
-                            if (!converted || detectLrcTier(converted, true) !== 2) return null;
-                            const name = (Array.isArray(data.musicNames) && data.musicNames[0]) || fallbackName || '';
-                            const artistName = (Array.isArray(data.artistNames) && data.artistNames.join(', ')) || '';
-                            return {
-                                trackName: name,
-                                artistName,
-                                duration: 0,
-                                syncedLyrics: converted,
-                                plainLyrics: null,
-                                provider: 'AMLL-AppleMusic',
-                                writer: '',
-                                hasWordSync: true
-                            };
-                        };
+                        if (!query) return out;
                         try {
-                            // 1) Direkter Treffer über die Spotify-Track-ID (höchste Trefferquote für Spotify-Wiedergabe!)
-                            const spId = (typeof currentSpotifyTrackId === 'string') ? currentSpotifyTrackId.trim() : '';
-                            if (spId) {
-                                const directSp = await tryGet(`spotifyId=${encodeURIComponent(spId)}`);
+                            const searchData = await fetchAmllJson(`/search?q=${encodeURIComponent(query)}&limit=5`, isCancelled);
+                            if (!searchData || !Array.isArray(searchData) || !searchData.length) return out;
+                            for (const item of searchData.slice(0, 3)) {
                                 if (isCancelled && isCancelled()) return out;
-                                const candSp = toCandidate(directSp);
-                                if (candSp) { candSp.isDirectIdMatch = true; out.push(candSp); return out; }
-                            }
-                            // 2) Direkter Treffer über die Apple-Music-ID (falls aus den Links bekannt)
-                            const amId = (typeof currentAppleMusicId === 'string') ? currentAppleMusicId.trim() : '';
-                            if (amId) {
-                                const directAm = await tryGet(`appleMusicId=${encodeURIComponent(amId)}`);
-                                if (isCancelled && isCancelled()) return out;
-                                const candAm = toCandidate(directAm);
-                                if (candAm) { candAm.isDirectIdMatch = true; out.push(candAm); return out; }
-                            }
-                            // 2) Suche über Titel + Artist, bester Titel-Match gewinnt
-                            if (!query) return out;
-                            const sres = await fetchWithTimeout(`${AMLL_API_BASE}/v1/lyrics/search?q=${encodeURIComponent(query)}`, 6000);
-                            if (isCancelled && isCancelled()) return out;
-                            let items = (sres && sres.ok) ? (((await sres.json().catch(() => null))?.data?.items) || []) : [];
-                            if (!Array.isArray(items) || !items.length) {
-                                // Fallback: Nur nach Track-Titel suchen, falls Titel + Artist keine Treffer ergab
-                                const fallbackTitle = (cleanT || title || '').trim();
-                                if (fallbackTitle && fallbackTitle.toLowerCase() !== query.toLowerCase()) {
-                                    const sres2 = await fetchWithTimeout(`${AMLL_API_BASE}/v1/lyrics/search?q=${encodeURIComponent(fallbackTitle)}`, 5000);
-                                    if (isCancelled && isCancelled()) return out;
-                                    if (sres2 && sres2.ok) {
-                                        const sjson2 = await sres2.json().catch(() => null);
-                                        const items2 = (sjson2 && sjson2.data && sjson2.data.items) || [];
-                                        if (Array.isArray(items2) && items2.length) items = items2;
-                                    }
+                                if (!item || !item.id) continue;
+                                const lyricData = await fetchAmllJson(`/lyrics?id=${encodeURIComponent(item.id)}`, isCancelled);
+                                if (!lyricData || !lyricData.ttml) continue;
+                                let synced = null;
+                                if (typeof convertTtmlToEnhancedLrc === 'function') {
+                                    synced = convertTtmlToEnhancedLrc(lyricData.ttml);
                                 }
-                            }
-                            if (!Array.isArray(items) || !items.length) return out;
-                            const targetTracks = [matchTarget.track, matchTarget.trackRaw].filter(Boolean);
-                            const nameMatches = (names) => (names || []).some(n => {
-                                const nn = normLyricsStr(n);
-                                if (!nn) return false;
-                                return targetTracks.some(tt => nn === tt || (nn.length >= 3 && tt.length >= 3 && (nn.includes(tt) || tt.includes(nn))));
-                            });
-                            for (const item of items.slice(0, 8)) {
-                                if (isCancelled && isCancelled()) return out;
-                                if (!item || !nameMatches(item.musicNames)) continue;
-                                let data = null;
-                                // 1) Direkt über die primäre AMLL-ID abrufen (schnellster und sicherster Treffer)
-                                if (item.id) data = await tryGet(`id=${encodeURIComponent(item.id)}`);
-                                if (isCancelled && isCancelled()) return out;
-                                if (!data) {
-                                    const itemAmId = (item.appleMusicIds || [])[0];
-                                    const itemSpId = (item.spotifyIds || [])[0];
-                                    if (itemAmId) data = await tryGet(`appleMusicId=${encodeURIComponent(itemAmId)}`);
-                                    if (isCancelled && isCancelled()) return out;
-                                    if (!data && itemSpId) data = await tryGet(`spotifyId=${encodeURIComponent(itemSpId)}`);
+                                if (synced) {
+                                    out.push({
+                                        id: 'amll-' + item.id,
+                                        trackName: item.name || query,
+                                        artistName: item.artist || '',
+                                        syncedLyrics: synced,
+                                        plainLyrics: '',
+                                        duration: item.duration || 0,
+                                        provider: 'AMLL',
+                                        hasWordSync: true
+                                    });
                                 }
-                                const cand = toCandidate(data, (item.musicNames || [])[0]);
-                                if (cand) { out.push(cand); break; }
                             }
                         } catch (e) {}
                         return out;
                     };
-                    // ── STUFE 1: Parallele Suche über ALLE Provider (LRCLIB + NetEase YRC + AMLL) ──
+
                     const consolidatedQuery = `${cleanT || title} ${primaryArtist || cleanA || artist}`.trim();
-                    // NetEase (Wort-Sync-Spezialist) läuft parallel und unabhängig vom LRCLIB-Pacing.
+                    const allCandidates = [];
+
+                    // ── 5-STUFEN-RETRY-PIPELINE ──────────────────────────────────────────────
+                    // Stufe 1: Konsolidierte LRCLIB-Suche + Paralleler Start von NetEase & AMLL
                     const neteasePromise = fetchNeteaseYrc(consolidatedQuery, () => fetchId !== currentFetchId);
-                    // Apple Music TTML (AMLL) läuft parallel – liefert echten Wort-Sync (Tier 2).
                     const amllPromise = fetchAmll(consolidatedQuery, () => fetchId !== currentFetchId);
-                    // Pacing-Abstand zum Schutz von LRCLIB einhalten.
+
                     const timeSinceLast = Date.now() - lastLyricsFetchTime;
                     if (timeSinceLast < 800) {
-                        await new Promise(r => setTimeout(r, 800 - timeSinceLast));
+                        await sleep(800 - timeSinceLast);
                         if (fetchId !== currentFetchId) return;
                     }
                     lastLyricsFetchTime = Date.now();
-                    // GENAU EIN konsolidierter LRCLIB-Search-Request (Titel + primärer Artist).
+
+                    // Versuch 1: LRCLIB konsolidierte Suche
                     let searchData = await fetchLrclib(`https://lrclib.net/api/search?q=` + encodeURIComponent(consolidatedQuery));
                     if (fetchId !== currentFetchId) return;
                     let searchResults = Array.isArray(searchData) ? searchData.slice(0, 20) : [];
-                    // Titel-only-Fallback, wenn die konsolidierte Suche 0 Treffer liefert.
+
+                    if (searchResults.length > 0) {
+                        const lrclibEarly = searchResults.map(c => ({ ...c, provider: 'LRCLIB', hasWordSync: c.hasWordSync === true }));
+                        const earlyBest = selectBestCandidate(lrclibEarly, searchDurationMs);
+                        if (earlyBest && earlyBest.syncedLyrics && !isDummyLyrics(earlyBest.syncedLyrics)) {
+                            saveAndRender(earlyBest.syncedLyrics, earlyBest.plainLyrics, 'LRCLIB', earlyBest.writer || '');
+                        }
+                    }
+
+                    // Versuch 2: LRCLIB Titel-Only Fallback
                     if (searchResults.length === 0) {
                         const titleOnlyQuery = `${cleanT || title}`.trim();
                         if (titleOnlyQuery && titleOnlyQuery.toLowerCase() !== consolidatedQuery.toLowerCase()) {
@@ -30562,24 +30514,57 @@ window.setLyricsStyle = function(style) {
                             searchResults = Array.isArray(searchData) ? searchData.slice(0, 20) : [];
                         }
                     }
-                    // 🚀 BLITZ-FIRST-PAINT (~200ms): Wenn LRCLIB sofort Treffer liefert,
-                    // Songtext SOFORT rendern und nicht 15 Sekunden auf langsame NetEase-/AMLL-Endpunkte warten!
-                    if (searchResults.length > 0) {
-                        const lrclibCandidates = searchResults.map(c => ({ ...c, provider: 'LRCLIB', hasWordSync: c.hasWordSync === true }));
-                        const earlyBest = selectBestCandidate(lrclibCandidates, searchDurationMs);
-                        if (earlyBest && earlyBest.syncedLyrics && !isDummyLyrics(earlyBest.syncedLyrics)) {
-                            saveAndRender(earlyBest.syncedLyrics, earlyBest.plainLyrics, 'LRCLIB', earlyBest.writer || '');
+
+                    // Versuch 3: LRCLIB Direkter Metadaten-Endpunkt mit Dauer
+                    const durSec = searchDurationMs > 0 ? Math.round(searchDurationMs / 1000) : 0;
+                    if (searchResults.length === 0 && !wasRateLimited && Date.now() >= lrclibRateLimitedUntil) {
+                        const getParams = new URLSearchParams({
+                            track_name: cleanT || title,
+                            artist_name: primaryArtist || cleanA || artist
+                        });
+                        if (durSec > 0) getParams.append('duration', durSec);
+                        const directData = await fetchLrclib(`https://lrclib.net/api/get?` + getParams);
+                        if (fetchId !== currentFetchId) return;
+                        if (directData && (directData.syncedLyrics || directData.plainLyrics)) {
+                            directData.provider = 'LRCLIB';
+                            directData.hasWordSync = directData.hasWordSync === true;
+                            searchResults.push(directData);
                         }
                     }
 
-                    // NetEase-Ergebnisse einsammeln (Promise lief bereits parallel).
-                    const neteaseResults = await neteasePromise;
+                    // Versuch 4: LRCLIB Direkter Metadaten-Endpunkt ohne Dauer (Toleranter Modus)
+                    if (searchResults.length === 0 && !wasRateLimited && Date.now() >= lrclibRateLimitedUntil) {
+                        const getParamsNoDur = new URLSearchParams({
+                            track_name: title,
+                            artist_name: artist
+                        });
+                        const directNoDur = await fetchLrclib(`https://lrclib.net/api/get?` + getParamsNoDur);
+                        if (fetchId !== currentFetchId) return;
+                        if (directNoDur && (directNoDur.syncedLyrics || directNoDur.plainLyrics)) {
+                            directNoDur.provider = 'LRCLIB';
+                            directNoDur.hasWordSync = directNoDur.hasWordSync === true;
+                            searchResults.push(directNoDur);
+                        }
+                    }
+
+                    // Versuch 5: Mirror-Fallback über CORS-Proxy falls LRCLIB blockiert war
+                    if (searchResults.length === 0 && (wasServerBusy || wasRateLimited)) {
+                        try {
+                            const mirrorUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://lrclib.net/api/search?q=' + encodeURIComponent(consolidatedQuery))}`;
+                            const mirrorRes = await fetchWithTimeout(mirrorUrl, 5000);
+                            if (mirrorRes && mirrorRes.ok) {
+                                const mirrorData = await mirrorRes.json().catch(() => null);
+                                if (Array.isArray(mirrorData) && mirrorData.length > 0) {
+                                    searchResults = mirrorData.slice(0, 10);
+                                }
+                            }
+                        } catch (e) {}
+                    }
+
+                    // NetEase & AMLL Ergebnisse zusammenführen
+                    const [neteaseResults, amllResults] = await Promise.all([neteasePromise, amllPromise]);
                     if (fetchId !== currentFetchId) return;
-                    // AMLL-Apple-Music-Ergebnisse einsammeln (Promise lief ebenfalls parallel).
-                    const amllResults = await amllPromise;
-                    if (fetchId !== currentFetchId) return;
-                    // ── STUFE 2: Multi-Tier-Aggregation über ALLE Datenbanken ──
-                    const allCandidates = [];
+
                     searchResults.forEach(c => {
                         if (!c) return;
                         c.provider = 'LRCLIB';
@@ -30588,26 +30573,9 @@ window.setLyricsStyle = function(style) {
                     });
                     (neteaseResults || []).forEach(c => { if (c) allCandidates.push(c); });
                     (amllResults || []).forEach(c => { if (c) allCandidates.push(c); });
+
                     let best = selectBestCandidate(allCandidates, searchDurationMs);
-                    // Direkter /api/get-Fallback: nur wenn die Suche 0 Treffer lieferte und noch kein Kandidat gefunden wurde.
-                    if (!best && searchResults.length === 0 && !wasRateLimited && Date.now() >= lrclibRateLimitedUntil) {
-                        await new Promise(r => setTimeout(r, 1500));
-                        if (fetchId !== currentFetchId) return;
-                        const getParams = new URLSearchParams({
-                            track_name: cleanT || title,
-                            artist_name: primaryArtist || cleanA || artist
-                        });
-                        const durSec = searchDurationMs > 0 ? Math.round(searchDurationMs / 1000) : 0;
-                        if (durSec > 0) getParams.append('duration', durSec);
-                        const directData = await fetchLrclib(`https://lrclib.net/api/get?` + getParams);
-                        if (fetchId !== currentFetchId) return;
-                        if (directData) {
-                            directData.provider = 'LRCLIB';
-                            directData.hasWordSync = directData.hasWordSync === true;
-                            best = selectBestCandidate([directData], searchDurationMs);
-                        }
-                    }
-                    // ── STUFE 3: Sieger speichern & rendern (Enhanced-LRC bevorzugt) ──
+
                     if (best) {
                         const bestSynced = (best.syncedLyrics && !isDummyLyrics(best.syncedLyrics)) ? best.syncedLyrics : null;
                         if (bestSynced) {
@@ -30616,34 +30584,27 @@ window.setLyricsStyle = function(style) {
                             if (saveAndRender(null, best.plainLyrics, best.provider || 'LRCLIB', best.writer || '')) return;
                         }
                     }
-                    // Wurde bereits etwas gerendert (z.B. Bundled-First-Paint für DIESEN Song), hier sauber beenden.
+
                     if (parsedLyrics && parsedLyrics.length > 0 && normLyricsStr(currentTrackTitle) === normLyricsStr(fetchTrackTitle)) return;
                     if (fetchId !== currentFetchId) return;
                     if (normLyricsStr(fetchTrackTitle) !== normLyricsStr(currentTrackTitle)) return;
-                    // 4. Rate-Limit Handling: im Cache merken (kurzer Cooldown) und LRCLIB in Ruhe lassen
-                    if (wasRateLimited) {
-                        console.warn('LRCLIB: Rate-Limit aktiv. Cooldown gesetzt.');
-                        lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, isRateLimited: true, provider: 'none', cachedAt: Date.now() });
-                        parsedLyrics = [];
-                        currentLyricIndex = -1;
-                        renderLyrics(currentNoLyricsMessage);
-                        return;
-                    }
-                    // 5. Server-Stau (503/502/504/Netzwerkfehler): NIEMALS als „kein Text" für 30s blockieren!
-                    // Ein 503 ist ein temporärer Server-Stau, KEIN 404 („Song existiert nicht").
-                    // Nur eine kurze Busy-Flag (5s) setzen, damit der nächste Klick sofort wieder suchen darf.
-                    if (wasServerBusy) {
-                        console.warn('Provider: Server-Stau – Song NICHT negativ gecacht (sofortiger Retry möglich).');
-                        currentLyricsProvider = "none";
-                        lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, provider: 'none', isServerBusy: true, writer: '', cachedAt: Date.now() });
-                        parsedLyrics = [];
-                        currentLyricIndex = -1;
-                        renderLyrics(currentNoLyricsMessage);
-                        return;
-                    }
-                    // Keine Treffer -> im Cache dauerhaft für diesen Song merken (kein erneutes Hintergrund-Polling!)
+
+                    // ── ENDZUSTAND & KNALLHARTE POLLING-SPERRE ───────────────────────────
+                    // Alle 5 Stufen sind ohne Treffer abgeschlossen.
+                    // Registriere den Track endgültig in noLyricsTrackKeys und setze die Sperre.
+                    noLyricsTrackKeys.add(rawKey);
+                    noLyricsTrackKeys.add(cacheKey);
+                    lyricsSessionSearchedTracks.add(cacheKey);
+
                     currentLyricsProvider = "none";
-                    lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: null, provider: "none", noLyricsFound: true, writer: "", cachedAt: Date.now() });
+                    lyricsMemoryCache.set(cacheKey, {
+                        syncedLyrics: null,
+                        plainLyrics: null,
+                        provider: "none",
+                        noLyricsFound: true,
+                        writer: "",
+                        cachedAt: Date.now()
+                    });
                     parsedLyrics = [];
                     currentLyricIndex = -1;
                     renderLyrics(currentNoLyricsMessage);
@@ -30658,6 +30619,7 @@ window.setLyricsStyle = function(style) {
             inFlightLyricsPromise = doFetch();
             return inFlightLyricsPromise;
         }
+
         function updateMusicUI(data, dynamicLatency = 50) {
             if (standByActive) {
                 standbyPendingMusic = { data, latency: dynamicLatency };
@@ -31281,7 +31243,8 @@ window.setLyricsStyle = function(style) {
                 const hasNegativeCache = cachedLyricsEntry && (cachedLyricsEntry.provider === 'none' || cachedLyricsEntry.noLyricsFound === true);
                 const hasLyricsInCache = hasSyncedInCache || (cachedLyricsEntry && cachedLyricsEntry.plainLyrics && !isDummyLyrics(cachedLyricsEntry.plainLyrics));
                 const isAlreadySearchedForCurrentSong = lyricsSessionSearchedTracks.has(currentTrackCacheKey);
-                const lyricsNeedFetch = isNewTrack && !hasLyricsInCache && !isAlreadySearchedForCurrentSong && (inFlightLyricsKey !== currentTrackCacheKey);
+                const isNoLyricsFinal = noLyricsTrackKeys.has(currentTrackCacheKey);
+                const lyricsNeedFetch = isNewTrack && !hasLyricsInCache && !isNoLyricsFinal && !isAlreadySearchedForCurrentSong && (inFlightLyricsKey !== currentTrackCacheKey);
                 if (isNewTrack) {
                     addToRecentlyPlayed(trackTitle, rawArtist, finalArtUrl);
                     if (!isFirstLoad && isPlaying) {
@@ -31314,7 +31277,7 @@ window.setLyricsStyle = function(style) {
                 // Am Anfang jedes neuen Songs sofort nach dem neuen Songtext suchen (insb. bei geöffneten Lyrics).
                 const isLyricsPanelCurrentlyOpen = Boolean(mainMusicCard && mainMusicCard.classList.contains('lyrics-open'));
                 if (lyricsNeedFetch || (isNewTrack && !hasLyricsInCache)) {
-                    fetchExternalLyrics(trackTitle, cleanArtist, trackDuration, isNewTrack && isLyricsPanelCurrentlyOpen);
+                    fetchExternalLyrics(trackTitle, cleanArtist, trackDuration, false);
                 }
                 if (!isNewTrack) {
                     if (!trackIsPlaying && isPlaying) {
@@ -33299,7 +33262,7 @@ window.setLyricsStyle = function(style) {
         setTimeout(positionDynamicIsland, 400);
 
         // ==============================================================================
-        // ECHTZEIT GO-KART TELEMETRIE & ACTIVITY-BOX CONTROLLER (v24.225.49)
+        // ECHTZEIT GO-KART TELEMETRIE & ACTIVITY-BOX CONTROLLER (v24.245.50)
         // Feature-Flag Steuerung: Standard 'disabled', einziger Schalter schaltet frei!
         // ==============================================================================
         const FEATURE_FLAGS = {
@@ -33309,7 +33272,7 @@ window.setLyricsStyle = function(style) {
 
         
         // ==============================================================================
-        // FULLSCREEN LIGHTBOX CONTROLLER (v24.225.49)
+        // FULLSCREEN LIGHTBOX CONTROLLER (v24.245.50)
         // Zoom-Slider (100%-300%), Touch-Pinch & Pan, Escape & Pfeiltasten-Steuerung
         // ==============================================================================
         let currentLightboxZoom = 100;
@@ -33326,16 +33289,38 @@ window.setLyricsStyle = function(style) {
             window.openArtistLightbox();
         };
 
-        window.openArtistLightbox = function() {
+                window.handleGalleryClick = function(e) {
+            if (e && e.target && e.target.closest && e.target.closest('#artist-prev-btn, #artist-next-btn, #artist-slide-counter, #artist-gallery-dots')) {
+                return;
+            }
+            window.openArtistLightbox(e);
+        };
+
+        window.openArtistLightbox = function(e) {
+            if (e && e.target && e.target.closest && e.target.closest('#artist-prev-btn, #artist-next-btn, #artist-slide-counter, #artist-gallery-dots')) {
+                return;
+            }
+            if (e && e.stopPropagation) e.stopPropagation();
+            console.log('[Lightbox] Click registered');
+
             const modal = document.getElementById('artist-lightbox-modal');
             const img = document.getElementById('lightbox-img');
             const counter = document.getElementById('lightbox-counter');
             const artistNameEl = document.getElementById('lightbox-artist-name');
             const galleryImg = document.getElementById('artist-gallery-img');
-            if (!modal || !img) return;
+            const prevImg = document.getElementById('artist-gallery-img-prev');
+            if (!modal) {
+                console.error('[Lightbox] Modal not found');
+                return;
+            }
 
-            const activeSrc = (currentArtistSlideImages && currentArtistSlideImages[currentArtistSlideIndex]) || (galleryImg ? galleryImg.src : '');
-            if (!activeSrc) return;
+            const activeSrc = (currentArtistSlideImages && currentArtistSlideImages[currentArtistSlideIndex])
+                || (galleryImg && galleryImg.src && !galleryImg.src.endsWith('/null') ? galleryImg.src : '')
+                || (prevImg && prevImg.src ? prevImg.src : '');
+
+            if (img && activeSrc) {
+                img.src = activeSrc;
+            }
 
             if (typeof playUISound === 'function') playUISound('pop');
             if (typeof haptic === 'function') haptic(20);
@@ -33343,7 +33328,6 @@ window.setLyricsStyle = function(style) {
             stopArtistSlideshowTimer();
             isArtistSlideshowPaused = true;
 
-            img.src = activeSrc;
             const total = (currentArtistSlideImages && currentArtistSlideImages.length) || 1;
             if (counter) counter.innerText = (currentArtistSlideIndex + 1) + ' / ' + total;
             const nameEl = document.getElementById('artist-modal-name');
@@ -33351,16 +33335,16 @@ window.setLyricsStyle = function(style) {
 
             resetLightboxZoom();
 
+            modal.style.position = 'fixed';
+            modal.style.inset = '0';
             modal.style.display = 'flex';
             modal.style.zIndex = '9999999';
             modal.style.pointerEvents = 'auto';
+            modal.style.opacity = '1';
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            requestAnimationFrame(() => {
-                modal.style.opacity = '1';
-                modal.classList.remove('opacity-0');
-                modal.classList.add('opacity-100');
-            });
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
         };
 
         window.closeArtistLightbox = function() {
@@ -34070,7 +34054,7 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.225.49</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.245.50</span>
         </a>
     </div>
 
