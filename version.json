@@ -1,10 +1,10 @@
 {
-  "version": "24.245.53",
-  "buildTime": "2026-11-01T12:52:00.000Z",
+  "version": "24.245.54",
+  "buildTime": "2026-11-01T12:03:25.989Z",
   "shortNotes": [
-    "Lyrics & Canvas Layer-Entkopplung: 0% GPU-Doppeldecoder, keine Video-Überlagerung bei geöffnetem Text",
-    "Hochempfindliche Selbstheilung: Schneller Drift-Ausgleich (>800ms harter Resync, 45% Nachführung)",
-    "Tab-Rückkehr Sofort-Sync: Pausierte und übersprungene Songs werden ohne Zeitverzerrung synchronisiert",
-    "Overlay Songwechsel-Erkennung & Banner für Künstler-Modal & Vollbild-Cinema mit Auto-Update Schalter"
+    "Mobile Lightbox: Touch-Pan Drag (1-Finger Wischen bei Zoom) & 500% Max-Zoom",
+    "Mobile Layout Fix: UI-Kontrollzentrum & Header während Artist-Modal/Lightbox ausgeblendet",
+    "Barrierefreie 44px Touch-Ziele für Schließen-Buttons mit Safe-Area-Inset Schutz",
+    "Standby Sofort-Idle bei pausierter Musik & Admin Dossier / Checkliste synchronisiert"
   ]
 }
