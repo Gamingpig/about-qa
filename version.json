@@ -1,10 +1,10 @@
 {
-  "version": "24.245.55",
-  "buildTime": "2026-11-01T12:37:00.000Z",
+  "version": "24.245.56",
+  "buildTime": "2026-11-01T12:51:28.179Z",
   "shortNotes": [
-    "White Screen Syntax-Fix: Doppelte isPlaying Deklaration in resyncAllCanvasVideos restlos behoben (0 Syntax-Fehler)",
-    "Mattglas-Prägung Typografie: Kontrast-Rim (Ambient Occlusion Edge) für Lyrics über 100% hellen Canvas-Videos ohne Abdunklung",
-    "Mobile UI-Lock: Header & UI-Kontrollzentrum während Artist-Modal und Lightbox vollständig ausgeblendet",
-    "Strikte Trennung der Administrator-Release-Notes von der Live-Version & automatischer Staging-Sync"
+    "Lyrics-Matching Resilienz: Knallhartes Duration-Gate (>25s/>8s Reject) & Identitäts-Scoring verhindert falsche Songtexte",
+    "Mobile Lightbox HD-Status: Dynamische Anzeige (Suche HD-Original -> HD 640p aktiv) direkt in der Lightbox-Leiste",
+    "Super-Resolution Clarity Filter: Schärfefilter für bis zu 500% Zoom gegen Verpixelung interaktiv zuschaltbar",
+    "Service Worker Cache-Update & Staging-Synchronisation optimiert"
   ]
 }

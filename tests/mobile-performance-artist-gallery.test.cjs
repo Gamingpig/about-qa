@@ -388,4 +388,76 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         assert.equal(foreground.classList.contains('opacity-0'), false);
         assert.equal(skeleton.style.opacity, '0');
     });
+    it('rejects candidate lyrics with duration mismatch or unrelated artist/title (hardened identity matching)', () => {
+        const normSource = appHtml.match(/function normLyricsStr\(s\) \{[\s\S]*?\r?\n        \}/)?.[0];
+        const startDetect = appHtml.indexOf('function detectLrcTier(syncedLyrics');
+        const endDetect = appHtml.indexOf('// Konverter: NetEase-YRC', startDetect);
+        const detectTierSource = appHtml.substring(startDetect, endDetect);
+
+        const startDummy = appHtml.indexOf('function isDummyLyrics(text)');
+        const endDummy = appHtml.indexOf('function cleanStringForAPI', startDummy);
+        const isDummySource = appHtml.substring(startDummy, endDummy);
+
+        const startScore = appHtml.indexOf('function scoreLyricsCandidate(c, target');
+        const endScore = appHtml.indexOf('function isStrictMatch', startScore);
+        const scoreSource = appHtml.substring(startScore, endScore);
+
+        const scoreLyricsCandidate = vm.runInNewContext(`(() => {
+            const BANNED_LYRICS_CANDIDATE_IDS = new Set([6629086]);
+            const LYRICS_PROVIDER_BONUS = { 'LRCLIB': 10, 'NetEase': 20 };
+            ${normSource};
+            ${detectTierSource};
+            ${isDummySource};
+            ${scoreSource};
+            return scoreLyricsCandidate;
+        })()`);
+
+        const normLyricsStr = vm.runInNewContext(`(() => { ${normSource}; return normLyricsStr; })()`);
+
+        const target = {
+            track: normLyricsStr('Verletzt'),
+            trackRaw: normLyricsStr('Verletzt'),
+            artist: normLyricsStr('VDSIS, Dustin'),
+            artistRaw: normLyricsStr('VDSIS, Dustin'),
+            artists: ['vdsis', 'dustin']
+        };
+
+        const correctCandidate = {
+            id: 111,
+            trackName: 'Verletzt',
+            artistName: 'VDSIS, Dustin',
+            duration: 199,
+            syncedLyrics: '[00:10.00] Zeile eins des Songs\n[00:15.00] Zeile zwei des Songs\n[00:20.00] Zeile drei des Songs',
+            provider: 'LRCLIB',
+            hasWordSync: false
+        };
+
+        const wrongCandidateDurationMismatch = {
+            id: 222,
+            trackName: 'Verletzt',
+            artistName: 'Dustin Lynch',
+            duration: 280,
+            syncedLyrics: '[00:10.00] Zeile eins des Songs\n[00:15.00] Zeile zwei des Songs\n[00:20.00] Zeile drei des Songs',
+            provider: 'LRCLIB',
+            hasWordSync: true
+        };
+
+        const wrongCandidateSubstring = {
+            id: 333,
+            trackName: 'Verletzt im Krieg und einsam',
+            artistName: 'VDSIS, Dustin',
+            duration: 200,
+            syncedLyrics: '[00:10.00] Zeile eins des Songs\n[00:15.00] Zeile zwei des Songs\n[00:20.00] Zeile drei des Songs',
+            provider: 'LRCLIB',
+            hasWordSync: true
+        };
+
+        const scoreCorrect = scoreLyricsCandidate(correctCandidate, target, 200000);
+        const scoreDurationMismatch = scoreLyricsCandidate(wrongCandidateDurationMismatch, target, 200000);
+        const scoreSubstring = scoreLyricsCandidate(wrongCandidateSubstring, target, 200000);
+
+        assert.ok(scoreCorrect > 500, 'Correct candidate must achieve high score (> 500)');
+        assert.equal(scoreDurationMismatch, -1, 'Duration mismatch beyond tolerance must be rejected (-1)');
+        assert.equal(scoreSubstring, -1, 'Loose substring title mismatch must be rejected (-1)');
+    });
 });
