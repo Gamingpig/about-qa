@@ -1,10 +1,10 @@
 {
-  "version": "24.245.56",
-  "buildTime": "2026-11-01T12:51:28.179Z",
+  "version": "24.245.57",
+  "buildTime": "2026-11-02T08:26:57.554Z",
   "shortNotes": [
-    "Lyrics-Matching Resilienz: Knallhartes Duration-Gate (>25s/>8s Reject) & Identitäts-Scoring verhindert falsche Songtexte",
-    "Mobile Lightbox HD-Status: Dynamische Anzeige (Suche HD-Original -> HD 640p aktiv) direkt in der Lightbox-Leiste",
-    "Super-Resolution Clarity Filter: Schärfefilter für bis zu 500% Zoom gegen Verpixelung interaktiv zuschaltbar",
+    "Onboarding Sprachauswahl-Fix: Fehlende Anführungszeichen in renderLanguagePicker() behoben",
+    "Fail-Safe Click & Touch Delegation: Direkte Event-Delegation für alle Sprach-Buttons garantiert sofortige Reaktion",
+    "Autostart-Sequenz: Sprachauswahl schließt zuverlässig und startet den Setup-Rundgang nahtlos",
     "Service Worker Cache-Update & Staging-Synchronisation optimiert"
   ]
 }

@@ -460,4 +460,15 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         assert.equal(scoreDurationMismatch, -1, 'Duration mismatch beyond tolerance must be rejected (-1)');
         assert.equal(scoreSubstring, -1, 'Loose substring title mismatch must be rejected (-1)');
     });
+    it('renders valid language picker buttons with functional onclick and data-lang attributes', () => {
+        const start = appHtml.indexOf('function renderLanguagePicker() {');
+        const end = appHtml.indexOf('window.closeLanguagePicker = function()', start);
+        assert.ok(start !== -1 && end !== -1, 'renderLanguagePicker function must exist');
+        const renderPickerCode = appHtml.substring(start, end);
+
+        assert.ok(renderPickerCode.includes('class="lang-picker-btn relative'), 'Button class attribute must be properly quoted');
+        assert.ok(renderPickerCode.includes('onclick="selectLanguage(\'${l.code}\'\)"'), 'Button onclick attribute must be properly quoted');
+        assert.ok(renderPickerCode.includes('data-lang="${l.code}"'), 'Button must include data-lang attribute');
+        assert.ok(appHtml.includes("closest('.lang-picker-btn')"), 'Fail-safe click delegation must be present');
+    });
 });
