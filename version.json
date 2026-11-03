@@ -1,5 +1,5 @@
 {
-  "version": "24.245.66",
+  "version": "24.245.67",
   "buildTime": "2026-11-03T13:10:32.064Z",
   "shortNotes": [
     "CPU-Performance-Shield: Unnötige DOM-Style-Mutationen in der Lyrics-Loop restlos gecacht (kein wiederholtes setProperty auf inaktiven Wörtern)",
