@@ -13,7 +13,7 @@ const profileFetcherSource = appHtml.match(/function fetchSpotifyArtistProfileIm
 const extractSpotifyArtistProfileImages = vm.runInNewContext(`(${imageExtractorSource.trim()})`);
 
 describe('Mobile lyrics performance and Spotify artist gallery', () => {
-    it('defaults to Apple Music Pro unless low-end mode is enabled, preserving saved styles including fill', () => {
+    it('defaults to Apple Music Pro as universal standard lyrics animation, preserving custom user choices', () => {
         assert.match(appHtml, /const savedLyricsStyle = AppStorage\.getItem\('lyricsStyle'\);/);
         const migrationStart = appHtml.indexOf("const isLowEndLyricsMode = document.body.classList.contains('low-end');");
         const migrationEnd = appHtml.indexOf('function runPerfSelfTest()', migrationStart);
@@ -23,7 +23,7 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
             if (savedStyle) storage.set('lyricsStyle', savedStyle);
             const context = {
                 savedLyricsStyle: savedStyle,
-                currentLyricsStyle: savedStyle || 'fill',
+                currentLyricsStyle: savedStyle || 'applemusicpro',
                 AppStorage: {
                     getItem: key => storage.get(key) || null,
                     setItem: (key, value) => storage.set(key, String(value))
@@ -35,8 +35,7 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         };
 
         assert.deepEqual(initializeStyle(null, false), { style: 'applemusicpro', saved: 'applemusicpro' });
-        assert.deepEqual(initializeStyle(null, true), { style: 'fill', saved: 'fill' });
-        assert.deepEqual(initializeStyle('fill', false), { style: 'fill', saved: 'fill' });
+        assert.deepEqual(initializeStyle(null, true), { style: 'applemusicpro', saved: 'applemusicpro' });
         assert.deepEqual(initializeStyle('bounce', false), { style: 'bounce', saved: 'bounce' });
         const fillRule = appHtml.match(/\.lyrics-style-fill \.lyric-word \{([^}]+)\}/)?.[1] || '';
         assert.match(fillRule, /linear-gradient\(to right, #ffffff var\(--fill-percent, 0%\), rgba\(255,\s*255,\s*255,\s*0\.2\) var\(--fill-percent, 0%\)\)/);
@@ -459,6 +458,18 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         assert.ok(scoreCorrect > 500, 'Correct candidate must achieve high score (> 500)');
         assert.equal(scoreDurationMismatch, -1, 'Duration mismatch beyond tolerance must be rejected (-1)');
         assert.equal(scoreSubstring, -1, 'Loose substring title mismatch must be rejected (-1)');
+
+        const wrongCandidateStopwordArtist = {
+            id: 444,
+            trackName: 'Verletzt',
+            artistName: 'The Band',
+            duration: 200,
+            syncedLyrics: '[00:10.00] Zeile eins des Songs\n[00:15.00] Zeile zwei des Songs\n[00:20.00] Zeile drei des Songs',
+            provider: 'LRCLIB',
+            hasWordSync: true
+        };
+        const scoreStopwordArtist = scoreLyricsCandidate(wrongCandidateStopwordArtist, target, 200000);
+        assert.equal(scoreStopwordArtist, -1, 'Stopword-only artist candidate must be rejected (-1)');
     });
     it('renders valid language picker buttons with functional onclick and data-lang attributes', () => {
         const start = appHtml.indexOf('function renderLanguagePicker() {');

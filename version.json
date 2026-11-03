@@ -1,10 +1,10 @@
 {
-  "version": "24.245.57",
-  "buildTime": "2026-11-02T08:26:57.554Z",
+  "version": "24.245.58",
+  "buildTime": "2026-11-03T09:52:26.132Z",
   "shortNotes": [
-    "Onboarding Sprachauswahl-Fix: Fehlende Anführungszeichen in renderLanguagePicker() behoben",
-    "Fail-Safe Click & Touch Delegation: Direkte Event-Delegation für alle Sprach-Buttons garantiert sofortige Reaktion",
-    "Autostart-Sequenz: Sprachauswahl schließt zuverlässig und startet den Setup-Rundgang nahtlos",
-    "Service Worker Cache-Update & Staging-Synchronisation optimiert"
+    "Lyrics-Standardstil: Apple Music Pro (applemusicpro) ist nun universeller Standard für alle Geräte und Nutzer inkl. automatischer Migration",
+    "Präzisions-Lyrics-Matching: Strikte Ausschließung von Stoppwörtern ('The', 'DJ', 'Band') und verfeinerte Künstlertoken-Prüfung gegen falsche Songtexte",
+    "HD-Bildersuche & Schärfefilter: Sichtbare 1.2s Statusanzeige ('Suche HD-Original...') beim Öffnen der Lightbox mit direktem Übergang zu HD-Filter aktiv",
+    "Overlays Auto-Update: Einstellungs-Toggle im neuen Einstellungsmenü unter 'Audio & Medien' steuert sofortige automatische Aktualisierung bei Songwechsel"
   ]
 }
