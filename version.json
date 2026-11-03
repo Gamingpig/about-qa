@@ -1,10 +1,11 @@
 {
-  "version": "24.245.63",
-  "buildTime": "2026-11-03T12:24:50.905Z",
+  "version": "24.245.64",
+  "buildTime": "2026-11-03T12:43:57.456Z",
   "shortNotes": [
-    "Original-Typografie & Shader-Treue: Verzerrende Text-Strokes restlos entfernt; alle Animations-Stile (Viscous Liquid, Matrix, Hellfire) strahlen im Original-Design",
-    "Blaue Glas-Kopfleiste im Dashboard: Edler blauer Hintergrund (besonders bei Maus-Hover) für sofortiges Finden von Einstellungen & Buttons",
-    "Perfektes Weichzeichner-Fading: Kein abruptes horizontales Abschneiden der Unschärfe mehr; sanftes 90px-Fading nach unten",
-    "Präzisions-Time-Sync: 0ms-Echtzeit-Synchronisation mit butterweichem Phase-Locked-Loop Deadband"
+    "Hotfix White Screen: Syntaxfehler im Core-Engine-Skript restlos behoben – Dark Theme und Dashboard laden wieder sofort & zuverlässig",
+    "Original-Typografie & Shader-Treue: Alle Lyrics-Schriftarten und Animationsstile (Viscous Liquid, Matrix Rain, Hellfire etc.) strahlen im originalgetreuen Design",
+    "Blaue Glas-Kopfleiste im Lyrics-Dashboard: Markanter blauer Hintergrund bei Hover für sofortiges Auffinden der Einstellungen (⚙️) und Buttons",
+    "Perfektes Weichzeichner-Fading: Sanfter 90px-Masken-Verlauf nach unten statt abruptem Unschärfe-Schnitt",
+    "Präzisions-Time-Sync: 0ms Basis-Offset mit phasenstarrer Deadband-PLL-Synchronisation"
   ]
 }
