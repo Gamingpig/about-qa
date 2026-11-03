@@ -5662,9 +5662,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         }
         /* Verhindert Kollisionen: Hinweis und Steuerungselemente ausblenden, solange Lyrics aktiv sind (#mini-player-toggle bleibt sichtbar zum direkten Schließen) */
         body:has(#main-music-card.lyrics-open) #music-sync-note,
-        body:has(#main-music-card.lyrics-open) #music-section-title,
-        body.lyrics-mode-active #music-sync-note,
-        body.lyrics-mode-active #music-section-title {
+        body.lyrics-mode-active #music-sync-note {
             display: none !important;
         }
         /* FIX: Control Center (#ui-controls) oben rechts bleibt auch bei geöffneten Lyrics voll sichtbar und bedienbar */
@@ -28635,7 +28633,8 @@ window.setLyricsStyle = function(style) {
                     if (miniStatus) miniStatus.innerText = currentRawArtist || t('mini_click_to_close') || 'Klicken zum Schließen';
                 }
                 if (musicNoteEl) musicNoteEl.classList.add('hidden');
-                if (musicTitleEl) musicTitleEl.classList.add('hidden');
+                // FIX: musicTitleEl ('Was bei mir gerade läuft') bleibt über dem Dashboard immer sichtbar
+                if (musicTitleEl) musicTitleEl.classList.remove('hidden');
                 if (diEl) {
                     updateIslandRing();
                 }
