@@ -8546,7 +8546,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
                 }
             } catch (e) {}
         })();
-        const DEFAULT_SYNC_OFFSET = -400;
+        const DEFAULT_SYNC_OFFSET = 0;
         // NEU v24.119: Dynamischer Live-Share Handler für geteilte Links
         (function handleLiveShareIncoming() {
             try {
@@ -9961,8 +9961,8 @@ html.gp-android:not(.dark) #ui-controls {
                                         <button onclick="resetSyncOffset(this)" id="btn-resync" class="text-[7px] xxs:text-[8px] bg-blue-500/20 hover:bg-blue-500/40 text-blue-300 px-1.5 py-0.5 rounded transition-colors uppercase font-bold tracking-wider">Re-Sync</button>
                                     </div>
                                     <div class="px-1 py-1 flex items-center gap-2">
-                                        <input type="range" id="sync-slider" min="-5000" max="5000" step="50" value="-400" class="w-full h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer">
-                                        <span id="sync-value" class="text-[8px] xxs:text-[10px] text-white font-mono w-6 xxs:w-8 text-right">-400</span>
+                                        <input type="range" id="sync-slider" min="-5000" max="5000" step="50" value="0" class="w-full h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer">
+                                        <span id="sync-value" class="text-[8px] xxs:text-[10px] text-white font-mono w-6 xxs:w-8 text-right">0</span>
                                     </div>
                                     <div class="px-1 pt-0.5 pb-0.5 flex items-center gap-1.5">
                                         <div class="relative flex-1 flex items-center">
@@ -15519,7 +15519,12 @@ html.gp-android:not(.dark) #ui-controls {
         // gespeicherten Wert verwenden statt immer wieder beim Standardwert zu starten.
         const savedUserSyncOffset = AppStorage.getItem('userSyncOffset');
         const parsedSavedOffset = savedUserSyncOffset !== null ? parseInt(savedUserSyncOffset, 10) : NaN;
-        let liveSyncOffset = (!isNaN(parsedSavedOffset)) ? Math.max(-5000, Math.min(5000, parsedSavedOffset)) : (typeof DEFAULT_SYNC_OFFSET !== 'undefined' ? DEFAULT_SYNC_OFFSET : -400);
+        let liveSyncOffset = (!isNaN(parsedSavedOffset)) ? Math.max(-5000, Math.min(5000, parsedSavedOffset)) : (typeof DEFAULT_SYNC_OFFSET !== 'undefined' ? DEFAULT_SYNC_OFFSET : 0);
+        // MIGRATION (v24.245.59): Alter -400ms Offset aus Vorversionen auf den nativen 0ms Präzisions-Sync umstellen
+        if (parsedSavedOffset === -400) {
+            liveSyncOffset = 0;
+            AppStorage.setItem('userSyncOffset', '0');
+        }
         let currentMs = 0;
         let totalMs = 0;
         let currentTrackId = "";
@@ -25231,7 +25236,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
         function applySyncOffset(newOffset, persist = true) {
             let parsed = Math.round(parseFloat(newOffset));
             if (isNaN(parsed)) {
-                parsed = (typeof liveSyncOffset === 'number' && !isNaN(liveSyncOffset)) ? liveSyncOffset : (typeof DEFAULT_SYNC_OFFSET !== 'undefined' ? DEFAULT_SYNC_OFFSET : -400);
+                parsed = (typeof liveSyncOffset === 'number' && !isNaN(liveSyncOffset)) ? liveSyncOffset : (typeof DEFAULT_SYNC_OFFSET !== 'undefined' ? DEFAULT_SYNC_OFFSET : 0);
             }
             parsed = Math.max(-5000, Math.min(5000, parsed));
             liveSyncOffset = parsed;
@@ -25318,7 +25323,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
                         await fetchExternalLyrics(title, artist, totalMs, true);
                     }
                     // 3. Offset zurücksetzen & Sync-UI aktualisieren
-                    liveSyncOffset = typeof DEFAULT_SYNC_OFFSET !== 'undefined' ? DEFAULT_SYNC_OFFSET : -400;
+                    liveSyncOffset = typeof DEFAULT_SYNC_OFFSET !== 'undefined' ? DEFAULT_SYNC_OFFSET : 0;
                     AppStorage.removeItem('userSyncOffset');
                     if (syncSlider) syncSlider.value = liveSyncOffset;
                     if (syncValueEl) syncValueEl.innerText = String(liveSyncOffset);
