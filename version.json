@@ -1,10 +1,10 @@
 {
-  "version": "24.245.60",
-  "buildTime": "2026-11-03T11:52:40.574Z",
+  "version": "24.245.61",
+  "buildTime": "2026-11-03T12:05:05.685Z",
   "shortNotes": [
-    "Custom Glass Lyrics-Stil-Auswahl: Elegantes Dark-Glass Dropdown ohne weiße Zwischenüberschriften",
-    "Aktives Theme-Highlight: Aktiver Animationsstil wird hervorgehoben und mit Häkchen (✓) markiert",
-    "Native 0ms-Synchronisation: Standard-Sync-Offset auf 0 ms kalibriert und Slider zentriert",
-    "Universelle Typografie-Kontur: Gestochen scharfe Lesbarkeit auf hellen Videos & Cover-Art ohne Blendung"
+    "Reines Canvas ohne Abdunklung: Jegliche Video-Verdunklung (Canvas-Tint) restlos entfernt für 100% Original-Brillanz",
+    "Typografische Silhouetten-Matrix: Gestochen scharfer 0.65px Mikro-Stroke & 4-Wege Schatten direkt am Buchstaben selbst",
+    "Apple Music Pro Buchstaben-Schärfe: Keine verwaschenen Zeichen mehr auf hellen/weißen Videos & Szenen",
+    "Custom Glass Lyrics-Stil-Auswahl: Elegantes Dark-Glass Dropdown mit aktiven Häkchen (✓) und sauberen Zwischenüberschriften"
   ]
 }
