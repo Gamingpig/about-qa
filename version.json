@@ -1,11 +1,10 @@
 {
-  "version": "24.245.64",
-  "buildTime": "2026-11-03T12:43:57.456Z",
+  "version": "24.245.65",
+  "buildTime": "2026-11-03T13:02:43.085Z",
   "shortNotes": [
-    "Hotfix White Screen: Syntaxfehler im Core-Engine-Skript restlos behoben – Dark Theme und Dashboard laden wieder sofort & zuverlässig",
-    "Original-Typografie & Shader-Treue: Alle Lyrics-Schriftarten und Animationsstile (Viscous Liquid, Matrix Rain, Hellfire etc.) strahlen im originalgetreuen Design",
-    "Blaue Glas-Kopfleiste im Lyrics-Dashboard: Markanter blauer Hintergrund bei Hover für sofortiges Auffinden der Einstellungen (⚙️) und Buttons",
-    "Perfektes Weichzeichner-Fading: Sanfter 90px-Masken-Verlauf nach unten statt abruptem Unschärfe-Schnitt",
-    "Präzisions-Time-Sync: 0ms Basis-Offset mit phasenstarrer Deadband-PLL-Synchronisation"
+    "GPU-Ressourcen-Optimierung: Aufwendiges mask-image und redundante Filter auf dem Lyrics-Container restlos entfernt für butterweiche 60/120fps ohne GPU-Last",
+    "Original-Schriftbild & pure Typografie: Globales Überskalieren und künstliche Schatten entfernt – alle Schriftarten und Animationsstile laufen im nativen Original-Look",
+    "Blaue Glas-Kopfleiste im Dashboard: Angenehmer Blauschimmer auf Hover für sofortige Auffindbarkeit von Einstellungen (⚙️) und Buttons ohne Blur-Overhead",
+    "Perfekter Lyrics-Container: Optimierte untere Scroll-Fläche mit ausreichendem Abstand oberhalb der Steuerungs-Buttons"
   ]
 }
