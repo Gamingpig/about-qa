@@ -1,10 +1,9 @@
 {
-  "version": "24.245.70",
-  "buildTime": "2026-11-03T13:10:32.064Z",
+  "version": "24.245.71",
+  "buildTime": "2026-11-03T14:10:20.487Z",
   "shortNotes": [
-    "CPU-Performance-Shield: Unnötige DOM-Style-Mutationen in der Lyrics-Loop restlos gecacht (kein wiederholtes setProperty auf inaktiven Wörtern)",
-    "60 FPS Pacing-Lock: requestAnimationFrame-Loop präzise auf 60 FPS gedrosselt – verhindert CPU-Spikes auf 120Hz/144Hz/240Hz High-Refresh Displays",
-    "Zero Layout-Reflow: textContent-Caching für Zeitanzeigen statt ständiger innerText-Neuberechnungen",
-    "GPU- & Typografie-Integrität: 0% GPU-Mask-Overhead und 100% unverfälschte Original-Schriftarten"
+    "Dashboard & Lyrics Rollback: Vollständiger Rollback des Music-Dashboards auf die bewährte, extrem ressourcenschonende Baseline (6bcc679)",
+    "0% GPU-Bottleneck & minimale CPU-Auslastung",
+    "Sofortige Service-Worker-Aktualisierung (skipWaiting) für nahtlosen Übergang"
   ]
 }
