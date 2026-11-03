@@ -1,10 +1,10 @@
 {
-  "version": "24.245.59",
-  "buildTime": "2026-11-03T10:59:59.094Z",
+  "version": "24.245.60",
+  "buildTime": "2026-11-03T11:52:40.574Z",
   "shortNotes": [
-    "Lyrics-Matching Toleranz: Ausbalanciertes Duration-Gate (bis 45s) und Substring-Schutz verhindern Text-Ausfälle bei echten Songs",
-    "5-Stufen-Fallback-Pipeline: Titel-Only-Suche und direkter /api/get Metadaten-Endpunkt greifen zuverlässig bei schwierigen Titeln",
-    "Universelle Typografie-Kontur: Ambient Occlusion Edge für gestochen scharfe Lesbarkeit auf hellen Videos, hellem Cover-Art & Hintergründen",
-    "Apple Music Pro Kontrast: Kein weißes Überstrahlen mehr; gestochen scharfer, edler Mikro-Schatten garantiert 100% Lesbarkeit"
+    "Custom Glass Lyrics-Stil-Auswahl: Elegantes Dark-Glass Dropdown ohne weiße Zwischenüberschriften",
+    "Aktives Theme-Highlight: Aktiver Animationsstil wird hervorgehoben und mit Häkchen (✓) markiert",
+    "Native 0ms-Synchronisation: Standard-Sync-Offset auf 0 ms kalibriert und Slider zentriert",
+    "Universelle Typografie-Kontur: Gestochen scharfe Lesbarkeit auf hellen Videos & Cover-Art ohne Blendung"
   ]
 }
