@@ -1,9 +1,9 @@
 {
-  "version": "24.245.71",
-  "buildTime": "2026-11-03T14:10:20.487Z",
+  "version": "24.245.72",
+  "buildTime": "2026-11-03T14:29:42.684Z",
   "shortNotes": [
-    "Dashboard & Lyrics Rollback: Vollständiger Rollback des Music-Dashboards auf die bewährte, extrem ressourcenschonende Baseline (6bcc679)",
-    "0% GPU-Bottleneck & minimale CPU-Auslastung",
-    "Sofortige Service-Worker-Aktualisierung (skipWaiting) für nahtlosen Übergang"
+    "Kein automatisches Neuladen bei SW-Updates mehr (Nutzer entscheidet selbst)",
+    "GPU & CPU Entlastung im Songtext-Modus (30fps Throttle & optimierte Shader)",
+    "Echter 0% GPU-Idle im StandBy-Screen bei inaktiver Musik"
   ]
 }
