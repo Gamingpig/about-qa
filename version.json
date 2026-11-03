@@ -1,10 +1,10 @@
 {
-  "version": "24.245.62",
-  "buildTime": "2026-11-03T12:17:24.182Z",
+  "version": "24.245.63",
+  "buildTime": "2026-11-03T12:24:50.905Z",
   "shortNotes": [
-    "Präzisions-Time-Sync 2.0: Künstliche Latenz-Puffer (+120ms) restlos eliminiert für echten 0ms-Echtzeit-Gleichlauf",
-    "Zero-Jitter Deadband & Slew-Filter: Kein Springen/Ruckeln mehr bei normalen HTTP-Netzwerkschwankungen (unter 150ms)",
-    "Individuelle Quellen-Latenz: Getrennte Messung für stats.fm und NPC verhindert Latenz-Inflation durch langsame Server",
-    "Butterweiche kontinuierliche Konvergenz: Sanfter 12%-Slew bei Drift ohne Abbruch der flüssigen Wort-Animation"
+    "Original-Typografie & Shader-Treue: Verzerrende Text-Strokes restlos entfernt; alle Animations-Stile (Viscous Liquid, Matrix, Hellfire) strahlen im Original-Design",
+    "Blaue Glas-Kopfleiste im Dashboard: Edler blauer Hintergrund (besonders bei Maus-Hover) für sofortiges Finden von Einstellungen & Buttons",
+    "Perfektes Weichzeichner-Fading: Kein abruptes horizontales Abschneiden der Unschärfe mehr; sanftes 90px-Fading nach unten",
+    "Präzisions-Time-Sync: 0ms-Echtzeit-Synchronisation mit butterweichem Phase-Locked-Loop Deadband"
   ]
 }
