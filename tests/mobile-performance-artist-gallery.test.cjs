@@ -470,6 +470,37 @@ describe('Mobile lyrics performance and Spotify artist gallery', () => {
         };
         const scoreStopwordArtist = scoreLyricsCandidate(wrongCandidateStopwordArtist, target, 200000);
         assert.equal(scoreStopwordArtist, -1, 'Stopword-only artist candidate must be rejected (-1)');
+
+        // Praxistoleranz: Echte Songs mit Radio-Edit / Intros (15s Versatz) müssen akzeptiert werden
+        const validEditCandidate = {
+            id: 555,
+            trackName: 'Verletzt',
+            artistName: 'VDSIS, Dustin',
+            duration: 185, // 15s Differenz zu 200s
+            syncedLyrics: '[00:10.00] Zeile eins des Songs\n[00:15.00] Zeile zwei des Songs\n[00:20.00] Zeile drei des Songs',
+            provider: 'LRCLIB'
+        };
+        const scoreEdit = scoreLyricsCandidate(validEditCandidate, target, 200000);
+        assert.ok(scoreEdit > 450, 'Legitimate song version with 15s duration tolerance must be accepted');
+
+        // Künstlernamen aus Stoppwörtern (z.B. "The Band") dürfen nicht komplett gelöscht werden
+        const targetTheBand = {
+            track: normLyricsStr('The Weight'),
+            trackRaw: normLyricsStr('The Weight'),
+            artist: normLyricsStr('The Band'),
+            artistRaw: normLyricsStr('The Band'),
+            artists: ['the band']
+        };
+        const candidateTheBand = {
+            id: 666,
+            trackName: 'The Weight',
+            artistName: 'The Band',
+            duration: 275,
+            syncedLyrics: '[00:10.00] Zeile eins\n[00:15.00] Zeile zwei\n[00:20.00] Zeile drei',
+            provider: 'LRCLIB'
+        };
+        const scoreTheBand = scoreLyricsCandidate(candidateTheBand, targetTheBand, 275000);
+        assert.ok(scoreTheBand > 500, 'Artists consisting of stopwords like The Band must match legitimately');
     });
     it('renders valid language picker buttons with functional onclick and data-lang attributes', () => {
         const start = appHtml.indexOf('function renderLanguagePicker() {');
