@@ -1,9 +1,9 @@
 {
-  "version": "24.245.72",
-  "buildTime": "2026-11-03T14:29:42.684Z",
+  "version": "24.245.73",
+  "buildTime": "2026-11-04T16:30:00.000Z",
   "shortNotes": [
-    "Kein automatisches Neuladen bei SW-Updates mehr (Nutzer entscheidet selbst)",
-    "GPU & CPU Entlastung im Songtext-Modus (30fps Throttle & optimierte Shader)",
-    "Echter 0% GPU-Idle im StandBy-Screen bei inaktiver Musik"
+    "GPU-Entlastung auf 0% Idle: Hintergrund-Blobs & verdeckte Videos gestoppt",
+    "Songtext-Toleranz erhöht: Songs mit abweichender Edit-Länge werden gefunden",
+    "100% statisches GitHub Pages Hosting: Vollständig immun gegen PHP-Exploits"
   ]
 }
