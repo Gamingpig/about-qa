@@ -7,11 +7,11 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
-    [FEATURE/UI] Release v24.245.73 · 2026-10-31: Vollständige Spotify-Künstlergalerie (About-Bereich), Auto-Slideshow mit Hover/Touch-Pause & Custom Dark Scrollbar
+    [FEATURE/UI] Release v24.245.74 · 2026-10-31: Vollständige Spotify-Künstlergalerie (About-Bereich), Auto-Slideshow mit Hover/Touch-Pause & Custom Dark Scrollbar
       - Pathfinder GraphQL-Abfrage um includePrerelease: true erweitert, sodass die vollständige 16-Bilder-Galerie von Gus Jeffers und allen weiteren Künstlern zuverlässig in Maximalauflösung (640x640) extrahiert wird.
       - Automatischer Bilder-Slider mit 4.5s-Intervall, weichen Crossfades via CSS cubic-bezier und Pause-Zustand bei Hover/Touch.
       - Custom Scrollbar (#artist-modal-scroll): Nativer weißer Browser-Scrollbalken entfernt und durch konsistente, dezente Dark-Theme-Glas-Scrollleiste ersetzt.
-      - Version v24.245.73 ist mit Service Worker, version.json, Footer und Update-Watcher synchronisiert.
+      - Version v24.245.74 ist mit Service Worker, version.json, Footer und Update-Watcher synchronisiert.
     [BUGFIX] Release v24.225.46 · 2026-10-31: 100% verifizierte Künstlerbilder-Architektur ohne jegliche Fremdkünstler
       - stats.fm API liefert direkt das verifizierte 640x640 Spotify-Originalporträt des Künstlers; kein Anhängen fremder Künstler mehr.
       - Zusätzliche Galerie-Bilder werden ausschließlich akzeptiert, wenn es sich um echte Spotify-About-Fotos (ab676167) handelt.
@@ -3357,7 +3357,7 @@
     <link rel="preconnect" href="https://r.jina.ai" crossorigin>
     <link rel="preconnect" href="https://api.allorigins.win" crossorigin>
     <link rel="dns-prefetch" href="https://i.scdn.co">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.245.73</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.245.74</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3382,7 +3382,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.245.73 • 2026-11-01';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.245.74 • 2026-11-01';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -4297,6 +4297,47 @@ body.liquid-glass-active .mesh-gradient {
     opacity: 0.9 !important;
 }
 /* Basis-Karten */
+/* ========================================================================= */
+/* DESKTOP GLASS SHIELD (v24.245.74 - Ultra-Effizienz-Architektur)           */
+/* Schaltet rechenintensive Multi-Pass Gaussian Blurs auf allen 26 Standard- */
+/* Inhaltskarten ab. Backdrop-Filter bleibt exklusiv für #dynamic-island &   */
+/* die aktive #main-music-card / Lyrics reserviert. Spart 40%+ GPU im Idle.  */
+/* ========================================================================= */
+.glass-card:not(#main-music-card):not(#dynamic-island) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+.dark .glass-card:not(#main-music-card):not(#dynamic-island) {
+    background: rgba(18, 20, 29, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+html:not(.dark) .glass-card:not(#main-music-card):not(#dynamic-island) {
+    background: rgba(248, 250, 252, 0.88) !important;
+    border: 1px solid rgba(226, 232, 240, 0.85) !important;
+    box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+body.liquid-glass-active .glass-card:not(#main-music-card):not(#dynamic-island) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+.dark body.liquid-glass-active .glass-card:not(#main-music-card):not(#dynamic-island) {
+    background: rgba(18, 20, 29, 0.78) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+html:not(.dark) body.liquid-glass-active .glass-card:not(#main-music-card):not(#dynamic-island) {
+    background: rgba(248, 250, 252, 0.90) !important;
+    border: 1px solid rgba(226, 232, 240, 0.90) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+
 .glass-card {
     background: rgba(255, 255, 255, 0.85);
     border: 1px solid rgba(226, 232, 240, 0.85);
@@ -5678,6 +5719,17 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         /* PERF-FIX v24.19: will-change von der Basis-Regel entfernt (galt bisher permanent,
            auch bei opacity:0/unsichtbar) - jetzt nur noch aktiv, während der Effekt beim
            Songstart tatsächlich einmalig einschwingt (siehe .playing-Regel unten). */
+        
+        /* ZERO-GPU STATIC AMBIENT COVER GLOW (v24.245.74) */
+        #main-music-card:not(.canvas-active).playing,
+        #main-music-card.paused {
+            box-shadow: 0 12px 40px -10px var(--track-dominant-color, rgba(99, 102, 241, 0.25)) !important;
+        }
+        #main-music-card:not(.playing) #canvas-glow-video,
+        #main-music-card.paused #canvas-glow-video {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
         #canvas-glow-video {
             position: absolute !important;
             top: 50% !important;
@@ -5693,7 +5745,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             object-fit: cover;
             /* v24.225.36: --canvas-glow-intensity (0..1.5, Standard 1) skaliert Helligkeit,
                Sättigung und Deckkraft der Aura. Bei 1 bleibt der bisherige Look exakt erhalten. */
-            filter: blur(var(--canvas-glow-blur, 45px)) saturate(calc(1.4 + 1.1 * var(--canvas-glow-intensity, 1))) brightness(calc(0.85 + 0.35 * var(--canvas-glow-intensity, 1))) !important;
+            filter: blur(var(--canvas-glow-blur, 18px)) saturate(calc(1.4 + 1.1 * var(--canvas-glow-intensity, 1))) brightness(calc(0.85 + 0.35 * var(--canvas-glow-intensity, 1))) !important;
             opacity: 0;
             transition: opacity 0.8s ease;
             pointer-events: none;
@@ -5789,7 +5841,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         #main-music-card.canvas-active #lyrics-ambient-tint {
             opacity: 0 !important;
         }
-        /* PERF & VISUAL FIX v24.245.73: Wenn Lyrics offen sind, müssen Hintergrundvideos der Hauptkarte 100% ausgeblendet und dekodier-gestoppt sein (keine Überlagerung!) */
+        /* PERF & VISUAL FIX v24.245.74: Wenn Lyrics offen sind, müssen Hintergrundvideos der Hauptkarte 100% ausgeblendet und dekodier-gestoppt sein (keine Überlagerung!) */
         #main-music-card.lyrics-open #canvas-video,
         #main-music-card.lyrics-open #canvas-media-video,
         #main-music-card.lyrics-open #canvas-glow-video {
@@ -5797,7 +5849,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             visibility: hidden !important;
             pointer-events: none !important;
         }
-        /* TYPOGRAPHIC CONTRAST ENGINE (Mattglas-Prägung / Ambient Occlusion Edge) v24.245.73 */
+        /* TYPOGRAPHIC CONTRAST ENGINE (Mattglas-Prägung / Ambient Occlusion Edge) v24.245.74 */
         #main-music-card.canvas-active #lyrics-container .lyric-line.active {
             color: rgba(248, 250, 252, 0.98) !important;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95) !important;
@@ -5945,7 +5997,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             -webkit-backface-visibility: hidden;
             transform: translateZ(0);
         }
-                /* PWA Update Banner (v24.245.73 - Robuste Z-Index- & Display-Garantie) */
+                /* PWA Update Banner (v24.245.74 - Robuste Z-Index- & Display-Garantie) */
         #gp-update-banner {
             position: fixed !important;
             bottom: 24px !important;
@@ -6191,7 +6243,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         body.artist-lightbox-open {
             overflow: hidden !important;
         }
-        /* MOBILE FIX v24.245.73: Verhindert, dass das Kontrollzentrum / Header oben rechts den X-Button überlagert */
+        /* MOBILE FIX v24.245.74: Verhindert, dass das Kontrollzentrum / Header oben rechts den X-Button überlagert */
         body.artist-modal-open #ui-controls,
         body.artist-modal-open #dynamic-island,
         body.artist-modal-open #dynamic-island-ring,
@@ -7453,7 +7505,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
                umgestellt, um eine unabhängige Netzwerk-Anfrage zu sparen - das hat sich als
                Fehlentscheidung herausgestellt, siehe oben.) */
             position: absolute; inset: -30px; background-size: cover; background-position: center;
-            filter: blur(var(--standby-bg-blur, 36px)) brightness(0.4) saturate(160%); transform: scale(1.28);
+            filter: blur(var(--standby-bg-blur, 16px)) brightness(0.4) saturate(160%); transform: scale(1.28);
             transition: opacity 0.5s ease, filter 0.3s ease;
         }
         /* KRITISCHER FIX v24.49: Nutzer maß per Task-Manager 14-16% DAUERHAFTE GPU-Last im
@@ -7939,6 +7991,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
            #standby-nowplaying-Karte, ohne eigene Compositor-Ebene - bei langen Songtiteln
            vermutlich sogar die größere Kostenquelle als die kleinen EQ-Balken, da eine breitere
            Fläche kontinuierlich bewegt wird. will-change hier aus demselben Grund ergänzt. */
+        #standby-track-title-wrap { contain: layout paint; }
         .standby-marquee-active #standby-track-title-inner {
             animation: standby-marquee var(--marquee-duration-title, 6s) ease-in-out infinite;
             will-change: transform;
@@ -9288,7 +9341,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.73</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.74</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -9325,7 +9378,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.73 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.73 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.74 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.74 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -9557,7 +9610,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <div class="flex items-center gap-2 flex-wrap">
                         <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
                         <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
-                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.245.73</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.245.74</span>
                     </div>
                     <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
                 </div>
@@ -9581,7 +9634,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.245.73</span>
+                <span>🧪 QA TESTUMGEBUNG v24.245.74</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -10632,7 +10685,7 @@ html.gp-android:not(.dark) #ui-controls {
             ✕
         </button>
 
-        <!-- NEU v24.245.73: Floating Banner bei Songwechsel im Artist Modal -->
+        <!-- NEU v24.245.74: Floating Banner bei Songwechsel im Artist Modal -->
         <div id="artist-track-change-banner" class="hidden absolute top-4 inset-x-4 sm:inset-x-8 z-40 p-2.5 sm:p-3 rounded-2xl bg-slate-900/95 border border-indigo-500/50 shadow-2xl backdrop-blur-md flex items-center justify-between gap-2 text-left animate-in fade-in duration-300">
             <div class="flex items-center gap-2.5 min-w-0">
                 <div class="w-8 h-8 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-sm shrink-0">🎵</div>
@@ -10736,7 +10789,7 @@ html.gp-android:not(.dark) #ui-controls {
     </div>
 </div>
 
-<!-- NEU v24.245.73: Fullscreen-Lightbox mit Zoom-Slider (100%-300%), Touch-Pinch & Pan -->
+<!-- NEU v24.245.74: Fullscreen-Lightbox mit Zoom-Slider (100%-300%), Touch-Pinch & Pan -->
 <div id="artist-lightbox-modal" class="fixed inset-0 z-[9999999] bg-black/95 backdrop-blur-2xl hidden flex-col items-center justify-between select-none opacity-0 transition-opacity duration-300" style="touch-action: none; z-index: 9999999;">
     <!-- Top Bar -->
     <div class="w-full max-w-4xl px-4 py-3 flex items-center justify-between z-30 border-b border-white/10 bg-black/75 backdrop-blur-md" style="padding-top: max(0.75rem, env(safe-area-inset-top, 0.75rem));">
@@ -10746,7 +10799,7 @@ html.gp-android:not(.dark) #ui-controls {
             </span>
             <span class="text-xs text-slate-300 font-medium hidden sm:inline" id="lightbox-artist-name">Künstler</span>
         
-            <!-- HD-Status & Schärfefilter Badge (v24.245.73) -->
+            <!-- HD-Status & Schärfefilter Badge (v24.245.74) -->
             <button id="lightbox-hd-badge" onclick="toggleLightboxHdFilter()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-white/10 hover:bg-white/20 border border-white/15 text-slate-200 transition-all active:scale-95 cursor-pointer" title="HD-Status & Super-Resolution Schärfefilter">
                 <span id="lightbox-hd-indicator" class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
                 <span id="lightbox-hd-label">Suche HD-Original...</span>
@@ -10787,7 +10840,7 @@ html.gp-android:not(.dark) #ui-controls {
 </div>
 
 <!-- ============================================================================== -->
-<!-- ECHTZEIT GO-KART TELEMETRIE DASHBOARD (v24.245.73)                             -->
+<!-- ECHTZEIT GO-KART TELEMETRIE DASHBOARD (v24.245.74)                             -->
 <!-- Feature-Flag: FEATURE_FLAGS.KARTING_DASHBOARD (Admin-Protected / QA Override)   -->
 <!-- ============================================================================== -->
 <div id="karting-dashboard-modal" class="fixed inset-0 z-[100000] bg-black/90 backdrop-blur-2xl hidden flex-col items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300 select-none" onclick="if(event.target === this) closeKartingDashboard()">
@@ -11087,7 +11140,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.245.73</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.245.74</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -11341,7 +11394,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <button onclick="requestNotificationPermissionManually()" id="btn-notification-permission" class="w-full min-h-[44px] text-left text-xs sm:text-sm text-teal-400 px-3 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-teal-500/20 transition-all font-bold cursor-pointer active:scale-98">Benachrichtigungen: nicht eingerichtet</button>
                     <p id="settings-notification-hint" class="text-xs text-slate-400 px-1 leading-snug">Für die „Willkommen zurück“-Meldung, falls Musik pausiert war während du weg warst.</p>
                 </div>
-                <!-- NEU v24.245.73: Auto-Update Overlays bei Songwechsel -->
+                <!-- NEU v24.245.74: Auto-Update Overlays bei Songwechsel -->
                 <div class="pt-2 border-t border-white/5 space-y-1">
                     <div class="flex items-center justify-between gap-3">
                         <div class="min-w-0">
@@ -11414,7 +11467,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.245.73</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.245.74</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -11425,7 +11478,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.245.73</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.245.74</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -11468,7 +11521,7 @@ html.gp-android:not(.dark) #ui-controls {
         </div>
     </div>
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.245.73</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.245.74</p>
 </div>
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
@@ -11724,7 +11777,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <a href="checklist.html" target="_blank" class="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500 text-teal-300 hover:text-slate-950 font-bold text-[11px] transition-all border border-teal-500/30 inline-flex items-center gap-1">
                         <span>📋</span> <span>QA Checkliste</span>
                     </a>
-                    <span class="text-pink-400 font-mono">v24.245.73</span>
+                    <span class="text-pink-400 font-mono">v24.245.74</span>
                 </div>
             </div>
         </div>
@@ -14390,7 +14443,7 @@ html.gp-android:not(.dark) #ui-controls {
             window._manualLangChange = false;
         };
 
-        // FAIL-SAFE LANGUAGE PICKER DELEGATION (v24.245.73)
+        // FAIL-SAFE LANGUAGE PICKER DELEGATION (v24.245.74)
         document.addEventListener('click', function(e) {
             const btn = e.target && e.target.closest ? e.target.closest('.lang-picker-btn') : null;
             if (btn) {
@@ -14888,7 +14941,7 @@ html.gp-android:not(.dark) #ui-controls {
         let isLyricsSettingsOpen = false;
         const savedLyricsStyle = AppStorage.getItem('lyricsStyle');
         let currentLyricsStyle = savedLyricsStyle || 'applemusicpro';
-        // MIGRATION v24.245.73: Apple Music Pro als universeller Standard für alle Nutzer
+        // MIGRATION v24.245.74: Apple Music Pro als universeller Standard für alle Nutzer
         try {
             if (AppStorage.getItem('gp_lyrics_style_amp_migrated_v58') !== 'true') {
                 if (!savedLyricsStyle || savedLyricsStyle === 'fill') {
@@ -18192,9 +18245,9 @@ html.gp-android:not(.dark) #ui-controls {
                             updateSettingsSystemUpdateUI(null);
                             if (userInitiated) {
                                 if (typeof showSystemToast === 'function') {
-                                    showSystemToast('🟢 System ist auf dem neuesten Stand (v' + (currentVer || '24.245.73') + ')');
+                                    showSystemToast('🟢 System ist auf dem neuesten Stand (v' + (currentVer || '24.245.74') + ')');
                                 } else if (typeof toast === 'function') {
-                                    toast('🟢 System ist auf dem neuesten Stand (v' + (currentVer || '24.245.73') + ')');
+                                    toast('🟢 System ist auf dem neuesten Stand (v' + (currentVer || '24.245.74') + ')');
                                 }
                             }
                         }
@@ -18882,6 +18935,7 @@ let shareCardLoading;
                     element.style.setProperty('transition', 'none', 'important');
                     element.style.setProperty('opacity', '0', 'important');
                 }
+                enforceSingleActiveVideo('none');
                 for (const media of document.querySelectorAll('video, audio')) {
                     if (!overlay.contains(media) && !media.paused) {
                         standbyPausedMedia.add(media);
@@ -19971,7 +20025,7 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
-        { version: "v24.245.73", date: "31. Oktober 2026", type: "feature", items: {
+        { version: "v24.245.74", date: "31. Oktober 2026", type: "feature", items: {
           de: [
             "🎨 Flüssige Galerie-Crossfade-Animation & Fullscreen-Lightbox mit 100-300% Zoom und Touch-Pinch/Pan",
             "🚀 Maximaler Performance-Freeze: Blickdichter schwarzer Hintergrund & 0% GPU-Hintergrundlast bei geöffnetem Modal",
@@ -25159,7 +25213,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
                     musicCardWrapper.classList.remove('dashboard-opening');
                     musicCardWrapper.classList.add('dashboard-closing');
                 }
-                // PERF FIX v24.245.73: Alle Videos bei minimiertem Dashboard sofort pausieren
+                // PERF FIX v24.245.74: Alle Videos bei minimiertem Dashboard sofort pausieren
                 const cmvMin = document.getElementById('canvas-media-video');
                 const cgvMin = document.getElementById('canvas-glow-video');
                 const cBaseMin = document.getElementById('canvas-video');
@@ -27213,6 +27267,50 @@ window.setLyricsStyle = function(style) {
         // FIX v24.225.28: 100% Werbefreiheit auf der Haupt-Karte:
         // Die Musikkarte nutzt IMMER das native, offizielle, werbefreie Spotify-Canvas (MP4).
         // YouTube-Iframes werden NIEMALS auf der Karte eingebettet, um Werbespots auf dem Cover restlos zu eliminieren!
+        // =========================================================================
+        // STRICT VIDEO VIRTUALIZER (v24.245.74)
+        // Garantiert programmatisch: Zu jedem Zeitpunkt wird maximal 1 Video aktiv decodiert!
+        // =========================================================================
+        function enforceSingleActiveVideo(mode) {
+            const cVideo = document.getElementById('canvas-video');
+            const mVideo = document.getElementById('canvas-media-video');
+            const gVideo = document.getElementById('canvas-glow-video');
+            const lVideo = document.getElementById('lyrics-canvas-video');
+            const cinemaVideo = document.getElementById('canvas-cinema-video');
+            const cinemaGlowVideo = document.getElementById('canvas-cinema-glow-video');
+
+            const allVids = [cVideo, mVideo, gVideo, lVideo, cinemaVideo, cinemaGlowVideo];
+            const isPlaying = trackIsPlaying || (typeof isMusicPlaying !== 'undefined' && isMusicPlaying);
+
+            if (mode === 'lyrics') {
+                [cVideo, mVideo, gVideo, cinemaVideo, cinemaGlowVideo].forEach(v => { if (v && !v.paused) v.pause(); });
+                if (lVideo && lVideo.paused && canvasEnabled && isPlaying && currentCanvasUrl) {
+                    lVideo.play().catch(()=>{});
+                }
+            } else if (mode === 'dashboard') {
+                [lVideo, cinemaVideo, cinemaGlowVideo].forEach(v => { if (v && !v.paused) v.pause(); });
+                if (cVideo && cVideo.paused && canvasEnabled && isPlaying && currentCanvasUrl) {
+                    cVideo.play().catch(()=>{});
+                }
+                if (mVideo && mVideo.paused && canvasEnabled && isPlaying && currentCanvasUrl) {
+                    mVideo.play().catch(()=>{});
+                }
+                if (gVideo && (typeof coverGlowEnabled !== 'undefined' ? coverGlowEnabled : true) && canvasEnabled && isPlaying && currentCanvasUrl) {
+                    if (gVideo.paused) gVideo.play().catch(()=>{});
+                } else if (gVideo && !gVideo.paused) {
+                    gVideo.pause();
+                }
+            } else if (mode === 'cinema') {
+                [cVideo, mVideo, gVideo, lVideo].forEach(v => { if (v && !v.paused) v.pause(); });
+                if (cinemaVideo && cinemaVideo.paused) cinemaVideo.play().catch(()=>{});
+                if (cinemaGlowVideo && cinemaGlowVideo.paused) cinemaGlowVideo.play().catch(()=>{});
+            } else {
+                // 'none': StandBy, minimiertes Dashboard, inaktiver Tab, Offline oder Pause -> ALLE stoppen
+                allVids.forEach(v => { if (v && !v.paused) v.pause(); });
+            }
+        }
+        window.enforceSingleActiveVideo = enforceSingleActiveVideo;
+
         function applyActiveMediaMode() {
             const isPlaying = trackIsPlaying || (typeof isMusicPlaying !== 'undefined' && isMusicPlaying);
             const mvBg = document.getElementById('mv-bg-iframe');
@@ -27240,46 +27338,31 @@ window.setLyricsStyle = function(style) {
             const isStandBy = typeof standByActive !== 'undefined' && standByActive;
             const isTabHidden = typeof document !== 'undefined' && document.hidden;
 
-            // 2. Reine, werbefreie Spotify-Canvas-Wiedergabe auf der Karte
-            // PERF FIX v24.245.73: Strenge Layer-Wächter - niemals verdeckte Videos dekodieren
-            if (canvasEnabled && currentCanvasUrl && isPlaying && !isStandBy && !isLyricsOpen && !isArtistOpen && !isCinemaMode && !isTabHidden && isDashboardOpen) {
-                if (canvasVideo) {
-                    canvasVideo.classList.remove('opacity-0');
-                    canvasVideo.classList.add('opacity-100');
-                    if (canvasVideo.paused) canvasVideo.play().catch(()=>{});
-                }
-                if (canvasMediaVideo) {
-                    canvasMediaVideo.classList.remove('opacity-0');
-                    canvasMediaVideo.classList.add('opacity-100');
-                    if (canvasMediaVideo.paused) canvasMediaVideo.play().catch(()=>{});
-                }
+            // 2. Reine, werbefreie Spotify-Canvas-Wiedergabe auf der Karte mit strikter Virtualisierung (v24.245.74)
+            if (isStandBy || isTabHidden || !isPlaying || !canvasEnabled || !currentCanvasUrl) {
+                enforceSingleActiveVideo('none');
+                if (canvasVideo) { canvasVideo.classList.add('opacity-0'); canvasVideo.classList.remove('opacity-100'); }
+                if (canvasMediaVideo) { canvasMediaVideo.classList.add('opacity-0'); canvasMediaVideo.classList.remove('opacity-100'); }
+                if (canvasGlowVideo) { canvasGlowVideo.classList.add('opacity-0'); canvasGlowVideo.classList.remove('opacity-100'); }
+                if (mainMusicCard && !isLyricsOpen) mainMusicCard.classList.remove('canvas-active');
+            } else if (isLyricsOpen) {
+                enforceSingleActiveVideo('lyrics');
+                if (canvasVideo) { canvasVideo.classList.add('opacity-0'); canvasVideo.classList.remove('opacity-100'); }
+                if (canvasMediaVideo) { canvasMediaVideo.classList.add('opacity-0'); canvasMediaVideo.classList.remove('opacity-100'); }
+                if (canvasGlowVideo) { canvasGlowVideo.classList.add('opacity-0'); canvasGlowVideo.classList.remove('opacity-100'); }
+            } else if (isCinemaMode) {
+                enforceSingleActiveVideo('cinema');
+            } else if (isDashboardOpen && !isArtistOpen) {
+                enforceSingleActiveVideo('dashboard');
+                if (canvasVideo) { canvasVideo.classList.remove('opacity-0'); canvasVideo.classList.add('opacity-100'); }
+                if (canvasMediaVideo) { canvasMediaVideo.classList.remove('opacity-0'); canvasMediaVideo.classList.add('opacity-100'); }
                 if (canvasGlowVideo && (typeof coverGlowEnabled !== 'undefined' ? coverGlowEnabled : true)) {
                     canvasGlowVideo.classList.remove('opacity-0');
                     canvasGlowVideo.classList.add('opacity-100');
-                    if (canvasGlowVideo.paused) canvasGlowVideo.play().catch(()=>{});
                 }
-                if (mainMusicCard) {
-                    mainMusicCard.classList.add('canvas-active');
-                }
+                if (mainMusicCard) mainMusicCard.classList.add('canvas-active');
             } else {
-                if (canvasVideo) {
-                    canvasVideo.classList.add('opacity-0');
-                    canvasVideo.classList.remove('opacity-100');
-                    if (!canvasVideo.paused) canvasVideo.pause();
-                }
-                if (canvasMediaVideo) {
-                    canvasMediaVideo.classList.add('opacity-0');
-                    canvasMediaVideo.classList.remove('opacity-100');
-                    if (!canvasMediaVideo.paused) canvasMediaVideo.pause();
-                }
-                if (canvasGlowVideo) {
-                    canvasGlowVideo.classList.add('opacity-0');
-                    canvasGlowVideo.classList.remove('opacity-100');
-                    if (!canvasGlowVideo.paused) canvasGlowVideo.pause();
-                }
-                if (mainMusicCard) {
-                    mainMusicCard.classList.remove('canvas-active');
-                }
+                enforceSingleActiveVideo('none');
             }
             updateMediaButtonState();
         }
@@ -27615,13 +27698,13 @@ window.setLyricsStyle = function(style) {
                 return;
             }
 
-            // 2. Main Music Card Synchronisation mit strikter Layer-Entkopplung (v24.245.73)
+            // 2. Main Music Card Synchronisation mit strikter Layer-Entkopplung (v24.245.74)
             const isLyricsOpen = mainMusicCard && mainMusicCard.classList.contains('lyrics-open');
             const isArtistOpen = document.body.classList.contains('artist-modal-open');
             const isCinemaMode = document.body.classList.contains('canvas-cinema-mode');
             const isStandBy = typeof standByActive !== 'undefined' && standByActive;
             const isTabHidden = typeof document !== 'undefined' && document.hidden;
-// isPlaying bereits am Funktionsanfang deklariert (v24.245.73 Syntax-Fix)
+// isPlaying bereits am Funktionsanfang deklariert (v24.245.74 Syntax-Fix)
 
             const mVideo = document.getElementById('canvas-media-video');
             const mGlow = document.getElementById('canvas-glow-video');
@@ -27698,14 +27781,7 @@ window.setLyricsStyle = function(style) {
                 // Bei 'play' wird sanft synchronisiert ohne Decoder-Abwürfe:
                 canvasVideo.addEventListener('play', () => resyncAllCanvasVideos(false), { passive: true });
 
-                // Sanfter Notfall-Check alle 4 Sekunden falls ein Video durch Background-Tab
-                // eingeschlafen ist (v24.225.36: von 8s auf 4s verkürzt, Kostet nur currentTime-Reads;
-                // ein Seek passiert weiterhin erst ab 350ms Versatz).
-                setInterval(() => {
-                    if (canvasEnabled && trackIsPlaying && canvasVideo && !canvasVideo.paused) {
-                        resyncAllCanvasVideos(false);
-                    }
-                }, 4000);
+                // [v24.245.74] 4s-Timer in zentralen 5s-Heartbeat konsolidiert
             }
         }
 
@@ -28497,7 +28573,7 @@ window.setLyricsStyle = function(style) {
             // PERF-FIX v24.225.28: StandBy-Grade Hardware Layer Isolation
             document.body.classList.add('canvas-cinema-mode');
 
-            // PERF-FIX v24.225.28 / v24.245.73: Dashboard-Videos im Hintergrund schlafen legen solange Cinema aktiv ist
+            // PERF-FIX v24.225.28 / v24.245.74: Dashboard-Videos im Hintergrund schlafen legen solange Cinema aktiv ist
             if (canvasVideo && !canvasVideo.paused) canvasVideo.pause();
             const cmvBg = document.getElementById('canvas-media-video');
             if (cmvBg && !cmvBg.paused) cmvBg.pause();
@@ -28539,7 +28615,7 @@ window.setLyricsStyle = function(style) {
                 cGlow.classList.add('opacity-0');
                 cGlow.classList.remove('opacity-100');
             }
-            // PERF-FIX v24.225.28 / v24.245.73: Dashboard-Videos nur aufwecken wenn Dashboard offen & keine Lyrics aktiv
+            // PERF-FIX v24.225.28 / v24.245.74: Dashboard-Videos nur aufwecken wenn Dashboard offen & keine Lyrics aktiv
             if (typeof dismissCinemaTrackChange === 'function') dismissCinemaTrackChange();
             const isPlayingNow = (typeof trackIsPlaying !== 'undefined' ? trackIsPlaying : (typeof isMusicPlaying !== 'undefined' && isMusicPlaying));
             const isLyricsNow = mainMusicCard && mainMusicCard.classList.contains('lyrics-open');
@@ -28628,24 +28704,16 @@ window.setLyricsStyle = function(style) {
             const musicTitleEl = document.getElementById('music-section-title');
             const lcv = document.getElementById('lyrics-canvas-video');
             if (show) {
-                // PERF & VISUAL FIX v24.245.73: Hintergrund-Videos der Hauptkarte sofort pausieren,
-                // damit im Lyrics-Overlay niemals zwei Videos übereinander laufen (GPU Decoder-Entlastung)
-                const cmvBgHide = document.getElementById('canvas-media-video');
-                const cgvBgHide = document.getElementById('canvas-glow-video');
-                const cBaseBgHide = document.getElementById('canvas-video');
-                if (cmvBgHide && !cmvBgHide.paused) cmvBgHide.pause();
-                if (cgvBgHide && !cgvBgHide.paused) cgvBgHide.pause();
-                if (cBaseBgHide && !cBaseBgHide.paused) cBaseBgHide.pause();
-
+                enforceSingleActiveVideo('lyrics');
                 if (lcv && canvasEnabled && (trackIsPlaying || (typeof isMusicPlaying !== 'undefined' && isMusicPlaying)) && currentCanvasUrl) {
                     if (canvasVideo && canvasVideo.currentTime > 0) lcv.currentTime = canvasVideo.currentTime;
-                    lcv.play().catch(()=>{});
                 }
             } else {
-                if (lcv && !lcv.paused) lcv.pause();
-                // Wenn Lyrics geschlossen werden und Dashboard offen ist, Hintergrundvideos sanft aufwecken
                 if (isDashboardOpen && canvasEnabled && (trackIsPlaying || (typeof isMusicPlaying !== 'undefined' && isMusicPlaying)) && currentCanvasUrl) {
+                    enforceSingleActiveVideo('dashboard');
                     resyncAllCanvasVideos(true);
+                } else {
+                    enforceSingleActiveVideo('none');
                 }
             }
             if(show) {
@@ -29957,7 +30025,7 @@ window.setLyricsStyle = function(style) {
                 stopLyricsStylePreviewLoop();
                 window.__tabHiddenAt = performance.now();
             } else {
-                // PERF & SYNC FIX v24.245.73: Nach Tab-Rückkehr keine veraltete Zeit extrapolieren,
+                // PERF & SYNC FIX v24.245.74: Nach Tab-Rückkehr keine veraltete Zeit extrapolieren,
                 // sondern sofort die exakte Spotify-Position mit Force-Sync einholen
                 window.isForceMusicSync = true;
                 localStartTime = performance.now();
@@ -30491,7 +30559,7 @@ window.setLyricsStyle = function(style) {
             // lyricsMemoryCache für den aktuellen Song reicht vollkommen aus.
             return;
         }
-        // Persistentes Set gegen redundantes Polling für Songs ohne Text (v24.245.73)
+        // Persistentes Set gegen redundantes Polling für Songs ohne Text (v24.245.74)
         /* noLyricsTrackKeys already declared */
         window.noLyricsTrackKeys = noLyricsTrackKeys;
         /* lyricsSessionSearchedTracks already declared */
@@ -31191,7 +31259,7 @@ window.setLyricsStyle = function(style) {
             const isSameAsCurrent = !isFirstLoad && isSameSongTrack(trackTitle, cleanArtist, incomingSpotifyId, currentTrackTitle, currentRawArtist, currentSpotifyTrackId);
             const isNewTrack = isFirstLoad || !isSameAsCurrent;
             if (isNewTrack) {
-                // NEU v24.245.73: Erkennung von Songwechsel bei geöffneten Overlays (Artist Modal & Canvas Cinema)
+                // NEU v24.245.74: Erkennung von Songwechsel bei geöffneten Overlays (Artist Modal & Canvas Cinema)
                 if (!isFirstLoad) {
                     const autoUpdateOverlays = AppStorage.getItem('gp_auto_update_overlay_track') === 'true';
                     const isArtistModalOpen = document.body.classList.contains('artist-modal-open');
@@ -31471,7 +31539,7 @@ window.setLyricsStyle = function(style) {
 
                 if (activeCanvasUrl) {
                     const lyricsVisible = !!(mainMusicCard && mainMusicCard.classList.contains('lyrics-open'));
-                    // PERF & VISUAL FIX v24.245.73: Wenn Lyrics offen sind, laufen NUR lyricsCanvasVideo!
+                    // PERF & VISUAL FIX v24.245.74: Wenn Lyrics offen sind, laufen NUR lyricsCanvasVideo!
                     // Sämtliche Hintergrund-Videos der Hauptkarte (canvasVideo, canvasMediaVideo, canvasGlowVideo)
                     // werden pausiert und auf Opacity 0 gesetzt, um 0% GPU-Doppelbelastung und Artefakt-Überlagerung zu garantieren.
                     if (lyricsVisible) {
@@ -31712,7 +31780,7 @@ window.setLyricsStyle = function(style) {
                             (songEndedLocally && newProgressVal < 15000 && previousApiProgress > 25000) ||
                             (!songEndedLocally && apiWentBackward)
                         );
-                        // NEU v24.245.73: Hochempfindliche, reaktionsschnelle Selbstheilungs-Synchronisation
+                        // NEU v24.245.74: Hochempfindliche, reaktionsschnelle Selbstheilungs-Synchronisation
                         // 1. Sofortiger Resync bei Force-Sync, Seeks, Pausen-Resume oder Abweichungen > 800ms
                         if (window.isForceMusicSync || isLegitRepeatOrSeek || absDrift > 800) {
                             window.isForceMusicSync = false;
@@ -32068,119 +32136,82 @@ window.setLyricsStyle = function(style) {
                 }
             }, { passive: true });
         }
-        // NEU v24.60 (v24.216.0): Watchdog - prüft alle 15s, ob trotz vermeintlich laufender Musik oder aktivem
-        // Songwechsel seit über 30 Sekunden kein erfolgreiches Update mehr angekommen ist.
-        // Schützt JETZT AUCH DEN STANDBY-MODUS vor dem Einschlafen!
+        // ============================================================================
+        // CONSOLIDATED SINGLE UNIFIED HEARTBEAT TICKER (v24.245.74)
+        // Ersetzt 4 disparate Einzel-Intervalle (3s, 4s, 15s, 2s) durch einen zentralen
+        // 5-Sekunden-Puls mit strikter document.hidden-Prüfung. Ermöglicht tiefere CPU C-States.
+        // ============================================================================
+        let lastVisibleTimeText = null;
+        let lastVisibleTimeChangeAt = Date.now();
+        let unifiedHeartbeatTicks = 0;
+
         setInterval(() => {
-            if (shouldPauseBackgroundWork()) return;
-            const needsActiveMonitoring = trackIsPlaying || isHuntingForNextTrack;
-            if (needsActiveMonitoring) {
-                const silentForMs = Date.now() - lastSuccessfulFetchAt;
-                if (silentForMs > 30000) {
-                    console.warn(`Watchdog: seit ${Math.round(silentForMs / 1000)}s kein erfolgreiches Musikdaten-Update erhalten - erzwinge Wiederherstellungsversuch.`);
-                    fetchMusicData().finally(() => scheduleNextMusicPoll());
-                    startProgressTracking();
-                }
-            } else if (standByActive) {
-                const silentForMs = Date.now() - lastSuccessfulFetchAt;
-                if (silentForMs > 60000) {
-                    fetchMusicData().finally(() => scheduleNextMusicPoll());
-                }
-            }
-        }, 15000);
-        // NEU v24.65: Zusätzlicher, engmaschiger Selbstheilungs-Check - unabhängig vom
-        // 30s-Watchdog oben (der nur bei ausbleibenden Musikdaten-Updates greift). Prüft
-        // alle 3 Sekunden: läuft trotz aktiver Musik kein Fortschritts-Tracking? Dann neu
-        // starten - BEDINGUNGSLOS, nicht mit einem fragilen !isAnimating-Check.
-        setInterval(() => {
-            if (shouldPauseBackgroundWork()) return;
+            if (typeof shouldPauseBackgroundWork === 'function' && shouldPauseBackgroundWork()) return;
+            if (typeof document !== 'undefined' && document.hidden) return;
+
+            unifiedHeartbeatTicks++;
+
+            // 1. Selbstheilungs-Check (vormals alle 3s, jetzt pro 5s-Tick)
             const isLyricsOpen = mainMusicCard && mainMusicCard.classList.contains('lyrics-open');
             const hasSynced = parsedLyrics && parsedLyrics.length > 0;
             if (trackIsPlaying) {
                 if (isLyricsOpen && hasSynced) {
                     if (!lyricAnimFrame) {
-                        console.warn('Selbstheilungs-Check: Lyrics rAF-Loop war trotz offener Lyrics inaktiv - starte neu.');
                         startProgressTracking();
                     }
                 } else if (!progressTickerInterval) {
-                    console.warn('Selbstheilungs-Check: Fortschritts-Tracking war trotz laufender Musik inaktiv - starte neu.');
                     startProgressTracking();
                 }
             }
-        }, 3000);
-        // NEU v24.66 (LETZTE SICHERHEITSSTUFE): Nutzer meldete nach mehreren Fix-Runden
-        // weiterhin einen eingefrorenen Fortschritt, trotz gründlich verifizierter interner
-        // Logik. Statt noch tiefer in internen Variablen zu suchen, überwacht dieser Check
-        // jetzt den TATSÄCHLICH SICHTBAREN Text direkt (also exakt das, was der Nutzer
-        // selbst sieht) - unabhängig davon, WARUM er sich nicht ändert. Bleibt der
-        // angezeigte Zeit-Text trotz laufender Musik über 40 Sekunden komplett unverändert,
-        // wird die komplette Seite automatisch neu geladen. Das behebt das sichtbare
-        // Symptom garantiert, selbst falls die genaue interne Ursache (Cache,
-        // Browser-Erweiterung, o.ä.) nicht zweifelsfrei diagnostizierbar ist - der Nutzer
-        // muss dafür nichts selbst tun.
-        let lastVisibleTimeText = null;
-        let lastVisibleTimeChangeAt = Date.now();
-        setInterval(() => {
-            // FIX v24.67 (KRITISCH): Nutzer meldete - die Seite lädt sich nachts während des
-            // StandBy-Lockscreens unerwünscht selbst neu, genau während er sie bewusst über
-            // Nacht als Ambient-Display stehen lassen wollte. Root Cause: Dieser Notfall-Check
-            // wusste nichts vom StandBy-Modus - dort wird das Fortschritts-Tracking aber ganz
-            // ABSICHTLICH komplett angehalten (siehe der kritische Hitze-Fix aus v24.42/v24.48/
-            // v24.49) - ein unveränderter Zeit-Text ist während StandBy also das ERWARTETE,
-            // korrekte Verhalten, kein Bug. Genauso im Hintergrund-Tab (document.hidden), wo
-            // aus denselben Effizienzgründen ebenfalls pausiert wird. Beide Zustände jetzt
-            // explizit übersprungen, bevor überhaupt gemessen wird.
-            // NACHTRAG (überholt seit v24.70): StandBy tickt Fortschritt inzwischen live mit
-            // eigenem, günstigerem Takt - die obige Prämisse "während StandBy läuft nichts
-            // stimmt nicht mehr, macht den Ausschluss hier aber nicht falsch, nur nicht mehr
-            // ganz treffend begründet. Bleibt trotzdem korrekt: dieser Check beobachtet gezielt
-            // die HAUPT-Karte, die während StandBy ohnehin unsichtbar ist.
-            // FIX v24.97 (KRITISCH): Nutzer meldete - unerwünschter Reload sowohl im StandBy
-            // als auch bei normaler Nutzung. Beim Code-Audit einen echten Robustheits-Fehler
-            // gefunden: lastVisibleTimeText wurde bisher NUR im unteren Zweig aktualisiert,
-            // nicht aber hier beim Überspringen wegen StandBy/Hintergrund - blieb die App
-            // länger in einem dieser Zustände (z.B. StandBy über Nacht), stand dort ein
-            // MINUTEN bis STUNDEN alter Text-Wert. Direkt nach dem Verlassen von StandBy/
-            // Hintergrund verglich der nächste Tick dann gegen diesen veralteten Wert - falls
-            // die aktuelle Anzeige zufällig genau diesen alten Text (wieder) zeigte (z.B. beim
-            // Übergang, bevor der erste frische Tick durchkam), oder falls startProgressTracking()
-            // nach dem Verlassen einen Moment brauchte, bis timeCurrentEl neu beschrieben wurde,
-            // konnte das fälschlich als "eingefroren" zählen. Jetzt wird lastVisibleTimeText
-            // beim Überspringen ebenfalls konsequent auf null gesetzt (statt nur den Timer),
-            // damit der nächste echte Vergleich immer mit einer frischen Basis startet, nie
-            // mit einem Wert von vor Minuten/Stunden.
-            if (standByActive || document.hidden) {
+
+            // 2. Canvas-Resync & Virtualisierungs-Wächter (alle 5s bei aktiver Wiedergabe)
+            if (canvasEnabled && trackIsPlaying && isDashboardOpen && !isLyricsOpen) {
+                const cv = document.getElementById('canvas-video');
+                if (cv && !cv.paused) {
+                    if (typeof resyncAllCanvasVideos === 'function') {
+                        resyncAllCanvasVideos(false);
+                    }
+                }
+            }
+
+            // 3. Watchdog (alle 15s -> jeder 3. Tick)
+            if (unifiedHeartbeatTicks % 3 === 0) {
+                const needsActiveMonitoring = trackIsPlaying || isHuntingForNextTrack;
+                if (needsActiveMonitoring) {
+                    const silentForMs = Date.now() - lastSuccessfulFetchAt;
+                    if (silentForMs > 30000) {
+                        console.warn(`Watchdog: seit ${Math.round(silentForMs / 1000)}s kein erfolgreiches Musikdaten-Update erhalten - erzwinge Wiederherstellungsversuch.`);
+                        fetchMusicData().finally(() => scheduleNextMusicPoll());
+                        startProgressTracking();
+                    }
+                } else if (standByActive) {
+                    const silentForMs = Date.now() - lastSuccessfulFetchAt;
+                    if (silentForMs > 60000) {
+                        fetchMusicData().finally(() => scheduleNextMusicPoll());
+                    }
+                }
+            }
+
+            // 4. Frozen Time Check (Überwachung pro 5s-Tick)
+            if (standByActive) {
                 lastVisibleTimeChangeAt = Date.now();
-                lastVisibleTimeText = null; // NEU v24.97: frische Basis erzwingen, kein veralteter Vergleichswert
-                return;
+                lastVisibleTimeText = null;
+            } else if (trackIsPlaying && timeCurrentEl) {
+                const nowText = timeCurrentEl.innerText;
+                if (nowText !== lastVisibleTimeText || lastVisibleTimeText === null) {
+                    lastVisibleTimeText = nowText;
+                    lastVisibleTimeChangeAt = Date.now();
+                } else {
+                    const frozenForMs = Date.now() - lastVisibleTimeChangeAt;
+                    if (frozenForMs > 40000) {
+                        lastVisibleTimeChangeAt = Date.now();
+                        if (typeof startProgressTracking === 'function') {
+                            startProgressTracking();
+                        }
+                    }
+                }
             }
-            if (!trackIsPlaying || !timeCurrentEl) return;
-            const nowText = timeCurrentEl.innerText;
-            if (nowText !== lastVisibleTimeText || lastVisibleTimeText === null) {
-                lastVisibleTimeText = nowText;
-                lastVisibleTimeChangeAt = Date.now();
-                return;
-            }
-            const frozenForMs = Date.now() - lastVisibleTimeChangeAt;
-            if (frozenForMs > 40000) {
-                // FIX v24.102 (KRITISCH): Diese "Notfall-Selbstheilung" war jetzt mehrfach
-                // (v24.66/67, dann erneut v24.97) Quelle NEUER, unerwünschter Reloads, statt
-                // das ursprüngliche Problem zuverlässig zu lösen - Nutzer meldete den Bug nach
-                // dem v24.97-Fix erneut, ohne dass sich am Code seither etwas geändert hätte.
-                // Statt eine sechste Runde an genau dieser fragilen Heuristik zu drehen: der
-                // erzwungene automatische Reload wird jetzt komplett entfernt. Seit v24.70 läuft
-                // das Fortschritts-Tracking ohnehin deutlich robuster als zur Zeit, als dieser
-                // Mechanismus ursprünglich gebaut wurde (mehrere Selbstheilungs-Ebenen, siehe
-                // v24.65/66/70) - das Sicherheitsnetz "im Zweifel einfach neu laden" richtet
-                // mittlerweile öfter Schaden an (unterbricht StandBy-Sitzungen ungefragt), als
-                // es noch nützt. Stattdessen: dezenter Hinweis, der Nutzer entscheidet selbst,
-                // ob und wann neu geladen wird - console.error bleibt für Diagnosezwecke.
-                console.error(`Notfall-Selbstheilung: sichtbare Zeit-Anzeige war ${Math.round(frozenForMs / 1000)}s unverändert trotz laufender Musik - biete Neuladen an statt es zu erzwingen.`);
-                // Deaktiviert auf Wunsch; Code für spätere Verwendung erhalten:
-                // if (typeof showToast === 'function') showToast(t('toast_stale_reload_hint'), 8000);
-                lastVisibleTimeChangeAt = Date.now(); // Timer zurücksetzen, damit der Hinweis nicht alle 2s erneut aufploppt
-            }
-        }, 2000);
+        }, 5000);
         // NEW: Falls der Nutzer den Vollbildmodus direkt verlässt (z.B. Escape-Taste,
         // Browser-eigenes Vollbild-Verlassen-UI), soll StandBy synchron mit verlassen
         // werden, statt in einem inkonsistenten Zwischenzustand hängen zu bleiben.
@@ -33025,7 +33056,7 @@ window.setLyricsStyle = function(style) {
         };
 
         // =========================================================================
-        // --- OVERLAY TRACK CHANGE CONTROLLER & BANNER (v24.245.73) ----------------
+        // --- OVERLAY TRACK CHANGE CONTROLLER & BANNER (v24.245.74) ----------------
         // =========================================================================
         let pendingOverlayTrack = { title: '', artist: '' };
 
@@ -33884,7 +33915,7 @@ window.setLyricsStyle = function(style) {
         setTimeout(positionDynamicIsland, 400);
 
         // ==============================================================================
-        // ECHTZEIT GO-KART TELEMETRIE & ACTIVITY-BOX CONTROLLER (v24.245.73)
+        // ECHTZEIT GO-KART TELEMETRIE & ACTIVITY-BOX CONTROLLER (v24.245.74)
         // Feature-Flag Steuerung: Standard 'disabled', einziger Schalter schaltet frei!
         // ==============================================================================
         const FEATURE_FLAGS = {
@@ -33894,7 +33925,7 @@ window.setLyricsStyle = function(style) {
 
         
         // ==============================================================================
-        // FULLSCREEN LIGHTBOX CONTROLLER (v24.245.73)
+        // FULLSCREEN LIGHTBOX CONTROLLER (v24.245.74)
         // Zoom-Slider (100%-300%), Touch-Pinch & Pan, Escape & Pfeiltasten-Steuerung
         // ==============================================================================
         let currentLightboxZoom = 100;
@@ -34113,7 +34144,7 @@ window.setLyricsStyle = function(style) {
             }
         });
 
-        // Lightbox Drag, Touch-Pan & Pinch-to-Zoom Support (v24.245.73)
+        // Lightbox Drag, Touch-Pan & Pinch-to-Zoom Support (v24.245.74)
         (function() {
             const viewport = document.getElementById('lightbox-viewport');
             if (!viewport) return;
@@ -34799,16 +34830,16 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.3)] backdrop-blur-md text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-all">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.245.73</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.245.74</span>
         </a>
     </div>
 
 <!-- Spotify Canvas & Music Video Cinema Modal: Ungequetschte Original-Ansicht mit Ambilight Glow -->
 <div id="canvas-cinema-modal" class="fixed inset-0 z-[99999] bg-black flex flex-col items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-all duration-300" onclick="if(event.target === this) closeCanvasCinema()">
     <!-- 1. SPOTIFY CANVAS MODUS (9:16 Hochformat): Dezent erweiternde Aura statt Fullscreen-Glow -->
-    <video id="canvas-cinema-glow-video" class="absolute w-full max-w-[340px] sm:max-w-[400px] max-h-[85vh] aspect-[9/16] rounded-3xl object-cover opacity-80 pointer-events-none transition-opacity duration-700 z-0 scale-[1.14] sm:scale-[1.18]" style="filter: blur(38px) saturate(2.4) brightness(1.2); contain: strict; will-change: transform;" loop muted playsinline></video>
+    <video id="canvas-cinema-glow-video" class="absolute w-full max-w-[340px] sm:max-w-[400px] max-h-[85vh] aspect-[9/16] rounded-3xl object-cover opacity-80 pointer-events-none transition-opacity duration-700 z-0 scale-[1.14] sm:scale-[1.18]" style="filter: blur(18px) saturate(2.0) brightness(1.15); contain: strict; will-change: transform;" loop muted playsinline></video>
     <div id="canvas-cinema-card" class="relative w-full max-w-[340px] sm:max-w-[400px] max-h-[85vh] aspect-[9/16] rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.9)] border border-white/20 flex items-center justify-center bg-black z-10">
-        <!-- NEU v24.245.73: Floating Banner bei Songwechsel im Cinema Mode -->
+        <!-- NEU v24.245.74: Floating Banner bei Songwechsel im Cinema Mode -->
         <div id="cinema-track-change-banner" class="hidden absolute top-4 inset-x-4 z-40 p-2.5 rounded-2xl bg-black/90 border border-emerald-500/50 shadow-2xl backdrop-blur-md flex items-center justify-between gap-2 text-left pointer-events-auto">
             <div class="flex items-center gap-2 min-w-0">
                 <span class="text-base shrink-0">🎵</span>

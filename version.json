@@ -1,9 +1,9 @@
 {
-  "version": "24.245.73",
-  "buildTime": "2026-11-04T16:30:00.000Z",
+  "version": "24.245.74",
+  "buildTime": "2026-11-05T12:30:00.000Z",
   "shortNotes": [
-    "GPU-Entlastung auf 0% Idle: Hintergrund-Blobs & verdeckte Videos gestoppt",
-    "Songtext-Toleranz erhöht: Songs mit abweichender Edit-Länge werden gefunden",
-    "100% statisches GitHub Pages Hosting: Vollständig immun gegen PHP-Exploits"
+    "Desktop Glass Shield: Backdrop-Filter auf 26 Inhaltskarten abgeschaltet",
+    "Strenge Video-Virtualisierung: Maximal 1 aktives Video zeitgleich im DOM",
+    "Konsolidierter 5s-Heartbeat: 4 Einzel-Intervalle für tiefe CPU C-States verschmolzen"
   ]
 }
