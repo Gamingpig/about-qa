@@ -1,10 +1,9 @@
 {
-  "version": "24.245.76",
-  "buildTime": "2026-11-05T13:16:17.654Z",
+  "version": "24.245.77",
+  "buildTime": "2026-11-05T13:31:02.719Z",
   "shortNotes": [
-    "StandBy Ultra Deep-Sleep: #standby-card-blur-bg Blur eliminiert & universeller Desktop-Schutz gegen Restfilter",
-    "Dashboard Ticker Throttling: Fortschritts-Ticker auf 500ms gedrosselt & redundante StandBy-DOM-Zugriffe entfernt",
-    "Hintergrund-Partikel Ruhemodus: Partikel bei geschlossenem Dashboard komplett ausgeblendet",
-    "Desktop Glow Cap: Maximaler Unschärferadius auf 14px limitiert für drastische Entlastung"
+    "Dashboard Blur & Aura-Regler reaktiviert: Volle dynamische Einstellbarkeit über CSS-Variablen wiederhergestellt",
+    "2D-Performance-Architektur beibehalten: Frosted Glass Shield, StandBy 0% Deep-Sleep & geschlossenes Dashboard unverändert sparsam",
+    "Canvas Glow Steuerung: Aura-Blur, Karten-Blur, Radius und Intensität reagieren sofort auf Schieberegler"
   ]
 }
