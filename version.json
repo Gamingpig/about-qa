@@ -1,10 +1,10 @@
 {
-  "version": "24.245.79",
-  "buildTime": "2026-11-05T14:11:54.441Z",
+  "version": "24.245.80",
+  "buildTime": "2026-11-05T14:37:05.782Z",
   "shortNotes": [
-    "Ultra-Logische Spotify-Steuerung: Canvas-Video und Cover-Canvas laufen synchron bei aktiver Wiedergabe im Dashboard",
-    "Equalizer-Animationen aktiv: .eq-bar und .di-eq tanzen grün bei Playback und frieren bei Pause/Offline sofort flach ein",
-    "Hardware-Schonung: StandBy, minimierte Tabs und nicht sichtbare Ansichten schalten alle 6 Videos und rAF-Schleifen ab",
-    "2D Frosted Glass & Blur Shield: Keine GPU-Spitzen im Leerlauf bei voller visueller Anpassbarkeit"
+    "Memory Leak & Autoclicker Protection: WebAudio AudioNode Leak-Guard mit automatischem disconnect() & Safety-Timeout",
+    "DOM-Pool Begrenzung: #toast-container auf maximal 3 aktive Elemente limitiert & Spam-Deduplizierung integriert",
+    "Compositor Animation Guard: target.animate() instanziiert keine redundanten Animationen auf bereits animierten Elementen",
+    "Haptik-, Soundboard- & Effekt-Throttling: Rate-Limits für DJ Scratch, SFX, Partikel und navigator.vibrate"
   ]
 }
