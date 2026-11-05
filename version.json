@@ -1,10 +1,10 @@
 {
-  "version": "24.245.78",
-  "buildTime": "2026-11-05T13:48:32.188Z",
+  "version": "24.245.79",
+  "buildTime": "2026-11-05T14:11:54.441Z",
   "shortNotes": [
-    "QA-Sticky-Watermark Zero-GPU: animate-ping & backdrop-blur-md durch ruhigen leuchtenden Indikator ersetzt",
-    "Dynamic Island Idle-Calm: Unnötige permanente Ring-Puls-Animation im Leerlauf vollständig abgeschaltet",
-    "Dynamic Island EQ-Bars Freeze: EQ-Animation friert sofort ein wenn eingeklappt oder pausiert",
-    "Hero QA-Badge Calm: Pulsierende Ping-Animation im Header-Badge beruhigt"
+    "Ultra-Logische Spotify-Steuerung: Canvas-Video und Cover-Canvas laufen synchron bei aktiver Wiedergabe im Dashboard",
+    "Equalizer-Animationen aktiv: .eq-bar und .di-eq tanzen grün bei Playback und frieren bei Pause/Offline sofort flach ein",
+    "Hardware-Schonung: StandBy, minimierte Tabs und nicht sichtbare Ansichten schalten alle 6 Videos und rAF-Schleifen ab",
+    "2D Frosted Glass & Blur Shield: Keine GPU-Spitzen im Leerlauf bei voller visueller Anpassbarkeit"
   ]
 }
