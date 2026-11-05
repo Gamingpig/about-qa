@@ -1,9 +1,10 @@
 {
-  "version": "24.245.74",
-  "buildTime": "2026-11-05T12:30:00.000Z",
+  "version": "24.245.75",
+  "buildTime": "2026-11-05T12:56:48.996Z",
   "shortNotes": [
-    "Desktop Glass Shield: Backdrop-Filter auf 26 Inhaltskarten abgeschaltet",
-    "Strenge Video-Virtualisierung: Maximal 1 aktives Video zeitgleich im DOM",
-    "Konsolidierter 5s-Heartbeat: 4 Einzel-Intervalle für tiefe CPU C-States verschmolzen"
+    "Search/Command Palette Zero-GPU: Vollständige Eliminierung von Backdrop-Filtern & Pausieren verdeckter Videos",
+    "StandBy Deep-Sleep 0% GPU: Vollflächiger 36px-Blur-Shader eliminiert & transition-freier Fortschrittsbalken",
+    "Dashboard Closed & Offscreen Freeze: Berechnungen, rAF & Ticker stoppen bei geschlossenem/gescrolltem Dashboard",
+    "Universal Tailwind Blur Shield: Entfernt redundante Filter von Buttons, Footern und statischen Panels"
   ]
 }
