@@ -1,10 +1,10 @@
 {
-  "version": "24.245.75",
-  "buildTime": "2026-11-05T12:56:48.996Z",
+  "version": "24.245.76",
+  "buildTime": "2026-11-05T13:16:17.654Z",
   "shortNotes": [
-    "Search/Command Palette Zero-GPU: Vollständige Eliminierung von Backdrop-Filtern & Pausieren verdeckter Videos",
-    "StandBy Deep-Sleep 0% GPU: Vollflächiger 36px-Blur-Shader eliminiert & transition-freier Fortschrittsbalken",
-    "Dashboard Closed & Offscreen Freeze: Berechnungen, rAF & Ticker stoppen bei geschlossenem/gescrolltem Dashboard",
-    "Universal Tailwind Blur Shield: Entfernt redundante Filter von Buttons, Footern und statischen Panels"
+    "StandBy Ultra Deep-Sleep: #standby-card-blur-bg Blur eliminiert & universeller Desktop-Schutz gegen Restfilter",
+    "Dashboard Ticker Throttling: Fortschritts-Ticker auf 500ms gedrosselt & redundante StandBy-DOM-Zugriffe entfernt",
+    "Hintergrund-Partikel Ruhemodus: Partikel bei geschlossenem Dashboard komplett ausgeblendet",
+    "Desktop Glow Cap: Maximaler Unschärferadius auf 14px limitiert für drastische Entlastung"
   ]
 }
