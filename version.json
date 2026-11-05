@@ -1,9 +1,10 @@
 {
-  "version": "24.245.77",
-  "buildTime": "2026-11-05T13:31:02.719Z",
+  "version": "24.245.78",
+  "buildTime": "2026-11-05T13:48:32.188Z",
   "shortNotes": [
-    "Dashboard Blur & Aura-Regler reaktiviert: Volle dynamische Einstellbarkeit über CSS-Variablen wiederhergestellt",
-    "2D-Performance-Architektur beibehalten: Frosted Glass Shield, StandBy 0% Deep-Sleep & geschlossenes Dashboard unverändert sparsam",
-    "Canvas Glow Steuerung: Aura-Blur, Karten-Blur, Radius und Intensität reagieren sofort auf Schieberegler"
+    "QA-Sticky-Watermark Zero-GPU: animate-ping & backdrop-blur-md durch ruhigen leuchtenden Indikator ersetzt",
+    "Dynamic Island Idle-Calm: Unnötige permanente Ring-Puls-Animation im Leerlauf vollständig abgeschaltet",
+    "Dynamic Island EQ-Bars Freeze: EQ-Animation friert sofort ein wenn eingeklappt oder pausiert",
+    "Hero QA-Badge Calm: Pulsierende Ping-Animation im Header-Badge beruhigt"
   ]
 }
