@@ -1,10 +1,11 @@
 {
-  "version": "24.245.84",
-  "buildTime": "2026-11-06T08:00:05.309Z",
+  "version": "24.245.85",
+  "buildTime": "2026-11-06T08:23:08.066Z",
   "shortNotes": [
-    "Dashboard Glow Bereinigung: Schwebende Hintergrund-Partikel (#particles-container) vollständig entfernt",
-    "Ruhige, edle Ambilight-Aura ohne störende weiße Staub-Punkte oder rechenintensive Endlos-Animationen",
-    "Zusätzliche GPU-Entlastung: 6 schwebende Partikel-Ebenen samt Keyframes aus DOM und Render-Pipeline entfernt",
-    "Asynchroner Spotify Equalizer bleibt mit voller GPU-Beschleunigung und lebendigen Frequenzen aktiv"
+    "Zero-GPU Dashboard Shield: 22px Multi-Pass Gaussian Backdrop-Filter auf #main-music-card eliminiert",
+    "Hardware-beschleunigte Mattglas-Prägung verhindert rekursive Shader-Berechnungen bei geöffnetem Dashboard",
+    "Compositor-Layer-Isolation: .eq-bars mit contain: paint und isolation: isolate entkoppelt",
+    "Hardware-Overlay für #canvas-glow-video & #ambilight-glow (translate3d, will-change: transform, opacity)",
+    "Verschachtelter .backdrop-blur-[1px] im Kartenhintergrund entfernt für butterweiche 60-144 FPS Performance"
   ]
 }
