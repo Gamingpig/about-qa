@@ -1,10 +1,10 @@
 {
-  "version": "24.245.82",
-  "buildTime": "2026-11-06T07:29:44.730Z",
+  "version": "24.245.83",
+  "buildTime": "2026-11-06T07:36:41.806Z",
   "shortNotes": [
-    "Spotify Equalizer Sichtbarkeit & Rendering: Containment-Kollaps behoben, immer sichtbare 18px Basisbreite",
-    "Authentische 4-Balken-Geometrie (6px, 12px, 8px, 10px) in sattem Spotify-Grün (#22c55e)",
-    "100% GPU-Compositor-Beschleunigung via will-change: transform und scaleY ohne Layout-Reflows",
-    "Mobile-Sicherheit: hidden xxs:flex-Klasse entfernt, sodass die Balken auf allen Displays sofort sichtbar sind"
+    "Asynchrone Spotify-Equalizer Dynamik: 4 echte unabhängige Frequenzbänder (0.43s, 0.65s, 0.49s, 0.58s)",
+    "Echte organische Beat-Wellen (Bass-Punch, Mitten-Schwung, Höhen-Peak) mit phasenverschobenen Keyframes",
+    "100% GPU-Compositor beschleunigt: Reine transform: scaleY() Animationen ohne CPU-Last und ohne Layout-Reflows",
+    "Robuster Ruhezustand: Sofortiger Pause-Freeze bei 40% Höhe und automatische Deaktivierung bei Lyrics/StandBy"
   ]
 }
