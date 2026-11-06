@@ -1,10 +1,10 @@
 {
-  "version": "24.245.80",
-  "buildTime": "2026-11-05T14:37:05.782Z",
+  "version": "24.245.81",
+  "buildTime": "2026-11-06T07:20:40.003Z",
   "shortNotes": [
-    "Memory Leak & Autoclicker Protection: WebAudio AudioNode Leak-Guard mit automatischem disconnect() & Safety-Timeout",
-    "DOM-Pool Begrenzung: #toast-container auf maximal 3 aktive Elemente limitiert & Spam-Deduplizierung integriert",
-    "Compositor Animation Guard: target.animate() instanziiert keine redundanten Animationen auf bereits animierten Elementen",
-    "Haptik-, Soundboard- & Effekt-Throttling: Rate-Limits für DJ Scratch, SFX, Partikel und navigator.vibrate"
+    "Compositor-Equalizer Overhaul: .eq-bars auf direkte Hardware-Transformation (scaleY + translateZ(0)) umgestellt",
+    "Zero Layout Reflow: Kein height-Jank bei Pause/Offline, rein GPU-beschleunigte Skalierung",
+    "Single Hardware Animation Cycle: 4 getrennte Timer durch synchronisierten 0.85s Wave-Zyklus mit Phasen-Delays ersetzt",
+    "Deep Culling & Compositor Shield: Vollständiges Einfrieren/Ausblenden bei Lyrics-Overlay, StandBy, Tab-Blur und Low-End"
   ]
 }
