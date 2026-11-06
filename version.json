@@ -1,10 +1,10 @@
 {
-  "version": "24.245.81",
-  "buildTime": "2026-11-06T07:20:40.003Z",
+  "version": "24.245.82",
+  "buildTime": "2026-11-06T07:29:44.730Z",
   "shortNotes": [
-    "Compositor-Equalizer Overhaul: .eq-bars auf direkte Hardware-Transformation (scaleY + translateZ(0)) umgestellt",
-    "Zero Layout Reflow: Kein height-Jank bei Pause/Offline, rein GPU-beschleunigte Skalierung",
-    "Single Hardware Animation Cycle: 4 getrennte Timer durch synchronisierten 0.85s Wave-Zyklus mit Phasen-Delays ersetzt",
-    "Deep Culling & Compositor Shield: Vollständiges Einfrieren/Ausblenden bei Lyrics-Overlay, StandBy, Tab-Blur und Low-End"
+    "Spotify Equalizer Sichtbarkeit & Rendering: Containment-Kollaps behoben, immer sichtbare 18px Basisbreite",
+    "Authentische 4-Balken-Geometrie (6px, 12px, 8px, 10px) in sattem Spotify-Grün (#22c55e)",
+    "100% GPU-Compositor-Beschleunigung via will-change: transform und scaleY ohne Layout-Reflows",
+    "Mobile-Sicherheit: hidden xxs:flex-Klasse entfernt, sodass die Balken auf allen Displays sofort sichtbar sind"
   ]
 }
