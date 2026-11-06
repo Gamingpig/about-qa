@@ -1,10 +1,10 @@
 {
-  "version": "24.245.83",
-  "buildTime": "2026-11-06T07:36:41.806Z",
+  "version": "24.245.84",
+  "buildTime": "2026-11-06T08:00:05.309Z",
   "shortNotes": [
-    "Asynchrone Spotify-Equalizer Dynamik: 4 echte unabhängige Frequenzbänder (0.43s, 0.65s, 0.49s, 0.58s)",
-    "Echte organische Beat-Wellen (Bass-Punch, Mitten-Schwung, Höhen-Peak) mit phasenverschobenen Keyframes",
-    "100% GPU-Compositor beschleunigt: Reine transform: scaleY() Animationen ohne CPU-Last und ohne Layout-Reflows",
-    "Robuster Ruhezustand: Sofortiger Pause-Freeze bei 40% Höhe und automatische Deaktivierung bei Lyrics/StandBy"
+    "Dashboard Glow Bereinigung: Schwebende Hintergrund-Partikel (#particles-container) vollständig entfernt",
+    "Ruhige, edle Ambilight-Aura ohne störende weiße Staub-Punkte oder rechenintensive Endlos-Animationen",
+    "Zusätzliche GPU-Entlastung: 6 schwebende Partikel-Ebenen samt Keyframes aus DOM und Render-Pipeline entfernt",
+    "Asynchroner Spotify Equalizer bleibt mit voller GPU-Beschleunigung und lebendigen Frequenzen aktiv"
   ]
 }
