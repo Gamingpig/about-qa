@@ -1,11 +1,10 @@
 {
-  "version": "24.245.89",
-  "buildTime": "2026-11-10T12:54:44.124Z",
+  "version": "24.245.90",
+  "buildTime": "2026-11-10T15:45:00.000Z",
   "shortNotes": [
-    "Perfekte Apple Music Pro Ästhetik: 0.35s elastischer Apple-Bounce mit sanft einblendendem Text-Shadow-Glow & 0.22s Farbübergang",
-    "Edler Frosted-Glass Hintergrund auf #lyrics-overlay nahtlos wiederhergestellt (Liquid-Glass Tiefschwarz mit 20px Weichzeichnung)",
-    "Equalizer-Balken bei geöffneten Lyrics vollständig pausiert (:not(.lyrics-open) verhindert 4 redundante Dauer-Keyframe-Animationen)",
-    "Progress-Update-Guard: updateProgressUI() überspringt verdeckte Hauptkarten-Transforms (#music-progress-bar) bei aktiven Lyrics",
-    "Stabiles 60 FPS Compositor-Pacing (15ms): Garantiert jitterfreie 60 FPS auf 60Hz Monitoren und drosselt High-Refresh Displays präzise"
+    "Soften Blur der Main Music Card für Pure Canvas (Cinema Modal) übernommen (52px Desktop / 38px Mobil)",
+    "Reaktivierung des Custom Glass Lyrics Style Pickers mit Kategorien-Headern und aktiver Häkchen-Anzeige",
+    "Bestehendes lyrics-style-select Element als Kompatibilitätsanker im DOM erhalten",
+    "Strikte 0% zusätzliche GPU-/CPU-Last durch reine Compositor-Layer-Attribute (contain: strict; will-change: transform)"
   ]
 }
