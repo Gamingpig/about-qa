@@ -1,11 +1,10 @@
 {
-  "version": "24.245.85",
-  "buildTime": "2026-11-06T08:23:08.066Z",
+  "version": "24.245.86",
+  "buildTime": "2026-11-10T12:08:51.854Z",
   "shortNotes": [
-    "Zero-GPU Dashboard Shield: 22px Multi-Pass Gaussian Backdrop-Filter auf #main-music-card eliminiert",
-    "Hardware-beschleunigte Mattglas-Prägung verhindert rekursive Shader-Berechnungen bei geöffnetem Dashboard",
-    "Compositor-Layer-Isolation: .eq-bars mit contain: paint und isolation: isolate entkoppelt",
-    "Hardware-Overlay für #canvas-glow-video & #ambilight-glow (translate3d, will-change: transform, opacity)",
-    "Verschachtelter .backdrop-blur-[1px] im Kartenhintergrund entfernt für butterweiche 60-144 FPS Performance"
+    "CPU-Entlastung bei Songtext-Animation: 95% weniger DOM-Mutationen durch Word-State-Caching",
+    "Fluiditäts-Upgrade für schnelle Songs: 30fps-Desktop-Drosselung aufgehoben für butterweiche 60-144 FPS",
+    "Apple Music Pro: Reaktionsschnelle 0.20s Elastic-Transitions und Hardware-Layer-Promotion (will-change)",
+    "DOM-Reflow-Schutz: textContent-Aktualisierungen bei Zeitanzeigen nur noch bei echtem Sekundenwechsel"
   ]
 }
