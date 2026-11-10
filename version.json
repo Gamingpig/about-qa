@@ -1,11 +1,11 @@
 {
-  "version": "24.245.88",
-  "buildTime": "2026-11-10T12:41:10.074Z",
+  "version": "24.245.89",
+  "buildTime": "2026-11-10T12:54:44.124Z",
   "shortNotes": [
-    "Zero-Blur Shield für Songtext-Overlay: 24px Multi-Pass Gaussian Blur auf #lyrics-overlay vollständig eliminiert",
-    "Compositor-Layer-Bereinigung: will-change und 3D-Backface-Visibility von .lyric-char entfernt (über 1.500 Layer abgebaut)",
-    "Keine CPU-Rasterisierung bei Zeichen-Übergängen: text-shadow aus CSS-Transitions entfernt für butterweiche Darstellung",
-    "Effiziente Style-Invalidierung: --fill-percent nur noch in Fill/Karaoke-Styles, 0 Style-Updates in Apple Music Pro",
-    "Butterweiches 10ms Frame-Pacing für Desktop: Kein VSYNC-Jitter-Dropping auf 60Hz und flüssige Kadenz bei schnellen Raps"
+    "Perfekte Apple Music Pro Ästhetik: 0.35s elastischer Apple-Bounce mit sanft einblendendem Text-Shadow-Glow & 0.22s Farbübergang",
+    "Edler Frosted-Glass Hintergrund auf #lyrics-overlay nahtlos wiederhergestellt (Liquid-Glass Tiefschwarz mit 20px Weichzeichnung)",
+    "Equalizer-Balken bei geöffneten Lyrics vollständig pausiert (:not(.lyrics-open) verhindert 4 redundante Dauer-Keyframe-Animationen)",
+    "Progress-Update-Guard: updateProgressUI() überspringt verdeckte Hauptkarten-Transforms (#music-progress-bar) bei aktiven Lyrics",
+    "Stabiles 60 FPS Compositor-Pacing (15ms): Garantiert jitterfreie 60 FPS auf 60Hz Monitoren und drosselt High-Refresh Displays präzise"
   ]
 }
