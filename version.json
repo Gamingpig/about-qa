@@ -1,10 +1,10 @@
 {
-  "version": "24.245.86",
-  "buildTime": "2026-11-10T12:08:51.854Z",
+  "version": "24.245.87",
+  "buildTime": "2026-11-10T12:18:58.064Z",
   "shortNotes": [
-    "CPU-Entlastung bei Songtext-Animation: 95% weniger DOM-Mutationen durch Word-State-Caching",
-    "Fluiditäts-Upgrade für schnelle Songs: 30fps-Desktop-Drosselung aufgehoben für butterweiche 60-144 FPS",
-    "Apple Music Pro: Reaktionsschnelle 0.20s Elastic-Transitions und Hardware-Layer-Promotion (will-change)",
-    "DOM-Reflow-Schutz: textContent-Aktualisierungen bei Zeitanzeigen nur noch bei echtem Sekundenwechsel"
+    "Echte CPU-Entlastung bei Songtext-Animation: 0 DOM-Mutationen pro Frame für vergangene und zukünftige Wörter",
+    "Word-State-Machine: Nur noch das aktuell aktive Wort triggert Style- und Attributänderungen (1-2 DOM-Ops statt 60+)",
+    "Compositor-Taktung: Desktop-Framerate präzise auf 60 FPS (16.6ms) gedeckelt gegen CPU-Spikes auf High-Refresh Monitoren",
+    "Apple Music Pro: 0.20s Federtransition mit will-change und backface-visibility gegen Style-Thrashing bei schnellen Raps/Syllables"
   ]
 }
