@@ -11781,6 +11781,14 @@ html.gp-android:not(.dark) #ui-controls {
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
                     <span id="settings-info-pwa-val" class="text-xs font-bold text-emerald-400">Aktiv ✓</span>
                 </div>
+                <!-- Software-Updates -->
+                <div class="pt-2 border-t border-white/5">
+                    <label class="text-xs font-bold text-slate-400 block mb-2">Software-Updates</label>
+                    <button onclick="checkManualUpdates()" class="w-full py-2.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 text-xs font-bold transition-all border border-blue-500/30 cursor-pointer">
+                        Auf Updates prüfen
+                    </button>
+                    <div id="settings-update-status" class="mt-2 text-[10px] text-slate-400 font-mono text-center">Kein Update verfügbar</div>
+                </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">Release Notes</span>
                     <a href="release.html" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-blue-400 hover:text-blue-300 underline">Vollständiges Changelog ↗</a>
