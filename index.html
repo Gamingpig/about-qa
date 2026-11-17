@@ -11473,6 +11473,20 @@ html.gp-android:not(.dark) #ui-controls {
                     <span>140%</span>
                 </div>
             </div>
+            <!-- Layout Modus -->
+            <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-sm shrink-0">🖥️</div>
+                    <div>
+                        <label class="text-xs sm:text-sm font-bold text-slate-100 block">Layout-Modus</label>
+                        <span class="text-xs text-slate-400">Desktop-Grid vs Mobile</span>
+                    </div>
+                </div>
+                <div class="flex bg-slate-900 rounded-lg p-1 border border-slate-700">
+                    <button onclick="localStorage.setItem('gp_layout_mode', 'mobile'); location.reload();" class="px-3 py-1 rounded-md text-xs font-bold transition-all hover:bg-slate-700">Mobile</button>
+                    <button onclick="localStorage.setItem('gp_layout_mode', 'desktop'); location.reload();" class="px-3 py-1 rounded-md text-xs font-bold transition-all bg-blue-600/20 text-blue-300">Desktop</button>
+                </div>
+            </div>
             <!-- Canvas Glow Radius & Blur Einstellungen -->
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between">
