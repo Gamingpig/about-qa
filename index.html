@@ -4703,6 +4703,16 @@ body.liquid-glass-active :is(.glass-card, #header-section, #footer-bubble, #foot
     transition: opacity 0.4s var(--apple-ease);
     pointer-events: none;
 }
+/* Desktop Grid Layout Optimization (v24.246.1) */
+html.gp-desktop #main-content {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 40px !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+}
+
 :is(html.gp-android, html.gp-mobile) :is(.glass-card, #header-section, #footer-bubble, #footer-expandable-menu)::before { display: none !important; }
 :is(html.gp-android, html.gp-mobile) :is(.glass-card:not(#back-to-top), #header-section, #footer-bubble, #footer-expandable-menu)::after { display: none !important; }
 .dark body.liquid-glass-active :is(.glass-card, #header-section, #footer-bubble, #footer-expandable-menu)::before {
