@@ -3371,6 +3371,12 @@
         try { savedStrat = localStorage.getItem('gp_glass_render_strategy') || ''; } catch(e){}
         if (!savedStrat) savedStrat = (isAndroid || isPixel || isMobileOrTouch) ? 'shield' : 'auto';
         root.classList.add('glass-strat-' + savedStrat);
+        
+        // Layout Mode Manager: desktop/mobile
+        var savedLayout = '';
+        try { savedLayout = localStorage.getItem('gp_layout_mode') || ''; } catch(e){}
+        if (!savedLayout) savedLayout = (isMobileOrTouch) ? 'mobile' : 'desktop';
+        root.classList.add('gp-' + savedLayout);
     }catch(e){}})();
     </script>
     <script src="./js/core/push-config.js"></script>
@@ -8497,6 +8503,11 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         /* --- StandBy: Idle-Zustand (keine Musik) - Cover, EQ & Timeline ausblenden --- */
         #standby-nowplaying.standby-idle #standby-card-blur-bg {
             display: none !important;
+        }
+        /* FIX CHROME STANDBY GPU (v24.246.0): Disable backdrop-filter on Desktop to fix layer thrashing */
+        html.gp-desktop #standby-overlay {
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
         }
         #standby-overlay.standby-active:has(#standby-nowplaying.standby-idle) #standby-bg {
             filter: none !important;
