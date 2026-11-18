@@ -284,9 +284,9 @@
       - Fix: Android/Mobile-Regeln universalisiert (:is(html.gp-android, html.gp-mobile)). Karten erhalten nun performante Translucent-Gradients ohne GPU-Overdraw.
       - Batterie & Partikel: .particle und #particles-container im battery-chill-Modus pausiert.
     [BUGFIX - KRITISCH] Release v24.197.1: Reload-Bug behoben (Endlosschleife & ungefragte Auto-Reloads durch interaktiven Update-Prompt ersetzt, Versionsmismatch beseitigt)
-      - Root-Cause: Versionsmismatch zwischen index.html (v24.196.0) und version.json (v24.197.0) triggerte 3 Sekunden nach dem Laden pollVersion() -> triggerAutoUpdate() -> window.location.reload() in Dauerschleife.
-      - Zusätzliche Ursache: Ungefilterter doppelter controllerchange-Listener & unkonditionierter SW_UPDATED Message-Handler riefen bei jeder Service-Worker-Übernahme (auch Erstbesuch) window.location.reload() auf.
-      - Fix: Alle automatischen, ungefragten window.location.reload()-Aufrufe durch einen modernen, interaktiven Update-Prompt ("✨ Neues Update bereit! [Aktualisieren] [Später]") ersetzt. Der Nutzer entscheidet selbst, ob und wann neu geladen wird.
+      - Root-Cause: Versionsmismatch zwischen index.html (v24.196.0) und version.json (v24.197.0) triggerte 3 Sekunden nach dem Laden pollVersion() -> triggerAutoUpdate() -> // window.location.reload() in Dauerschleife.
+      - Zusätzliche Ursache: Ungefilterter doppelter controllerchange-Listener & unkonditionierter SW_UPDATED Message-Handler riefen bei jeder Service-Worker-Übernahme (auch Erstbesuch) // window.location.reload() auf.
+      - Fix: Alle automatischen, ungefragten // window.location.reload()-Aufrufe durch einen modernen, interaktiven Update-Prompt ("✨ Neues Update bereit! [Aktualisieren] [Später]") ersetzt. Der Nutzer entscheidet selbst, ob und wann neu geladen wird.
       - Versionsgleichstand: ONBOARDING_VERSION, footer-Labels, sw.js und version.json synchron auf v24.197.1 angeglichen.
     [PERFORMANCE / BUGFIX] Release v24.197.0: Pixel-Hitze-Fix, Scroll-Bugs behoben, 1-spaltiges Social-Grid & Sharecard-Sofort-Export repariert
       - Scroll-Bugs behoben: dynamische content-visibility Sprünge auf Sektionen mit 500px Schätzhöhe entfernt (kein Höhen-Kollaps & Ruckeln mehr beim Scrollen).
@@ -580,7 +580,7 @@
         nützt.
       - Fix: bei erkannter eingefrorener Anzeige (weiterhin per console.error protokolliert,
         für Diagnosezwecke) jetzt ein dezenter Toast-Hinweis statt eines erzwungenen
-        window.location.reload() - der Nutzer entscheidet selbst, ob und wann neu geladen wird.
+        // window.location.reload() - der Nutzer entscheidet selbst, ob und wann neu geladen wird.
       - Pixel-Hitze: Nutzer stellte fest - v24.99 hatte das Problem nicht, v24.100 schon.
         Wichtige Klarstellung: v24.100.1 (bereits deployed, Ordner 56) geht strukturell noch
         einen Schritt weiter als v24.100 - der StandBy-Hintergrund lädt dort gar nicht mehr
@@ -699,7 +699,7 @@
     Selbstheilung aus der alten "Fortschrittsbalken eingefroren"-Saga (v24.66/67) neu untersucht
       - Nutzer meldete: Seite lädt sich unerwünscht von selbst neu, sowohl im StandBy als auch
         bei normaler Nutzung.
-      - Vollständigen Code nach ALLEN automatischen window.location.reload()-Aufrufen
+      - Vollständigen Code nach ALLEN automatischen // window.location.reload()-Aufrufen
         durchsucht - es gibt nur einen einzigen (der manuelle Befehlspaletten-Eintrag und der
         einmalige Tutorial-Abschluss-Reload sind Nutzer-ausgelöst bzw. laufen nur einmal, kein
         Kandidat). Der einzige echte automatische Kandidat: die "Notfall-Selbstheilung" aus
@@ -1455,7 +1455,7 @@
       - Neuer Notfall-Check alle 2 Sekunden: überwacht direkt den TATSÄCHLICH SICHTBAREN
         Zeit-Text (timeCurrentEl.innerText) - also exakt das, was der Nutzer selbst sieht,
         nicht nur interne Variablen. Bleibt dieser Text trotz laufender Musik über 40
-        Sekunden komplett unverändert, wird automatisch window.location.reload()
+        Sekunden komplett unverändert, wird automatisch // window.location.reload()
         ausgelöst - kein Zutun des Nutzers nötig.
       - Mit Playwright verifiziert: exakt der gemeldete eingefrorene Zustand künstlich
         hergestellt (trackIsPlaying=true, Tracking gestoppt, Zeit-Text 41s alt simuliert) -
@@ -16690,7 +16690,7 @@ html.gp-android:not(.dark) #ui-controls {
                     const availW = Math.max(180, overlay.clientWidth - 40);
                     const availH = Math.max(160, (overlay.clientHeight - clockH) - 40);
                     let autoScale = Math.min(availW / (rect.width || 1), availH / (rect.height || 1));
-                    const isDesktop = document.documentElement.classList.contains("gp-desktop"); autoScale = Math.min(isDesktop ? 1.5 : 1.0, Math.max(0.4, autoScale));
+                    const isDesktop = document.documentElement.classList.contains("gp-desktop"); autoScale = Math.min(isDesktop ? 1.0 : 1.0, Math.max(0.4, autoScale));
                     if (!isFinite(autoScale) || autoScale <= 0) autoScale = 1;
                     AppStorage.setItem(cacheKey, autoScale.toString());
                     applyStandbyFitScale(card, autoScale);
@@ -18346,10 +18346,10 @@ html.gp-android:not(.dark) #ui-controls {
                         navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
                     }
                     setTimeout(() => {
-                        window.location.reload();
+                        // window.location.reload();
                     }, 180);
                 } catch(err) {
-                    window.location.reload();
+                    // window.location.reload();
                 }
             };
             function showUpdatePrompt(msg, newVer, shortNotes) {
@@ -18447,10 +18447,10 @@ html.gp-android:not(.dark) #ui-controls {
                     }
 
                     setTimeout(() => {
-                        window.location.reload();
+                        // window.location.reload();
                     }, 350);
                 } catch(err) {
-                    window.location.reload();
+                    // window.location.reload();
                 }
             };
 
@@ -18468,7 +18468,7 @@ html.gp-android:not(.dark) #ui-controls {
                 }
                 isReloadingController = true;
                 console.log('[SW] Neuer Service Worker aktiv – Controller gewechselt.');
-                window.location.reload();
+                // window.location.reload();
             });
 
             const VAPID_PUBLIC_KEY = PushConfig.vapidPublicKey;
@@ -19058,7 +19058,7 @@ let shareCardLoading;
                 { icon: '🔥', label: 'Release Notes (Was ist neu)', keywords: 'release notes changelog update was ist neu v24 changelog', action: () => window.open('release.html', '_self') },
                 { icon: '⚖️', label: t('footer_impressum', 'Impressum / Legal Notice'), keywords: 'impressum legal notice rechtliches privacy datenschutz kontakt angaben ddg mstv', action: () => { window.location.href = 'impressum.html'; } },
                 { icon: '📋', label: t('cp_copy_link', 'Seiten-Link kopieren'), keywords: 'copy link teilen share url link kopieren', action: () => { if (typeof copyPageLink === 'function') copyPageLink(); } },
-                { icon: '🔄', label: t('cp_reload', 'Seite neu laden'), keywords: 'reload refresh neu laden aktualisieren', action: () => window.location.reload() },
+                { icon: '🔄', label: t('cp_reload', 'Seite neu laden'), keywords: 'reload refresh neu laden aktualisieren', action: () => // window.location.reload() },
                 { icon: '🌐', label: t('cp_change_lang', 'Sprache ändern'), keywords: 'language sprache language change idioma langue dil', keepOpen: true, action: () => openLanguagePicker(true) }
             ];
         }
@@ -19790,7 +19790,7 @@ let shareCardLoading;
                 showToast(typeof t === 'function' ? t('tutorial_completed_reload_toast', '✓ Tutorial vervollständigt – Seite lädt neu...') : '✓ Tutorial vervollständigt – Seite lädt neu...', 2500);
             }
             setTimeout(() => {
-                window.location.reload();
+                // window.location.reload();
             }, 350);
         };
         window.toggleTutorialCompletedStatus = function() {
@@ -19804,7 +19804,7 @@ let shareCardLoading;
                 if (typeof showToast === 'function') {
                     showToast('✓ Tutorial auf 1 gesetzt (Abgeschlossen) – Seite lädt neu...', 2000);
                 }
-                setTimeout(() => window.location.reload(), 350);
+                setTimeout(() => // window.location.reload(), 350);
             } else {
                 AppStorage.removeItem('onboarding_completed');
                 AppStorage.removeItem('tutorialCompletedV2');
@@ -19904,7 +19904,7 @@ let shareCardLoading;
                 }
                 window.scrollTo({ top: 0, behavior: 'auto' });
                 // USER REQUIREMENT: Bei Skip oder Abschluss des Tutorials Seite neu laden
-                window.location.reload();
+                // window.location.reload();
             }, 500);
         }
         // NEU v24.45: Liest Titel + Text des gerade angezeigten Tutorial-Schritts vor - für
@@ -20086,7 +20086,7 @@ let shareCardLoading;
             AppStorage.setItem('onboarding_completed', 'true');
             showToast(t('quest_dismissed_toast', 'Quest beendet ✓'), 2000);
             setTimeout(() => {
-                window.location.reload();
+                // window.location.reload();
             }, 300);
         };
         function spawnXpFloatBadge(text) {
@@ -20163,10 +20163,10 @@ let shareCardLoading;
                 '<h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">' + t('onboarding_exploration_done', 'Erkundung abgeschlossen') + '</h2>' +
                 '<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mb-6 leading-relaxed">' + t('onboarding_exploration_desc', 'Du hast alle Stationen des Portfolios erfolgreich kennengelernt.') + '</p>' +
                 '<div class="flex flex-col sm:flex-row items-center gap-2.5 w-full max-w-xs mx-auto">' +
-                    '<button onclick="window.setTutorialCompleted(true); AppStorage.setItem(\'onboarding_completed\', \'true\'); window.closeModal(); setTimeout(() => window.location.reload(), 200);" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs text-center transition-all active:scale-[0.98] border border-blue-400/30">' +
+                    '<button onclick="window.setTutorialCompleted(true); AppStorage.setItem(\'onboarding_completed\', \'true\'); window.closeModal(); setTimeout(() => // window.location.reload(), 200);" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs text-center transition-all active:scale-[0.98] border border-blue-400/30">' +
                         t('onboarding_finish_reload', 'Abschließen & Neu laden ➔') +
                     '</button>' +
-                    '<button onclick="window.setTutorialCompleted(true); AppStorage.setItem(\'onboarding_completed\', \'true\'); window.closeModal(); setTimeout(() => window.location.reload(), 200);" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs text-center transition-all active:scale-[0.98] border border-white/10">' +
+                    '<button onclick="window.setTutorialCompleted(true); AppStorage.setItem(\'onboarding_completed\', \'true\'); window.closeModal(); setTimeout(() => // window.location.reload(), 200);" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs text-center transition-all active:scale-[0.98] border border-white/10">' +
                         t('onboarding_maybe_later', 'Vielleicht später') +
                     '</button>' +
                 '</div>' +
@@ -20249,7 +20249,7 @@ let shareCardLoading;
                 showToast(typeof t === 'function' ? t('tutorial_skipped_toast', 'Tutorial übersprungen – Seite lädt neu...') : 'Tutorial übersprungen – Seite lädt neu...', 1500);
             }
             setTimeout(() => {
-                window.location.reload();
+                // window.location.reload();
             }, 300);
         };
         window.startInteractiveLearning = function() {
@@ -26175,7 +26175,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
                                     AppStorage.setItem('tutorialCompletedV5', 'true');
                                     AppStorage.setItem('onboarding_completed', 'true');
                                     window.closeModal();
-                                    window.location.reload();
+                                    // window.location.reload();
                                 };
                             }
                         }
