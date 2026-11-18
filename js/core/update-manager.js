@@ -18,10 +18,21 @@ window.checkManualUpdates = async function() {
         if (remote.version !== local.version) {
             statusDiv.innerText = "Update gefunden: v" + remote.version;
             statusDiv.style.color = "#f59e0b";
-            // Trigger the global whatsnew overlay if it exists
-            if (typeof triggerWhatsNew === 'function') {
-                triggerWhatsNew();
+            
+            // 1. Force Clear PWA Cache
+            if ('caches' in window) {
+                const cacheKeys = await caches.keys();
+                await Promise.all(cacheKeys.map(key => caches.delete(key)));
             }
+
+            // 2. Unregister Service Workers
+            if ('serviceWorker' in navigator) {
+                const regs = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(regs.map(r => r.unregister()));
+            }
+
+            // 3. Force Hard Reload
+            window.location.reload(true);
         } else {
             statusDiv.innerText = "Dein System ist aktuell (v" + local.version + ")";
             statusDiv.style.color = "#10b981";
