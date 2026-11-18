@@ -8516,10 +8516,19 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         #standby-nowplaying.standby-idle #standby-card-blur-bg {
             display: none !important;
         }
-        /* FIX CHROME STANDBY GPU (v24.246.0): Disable backdrop-filter on Desktop to fix layer thrashing */
-        html.gp-desktop #standby-overlay {
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
+        /* Desktop Full-Width Adaptation */
+        html.gp-desktop #main-music-card {
+            max-width: none !important;
+            width: 100% !important;
+        }
+        
+        /* Fix for Chrome Standby Card rendering issues */
+        @media screen and (-webkit-min-device-pixel-ratio:0) {
+            #standby-nowplaying {
+                contain: none !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
         }
         #standby-overlay.standby-active:has(#standby-nowplaying.standby-idle) #standby-bg {
             filter: none !important;
@@ -10245,7 +10254,7 @@ html.gp-android:not(.dark) #ui-controls {
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="xxs:w-4 xxs:h-4 sm:w-5 sm:h-5"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/></svg>
                                     </button>
                                     <!-- Das Lyrics Settings Menü Fenster (Direkt am Button im Lyrics Center verankert!) -->
-                                    <div id="lyrics-settings-menu" class="absolute top-full right-0 mt-2 xxs:mt-3 bg-[#0f172a] border border-slate-700/80 rounded-2xl p-2.5 xxs:p-3 sm:p-3.5 shadow-2xl hidden flex flex-col gap-2 w-[285px] xxs:w-[315px] sm:w-[345px] max-w-[calc(100vw-1.5rem)] z-[9999] origin-top-right max-h-[75vh] sm:max-h-[460px] overflow-y-auto" style="-webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;" onclick="event.stopPropagation()">
+                                    <div id="lyrics-settings-menu" class="absolute top-full right-0 mt-2 xxs:mt-3 bg-black border border-slate-700/80 rounded-2xl p-2.5 xxs:p-3 sm:p-3.5 shadow-2xl hidden flex flex-col gap-2 w-[285px] xxs:w-[315px] sm:w-[345px] max-w-[calc(100vw-1.5rem)] z-[9999] origin-top-right max-h-[75vh] sm:max-h-[460px] overflow-y-auto" style="-webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; background-color: #000 !important; backdrop-filter: none !important; opacity: 1.0 !important;" onclick="event.stopPropagation()">
                                     <!-- Header -->
                                     <div class="flex items-center justify-between pb-1.5 mb-0.5 border-b border-white/10">
                                         <span class="text-xs font-black uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
@@ -18571,28 +18580,7 @@ html.gp-android:not(.dark) #ui-controls {
             });
             setInterval(checkSWUpdates, 60000);
 
-            // Version Watcher: Prüft version.json direkt ohne Cache (nur wenn Tab aktiv)
-            async function pollVersion() {
-                if (document.hidden) return;
-                try {
-                    const res = await fetch('./version.json?_t=' + Date.now(), { cache: 'no-store' });
-                    if (!res.ok) return;
-                    const data = await res.json();
-                    const liveVer = (data && data.version ? String(data.version) : '').replace(/^v/, '').trim();
-                    const currentVer = String(window.ONBOARDING_VERSION || '').split(' · ')[0].replace(/^v/, '').trim();
-                    const liveNum = typeof parseVersionNum === 'function' ? parseVersionNum(liveVer) : 0;
-                    const curNum = typeof parseVersionNum === 'function' ? parseVersionNum(currentVer) : 0;
-                    const hasWaiting = Boolean(swRegistration && swRegistration.waiting);
-                    if (hasWaiting || (liveVer && currentVer && liveNum > curNum)) {
-                        console.log('[VersionWatcher] Update verfügbar:', currentVer, '->', liveVer);
-                        showUpdatePrompt('Version v' + liveVer + ' verfügbar!', liveVer, data.shortNotes || []);
-                    }
-                } catch(_) {}
-            }
-            (function setupVersionWatcher() {
-                setTimeout(pollVersion, 3000);
-                setInterval(pollVersion, 60000);
-            })();
+
 
             // Manuelle Update-Prüfung (z. B. aus Android-Style Settings-Karte)
             window.manualCheckForUpdates = async function(userInitiated = false) {

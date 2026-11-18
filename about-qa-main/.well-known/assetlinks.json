@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.gamingpig.portfolio",
+    "sha256_cert_fingerprints": [
+      "F9:62:4C:67:86:85:18:29:A7:81:65:6F:E2:F6:6C:34:0A:B0:51:06:DF:EF:CF:7C:1C:C9:01:23:3E:C6:0B:1D"
+    ]
+  }
+}]

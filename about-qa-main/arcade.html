@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Piggy Cyber Dash 🕹️ - Retro Arcade 8-Bit</title>
+    <meta name="theme-color" content="#030712">
+    <link rel="icon" href="https://gamingpig.github.io/About-Gamingpig/og-v2.jpg" type="image/jpeg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #030712;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .scanlines {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-between text-white p-3 sm:p-6" style="padding-top: max(12px, env(safe-area-inset-top, 12px));">
+
+    <!-- Top Navigation Bar -->
+    <header class="w-full max-w-2xl flex items-center justify-between py-2 sm:py-3 px-4 rounded-2xl bg-slate-900/80 border border-cyan-500/30 backdrop-blur-xl z-20 shadow-lg">
+        <a id="btn-return" href="index.html" class="touch-manipulation flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-300 hover:text-cyan-400 transition-colors">
+            <span>←</span> <span>Zurück zum Portfolio</span>
+        </a>
+        <div class="flex items-center gap-2">
+            <span class="text-xl">🕹️</span>
+            <span class="text-xs sm:text-sm font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-400 uppercase">Piggy Cyber Dash</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button id="sound-toggle-btn" onclick="toggleSound()" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-mono font-bold text-cyan-300 transition-colors">
+                🔊 Sound: AN
+            </button>
+        </div>
+    </header>
+
+    <!-- Arcade Screen Container -->
+    <main class="w-full max-w-2xl flex-1 flex flex-col items-center justify-center relative my-auto p-2">
+        <div class="relative w-full aspect-[4/3] max-h-[520px] rounded-3xl overflow-hidden border-2 border-cyan-500/40 shadow-[0_0_60px_rgba(6,182,212,0.3)] bg-[#050814]" id="canvas-wrapper">
+            <canvas id="game-canvas" width="480" height="360" class="w-full h-full object-contain"></canvas>
+            <div class="absolute inset-0 scanlines"></div>
+
+            <!-- Start / Game Over Screen Overlay -->
+            <div id="game-overlay" class="absolute inset-0 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-30">
+                <div class="text-5xl sm:text-6xl mb-3 animate-bounce">🐷🚀</div>
+                <h1 id="overlay-title" class="text-2xl sm:text-3xl font-black text-white tracking-wide">PIGGY CYBER DASH</h1>
+                <p id="overlay-subtitle" class="text-xs sm:text-sm text-slate-300 mt-2 max-w-sm">
+                    Tippe oder drücke die Leertaste zum Springen. Weiche Laser-Säulen aus und sammle Sterne ⭐ und Controller 🎮!
+                </p>
+
+                <div id="overlay-score-wrap" class="hidden my-4 p-3 rounded-2xl bg-white/10 border border-white/10 w-full max-w-xs">
+                    <div class="text-xs text-slate-400 uppercase font-mono">Ergebnis</div>
+                    <div id="overlay-score-val" class="text-3xl font-black text-amber-400 font-mono">0</div>
+                    <div id="overlay-best-val" class="text-[11px] text-cyan-400 font-mono mt-0.5">Highscore: 0</div>
+                </div>
+
+                <button onclick="startGame(event)" class="mt-4 px-8 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-cyan-500/30 active:scale-95 transition-all">
+                    JETZT SPIELEN ⚡
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Controls & Hints -->
+    <footer class="w-full max-w-2xl py-2 px-4 rounded-2xl bg-slate-900/60 border border-white/10 text-center text-xs text-slate-400 z-20 flex items-center justify-between">
+        <span>Desktop: <kbd class="px-2 py-0.5 rounded bg-white/10 text-white font-mono text-[10px]">Leertaste</kbd> / Pfeil Oben</span>
+        <span id="best-score-footer" class="font-mono text-amber-300 font-bold">BEST: 0</span>
+        <span>Mobile: Display antippen</span>
+    </footer>
+
+    <script>
+        let isRunning = false;
+        let animFrame = null;
+        let score = 0;
+        let highScore = parseInt(localStorage.getItem('gp_arcade_highscore') || '0', 10);
+        let soundOn = true;
+        let lives = 3;
+        let invulnUntil = 0;
+        let pig = { x: 70, y: 180, vy: 0, r: 16 };
+        let pillars = [];
+        let stars = [];
+        let particles = [];
+        let lastSpawn = 0;
+        let lastTime = performance.now();
+        let audioCtx = null;
+
+        function getAudio() {
+            if (!audioCtx) {
+                const Cls = window.AudioContext || window.webkitAudioContext;
+                if (Cls) audioCtx = new Cls();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+            return audioCtx;
+        }
+
+        ['touchstart', 'click', 'keydown'].forEach(e => window.addEventListener(e, () => getAudio(), { once: true }));
+
+        function playSound(type) {
+            if (!soundOn) return;
+            try {
+                const ctx = getAudio();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+
+                if (type === 'jump') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.exponentialRampToValueAtTime(580, now + 0.12);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'coin') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, now);
+                    osc.frequency.setValueAtTime(880, now + 0.08);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                } else if (type === 'hit') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(140, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.18);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.18);
+                    osc.start(now);
+                    osc.stop(now + 0.18);
+                } else if (type === 'over') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(320, now);
+                    osc.frequency.linearRampToValueAtTime(100, now + 0.45);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+                    osc.start(now);
+                    osc.stop(now + 0.45);
+                }
+            } catch (e) {}
+        }
+
+        function toggleSound() {
+            soundOn = !soundOn;
+            document.getElementById('sound-toggle-btn').innerText = soundOn ? '🔊 Sound: AN' : '🔇 Sound: AUS';
+        }
+
+        function updateBestDisplay() {
+            document.getElementById('best-score-footer').innerText = 'BEST: ' + highScore;
+        }
+        updateBestDisplay();
+
+        function jump() {
+            if (!isRunning) return;
+            pig.vy = -6.6;
+            playSound('jump');
+            if (navigator.vibrate) navigator.vibrate(10);
+            for (let i = 0; i < 4; i++) {
+                particles.push({
+                    x: pig.x - 12,
+                    y: pig.y + 6,
+                    vx: -2 - Math.random() * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    life: 1.0,
+                    color: Math.random() > 0.5 ? '#06b6d4' : '#f43f5e',
+                    size: 3 + Math.random() * 3
+                });
+            }
+        }
+
+        function startGame(e) {
+            if (e) e.stopPropagation();
+            document.getElementById('game-overlay').classList.add('hidden');
+            score = 0;
+            lives = 3;
+            invulnUntil = 0;
+            pig = { x: 70, y: 180, vy: 0, r: 16 };
+            pillars = [];
+            stars = [];
+            particles = [];
+            lastSpawn = performance.now();
+            lastTime = performance.now();
+            isRunning = true;
+            jump();
+            if (animFrame) cancelAnimationFrame(animFrame);
+            animFrame = requestAnimationFrame(gameLoop);
+        }
+
+        function gameOver() {
+            isRunning = false;
+            playSound('over');
+            if (navigator.vibrate) navigator.vibrate(30);
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('gp_arcade_highscore', highScore.toString());
+                updateBestDisplay();
+            }
+            const overlay = document.getElementById('game-overlay');
+            document.getElementById('overlay-title').innerText = 'GAME OVER';
+            document.getElementById('overlay-subtitle').innerText = 'Gute Runde! Versuch deinen Highscore zu knacken.';
+            document.getElementById('overlay-score-val').innerText = score;
+            document.getElementById('overlay-best-val').innerText = 'Bester Score: ' + highScore;
+            document.getElementById('overlay-score-wrap').classList.remove('hidden');
+            overlay.classList.remove('hidden');
+        }
+
+        function gameLoop(now) {
+            if (!isRunning) return;
+            const dt = Math.min((now - lastTime) / 1000, 0.1);
+            lastTime = now;
+
+            pig.vy += 18.5 * dt;
+            pig.y += pig.vy;
+
+            if (pig.y < pig.r) { pig.y = pig.r; pig.vy = 0; }
+            if (pig.y > 360 - pig.r) { gameOver(); return; }
+
+            if (now - lastSpawn > 1650) {
+                lastSpawn = now;
+                const gapH = 110;
+                const topH = Math.floor(35 + Math.random() * (360 - gapH - 70));
+                pillars.push({ x: 480, topH, botY: topH + gapH, w: 38, passed: false });
+                stars.push({ x: 480 + 19, y: topH + gapH / 2, r: 9, type: Math.random() > 0.3 ? 'star' : 'controller', collected: false });
+            }
+
+            const speed = 145 * dt;
+            for (let i = pillars.length - 1; i >= 0; i--) {
+                const p = pillars[i];
+                p.x -= speed;
+
+                if (!p.passed && p.x + p.w < pig.x) {
+                    p.passed = true;
+                    score += 10;
+                }
+
+                if (now >= invulnUntil) {
+                    if (pig.x + pig.r > p.x && pig.x - pig.r < p.x + p.w) {
+                        if (pig.y - pig.r < p.topH || pig.y + pig.r > p.botY) {
+                            lives--;
+                            invulnUntil = now + 1200;
+                            playSound('hit');
+                            if (navigator.vibrate) navigator.vibrate(20);
+                            if (lives <= 0) { gameOver(); return; }
+                        }
+                    }
+                }
+
+                if (p.x < -p.w) pillars.splice(i, 1);
+            }
+
+            for (let i = stars.length - 1; i >= 0; i--) {
+                const s = stars[i];
+                s.x -= speed;
+                const dx = pig.x - s.x;
+                const dy = pig.y - s.y;
+                if (!s.collected && Math.sqrt(dx * dx + dy * dy) < pig.r + s.r) {
+                    s.collected = true;
+                    score += s.type === 'controller' ? 50 : 25;
+                    playSound('coin');
+                    for (let k = 0; k < 6; k++) {
+                        particles.push({
+                            x: s.x, y: s.y,
+                            vx: (Math.random() - 0.5) * 4, vy: (Math.random() - 0.5) * 4,
+                            life: 1.0, color: s.type === 'controller' ? '#a855f7' : '#fbbf24', size: 3 + Math.random() * 2
+                        });
+                    }
+                }
+                if (s.x < -30 || s.collected) stars.splice(i, 1);
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const pt = particles[i];
+                pt.x += pt.vx; pt.y += pt.vy; pt.life -= dt * 2.2;
+                if (pt.life <= 0) particles.splice(i, 1);
+            }
+
+            render(now);
+            animFrame = requestAnimationFrame(gameLoop);
+        }
+
+        function render(now) {
+            const canvas = document.getElementById('game-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#060a17';
+            ctx.fillRect(0, 0, 480, 360);
+
+            ctx.strokeStyle = 'rgba(6, 182, 212, 0.08)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < 480; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 360); ctx.stroke(); }
+            for (let y = 0; y < 360; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(480, y); ctx.stroke(); }
+
+            for (const p of pillars) {
+                const grad = ctx.createLinearGradient(p.x, 0, p.x + p.w, 0);
+                grad.addColorStop(0, '#06b6d4'); grad.addColorStop(1, '#3b82f6');
+                ctx.fillStyle = grad;
+                ctx.shadowColor = '#06b6d4'; ctx.shadowBlur = 10;
+                ctx.fillRect(p.x, 0, p.w, p.topH);
+                ctx.fillStyle = '#a5f3fc';
+                ctx.fillRect(p.x - 2, p.topH - 5, p.w + 4, 5);
+                ctx.fillStyle = grad;
+                ctx.fillRect(p.x, p.botY, p.w, 360 - p.botY);
+                ctx.fillStyle = '#a5f3fc';
+                ctx.fillRect(p.x - 2, p.botY, p.w + 4, 5);
+                ctx.shadowBlur = 0;
+            }
+
+            for (const s of stars) {
+                ctx.font = '16px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(s.type === 'controller' ? '🎮' : '⭐', s.x, s.y + Math.sin(now * 0.008) * 2);
+            }
+
+            for (const pt of particles) {
+                ctx.fillStyle = pt.color; ctx.globalAlpha = Math.max(0, pt.life);
+                ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2); ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+
+            if (now >= invulnUntil || Math.floor(now / 80) % 2 === 0) {
+                ctx.save();
+                ctx.translate(pig.x, pig.y);
+                ctx.rotate(Math.max(-0.4, Math.min(0.5, pig.vy * 0.05)));
+                ctx.font = '26px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText('🐷', 0, 0);
+                if (isRunning) {
+                    ctx.fillStyle = '#f43f5e'; ctx.beginPath();
+                    ctx.arc(-14, 4, 4 + Math.random() * 2, 0, Math.PI * 2); ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 16px monospace'; ctx.textAlign = 'left';
+            ctx.fillText('SCORE: ' + score, 14, 26);
+            let h = ''; for (let l = 0; l < lives; l++) h += '❤️ ';
+            ctx.font = '14px sans-serif'; ctx.textAlign = 'right';
+            ctx.fillText(h, 466, 26);
+        }
+
+        const wrapper = document.getElementById('canvas-wrapper');
+        wrapper.addEventListener('pointerdown', (e) => {
+            if (isRunning) { e.preventDefault(); jump(); }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'ArrowUp' || e.key.toLowerCase() === 'w') {
+                e.preventDefault();
+                if (!isRunning) startGame(); else jump();
+            }
+        });
+    </script>
+</body>
+</html>

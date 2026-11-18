@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎬 Lyrics-Loading Previews (16 Optionen) · Gamingpig</title>
+<!--
+    lyrics-loading-preview.html  ·  about-qa
+    Eigenständige, lokale Vorschau-Seite (keine externen Abhängigkeiten).
+    16 Lade-Animationen für Songtexte – von dezent bis spektakulär – per Klick umschaltbar.
+    Song-Umschalter + „Animation neu starten“. Gewünschte Option im Chat nennen: „Nimm Option X“.
+-->
+<style>
+    :root{
+        --bg:#070b14;
+        --txt:rgba(255,255,255,.92);
+        --muted:rgba(255,255,255,.42);
+        --faint:rgba(255,255,255,.06);
+        --line:rgba(255,255,255,.10);
+        --blue:#60a5fa;
+        --cyan:#22d3ee;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+        margin:0;
+        min-height:100vh;
+        padding:30px 18px 70px;
+        color:var(--txt);
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+        background:
+            radial-gradient(1100px 560px at 15% -8%, rgba(34,211,238,.10), transparent 60%),
+            radial-gradient(900px 520px at 92% 4%, rgba(99,102,241,.10), transparent 62%),
+            var(--bg);
+        -webkit-font-smoothing:antialiased;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    header.top{max-width:960px;margin:0 auto 20px;text-align:center}
+    header.top .kicker{
+        display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;
+        font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+        color:rgba(34,211,238,.85);background:rgba(34,211,238,.08);
+        border:1px solid rgba(34,211,238,.22);padding:5px 12px;border-radius:999px;
+    }
+    header.top h1{margin:0;font-size:clamp(22px,4.4vw,30px);font-weight:800;letter-spacing:-.02em}
+    header.top p{margin:8px 0 0;color:var(--muted);font-size:13px}
+
+    /* ── Info-Banner ────────────────────────────────────────── */
+    #info-badge{
+        max-width:960px;margin:0 auto 18px;padding:15px 18px;border-radius:16px;
+        background:linear-gradient(180deg, rgba(96,165,250,.13), rgba(96,165,250,.05));
+        border:1px solid rgba(96,165,250,.28);
+        box-shadow:inset 0 0 40px rgba(34,211,238,.06);
+        text-align:center;
+    }
+    #info-badge .badge-main{font-size:14px;font-weight:600}
+    #info-badge .badge-main strong{color:#93c5fd}
+    #info-badge .badge-desc{margin-top:4px;font-size:12px;color:rgba(226,232,240,.72)}
+    #info-badge .hint{display:block;width:100%;margin-top:5px;font-size:11.5px;font-weight:500;color:var(--muted)}
+
+    /* ── Steuerleiste (Song + Restart) ──────────────────────── */
+    .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;max-width:960px;margin:0 auto 16px}
+    .controls .grp{display:inline-flex;gap:6px;padding:5px;border-radius:999px;background:rgba(255,255,255,.03);border:1px solid var(--line)}
+    .controls .lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+    .song-btn,.restart-btn{
+        appearance:none;cursor:pointer;font:inherit;font-size:12px;font-weight:600;
+        color:var(--muted);background:transparent;border:1px solid transparent;border-radius:999px;padding:7px 13px;transition:all .18s ease;
+    }
+    .song-btn:hover{color:var(--txt);background:rgba(255,255,255,.06)}
+    .song-btn.active{color:#0b1220;background:#93c5fd;border-color:#93c5fd}
+    .restart-btn{color:#e0f2fe;background:rgba(34,211,238,.14);border:1px solid rgba(34,211,238,.45);box-shadow:0 0 18px rgba(34,211,238,.14)}
+    .restart-btn:hover{background:rgba(34,211,238,.24)}
+    .restart-btn:active{transform:scale(.96)}
+
+    /* ── Tabs ───────────────────────────────────────────────── */
+    .tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:1000px;margin:0 auto 22px}
+    .tab{
+        appearance:none;cursor:pointer;font:inherit;font-size:12px;font-weight:600;
+        color:var(--muted);background:rgba(255,255,255,.03);
+        border:1px solid var(--line);border-radius:999px;padding:8px 13px;
+        display:inline-flex;align-items:center;gap:7px;transition:all .18s ease;
+    }
+    .tab b{font-weight:800;color:rgba(255,255,255,.55);font-variant-numeric:tabular-nums}
+    .tab:hover{color:var(--txt);background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18)}
+    .tab.active{color:#e0f2fe;background:rgba(96,165,250,.16);border-color:rgba(96,165,250,.55);box-shadow:0 0 22px rgba(96,165,250,.16)}
+    .tab.active b{color:#bfdbfe}
+
+    /* ── Bühne / Vorschaufenster ────────────────────────────── */
+    .stage{
+        position:relative;max-width:960px;margin:0 auto;padding:26px 22px;
+        background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
+        border:1px solid var(--line);border-radius:26px;
+        box-shadow:0 30px 60px rgba(0,0,0,.35);
+        overflow:hidden;
+    }
+    .stage::before{content:"";position:absolute;inset:0;pointer-events:none;
+        background:radial-gradient(680px 280px at 50% -20%, rgba(34,211,238,.06), transparent 70%)}
+    .opt-panel{display:none}
+    .opt-panel.active{display:block;animation:fadein .3s ease}
+    @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+    /* ── Gemeinsame Bausteine ───────────────────────────────── */
+    .lp{position:relative;max-width:580px;margin:0 auto;padding:8px 4px}
+    .lp-head{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+    .lp-label{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(96,165,250,.9)}
+    .lp-meta{margin-bottom:26px}
+    .lp-title{margin:0;font-size:clamp(20px,3.4vw,26px);font-weight:700;color:rgba(255,255,255,.9);letter-spacing:-.01em;line-height:1.25}
+    .lp-title.xl{font-size:clamp(26px,5vw,36px);font-weight:800}
+    .lp-artist{margin:5px 0 0;font-size:13px;font-weight:500;color:var(--muted)}
+    .lp-kicker{display:inline-block;margin-bottom:12px;font-size:11px;font-weight:700;letter-spacing:.22em;color:rgba(255,255,255,.45)}
+    .lp-caption{margin:16px 0 0;font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+    .lp-skel{display:flex;flex-direction:column;gap:14px}
+    .sk{height:26px;border-radius:12px;background:var(--faint);position:relative;overflow:hidden}
+    .sk::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.10) 50%,transparent 70%);
+        background-size:200% 100%;background-repeat:no-repeat;animation:shimmer 2.2s ease-in-out infinite}
+    .w72{width:72%}.w88{width:88%}.w58{width:58%}.w82{width:82%}.w48{width:48%}
+    @keyframes shimmer{0%{background-position:150% 0}100%{background-position:-150% 0}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ═══ [1] Pure Apple Music Minimal (perfektioniert) ═══════ */
+    /* Organische 3-Soundbars: unabhängige Höhen, asynchrone Taktung, feiner Glow-Hauch. */
+    .bars{display:flex;align-items:flex-end;gap:3px;height:18px}
+    .bars i{display:block;width:3px;border-radius:9999px;background:rgba(96,165,250,.92);
+        filter:drop-shadow(0 0 6px rgba(96,165,250,.55));transform-origin:bottom center;
+        animation:bar1 1.15s cubic-bezier(.45,.05,.55,.95) infinite}
+    .bars i:nth-child(1){height:16px}
+    .bars i:nth-child(2){height:18px;animation-name:bar2;animation-duration:.85s;animation-timing-function:cubic-bezier(.34,1.56,.64,1)}
+    .bars i:nth-child(3){height:14px;animation-name:bar3;animation-duration:1.35s;animation-timing-function:cubic-bezier(.4,0,.2,1)}
+    @keyframes bar1{0%,100%{transform:scaleY(.34);opacity:.5}50%{transform:scaleY(1);opacity:1}}
+    @keyframes bar2{0%,100%{transform:scaleY(.24);opacity:.55}50%{transform:scaleY(1);opacity:1}}
+    @keyframes bar3{0%,100%{transform:scaleY(.42);opacity:.5}50%{transform:scaleY(1);opacity:1}}
+
+    /* Kaskadierender Lese-Shimmer (nur Option 1): die Lichtwelle gleitet von oben nach unten. */
+    .opt-panel[data-opt="1"] .sk::after{
+        background:linear-gradient(105deg,transparent 25%,rgba(255,255,255,.14) 50%,transparent 75%);
+        background-size:200% 100%;background-repeat:no-repeat;
+        animation-duration:2.4s;animation-timing-function:cubic-bezier(.4,0,.2,1);
+    }
+    .opt-panel[data-opt="1"] .lp-skel .sk:nth-child(1)::after{animation-delay:0s}
+    .opt-panel[data-opt="1"] .lp-skel .sk:nth-child(2)::after{animation-delay:.18s}
+    .opt-panel[data-opt="1"] .lp-skel .sk:nth-child(3)::after{animation-delay:.36s}
+    .opt-panel[data-opt="1"] .lp-skel .sk:nth-child(4)::after{animation-delay:.54s}
+    .opt-panel[data-opt="1"] .lp-skel .sk:nth-child(5)::after{animation-delay:.72s}
+
+    /* ═══ [2] Frosted Studio Glass ════════════════════════════ */
+    .glass{
+        background:rgba(255,255,255,.05);
+        backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+        border:1px solid rgba(255,255,255,.10);border-radius:22px;padding:26px 24px;
+        box-shadow:0 10px 40px rgba(0,0,0,.25);
+        animation:breathe 3.4s ease-in-out infinite;
+    }
+    .glass .sk{background:rgba(255,255,255,.08)}
+    .glass .lp-label{color:rgba(191,219,254,.9)}
+    @keyframes breathe{0%,100%{opacity:.82;transform:scale(.994)}50%{opacity:1;transform:scale(1.005)}}
+
+    /* ═══ [3] Cyberpunk Neon Equalizer ════════════════════════ */
+    .eq{display:flex;align-items:flex-end;justify-content:center;gap:7px;height:66px;margin-bottom:22px}
+    .eq i{width:9px;border-radius:6px 6px 3px 3px;box-shadow:0 0 14px currentColor;transform-origin:bottom center;animation:eqBounce .9s ease-in-out infinite}
+    @keyframes eqBounce{0%,100%{transform:scaleY(.22);opacity:.55}50%{transform:scaleY(1);opacity:1}}
+
+    /* ═══ [4] Holographic Spatial Vinyl ═══════════════════════ */
+    .holo-stage{display:flex;justify-content:center;margin-bottom:22px;perspective:520px}
+    .holo-vinyl{
+        position:relative;width:98px;height:98px;border-radius:50%;
+        background:conic-gradient(from 0deg,#22d3ee,#a855f7,#f472b6,#fbbf24,#34d399,#22d3ee);
+        box-shadow:0 12px 40px rgba(124,58,237,.4),0 0 44px rgba(34,211,238,.28);
+        animation:holoSpin 8s linear infinite, hueShift 6s linear infinite;
+    }
+    .holo-vinyl::before{content:"";position:absolute;inset:26px;border-radius:50%;
+        background:radial-gradient(circle at 40% 35%,#1b2233,#0a0e17);box-shadow:inset 0 0 20px rgba(0,0,0,.85)}
+    .holo-vinyl::after{content:"";position:absolute;inset:41px;border-radius:50%;background:#070b14;
+        box-shadow:inset 0 0 0 2px rgba(255,255,255,.06)}
+    @keyframes holoSpin{from{transform:rotateX(24deg) rotate(0)}to{transform:rotateX(24deg) rotate(360deg)}}
+    @keyframes hueShift{0%{filter:hue-rotate(0deg) saturate(1.25)}100%{filter:hue-rotate(360deg) saturate(1.25)}}
+
+    /* ═══ [5] Retro Outrun Synthwave ══════════════════════════ */
+    .outrun{position:relative;height:132px;margin-bottom:22px;border-radius:14px;overflow:hidden;
+        background:linear-gradient(180deg,#1a0b2e 0%,#2b0a3d 46%,#0a0618 100%)}
+    .outrun .sun{position:absolute;left:50%;top:22%;width:66px;height:66px;margin-left:-33px;border-radius:50%;
+        background:linear-gradient(180deg,#ffd76a,#ff6ec7 62%,#b026ff);
+        box-shadow:0 0 60px rgba(255,110,199,.65);animation:sunPulse 4s ease-in-out infinite}
+    .outrun .grid{position:absolute;left:-25%;right:-25%;bottom:-12px;height:80px;
+        background-image:
+            linear-gradient(90deg, rgba(0,229,255,.75) 1px, transparent 1px),
+            linear-gradient(0deg, rgba(255,60,172,.85) 1px, transparent 1px);
+        background-size:28px 28px,28px 28px;
+        transform:perspective(150px) rotateX(62deg);
+        -webkit-mask-image:linear-gradient(180deg,transparent,#000 42%);
+        mask-image:linear-gradient(180deg,transparent,#000 42%);
+        animation:gridmove 2.2s linear infinite}
+    @keyframes gridmove{0%{background-position:0 0,0 0}100%{background-position:0 0,0 28px}}
+    @keyframes sunPulse{0%,100%{transform:scale(1);opacity:.95}50%{transform:scale(1.06);opacity:1}}
+
+    /* ═══ [6] Liquid Ambient Aura (Glow Waves) ════════════════ */
+    .aurora{position:relative;height:132px;margin-bottom:22px;border-radius:16px;overflow:hidden;
+        background:radial-gradient(120% 120% at 50% 0%, rgba(16,185,129,.16), transparent 62%), #050810}
+    .aurora .blob{position:absolute;border-radius:50%;filter:blur(30px);opacity:.72;mix-blend-mode:screen}
+    .aurora .b1{width:160px;height:130px;left:-20px;top:-14px;background:radial-gradient(circle,#34d399,transparent 70%);animation:float1 7s ease-in-out infinite}
+    .aurora .b2{width:180px;height:140px;right:-34px;top:-4px;background:radial-gradient(circle,#22d3ee,transparent 70%);animation:float2 9s ease-in-out infinite}
+    .aurora .b3{width:150px;height:120px;left:38%;bottom:-34px;background:radial-gradient(circle,#a78bfa,transparent 70%);animation:float3 8s ease-in-out infinite}
+    .aurora .aura-glow{position:absolute;left:50%;top:52%;width:200px;height:120px;margin:-60px 0 0 -100px;
+        background:radial-gradient(closest-side, rgba(125,211,252,.35), transparent 70%);mix-blend-mode:screen;
+        animation:auraPulse 2.8s ease-in-out infinite}
+    @keyframes float1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(22px,14px) scale(1.16)}}
+    @keyframes float2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-26px,10px) scale(1.1)}}
+    @keyframes float3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(12px,-18px) scale(1.2)}}
+    @keyframes auraPulse{0%,100%{opacity:.35;transform:scale(.92)}50%{opacity:.85;transform:scale(1.1)}}
+
+    /* ═══ [7] Matrix Cyber Rain ═══════════════════════════════ */
+    .opt-panel[data-opt="7"]{position:relative;border-radius:20px;overflow:hidden}
+    .matrix{position:relative;height:132px;margin-bottom:22px;border-radius:14px;overflow:hidden;background:#04070a;border:1px solid rgba(0,255,65,.12)}
+    .matrix.matrix-abs{position:absolute;inset:0;height:auto;margin:0;border:1px solid rgba(0,255,65,.10);border-radius:inherit;
+        background:radial-gradient(closest-side, rgba(0,90,30,.22), transparent)}
+    .opt-panel[data-opt="7"] .lp{position:relative;z-index:1}
+    .matrix i{position:absolute;top:-45%;width:2px;border-radius:2px;
+        background:linear-gradient(180deg,transparent,rgba(0,255,65,.95),transparent);
+        filter:drop-shadow(0 0 4px rgba(0,255,65,.7));
+        animation:rainfall linear infinite}
+    @keyframes rainfall{0%{transform:translateY(-30%);opacity:0}12%{opacity:1}100%{transform:translateY(430%);opacity:0}}
+    .opt-panel[data-opt="7"] .sk{background:rgba(0,255,65,.06);border:1px solid rgba(0,255,65,.10)}
+    .opt-panel[data-opt="7"] .sk::after{background:linear-gradient(100deg,transparent 30%,rgba(0,255,65,.16) 50%,transparent 70%);background-size:200% 100%;background-repeat:no-repeat}
+    .opt-panel[data-opt="7"] .lp-title{color:#c7f9d4}
+    .opt-panel[data-opt="7"] .lp-label{color:rgba(0,255,65,.8)}
+
+    /* ═══ [8] Sonic Pulse Radar ═══════════════════════════════ */
+    .radar{position:relative;width:118px;height:118px;margin:0 auto 22px;display:flex;align-items:center;justify-content:center}
+    .radar span{position:absolute;width:26px;height:26px;border-radius:50%;border:2px solid rgba(34,211,238,.8);animation:pulseRing 2.4s ease-out infinite}
+    .radar span:nth-child(2){animation-delay:.8s}
+    .radar span:nth-child(3){animation-delay:1.6s}
+    .radar .core{width:16px;height:16px;border-radius:50%;background:#22d3ee;box-shadow:0 0 20px #22d3ee,0 0 44px rgba(34,211,238,.6);animation:corePulse 1.2s ease-in-out infinite}
+    @keyframes pulseRing{0%{transform:scale(.4);opacity:.9}100%{transform:scale(4.6);opacity:0}}
+    @keyframes corePulse{0%,100%{transform:scale(.85);opacity:.85}50%{transform:scale(1.2);opacity:1}}
+
+    /* ═══ [9] Editorial Laser Scan ════════════════════════════ */
+    .editorial{text-align:left}
+    .laser-lines{position:relative;margin-top:26px;display:flex;flex-direction:column;gap:16px}
+    .laser-lines > span{height:3px;border-radius:2px;background:linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,.04))}
+    .laser-lines > span:nth-child(1){width:90%}
+    .laser-lines > span:nth-child(2){width:72%}
+    .laser-lines > span:nth-child(3){width:84%}
+    .laser-lines > span:nth-child(4){width:60%}
+    .laser-lines > span:nth-child(5){width:48%}
+    .laser-beam{position:absolute;left:-4px;right:-4px;top:0;height:2px;
+        background:linear-gradient(90deg,transparent,#f43f5e,#22d3ee,transparent);
+        box-shadow:0 0 16px #f43f5e,0 0 32px rgba(34,211,238,.7);animation:scanmove 2.8s ease-in-out infinite}
+    @keyframes scanmove{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+
+    /* ═══ [10] Quantum Particle Orb ═══════════════════════════ */
+    .orb{position:relative;width:120px;height:120px;margin:0 auto 22px}
+    .orb .orb-core{position:absolute;inset:38px;border-radius:50%;
+        background:radial-gradient(circle at 38% 32%,#e0f2fe,#60a5fa 46%,#7c3aed 100%);
+        box-shadow:0 0 42px rgba(96,165,250,.65),0 0 84px rgba(124,58,237,.35);animation:orbPulse 2.4s ease-in-out infinite}
+    .orb .orb-rotor{position:absolute;inset:0;animation:spin 9s linear infinite}
+    .orb .orb-rotor i{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;
+        background:#a5b4fc;box-shadow:0 0 12px #818cf8;transform:rotate(var(--a)) translateY(-48px);animation:sparkle 1.6s ease-in-out infinite}
+    @keyframes orbPulse{0%,100%{transform:scale(.9)}50%{transform:scale(1.13)}}
+    @keyframes sparkle{0%,100%{opacity:.35;transform:rotate(var(--a)) translateY(-48px) scale(.65)}50%{opacity:1;transform:rotate(var(--a)) translateY(-48px) scale(1.3)}}
+
+    /* ═══ [11] Apple Music Spatial Ripple ═════════════════════ */
+    .ripple{position:relative;width:132px;height:132px;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;
+        border-radius:50%;background:radial-gradient(circle, rgba(96,165,250,.14), transparent 66%)}
+    .ripple span{position:absolute;width:34px;height:34px;border-radius:50%;border:1px solid rgba(191,219,254,.75);
+        box-shadow:0 0 12px rgba(96,165,250,.35);animation:rippleOut 3.6s cubic-bezier(.2,.7,.3,1) infinite}
+    .ripple span:nth-child(2){animation-delay:.9s}
+    .ripple span:nth-child(3){animation-delay:1.8s}
+    .ripple span:nth-child(4){animation-delay:2.7s}
+    .ripple .core{width:14px;height:14px;border-radius:50%;background:rgba(191,219,254,.95);
+        box-shadow:0 0 22px rgba(96,165,250,.85);animation:corePulse 2s ease-in-out infinite}
+    @keyframes rippleOut{0%{transform:scale(.3);opacity:0}12%{opacity:.9}100%{transform:scale(4);opacity:0}}
+
+    /* ═══ [12] Typo Motion Stream ═════════════════════════════ */
+    .typo-lines{display:flex;flex-direction:column;gap:13px;margin-top:26px;overflow:hidden}
+    .typo-lines span{
+        font-size:clamp(16px,2.6vw,20px);font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;
+        color:transparent;filter:blur(.35px);
+        background-image:linear-gradient(100deg,
+            rgba(255,255,255,.14) 0%, rgba(255,255,255,.14) 36%,
+            rgba(186,230,253,.9) 50%,
+            rgba(255,255,255,.14) 64%, rgba(255,255,255,.14) 100%);
+        background-size:220% 100%;background-repeat:no-repeat;
+        -webkit-background-clip:text;background-clip:text;
+        animation:typoStream 3.2s ease-in-out infinite, typoFloat 5s ease-in-out infinite;
+    }
+    .typo-lines span:nth-child(2){animation-delay:.4s,.2s}
+    .typo-lines span:nth-child(3){animation-delay:.8s,.4s}
+    .typo-lines span:nth-child(4){animation-delay:1.2s,.6s}
+    @keyframes typoStream{0%{background-position:160% 0}100%{background-position:-160% 0}}
+    @keyframes typoFloat{0%,100%{transform:translateX(0);opacity:.72}50%{transform:translateX(9px);opacity:1}}
+
+    /* ═══ [13] Cosmic Particle Nebula ═════════════════════════ */
+    .nebula{position:relative;height:150px;margin-bottom:22px;border-radius:16px;overflow:hidden;
+        background:
+            radial-gradient(120% 130% at 50% 42%, rgba(99,102,241,.20), transparent 60%),
+            radial-gradient(95% 95% at 72% 72%, rgba(34,211,238,.13), transparent 65%),
+            #05070f}
+    .nebula::before{content:"";position:absolute;left:50%;top:45%;width:220px;height:150px;margin:-75px 0 0 -110px;
+        background:radial-gradient(closest-side, rgba(129,140,248,.28), transparent 70%);
+        filter:blur(18px);mix-blend-mode:screen;animation:nebCore 6s ease-in-out infinite}
+    .nebula .dust{position:absolute;border-radius:50%;background:#e0e7ff;
+        box-shadow:0 0 6px rgba(191,219,254,.9);
+        animation:nebTwinkle 3s ease-in-out infinite, nebFloat 8s ease-in-out infinite}
+    @keyframes nebCore{0%,100%{opacity:.4;transform:scale(.92)}50%{opacity:.95;transform:scale(1.1)}}
+    @keyframes nebTwinkle{0%,100%{opacity:.15}50%{opacity:.95}}
+    @keyframes nebFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(var(--fx,8px),var(--fy,-12px))}}
+
+    /* ═══ [14] Liquid Siri / Sound Wave ═══════════════════════ */
+    .siri-stage{position:relative;height:150px;margin-bottom:22px;border-radius:16px;overflow:hidden;
+        background:radial-gradient(120% 130% at 50% 50%, rgba(99,102,241,.14), transparent 65%), #04060d}
+    .siri-wave{position:absolute;inset:0;width:100%;height:100%;
+        filter:drop-shadow(0 0 10px rgba(129,140,248,.55))}
+    .siri-wave path{stroke-linecap:round;stroke-linejoin:round}
+
+    /* ═══ [15] Cyber Audio Horizon ════════════════════════════ */
+    .horizon{position:relative;height:150px;margin-bottom:22px;border-radius:16px;overflow:hidden;
+        background:linear-gradient(180deg,#04070f 0%,#071a2f 58%,#020509 100%)}
+    .horizon .needles{position:absolute;left:0;right:0;bottom:0;height:100%;
+        display:flex;align-items:flex-end;justify-content:center;gap:2px;padding:0 6px}
+    .horizon .needles i{flex:0 0 auto;width:2px;border-radius:2px 2px 0 0;
+        background:linear-gradient(180deg,#a5f3fc,#22d3ee 42%,rgba(34,211,238,0));
+        box-shadow:0 0 8px rgba(34,211,238,.75);transform-origin:bottom center;
+        animation:needlePulse 1.4s ease-in-out infinite}
+    .horizon .hl{position:absolute;left:0;right:0;bottom:42%;height:1px;
+        background:linear-gradient(90deg,transparent,rgba(103,232,249,.95),transparent);
+        box-shadow:0 0 20px rgba(34,211,238,.85);animation:hlPulse 3s ease-in-out infinite}
+    @keyframes needlePulse{0%,100%{transform:scaleY(.22);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+    @keyframes hlPulse{0%,100%{opacity:.55}50%{opacity:1}}
+
+    /* ═══ [16] Apple Glass Aurora ═════════════════════════════ */
+    .glass-aurora{position:relative;height:150px;margin-bottom:22px;border-radius:18px;overflow:hidden;
+        background:
+            radial-gradient(120% 120% at 20% 20%, rgba(56,189,248,.35), transparent 55%),
+            radial-gradient(120% 120% at 80% 30%, rgba(168,85,247,.30), transparent 55%),
+            radial-gradient(120% 140% at 50% 100%, rgba(244,114,182,.28), transparent 60%),
+            #060912}
+    .glass-aurora .sheen{position:absolute;inset:-40%;mix-blend-mode:screen;filter:blur(26px);
+        background:conic-gradient(from 0deg, rgba(255,255,255,0), rgba(255,255,255,.20) 12%, rgba(56,189,248,.20) 34%, rgba(255,255,255,0) 52%, rgba(168,85,247,.22) 74%, rgba(255,255,255,0) 92%);
+        animation:auroraSpin 18s linear infinite}
+    .glass-aurora .caustic{position:absolute;inset:0;mix-blend-mode:screen;filter:blur(14px);
+        background:
+            radial-gradient(50% 40% at 30% 35%, rgba(255,255,255,.22), transparent 70%),
+            radial-gradient(45% 35% at 70% 62%, rgba(191,219,254,.18), transparent 70%);
+        animation:causticDrift 9s ease-in-out infinite}
+    .glass-aurora .refraction{position:absolute;inset:0;
+        backdrop-filter:blur(6px) saturate(1.4);-webkit-backdrop-filter:blur(6px) saturate(1.4)}
+    @keyframes auroraSpin{to{transform:rotate(360deg)}}
+    @keyframes causticDrift{0%,100%{transform:translate(0,0) scale(1);opacity:.7}50%{transform:translate(18px,-12px) scale(1.12);opacity:1}}
+
+    /* ── Footer ─────────────────────────────────────────────── */
+    footer.bottom{max-width:960px;margin:26px auto 0;text-align:center;color:rgba(255,255,255,.28);font-size:11px;letter-spacing:.06em}
+
+    /* ── Restart-Helfer ─────────────────────────────────────── */
+    .anim-restart *,.anim-restart *::before,.anim-restart *::after{animation:none !important}
+
+    @media (prefers-reduced-motion: reduce){
+        .bars i,.sk::after,.glass,.eq i,.holo-vinyl,.outrun .sun,.outrun .grid,.aurora .blob,.aurora .aura-glow,
+        .matrix i,.radar span,.radar .core,.laser-beam,.orb .orb-core,.orb .orb-rotor,.orb .orb-rotor i,
+        .ripple span,.ripple .core,.typo-lines span,
+        .nebula::before,.nebula .dust,.horizon .needles i,.horizon .hl,.glass-aurora .sheen,.glass-aurora .caustic{animation:none !important}
+    }
+</style>
+</head>
+<body>
+
+    <header class="top">
+        <span class="kicker">🎬 Gamingpig · Lyrics Loading Lab</span>
+        <h1>Songtext-Lade-Animationen</h1>
+        <p>16 Varianten · dezent bis spektakulär · Klick auf einen Tab schaltet die Vorschau live um</p>
+    </header>
+
+    <div id="info-badge">
+        <div class="badge-main">Aktuell gewählt: <strong>Option 1</strong> · Pure Apple Music Minimal</div>
+        <div class="badge-desc" id="badge-desc">Schlicht &amp; edel: lebendige 3-Soundbar-Equalizer mit Glow-Hauch und kaskadierendem Lese-Shimmer von oben nach unten.</div>
+        <span class="hint" id="badge-hint">(Sag im Chat einfach: „Nimm Option 1“)</span>
+    </div>
+
+    <div class="controls">
+        <span class="lbl">Song</span>
+        <div class="grp" id="song-switch">
+            <button type="button" class="song-btn active" data-song="0">Unforgettable – Marcus &amp; Martinus</button>
+            <button type="button" class="song-btn" data-song="1">Elektrisk – Marcus &amp; Martinus</button>
+        </div>
+        <button type="button" class="restart-btn" id="restart-btn">↻ Animation neu starten</button>
+    </div>
+
+    <nav class="tabs" id="tabs" aria-label="Animations-Auswahl">
+        <button type="button" class="tab active" data-opt="1" data-name="Pure Apple Music Minimal" data-desc="Schlicht &amp; edel: lebendige 3-Soundbar-Equalizer mit Glow-Hauch und kaskadierendem Lese-Shimmer von oben nach unten."><b>[1]</b> Pure Apple Music Minimal</button>
+        <button type="button" class="tab" data-opt="2" data-name="Frosted Studio Glass" data-desc="Transluzentes Milchglas mit sanftem Atem-Puls."><b>[2]</b> Frosted Studio Glass</button>
+        <button type="button" class="tab" data-opt="3" data-name="Cyberpunk Neon Equalizer" data-desc="7-Balken Spectrum-Analyzer in Cyan→Pink→Purple mit kräftigem Bounce."><b>[3]</b> Cyberpunk Neon Equalizer</button>
+        <button type="button" class="tab" data-opt="4" data-name="Holographic Spatial Vinyl" data-desc="Gekippte, rotierende Schallplatte mit schillernden Regenbogen-Reflexionen."><b>[4]</b> Holographic Spatial Vinyl</button>
+        <button type="button" class="tab" data-opt="5" data-name="Retro Outrun Synthwave" data-desc="80s Neon-Gitter, Sonnen-Glow &amp; Retrowave-Farben."><b>[5]</b> Retro Outrun Synthwave</button>
+        <button type="button" class="tab" data-opt="6" data-name="Liquid Ambient Aura" data-desc="Organischer Farbnebel &amp; Lichtkegel, der wie ein Beat-Puls atmet."><b>[6]</b> Liquid Ambient Aura</button>
+        <button type="button" class="tab" data-opt="7" data-name="Matrix Cyber Rain" data-desc="Feiner grüner Datenregen, der über transluzente Zeilen fließt."><b>[7]</b> Matrix Cyber Rain</button>
+        <button type="button" class="tab" data-opt="8" data-name="Sonic Pulse Radar" data-desc="Sonar-Echo-Ringe, die kreisförmig nach außen pulsieren."><b>[8]</b> Sonic Pulse Radar</button>
+        <button type="button" class="tab" data-opt="9" data-name="Editorial Laser Scan" data-desc="Scharfe Typografie mit einem wandernden horizontalen Laserstrahl."><b>[9]</b> Editorial Laser Scan</button>
+        <button type="button" class="tab" data-opt="10" data-name="Quantum Particle Orb" data-desc="Kreisende leuchtende Funken um einen pulsierenden Musikkern."><b>[10]</b> Quantum Particle Orb</button>
+        <button type="button" class="tab" data-opt="11" data-name="Apple Music Spatial Ripple" data-desc="Sanfte konzentrische Ringe, die sich wie Tropfen im Wasser ausbreiten."><b>[11]</b> Apple Music Spatial Ripple</button>
+        <button type="button" class="tab" data-opt="12" data-name="Typo Motion Stream" data-desc="Schwebende Text-Silhouetten mit Shimmer-Glanz und weichen Unschärfen."><b>[12]</b> Typo Motion Stream</button>
+        <button type="button" class="tab" data-opt="13" data-name="Cosmic Particle Nebula" data-desc="Feine, schwebende Sternenpartikel driften sanft wie kosmischer Nebel um den Songtitel."><b>[13]</b> Cosmic Particle Nebula</button>
+        <button type="button" class="tab" data-opt="14" data-name="Liquid Siri / Sound Wave" data-desc="Lebendige, geschmeidig morphende Sinus-Wellen wie bei Siri &amp; modernen Sprach-Assistenten."><b>[14]</b> Liquid Siri / Sound Wave</button>
+        <button type="button" class="tab" data-opt="15" data-name="Cyber Audio Horizon" data-desc="Futuristischer Audio-Horizont aus feinen Frequenz-Nadeln mit neonblauem Pulsieren."><b>[15]</b> Cyber Audio Horizon</button>
+        <button type="button" class="tab" data-opt="16" data-name="Apple Glass Aurora" data-desc="Dreidimensionaler Liquid-Glass-Look mit wandernden Lichtbrechungen und weichen Farbspiegelungen."><b>[16]</b> Apple Glass Aurora</button>
+    </nav>
+
+    <main class="stage" id="stage">
+
+        <!-- [1] Pure Apple Music Minimal -->
+        <section class="opt-panel active" data-opt="1">
+            <div class="lp">
+                <div class="lp-head">
+                    <div class="bars"><i></i><i></i><i></i></div>
+                    <span class="lp-label">Songtext wird geladen…</span>
+                </div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [2] Frosted Studio Glass -->
+        <section class="opt-panel" data-opt="2">
+            <div class="lp glass">
+                <div class="lp-head">
+                    <div class="bars"><i></i><i></i><i></i></div>
+                    <span class="lp-label">Songtext wird geladen…</span>
+                </div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [3] Cyberpunk Neon Equalizer -->
+        <section class="opt-panel" data-opt="3">
+            <div class="lp">
+                <div class="eq" id="eq-bars" aria-hidden="true"></div>
+                <div class="lp-head"><span class="lp-label">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [4] Holographic Spatial Vinyl -->
+        <section class="opt-panel" data-opt="4">
+            <div class="lp">
+                <div class="holo-stage"><div class="holo-vinyl" aria-hidden="true"></div></div>
+                <div class="lp-head"><span class="lp-label">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [5] Retro Outrun Synthwave -->
+        <section class="opt-panel" data-opt="5">
+            <div class="lp">
+                <div class="outrun" aria-hidden="true"><div class="sun"></div><div class="grid"></div></div>
+                <div class="lp-head"><span class="lp-label">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [6] Liquid Ambient Aura -->
+        <section class="opt-panel" data-opt="6">
+            <div class="lp">
+                <div class="aurora" aria-hidden="true">
+                    <div class="aura-glow"></div>
+                    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+                </div>
+                <div class="lp-head"><span class="lp-label" style="color:rgba(52,211,153,.9)">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [7] Matrix Cyber Rain -->
+        <section class="opt-panel" data-opt="7">
+            <div class="matrix matrix-abs" id="matrix-rain" aria-hidden="true"></div>
+            <div class="lp">
+                <div class="lp-head"><span class="lp-label">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [8] Sonic Pulse Radar -->
+        <section class="opt-panel" data-opt="8">
+            <div class="lp">
+                <div class="radar" aria-hidden="true"><span></span><span></span><span></span><div class="core"></div></div>
+                <div class="lp-head"><span class="lp-label">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [9] Editorial Laser Scan -->
+        <section class="opt-panel" data-opt="9">
+            <div class="lp editorial">
+                <span class="lp-kicker">NOW LOADING</span>
+                <h3 class="lp-title xl js-title">Unforgettable</h3>
+                <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                <div class="laser-lines" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <div class="laser-beam"></div>
+                </div>
+                <p class="lp-caption">Songtext wird geladen…</p>
+            </div>
+        </section>
+
+        <!-- [10] Quantum Particle Orb -->
+        <section class="opt-panel" data-opt="10">
+            <div class="lp">
+                <div class="orb" aria-hidden="true">
+                    <div class="orb-core"></div>
+                    <div class="orb-rotor" id="orb-rotor"></div>
+                </div>
+                <div class="lp-head"><span class="lp-label">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [11] Apple Music Spatial Ripple -->
+        <section class="opt-panel" data-opt="11">
+            <div class="lp">
+                <div class="ripple" aria-hidden="true"><span></span><span></span><span></span><span></span><div class="core"></div></div>
+                <div class="lp-head"><span class="lp-label">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [12] Typo Motion Stream -->
+        <section class="opt-panel" data-opt="12">
+            <div class="lp editorial">
+                <span class="lp-kicker">STREAM</span>
+                <h3 class="lp-title xl js-title">Unforgettable</h3>
+                <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                <div class="typo-lines" aria-hidden="true">
+                    <span>She comes alive at night</span>
+                    <span>When her prey's asleep</span>
+                    <span>Make your eyes go blind</span>
+                    <span>And now you are in too deep</span>
+                </div>
+                <p class="lp-caption">Songtext wird geladen…</p>
+            </div>
+        </section>
+
+        <!-- [13] Cosmic Particle Nebula -->
+        <section class="opt-panel" data-opt="13">
+            <div class="lp">
+                <div class="nebula" id="nebula" aria-hidden="true"></div>
+                <div class="lp-head"><span class="lp-label" style="color:rgba(165,180,252,.9)">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [14] Liquid Siri / Sound Wave -->
+        <section class="opt-panel" data-opt="14">
+            <div class="lp">
+                <div class="siri-stage" aria-hidden="true">
+                    <svg class="siri-wave" viewBox="0 0 600 160" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="siriGrad" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stop-color="#22d3ee"/>
+                                <stop offset="50%" stop-color="#818cf8"/>
+                                <stop offset="100%" stop-color="#f472b6"/>
+                            </linearGradient>
+                        </defs>
+                        <path id="siri-path2" d="" fill="none" stroke="url(#siriGrad)" stroke-width="3" opacity=".32"/>
+                        <path id="siri-path" d="" fill="none" stroke="url(#siriGrad)" stroke-width="3.5"/>
+                    </svg>
+                </div>
+                <div class="lp-head"><span class="lp-label" style="color:rgba(129,140,248,.95)">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [15] Cyber Audio Horizon -->
+        <section class="opt-panel" data-opt="15">
+            <div class="lp">
+                <div class="horizon" aria-hidden="true">
+                    <div class="hl"></div>
+                    <div class="needles" id="horizon-needles"></div>
+                </div>
+                <div class="lp-head"><span class="lp-label" style="color:rgba(103,232,249,.92)">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- [16] Apple Glass Aurora -->
+        <section class="opt-panel" data-opt="16">
+            <div class="lp">
+                <div class="glass-aurora" aria-hidden="true">
+                    <div class="sheen"></div>
+                    <div class="caustic"></div>
+                    <div class="refraction"></div>
+                </div>
+                <div class="lp-head"><span class="lp-label" style="color:rgba(216,180,254,.95)">Songtext wird geladen…</span></div>
+                <div class="lp-meta">
+                    <h3 class="lp-title js-title">Unforgettable</h3>
+                    <p class="lp-artist js-artist">Marcus &amp; Martinus</p>
+                </div>
+                <div class="lp-skel">
+                    <div class="sk w72"></div><div class="sk w88"></div><div class="sk w58"></div><div class="sk w82"></div><div class="sk w48"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bottom">about-qa · lyrics-loading-preview · lokal &amp; ohne externe Abhängigkeiten</footer>
+
+    <script>
+        (function () {
+            'use strict';
+
+            var SONGS = [
+                { title: 'Unforgettable', artist: 'Marcus & Martinus' },
+                { title: 'Elektrisk', artist: 'Marcus & Martinus' }
+            ];
+
+            var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+            var panels = Array.prototype.slice.call(document.querySelectorAll('.opt-panel'));
+            var songButtons = Array.prototype.slice.call(document.querySelectorAll('.song-btn'));
+            var badgeMain = document.querySelector('#info-badge .badge-main');
+            var badgeDesc = document.getElementById('badge-desc');
+            var badgeHint = document.getElementById('badge-hint');
+            var stage = document.getElementById('stage');
+
+            /* ── Dekorationen (einmalig erzeugen) ─────────────── */
+
+            // [3] 7-Balken Neon-Equalizer (Cyan -> Pink -> Purple)
+            var eq = document.getElementById('eq-bars');
+            if (eq && eq.childElementCount === 0) {
+                var neon = ['#22d3ee', '#38bdf8', '#818cf8', '#c084fc', '#f472b6', '#fb7185', '#a855f7'];
+                var heights = [22, 34, 46, 58, 46, 34, 22];
+                for (var i = 0; i < 7; i++) {
+                    var bar = document.createElement('i');
+                    bar.style.height = heights[i] + 'px';
+                    bar.style.background = neon[i];
+                    bar.style.color = neon[i];
+                    bar.style.animationDelay = (i * 0.08).toFixed(2) + 's';
+                    bar.style.animationDuration = (0.8 + (i % 3) * 0.12).toFixed(2) + 's';
+                    eq.appendChild(bar);
+                }
+            }
+
+            // [7] Matrix-Datenregen (feine grüne Spalten)
+            var rain = document.getElementById('matrix-rain');
+            if (rain && rain.childElementCount === 0) {
+                var COLS = 18;
+                for (var c = 0; c < COLS; c++) {
+                    var col = document.createElement('i');
+                    col.style.left = (c * (100 / COLS) + Math.random() * 2).toFixed(1) + '%';
+                    col.style.height = (28 + Math.random() * 42).toFixed(0) + '%';
+                    col.style.animationDuration = (1.6 + Math.random() * 1.8).toFixed(2) + 's';
+                    col.style.animationDelay = (-Math.random() * 3).toFixed(2) + 's';
+                    rain.appendChild(col);
+                }
+            }
+
+            // [10] Quantum-Partikel (12 kreisende Funken)
+            var rotor = document.getElementById('orb-rotor');
+            if (rotor && rotor.childElementCount === 0) {
+                for (var p = 0; p < 12; p++) {
+                    var spark = document.createElement('i');
+                    spark.style.setProperty('--a', (p * 30) + 'deg');
+                    spark.style.animationDelay = (p * 0.11).toFixed(2) + 's';
+                    rotor.appendChild(spark);
+                }
+            }
+
+            // [13] Cosmic-Particle-Nebula (feiner, schwebender Sternenstaub)
+            var nebula = document.getElementById('nebula');
+            if (nebula && nebula.childElementCount === 0) {
+                for (var n = 0; n < 46; n++) {
+                    var dust = document.createElement('i');
+                    dust.className = 'dust';
+                    var dSize = (1 + Math.random() * 2.4).toFixed(1);
+                    dust.style.width = dSize + 'px';
+                    dust.style.height = dSize + 'px';
+                    dust.style.left = (Math.random() * 100).toFixed(1) + '%';
+                    dust.style.top = (8 + Math.random() * 84).toFixed(1) + '%';
+                    dust.style.setProperty('--fx', ((Math.random() * 2 - 1) * 16).toFixed(1) + 'px');
+                    dust.style.setProperty('--fy', ((Math.random() * 2 - 1) * 20).toFixed(1) + 'px');
+                    dust.style.animationDuration = (2.2 + Math.random() * 2.4).toFixed(2) + 's, ' + (6 + Math.random() * 5).toFixed(2) + 's';
+                    dust.style.animationDelay = (-Math.random() * 4).toFixed(2) + 's, ' + (-Math.random() * 6).toFixed(2) + 's';
+                    nebula.appendChild(dust);
+                }
+            }
+
+            // [15] Cyber-Audio-Horizon (feine Frequenz-Nadeln)
+            var needles = document.getElementById('horizon-needles');
+            if (needles && needles.childElementCount === 0) {
+                var NEEDLE_COUNT = 56;
+                for (var k = 0; k < NEEDLE_COUNT; k++) {
+                    var needle = document.createElement('i');
+                    var nHeight = 26 + Math.sin(k * 0.5) * 12 + Math.random() * 26;
+                    needle.style.height = nHeight.toFixed(0) + 'px';
+                    needle.style.animationDuration = (0.9 + Math.random() * 0.9).toFixed(2) + 's';
+                    needle.style.animationDelay = (-Math.random() * 1.4).toFixed(2) + 's';
+                    needles.appendChild(needle);
+                }
+            }
+
+            // [14] Liquid-Siri-Wave: rAF-gemorphte Sinus-Wellen (nur wenn Option 14 sichtbar)
+            var siriPath = document.getElementById('siri-path');
+            var siriPath2 = document.getElementById('siri-path2');
+            var siriPanel = document.querySelector('.opt-panel[data-opt="14"]');
+            var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (siriPath) {
+                var SW = 600, SH = 160;
+                var buildSiri = function (t, ampScale) {
+                    var N = 52, d = '';
+                    var breath = 0.72 + 0.28 * Math.sin(t * 0.9);
+                    for (var i = 0; i <= N; i++) {
+                        var x = (i / N) * SW;
+                        var u = i / N;
+                        var env = Math.sin(u * Math.PI); // ruhig auslaufende Enden
+                        var y = SH / 2
+                            + Math.sin(u * 6.0 + t * 2.2) * 16 * ampScale * env * breath
+                            + Math.sin(u * 11.0 - t * 3.1) * 9 * ampScale * env * breath
+                            + Math.sin(u * 3.0 + t * 1.4) * 20 * ampScale * env * breath;
+                        d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+                    }
+                    return d.trim();
+                };
+                // Sofort einen gültigen Startpfad setzen (auch wenn der Tab gerade nicht sichtbar ist
+                // und requestAnimationFrame pausiert) – die Welle ist damit nie leer.
+                siriPath.setAttribute('d', buildSiri(0, 1));
+                if (siriPath2) siriPath2.setAttribute('d', buildSiri(1.3, 1.5));
+
+                if (!reduceMotion) {
+                    var siriStart = performance.now();
+                    var siriLoop = function (now) {
+                        if (!siriPanel || siriPanel.classList.contains('active')) {
+                            var st = (now - siriStart) / 1000;
+                            siriPath.setAttribute('d', buildSiri(st, 1));
+                            if (siriPath2) siriPath2.setAttribute('d', buildSiri(st * 0.8 + 1.3, 1.5));
+                        }
+                        requestAnimationFrame(siriLoop);
+                    };
+                    requestAnimationFrame(siriLoop);
+                }
+            }
+
+            /* ── Auswahl-Logik ────────────────────────────────── */
+            function select(opt) {
+                var key = String(opt);
+                var name = '';
+                var desc = '';
+                tabs.forEach(function (t) {
+                    var isActive = t.dataset.opt === key;
+                    t.classList.toggle('active', isActive);
+                    t.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                    if (isActive) { name = t.dataset.name; desc = t.dataset.desc; }
+                });
+                panels.forEach(function (pa) {
+                    pa.classList.toggle('active', pa.dataset.opt === key);
+                });
+                if (badgeMain) {
+                    badgeMain.innerHTML = 'Aktuell gewählt: <strong>Option ' + opt + '</strong> · ' + name;
+                }
+                if (badgeDesc) badgeDesc.textContent = desc;
+                if (badgeHint) {
+                    badgeHint.textContent = '(Sag im Chat einfach: „Nimm Option ' + opt + '“)';
+                }
+            }
+
+            function setSong(index) {
+                var song = SONGS[index];
+                if (!song) return;
+                songButtons.forEach(function (b, idx) {
+                    b.classList.toggle('active', idx === index);
+                });
+                Array.prototype.forEach.call(document.querySelectorAll('.js-title'), function (el) {
+                    el.textContent = song.title;
+                });
+                Array.prototype.forEach.call(document.querySelectorAll('.js-artist'), function (el) {
+                    el.textContent = song.artist;
+                });
+            }
+
+            function restartAnimations() {
+                if (!stage) return;
+                stage.classList.add('anim-restart');
+                void stage.offsetWidth; // Reflow erzwingen -> Animationen beginnen von vorn
+                stage.classList.remove('anim-restart');
+            }
+
+            /* ── Events ───────────────────────────────────────── */
+            tabs.forEach(function (t) {
+                t.addEventListener('click', function () { select(t.dataset.opt); });
+            });
+            songButtons.forEach(function (b) {
+                b.addEventListener('click', function () { setSong(parseInt(b.dataset.song, 10)); });
+            });
+            var restartBtn = document.getElementById('restart-btn');
+            if (restartBtn) restartBtn.addEventListener('click', restartAnimations);
+
+            /* ── Initialzustand ───────────────────────────────── */
+            select(1);
+            setSong(0);
+        })();
+    </script>
+
+</body>
+</html>

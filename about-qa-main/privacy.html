@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <script>/* Android Liquid Glass compatibility */(function(){try{var ua=navigator.userAgent||"";if(/Android/i.test(ua)){document.documentElement.classList.add("gp-android");if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add("gp-android-lowend");}if(/Mobile|iP(hone|od|ad)|Android.*Mobile/i.test(ua))document.documentElement.classList.add("gp-mobile");}catch(e){}})();</script>
+    <script src="./js/core/storage.e856be99df567fd2.js"></script>
+<meta charset="UTF-8">
+<script src="js/read-aloud-service.1fc24873f319082e.js"></script>
+<script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy / Datenschutzerklärung – Gamingpig Portfolio</title>
+<script>
+  try {
+    const savedAppLang = AppStorage.getItem('selectedLanguage');
+    if (savedAppLang) document.documentElement.setAttribute('lang', savedAppLang);
+  } catch(e) {}
+</script>
+<style data-gp-glass-engine="true">
+  :root{
+    --bg:#0d0d12;
+    --card:#16161d;
+    --text:#e8e8ee;
+    --muted:#9a9aa8;
+    --accent:#6c5ce7;
+    --border:#26262f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    padding:max(20px, env(safe-area-inset-top, 20px)) 20px 140px;
+  }
+  .wrap{max-width:720px;margin:0 auto;}
+  header{
+    padding:32px 0 20px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:32px;
+  }
+  header h1{
+    font-size:1.7rem;
+    margin:0 0 8px;
+  }
+  header p{
+    color:var(--muted);
+    margin:0;
+    font-size:0.95rem;
+  }
+  h2{
+    font-size:1.15rem;
+    margin:36px 0 10px;
+    color:var(--text);
+  }
+  p, li{
+    color:#d3d3dc;
+    font-size:0.97rem;
+  }
+  ul{padding-left:20px;}
+  .card{
+    position:relative;
+    background:rgba(22, 22, 29, 0.82) !important;
+    border:1px solid rgba(255, 255, 255, 0.12) !important;
+    border-top:1.5px solid rgba(255, 255, 255, 0.28) !important;
+    border-radius:16px;
+    padding:20px 22px;
+    margin:20px 0;
+    box-shadow:0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter:blur(16px) saturate(140%) !important;
+    -webkit-backdrop-filter:blur(16px) saturate(140%) !important;
+  }
+  .card p{
+    color:#e2e8f0 !important;
+    margin:0;
+    line-height:1.65;
+  }
+  a{color:var(--accent);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  footer{
+    margin-top:48px;
+    margin-bottom:60px;
+    padding-top:20px;
+    border-top:1px solid var(--border);
+    color:var(--muted);
+    font-size:0.85rem;
+  }
+  .back-btn{
+    position:relative; z-index:70; cursor:pointer; touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--card); border:1px solid var(--border);
+    color:var(--text); padding:7px 14px; border-radius:12px;
+    font-size:0.85rem; font-weight:600; text-decoration:none;
+    transition:all 0.15s ease;
+  }
+  .back-btn:hover{ border-color:var(--accent); color:#fff; text-decoration:none; }
+  /* NEU: Sprachumschalter */
+  .lang-switcher{
+    display:flex; flex-wrap:wrap; gap:6px; padding:16px 0 0;
+  }
+  .lang-btn{
+    background:var(--card); border:1px solid var(--border); color:var(--muted);
+    padding:6px 12px; border-radius:20px; font-size:0.8rem; cursor:pointer;
+    font-family:inherit; transition:all 0.15s ease;
+  }
+  .lang-btn:hover{ color:var(--text); border-color:var(--accent); }
+  .lang-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .privacy-tts-group{
+    display:inline-flex; align-items:center; background:var(--card); border:1px solid var(--border);
+    border-radius:20px; overflow:hidden; font-family:inherit; transition:border-color 0.15s ease;
+    margin-left:auto;
+  }
+  .privacy-tts-group:hover{ border-color:var(--accent); }
+  .privacy-play-btn{
+    background:transparent; border:none; color:var(--text); padding:6px 12px; font-size:0.8rem;
+    font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-family:inherit;
+    transition:all 0.15s ease;
+  }
+  .privacy-play-btn:hover{ color:var(--accent); }
+  .privacy-play-btn.speaking{ background:rgba(239, 68, 68, 0.2); color:#ef4444; }
+  .privacy-speed-trigger{
+    background:transparent; border:none; border-left:1px solid var(--border); color:var(--accent);
+    padding:6px 10px; font-size:0.75rem; font-family:ui-monospace, monospace; font-weight:700;
+    cursor:pointer; transition:background 0.15s ease;
+  }
+  .privacy-speed-trigger:hover{ background:rgba(255,255,255,0.05); }
+  .privacy-menu{
+    position:absolute; top:calc(100% + 6px); right:0; z-index:100; background:var(--card);
+    border:1px solid var(--border); border-radius:12px; padding:8px; box-shadow:0 12px 30px rgba(0,0,0,0.5);
+    min-width:180px; backdrop-filter:blur(16px);
+  }
+  .privacy-menu.hidden{ display:none; }
+  .privacy-menu-header{
+    display:flex; justify-content:space-between; align-items:center; font-size:0.75rem;
+    font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:6px;
+  }
+  .privacy-pill-grid{ display:grid; grid-template-columns:repeat(5, 1fr); gap:4px; }
+  .privacy-pill{
+    background:rgba(255,255,255,0.05); border:1px solid transparent; color:var(--muted);
+    border-radius:6px; padding:4px 0; font-size:0.75rem; font-family:ui-monospace, monospace;
+    font-weight:700; cursor:pointer; text-align:center;
+  }
+  .privacy-pill.active{ background:var(--accent); color:#fff; }
+</style>
+<link rel="stylesheet" href="assets/community-glass.20260910.css?v=v24.213.0" data-gp-glass-engine="true">
+</head>
+<body>
+<div class="wrap">
+  <div style="padding-top:12px; position:relative; z-index:60; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+    <a href="index.html" class="back-btn" id="privacy-back-btn">← Hauptseite</a>
+  </div>
+  <div class="lang-switcher">
+      <button class="lang-btn" data-lang="de" onclick="setPrivacyLang('de')">Deutsch</button>
+      <button class="lang-btn" data-lang="en" onclick="setPrivacyLang('en')">English</button>
+      <button class="lang-btn" data-lang="es" onclick="setPrivacyLang('es')">Español</button>
+      <button class="lang-btn" data-lang="fr" onclick="setPrivacyLang('fr')">Français</button>
+      <button class="lang-btn" data-lang="pt" onclick="setPrivacyLang('pt')">Português</button>
+      <button class="lang-btn" data-lang="tr" onclick="setPrivacyLang('tr')">Türkçe</button>
+      <div style="position:relative; display:inline-block; margin-left:auto;">
+        <div class="privacy-tts-group">
+          <button class="privacy-play-btn" id="privacy-speak-btn" onclick="togglePrivacySpeak()">
+            <span>🔊</span> <span id="privacy-speak-label">Vorlesen</span>
+          </button>
+          <button onclick="togglePrivacyTtsMenu()" class="privacy-speed-trigger" title="Tempo anpassen">
+            <span id="privacy-speed-val">1.0x</span>
+          </button>
+        </div>
+
+        <div id="privacy-tts-menu" class="privacy-menu hidden">
+          <div class="privacy-menu-header">
+            <span>Tempo</span>
+            <button onclick="stopPrivacySpeech()" style="background:none; border:none; color:#f87171; cursor:pointer; font-size:0.75rem; font-weight:700;">⏹ Stopp</button>
+          </div>
+          <div class="privacy-pill-grid">
+            <button onclick="setPrivacyTtsSpeed(0.8)" data-speed="0.8" class="privacy-pill">0.8x</button>
+            <button onclick="setPrivacyTtsSpeed(1.0)" data-speed="1.0" class="privacy-pill active">1.0x</button>
+            <button onclick="setPrivacyTtsSpeed(1.2)" data-speed="1.2" class="privacy-pill">1.2x</button>
+            <button onclick="setPrivacyTtsSpeed(1.5)" data-speed="1.5" class="privacy-pill">1.5x</button>
+            <button onclick="setPrivacyTtsSpeed(2.0)" data-speed="2.0" class="privacy-pill">2.0x</button>
+          </div>
+        </div>
+      </div>
+  </div>
+
+<div class="lang-block" data-lang="de" style="display:none;">
+  <header>
+    <h1>Datenschutzerklärung</h1>
+    <p>Gamingpig Portfolio · Stand: 15. Oktober 2026</p>
+  </header>
+
+  <div class="card">
+    <p>Diese App ist eine sogenannte Trusted Web Activity (TWA) und zeigt ausschließlich die
+    Inhalte der Website <a href="https://gamingpig.github.io/About-Gamingpig/">gamingpig.github.io/About-Gamingpig</a> an.
+    Es handelt sich um ein privates, nicht-kommerzielles Portfolio-Projekt.</p>
+  </div>
+
+  <h2>1. Verantwortlicher</h2>
+  <p>
+    Gamingpig<br>
+    E-Mail: <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>
+  </p>
+
+  <h2>2. Welche Daten werden erhoben?</h2>
+  <p>Die Website hat keine eigene Benutzerverwaltung, kein Analytics-Tracking und keine Werbung. Voting und Wünsche funktionieren ohne Anmeldung. Dafür werden pseudonyme Browser-Kennungen und freiwillig eingegebene Texte über ntfy an GitHub übertragen und öffentlich gespeichert (Abschnitt 14). Externe Dienste erhalten technische Verbindungsdaten.</p>
+  <ul>
+    <li>Es werden keine Standortdaten erhoben.</li>
+    <li>Es werden keine Kontakte, Fotos oder Dateien ausgelesen.</li>
+    <li>Es findet keine Analyse des Nutzerverhaltens (Analytics) statt.</li>
+  </ul>
+
+  <h2>3. Hosting &amp; technische Zugriffsdaten</h2>
+  <p>Die Inhalte werden über GitHub Pages (GitHub Inc., bzw. GitHub B.V. in der EU) ausgeliefert.
+  Wie bei jedem Webseitenaufruf verarbeitet GitHub dabei automatisch technische Zugriffsdaten
+  (z. B. IP-Adresse, Zeitpunkt des Zugriffs, User-Agent) im Rahmen des normalen Serverbetriebs.
+  Diese Verarbeitung liegt außerhalb meines Einflusses; weitere Informationen dazu bietet die
+  <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Datenschutzerklärung von GitHub</a>.</p>
+
+  <h2>4. Berechtigungen der App</h2>
+  <p>Die App benötigt lediglich eine bestehende Internetverbindung, um die Website-Inhalte anzuzeigen.
+  Es werden keine weiteren Geräteberechtigungen (Kamera, Mikrofon, Kontakte, Standort etc.) angefordert.</p>
+
+  <h2>5. Externe Schriftarten</h2>
+  <p>Zur einheitlichen Darstellung lädt die Website die Schriftarten „Inter“ und
+  „JetBrains Mono“ über Google Fonts. Dabei stellt dein Browser eine Verbindung zu
+  Servern von Google her. Hierbei werden technisch bedingt insbesondere deine IP-Adresse,
+  Browserinformationen sowie Zeitpunkt und angeforderte Datei an Google übermittelt.</p>
+
+  <h2>6. Musik-Dashboard, Stats.fm Wrapped und externe Dienste</h2>
+  <p>Das Musik-Dashboard ruft aktuelle Titelinformationen über die API von
+  <strong>npc-api.aikins.xyz</strong> ab. Liefert dieser Dienst keine aktuellen Daten, werden ersatzweise die öffentlichen aktuellen Titelinformationen des Profils <code>gamingpig</code> über <strong>stats.fm</strong> (api.stats.fm) abgerufen. Für Songtexte werden <strong>LRCLIB</strong> (unter Verwendung des offiziellen Identifikationsheaders <code>Lrclib-Client</code>) sowie ersatzweise Schnittstellen für <strong>NetEase Cloud Music</strong> und angebundene offene Musik- und Lyrics-Datenbanken kontaktiert. Bei der automatischen Songtext-Synchronisation werden ausschließlich bereinigte Titel- und Künstlerdaten übertragen. Es werden zu keinem Zeitpunkt Nutzerkonten, Cookies oder Identifikatoren an Drittanbieter übermittelt. Zur Entlastung der APIs und Vermeidung von Ratenbegrenzungen (HTTP 429) werden Songtexte temporär im flüchtigen Browserspeicher (Session Memory) zwischengespeichert und beim Verlassen der Sitzung verworfen. Zur zuverlässigen Anzeige hochauflösender Album-Covers
+  wird eine mehrstufige Abfragekette genutzt: Zunächst wird bei vorhandener Apple Music ID
+  die <strong>Apple iTunes Lookup API</strong> angefragt, gefolgt vom offiziellen
+  <strong>Spotify oEmbed-Dienst</strong> (open.spotify.com/oembed), der <strong>Apple iTunes
+  Search API</strong> sowie einer JSONP-Suchanfrage an <strong>Deezer</strong>, bevor als letzte
+  Stufe ein lokales Platzhalterbild angezeigt wird.
+  Für die <strong>Spotify Wrapped / Musik-Statistiken</strong> werden ausschließlich öffentliche Aggregationsdaten des Profils <code>gamingpig</code> über die offizielle API von <strong>stats.fm</strong> (api.stats.fm) abgerufen.
+  Dabei werden zu keinem Zeitpunkt persönliche Daten der Besucher an stats.fm oder Spotify übermittelt.
+  Wie bei jedem direkten Internetaufruf erhalten die jeweiligen Schnittstellenanbieter lediglich technisch unvermeidbare Verbindungsdaten (z. B. IP-Adresse und User-Agent).</p>
+
+  <p>Externe Inhalte werden erst verarbeitet, wenn die jeweilige Funktion geladen oder
+  verwendet wird. Für die Verarbeitung durch die Drittanbieter gelten deren eigene
+  Datenschutzbestimmungen; auf deren Speicherdauer und weitere Verarbeitung habe ich
+  keinen Einfluss.</p>
+
+  <h2>7. Sprachausgabe (Vorlesen-Funktion)</h2>
+  <p>Die Website bietet an vielen Stellen eine optionale Vorlesen-Funktion an, die nur bei
+  aktivem Klick auf den entsprechenden Button startet. Diese Funktion nutzt die im Browser
+  eingebaute Sprachausgabe (Web Speech API). Je nach Browser und Betriebssystem kann die
+  Sprachverarbeitung entweder vollständig lokal auf deinem Gerät stattfinden, oder der
+  Browser sendet den vorzulesenden Text zur Verarbeitung an einen Cloud-Dienst des
+  jeweiligen Anbieters (z. B. Google bei Chrome-Systemstimmen). Ich habe darauf keinen
+  Einfluss - welche Stimmen lokal oder über die Cloud laufen, entscheidet dein Browser bzw.
+  Betriebssystem. Beim synchronisierten Vorlesen von Songtexten wird die Textsprache
+  automatisch auf deinem Endgerät analysiert, um eine passende Sprachausgabe-Stimme zu wählen.
+  Zudem kann die Vorlesegeschwindigkeit individuell reguliert werden. Es werden dabei
+  ausschließlich die sichtbaren Seiteninhalte (z. B. Songtexte, Bio, Karteninhalte) vorgelesen,
+  keine persönlichen oder eingegebenen Nutzerdaten.</p>
+
+  <h2>8. Discord-Widget im Support-Bereich</h2>
+  <p>Im Support-Bereich der Website wird die aktuelle Mitglieder- und Online-Zahl meines
+  Discord-Servers live angezeigt. Dafür ruft dein Browser beim Laden der Seite automatisch
+  die öffentliche Einladungs-API von <strong>discord.com</strong> auf. Dabei werden die
+  üblichen technischen Verbindungsdaten (IP-Adresse, Zeitpunkt, Browserinformationen) an
+  Discord Inc. übermittelt. Es werden keine Nutzerkonten oder sonstigen persönlichen Daten
+  von dir an Discord übertragen. Weitere Informationen bietet die
+  <a href="https://discord.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung von Discord</a>.</p>
+
+  <h2>9. Lokale Speicherung im Browser (localStorage)</h2>
+  <p>Sprache, Design, Vorleseeinstellungen, Songverlauf und Versionsstände bleiben im Browser gespeichert. Für die Roadmap werden zusätzlich ein zufällig erzeugtes Schlüsselpaar (<code>gp_roadmap_identity_v2</code>), noch nicht bestätigte Einträge (<code>gp_roadmap_pending_v2</code>) und ein Lesecache (<code>gp_roadmap_cache_v2</code>) in localStorage gespeichert. Der private Schlüssel wird nicht an den Dienst gesendet; der freiwillige Gerätecode enthält ihn zur Übertragung auf eigene Geräte. Öffentliche Kennung, Signatur und Eintragsinhalt werden beim Absenden übertragen. Der Cache wird beim Abgleich ersetzt, ausstehende Einträge nach GitHub-Bestätigung entfernt. Es gibt keine automatische lokale Ablaufzeit. Alte lokale Wünsche können zur Wiederherstellung vorhanden sein. Browserdaten lassen sich in den Einstellungen löschen; dies löscht keine öffentlichen GitHub-Daten und kann ohne gesicherten Gerätecode den Zugriff auf die eigene Stimme verlieren lassen.</p>
+
+  <h2>10. Web-Push-Benachrichtigungen &amp; Störungs-Überwachung</h2>
+  <p>Die Website und PWA bietet eine freiwillige Störungs-Benachrichtigung (Web Push) an. Die Aktivierung erfolgt rein opt-in-basiert über deine ausdrückliche Zustimmung (Art. 6 Abs. 1 lit. a DSGVO). Zur technischen Zustellung von Meldungen bei API-Ausfällen generiert dein Browser einen pseudonymisierten Push-Endpunkt (z. B. über Google Firebase Cloud Messaging oder Apple Web Push). Es werden keine Namen, E-Mail-Adressen oder Geräteprofile verknüpft. Du kannst die Benachrichtigungen jederzeit mit einem Klick auf der Status-Seite oder in den Browsereinstellungen wieder deaktivieren.</p>
+
+  <p>Push-Endpunkt, Abonnementschlüssel und Sprache werden vor der Übertragung an ntfy mit einem zufälligen AES-GCM-Schlüssel verschlüsselt; dieser wird mit dem öffentlichen RSA-Schlüssel des Betreibers geschützt. GitHub Actions entschlüsselt die Registrierung und speichert die Gerätedaten erneut AES-GCM-verschlüsselt in data/subscribers.enc.json. Die privaten Schlüssel liegen in GitHub Actions Secrets. ntfy und GitHub verarbeiten weiterhin Verbindungsmetadaten wie IP-Adresse und Zeitpunkt. Push pausieren meldet das Browser-Abonnement ab; gespeicherte Daten und frühere Git-Historie werden dadurch nicht sofort entfernt. Frühere Versionen speicherten Geräte öffentlich; für eine Löschanfrage bitte die Kontaktadresse oben nutzen.</p>
+
+  <h2>11. Änderungen dieser Erklärung</h2>
+  <p>Diese Datenschutzerklärung kann bei Bedarf aktualisiert werden, z. B. wenn neue Funktionen
+  hinzukommen. Die jeweils aktuelle Version ist immer auf dieser Seite verfügbar.</p>
+
+  <h2>12. Kontakt</h2>
+  <p>Bei Fragen zum Datenschutz kannst du dich jederzeit per E-Mail an
+  <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a> wenden.</p>
+
+  <h2>13. Urheberrecht &amp; Rechtlicher Schutz</h2>
+  <p>Alle auf dieser Website und in der Web-Applikation bereitgestellten Inhalte, Designs, Logos, Icons, Quelltexte, Audiodaten und Softwarekomponenten unterliegen dem Urheberrecht: <strong>© 2026 Gamingpig · Alle Rechte vorbehalten</strong>. Jegliche unbefugte Vervielfältigung, Verbreitung, Bearbeitung oder Veröffentlichung ohne vorherige schriftliche Zustimmung ist untersagt und rechtlich geschützt.</p>
+
+  <h2 id="github-roadmap-de">14. Direktes Voting und öffentliche Wünsche über ntfy und GitHub</h2>
+  <p>Zweck ist die gemeinsame Feature-Planung und die geräteübergreifende Anzeige von Vorschlägen und Stimmen. Es ist kein Nutzerkonto erforderlich. Eine zufällig erzeugte Browser-Identität ordnet eigene Stimmen zu; über einen freiwillig übertragbaren privaten Gerätecode können eigene Geräte dieselbe Identität nutzen. Daraus folgt keine verifizierte Zuordnung zu einer natürlichen Person.</p>
+  <p>Beim Abstimmen oder Absenden werden Eintrags-ID, öffentliche Schlüsselkennung, Signatur und Stimmstand beziehungsweise Name/Pseudonym, Kategorie, Titel und Beschreibung an <code>ntfy.sh</code> gesendet. Die separate Roadmap-Warteschlange ist öffentlich lesbar. Ein GitHub-Workflow übernimmt gültige Einträge in <code>data/roadmap.json</code> im öffentlichen Repository <code>Gamingpig/About-Gamingpig</code>. Dort stehen pseudonyme Kennungen, Stimmen und Wünsche mit Datum auch geräteübergreifend zur Verfügung. Bitte keine vertraulichen Daten oder Angaben über andere Personen einreichen.</p>
+  <p>ntfy ist nur ein Zwischenspeicher mit begrenzter Aufbewahrung; dauerhaft gespeichert ist ein Eintrag erst nach dem GitHub-Commit. Der vorhandene Workflow ist alle 15 Minuten geplant, kann aber später laufen. Ausstehende Einträge werden deshalb gesondert angezeigt und können erneut gesendet werden. Die sichtbare Roadmap liest den gemeinsamen Stand von <code>raw.githubusercontent.com</code> etwa alle fünf Minuten und bei Rückkehr, höchstens einmal pro Minute. ntfy und GitHub erhalten dabei technisch notwendige Verbindungsdaten wie IP-Adresse, Zeitpunkt und Browserinformationen.</p>
+  <p>Für den Betrieb der öffentlichen Roadmap und die Anzeige freiwillig veröffentlichter Beiträge stützen wir uns auf Art. 6 Abs. 1 lit. f DSGVO: das berechtigte Interesse an gemeinsamer Feature-Planung und zuverlässiger Anzeige. Die Teilnahme ist freiwillig; das Portfolio kannst du ohne Beitrag oder Stimme nutzen. „Verstanden“ im Datenschutzhinweis bestätigt nur die Kenntnisnahme und ist keine Einwilligung in zusätzliche Verarbeitung.</p>
+  <p>Es gibt keine automatische Löschfrist für die öffentlichen Datensätze. Sie und frühere Fassungen können in der Git-Historie verbleiben. Die eigene Stimme lässt sich mit derselben Browser-Identität zurückziehen; ältere Git-Versionen werden dadurch nicht gelöscht. Zur Löschung eines Wunsches oder einer Kennung kontaktiere <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a> mit der Eintrags-ID. Sende niemals deinen privaten Gerätecode mit. Kopien Dritter, Git-Historie und bereits geladene Browser-Caches können gesonderte Behandlung erfordern; der nächste erfolgreiche Abgleich ersetzt den lokalen Lesecache.</p>
+  <p>GitHub verarbeitet Daten auch in den USA. Details zu eigener Verarbeitung, Aufbewahrung und internationalen Übermittlungen stehen in der <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub-Datenschutzerklärung</a> und der <a href="https://docs.ntfy.sh/privacy/" target="_blank" rel="noopener">ntfy-Datenschutzerklärung</a>.</p>
+  <p>Nach Maßgabe der DSGVO bestehen Rechte auf Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch und Beschwerde bei einer Datenschutzaufsichtsbehörde. Anfragen zu unserer Verarbeitung richten sich an die oben genannte Kontaktadresse.</p>
+
+  <footer>
+    © 2026 Gamingpig · Alle Rechte vorbehalten · Urheberrechtlich geschützt · <a href="impressum.html" style="color:var(--text-muted, #94a3b8);text-decoration:underline;">Impressum</a> · Privates, nicht-kommerzielles Portfolio
+  </footer>
+
+</div>
+
+<div class="lang-block" data-lang="en" style="display:none;">
+  <header>
+    <h1>Privacy Policy</h1>
+    <p>Gamingpig Portfolio · Last updated: October 15, 2026</p>
+  </header>
+
+  <div class="card">
+    <p>This app is a so-called Trusted Web Activity (TWA) and displays exclusively the
+    content of the website <a href="https://gamingpig.github.io/About-Gamingpig/">gamingpig.github.io/About-Gamingpig</a>.
+    It is a private, non-commercial portfolio project.</p>
+  </div>
+
+  <h2>1. Controller</h2>
+  <p>
+    Gamingpig<br>
+    Email: <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>
+  </p>
+
+  <h2>2. What data is collected?</h2>
+  <p>The website has no account system, analytics tracking or advertising. Votes and wishes work without login. Pseudonymous browser identifiers and voluntarily entered text are sent through ntfy to GitHub and stored publicly (section 14). External services receive technical connection data.</p>
+  <ul>
+    <li>No location data is collected.</li>
+    <li>No contacts, photos, or files are read.</li>
+    <li>No analysis of user behavior (analytics) takes place.</li>
+  </ul>
+
+  <h2>3. Hosting &amp; technical access data</h2>
+  <p>The content is delivered via GitHub Pages (GitHub Inc., or GitHub B.V. in the EU).
+  As with any website visit, GitHub automatically processes technical access data
+  (e.g. IP address, time of access, user agent) as part of normal server operation.
+  This processing is beyond my control; further information is available in the
+  <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a>.</p>
+
+  <h2>4. App permissions</h2>
+  <p>The app only requires an existing internet connection to display the website content.
+  No further device permissions (camera, microphone, contacts, location, etc.) are requested.</p>
+
+  <h2>5. External fonts</h2>
+  <p>For consistent display, the website loads the fonts "Inter" and
+  "JetBrains Mono" via Google Fonts. Your browser thereby establishes a connection to
+  Google's servers. This technically transmits your IP address, browser information,
+  and the time and requested file to Google.</p>
+
+  <h2>6. Music Dashboard, Stats.fm Wrapped and External Services</h2>
+  <p>The music dashboard retrieves current track information via the API of
+  <strong>npc-api.aikins.xyz</strong>. If that service provides no current data, the public current-track information of the <code>gamingpig</code> profile is retrieved from <strong>stats.fm</strong> (api.stats.fm) as a fallback. For lyrics, <strong>LRCLIB</strong> (using the official identification header <code>Lrclib-Client</code>) as well as fallback interfaces for <strong>NetEase Cloud Music</strong> and prepared open music & lyrics databases are contacted. During autonomous lyrics synchronization, only sanitized track title and artist data are transmitted. At no time are user accounts, cookies, or personal identifiers shared with third parties. To relieve upstream APIs and prevent rate limits (HTTP 429), retrieved lyrics are stored temporarily in volatile browser session memory and dismissed upon closing the session. To reliably display high-resolution album artwork,
+  a multi-stage sequential query chain is used: First, if an Apple Music ID is present, the
+  <strong>Apple iTunes Lookup API</strong> is queried, followed by the official
+  <strong>Spotify oEmbed service</strong> (open.spotify.com/oembed), Apple's
+  <strong>iTunes Search API</strong>, and a JSONP search request to <strong>Deezer</strong>,
+  before a local placeholder image is shown as a final fallback.
+  For the <strong>Spotify Wrapped / Music Statistics</strong>, only public aggregation data of the profile <code>gamingpig</code> is retrieved via the official API of <strong>stats.fm</strong> (api.stats.fm).
+  At no time are personal data of visitors transmitted to stats.fm or Spotify.
+  As with any direct internet request, the respective providers only receive technically necessary connection data (e.g. IP address and user agent).</p>
+
+  <p>External content is only processed once the respective feature is loaded or
+  used. Processing by third-party providers is subject to their own
+  privacy policies; I have no influence over their retention periods or
+  further processing.</p>
+
+  <h2>7. Voice narration (read-aloud feature)</h2>
+  <p>The website offers an optional read-aloud feature in many places, which only starts
+  when the corresponding button is actively clicked. This feature uses the browser's
+  built-in voice synthesis (Web Speech API). Depending on the browser and operating system, speech
+  processing may take place entirely locally on your device, or the
+  browser may send the text to be read aloud to a cloud service of
+  the respective provider for processing (e.g. Google for Chrome system voices). I have no
+  influence over this - which voices run locally or via the cloud is determined by your browser or
+  operating system. Only the visible page content (e.g.
+  lyrics, description text) is read aloud, no personal or entered data.</p>
+
+  <h2>8. Discord widget in the support section</h2>
+  <p>In the support section of the website, the current member and online
+  count of my Discord server is displayed live. To do this, your browser automatically calls
+  the public invite API of <strong>discord.com</strong> when the page loads. This transmits the
+  usual technical connection data (IP address, time, browser information) to
+  Discord Inc. No user accounts or other personal data
+  are transmitted from you to Discord. Further information is available in the
+  <a href="https://discord.com/privacy" target="_blank" rel="noopener">Discord Privacy Policy</a>.</p>
+
+  <h2>9. Local storage in the browser (localStorage)</h2>
+  <p>Language, design, speech preferences, recent songs and version flags are stored in the browser. Roadmap storage also includes a random key pair (<code>gp_roadmap_identity_v2</code>), unconfirmed entries (<code>gp_roadmap_pending_v2</code>) and a read cache (<code>gp_roadmap_cache_v2</code>). The private key is not sent to the service; the optional device code includes it for transfer to your own devices. The public identifier, signature and content are sent on submission. Sync replaces the cache and GitHub confirmation removes pending entries. Local storage has no automatic expiry. Older local wishes may remain recoverable. Clearing browser data does not delete public GitHub data and may remove access to your vote without a saved device code.</p>
+
+  <h2>10. Web Push Notifications &amp; Outage Alerts</h2>
+  <p>The website and PWA offer optional outage and incident alerts (Web Push). Activation is strictly opt-in based on your explicit consent (Art. 6(1)(a) GDPR). For message delivery when services go down, your browser generates a pseudonymized push endpoint (via Google FCM or Apple Push Services). No personal names, emails, or device tracking profiles are linked. You can revoke and disable notifications at any time directly on the status page or via your browser settings.</p>
+
+  <p>Push endpoints, subscription keys and language are encrypted before transmission to ntfy using AES-GCM and the operator’s RSA public key. GitHub Actions decrypts registrations and saves device records encrypted with AES-GCM in data/subscribers.enc.json; private keys are held in Actions Secrets. ntfy and GitHub still process connection metadata such as IP addresses and timestamps. Pausing push unsubscribes the browser; stored records and historical Git revisions are not immediately erased. Earlier versions stored records publicly. Contact the address above for deletion requests.</p>
+
+  <h2>11. Changes to this policy</h2>
+  <p>This privacy policy may be updated as needed, e.g. when new features
+  are added. The current version is always available on this page.</p>
+
+  <h2>12. Contact</h2>
+  <p>If you have any questions about privacy, you can contact me at any time by email at
+  <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>.</p>
+
+  <h2>13. Copyright &amp; Legal Protection</h2>
+  <p>All content, designs, logos, icons, source code, audio data, and software components provided on this website and PWA are subject to copyright: <strong>&copy; 2026 Gamingpig &middot; All Rights Reserved</strong>. Any unauthorized reproduction, distribution, modification, or public dissemination without prior written consent is strictly prohibited and legally protected.</p>
+
+  <h2 id="github-roadmap-en">14. Direct voting and public wishes through ntfy and GitHub</h2>
+  <p>The purpose is shared feature planning and displaying votes and ideas across devices. No account is required. A random browser identity assigns your votes; an optional private device code lets your devices share it. This is not a verified identity of a natural person.</p>
+  <p>Voting or submitting sends an entry ID, public key identifier, signature and vote selection or name/pseudonym, category, title and description to <code>ntfy.sh</code>. The separate roadmap queue is publicly readable. A GitHub workflow imports valid entries into <code>data/roadmap.json</code> in the public <code>Gamingpig/About-Gamingpig</code> repository. Pseudonymous identifiers, votes and dated wishes are available across devices. Do not submit confidential or other people’s data.</p>
+  <p>ntfy is temporary storage with limited retention. An entry is durable only after the GitHub commit. The existing workflow is scheduled every 15 minutes but may be delayed. Pending entries are shown separately and can be resent. The visible roadmap reads shared data from <code>raw.githubusercontent.com</code> about every five minutes and on return, at most once per minute. ntfy and GitHub receive technical connection data including IP address, time and browser information.</p>
+  <p>Operating the public roadmap and displaying voluntarily published contributions relies on Article 6(1)(f) GDPR: the legitimate interest in shared feature planning and reliable display. Participation is optional; the portfolio remains available without contributing. “Understood” acknowledges the privacy notice and is not consent to additional processing.</p>
+  <p>Public records have no automatic deletion deadline; previous versions may remain in Git history. You can withdraw your vote using the same browser identity, without deleting older Git versions. To request removal of a wish or identifier, email its entry ID to <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>. Never send your private device code. Third-party copies, Git history and existing browser caches may require separate handling; successful synchronization replaces the local cache.</p>
+  <p>GitHub also processes data in the USA. Its own processing, retention and international transfers are described in the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a>; see also the <a href="https://docs.ntfy.sh/privacy/" target="_blank" rel="noopener">ntfy Privacy Policy</a>.</p>
+  <p>Subject to the GDPR, you have rights of access, rectification, erasure, restriction, objection and complaint to a supervisory authority. Contact the address above regarding our processing.</p>
+
+  <footer>
+    &copy; 2026 Gamingpig &middot; All Rights Reserved &middot; Copyright Protected &middot; <a href="impressum.html" style="color:var(--text-muted, #94a3b8);text-decoration:underline;">Legal Notice</a> &middot; Private, non-commercial portfolio
+  </footer>
+
+</div>
+
+<div class="lang-block" data-lang="es" style="display:none;">
+  <header>
+    <h1>Política de Privacidad</h1>
+    <p>Gamingpig Portfolio · Actualizado: 15 de octubre de 2026</p>
+  </header>
+
+  <div class="card">
+    <p>Esta app es una llamada Trusted Web Activity (TWA) y muestra exclusivamente el
+    contenido del sitio web <a href="https://gamingpig.github.io/About-Gamingpig/">gamingpig.github.io/About-Gamingpig</a>.
+    Se trata de un proyecto de portafolio privado y no comercial.</p>
+  </div>
+
+  <h2>1. Responsable</h2>
+  <p>
+    Gamingpig<br>
+    Email: <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>
+  </p>
+
+  <h2>2. ¿Qué datos se recopilan?</h2>
+  <p>El sitio no tiene cuentas, seguimiento analítico ni publicidad. Votos e ideas no requieren registro. Identificadores seudónimos y textos voluntarios se envían por ntfy a GitHub y se guardan públicamente (sección 14). Los servicios externos reciben datos técnicos.</p>
+  <ul>
+    <li>No se recopilan datos de ubicación.</li>
+    <li>No se leen contactos, fotos ni archivos.</li>
+    <li>No se realiza ningún análisis del comportamiento del usuario (analítica).</li>
+  </ul>
+
+  <h2>3. Alojamiento y datos técnicos de acceso</h2>
+  <p>El contenido se entrega a través de GitHub Pages (GitHub Inc., o GitHub B.V. en la UE).
+  Como en cualquier visita a un sitio web, GitHub procesa automáticamente datos técnicos de acceso
+  (p. ej. dirección IP, momento del acceso, user agent) como parte del funcionamiento normal del servidor.
+  Este procesamiento está fuera de mi control; más información en la
+  <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Declaración de Privacidad de GitHub</a>.</p>
+
+  <h2>4. Permisos de la app</h2>
+  <p>La app solo necesita una conexión a internet existente para mostrar el contenido del sitio web.
+  No se solicitan más permisos del dispositivo (cámara, micrófono, contactos, ubicación, etc.).</p>
+
+  <h2>5. Fuentes externas</h2>
+  <p>Para una presentación uniforme, el sitio web carga las fuentes "Inter" y
+  "JetBrains Mono" a través de Google Fonts. Con ello, tu navegador establece una conexión con
+  los servidores de Google. Esto transmite técnicamente tu dirección IP, información del navegador,
+  y el momento y archivo solicitado a Google.</p>
+
+  <h2>6. Panel de música, Stats.fm Wrapped y servicios externos</h2>
+  <p>El panel de música obtiene información de la canción actual a través de la API de
+  <strong>npc-api.aikins.xyz</strong>. Si este servicio no proporciona datos actuales, se consulta como alternativa la información pública de la canción actual del perfil <code>gamingpig</code> mediante <strong>stats.fm</strong> (api.stats.fm). Para las letras se contacta a <strong>LRCLIB</strong> (utilizando el encabezado oficial <code>Lrclib-Client</code>), así como interfaces alternativas para <strong>NetEase Cloud Music</strong> y bases de datos abiertas de música y letras preparadas. En la sincronización automática de letras, únicamente se transmiten datos anonimizados de título y artista sin identificadores personales ni cookies. Para proteger las APIs frente a límites de tasa (HTTP 429), las letras se almacenan temporalmente en la memoria volátil de sesión del navegador. Para garantizar la carga confiable de portadas de álbumes en alta resolución,
+  se utiliza una cadena de consulta secuencial: primero, si existe un ID de Apple Music, se consulta la
+  <strong>Apple iTunes Lookup API</strong>, seguida del servicio oficial
+  <strong>Spotify oEmbed</strong> (open.spotify.com/oembed), la <strong>Apple iTunes Search API</strong>
+  y una búsqueda JSONP en <strong>Deezer</strong>, antes de mostrar como último recurso una imagen de marcador de posición local.
+  Para <strong>Spotify Wrapped / Estadísticas de música</strong>, solo se consultan datos de agregación públicos del perfil <code>gamingpig</code> a través de la API oficial de <strong>stats.fm</strong> (api.stats.fm).
+  En ningún momento se transmiten datos personales de los visitantes a stats.fm ni a Spotify.
+  Como en cualquier solicitud directa a internet, los respectivos proveedores solo reciben datos de conexión técnicamente necesarios (p. ej. dirección IP y user agent).</p>
+
+  <p>El contenido externo solo se procesa una vez que se carga o utiliza la función
+  correspondiente. El procesamiento por parte de terceros proveedores está sujeto a sus propias
+  políticas de privacidad; no tengo influencia sobre su período de retención ni su
+  procesamiento posterior.</p>
+
+  <h2>7. Narración por voz (función de lectura)</h2>
+  <p>El sitio web ofrece en muchos lugares una función opcional de lectura en voz alta, que solo se inicia
+  al hacer clic activamente en el botón correspondiente. Esta función utiliza la síntesis de voz
+  integrada del navegador (Web Speech API). Dependiendo del navegador y sistema operativo, el
+  procesamiento de voz puede tener lugar completamente de forma local en tu dispositivo, o el
+  navegador puede enviar el texto a leer a un servicio en la nube del
+  proveedor correspondiente para su procesamiento (p. ej. Google en el caso de las voces del sistema de Chrome). No tengo
+  influencia sobre esto: qué voces funcionan localmente o a través de la nube lo determina tu navegador o
+  sistema operativo. Solo se lee en voz alta el contenido visible de la página (p. ej.
+  letras de canciones, textos descriptivos), no datos personales ni introducidos.</p>
+
+  <h2>8. Widget de Discord en la sección de soporte</h2>
+  <p>En la sección de soporte del sitio web se muestra en vivo el número actual de
+  miembros y conectados de mi servidor de Discord. Para ello, tu navegador llama automáticamente
+  a la API pública de invitación de <strong>discord.com</strong> al cargar la página. Esto transmite los
+  datos técnicos de conexión habituales (dirección IP, momento, información del navegador) a
+  Discord Inc. No se transmiten cuentas de usuario ni otros datos personales
+  tuyos a Discord. Más información en la
+  <a href="https://discord.com/privacy" target="_blank" rel="noopener">Política de Privacidad de Discord</a>.</p>
+
+  <h2>9. Almacenamiento local en el navegador (localStorage)</h2>
+  <p>El navegador conserva idioma, diseño, lectura, canciones y versiones. También guarda claves aleatorias (<code>gp_roadmap_identity_v2</code>), envíos pendientes (<code>gp_roadmap_pending_v2</code>) y caché (<code>gp_roadmap_cache_v2</code>). La clave privada no se envía al servicio; el código opcional permite transferirla a tus dispositivos. Identificador público, firma y contenido se transmiten al enviar. La sincronización reemplaza la caché y elimina pendientes confirmados por GitHub. No caducan automáticamente. Pueden quedar ideas locales antiguas. Borrar datos del navegador no elimina datos públicos y puede perder el acceso a tu voto sin copia del código.</p>
+
+  <h2>10. Notificaciones Web Push y Alertas de Incidentes</h2>
+  <p>El sitio web y la PWA ofrecen un sistema opcional de notificaciones por fallos (Web Push). La activación es totalmente voluntaria con tu consentimiento explícito (Art. 6.1.a RGPD). Para el envío técnico, el navegador genera un endpoint seudonimizado (vía Google FCM o Apple Push). No se vinculan nombres ni perfiles personales. Puedes desactivar las notificaciones en cualquier momento desde la página de estado o los ajustes de tu navegador.</p>
+
+  <p>Los endpoints push, claves y lengua se cifran antes de enviarse a ntfy mediante AES-GCM y RSA. GitHub Actions los descifra y almacena cifrados en data/subscribers.enc.json; las claves privadas están en Actions Secrets. Los proveedores procesan metadatos de conexión, como IP y fecha. Pausar push cancela la suscripción del navegador, pero no borra inmediatamente registros ni historial Git. Versiones anteriores guardaban datos públicamente. Para solicitar su eliminación, usa el contacto anterior.</p>
+
+  <h2>11. Cambios en esta política</h2>
+  <p>Esta política de privacidad puede actualizarse según sea necesario, p. ej. cuando se añaden nuevas
+  funciones. La versión actual siempre está disponible en esta página.</p>
+
+  <h2>12. Contacto</h2>
+  <p>Si tienes preguntas sobre privacidad, puedes contactarme en cualquier momento por correo electrónico a
+  <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>.</p>
+
+  <h2>13. Derechos de Autor y Protección Legal</h2>
+  <p>Todos los contenidos, diseños, logotipos, iconos, código fuente y componentes de software de este sitio web y PWA están protegidos por derechos de autor: <strong>&copy; 2026 Gamingpig &middot; Todos los derechos reservados</strong>. Queda prohibida cualquier reproducción, distribución o modificación no autorizada.</p>
+
+  <h2 id="github-roadmap-es">14. Votos e ideas públicas mediante ntfy y GitHub</h2>
+  <p>La finalidad es planificar funciones y mostrar votos e ideas entre dispositivos sin cuenta. Una identidad aleatoria del navegador identifica tus votos; el código privado opcional permite compartirla entre tus dispositivos. No verifica la identidad de una persona.</p>
+  <p>Al votar o enviar, <code>ntfy.sh</code> recibe ID, identificador de clave pública, firma y selección de votos o nombre/seudónimo, categoría, título y descripción. La cola separada es pública. Un workflow importa entradas válidas en <code>data/roadmap.json</code> del repositorio público <code>Gamingpig/About-Gamingpig</code>, con identificadores, votos y fechas. No envíes datos confidenciales o ajenos.</p>
+  <p>ntfy es temporal y conserva mensajes por tiempo limitado; solo el commit en GitHub confirma almacenamiento duradero. El workflow está programado cada 15 minutos, pero puede retrasarse. Los pendientes se muestran y pueden reenviarse. La página visible consulta <code>raw.githubusercontent.com</code> cada cinco minutos y al regresar, máximo una vez por minuto. ntfy y GitHub reciben IP, hora e información del navegador.</p>
+  <p>La base para mantener la hoja de ruta y mostrar aportaciones publicadas voluntariamente es el art. 6.1.f RGPD: interés legítimo en planificar funciones conjuntamente y mostrar datos fiables. Participar es opcional. «Entendido» solo confirma la lectura del aviso, no autoriza tratamientos adicionales.</p>
+  <p>No hay borrado automático; versiones anteriores pueden permanecer en el historial Git. Retirar tu voto con la misma identidad no borra versiones antiguas. Para eliminar una idea o identificador, envía el ID a <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>, nunca el código privado. Copias, historial y cachés pueden requerir tratamiento separado; sincronizar correctamente reemplaza la caché.</p>
+  <p>GitHub también trata datos en EE. UU. Consulta su <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">política de privacidad</a> y la de <a href="https://docs.ntfy.sh/privacy/" target="_blank" rel="noopener">ntfy</a> sobre tratamiento, conservación y transferencias.</p>
+  <p>Según el RGPD, puedes solicitar acceso, rectificación, supresión, limitación y oposición, y reclamar ante una autoridad de control. Contacta con la dirección anterior sobre nuestro tratamiento.</p>
+
+  <footer>
+    &copy; 2026 Gamingpig &middot; Todos los derechos reservados &middot; Protegido por derechos de autor &middot; <a href="impressum.html" style="color:var(--text-muted, #94a3b8);text-decoration:underline;">Aviso Legal</a> &middot; Proyecto privado
+  </footer>
+
+</div>
+
+<div class="lang-block" data-lang="fr" style="display:none;">
+  <header>
+    <h1>Politique de confidentialité</h1>
+    <p>Gamingpig Portfolio · Mise à jour : 15 octobre 2026</p>
+  </header>
+
+  <div class="card">
+    <p>Cette app est ce qu'on appelle une Trusted Web Activity (TWA) et affiche exclusivement le
+    contenu du site <a href="https://gamingpig.github.io/About-Gamingpig/">gamingpig.github.io/About-Gamingpig</a>.
+    Il s'agit d'un projet de portfolio privé et non commercial.</p>
+  </div>
+
+  <h2>1. Responsable</h2>
+  <p>
+    Gamingpig<br>
+    Email : <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>
+  </p>
+
+  <h2>2. Quelles données sont collectées ?</h2>
+  <p>Le site ne gère ni comptes, ni suivi analytique, ni publicité. Votes et idées fonctionnent sans connexion. Identifiants pseudonymes et textes volontaires passent par ntfy vers GitHub et sont publics (section 14). Les services externes reçoivent des données techniques.</p>
+  <ul>
+    <li>Aucune donnée de localisation n'est collectée.</li>
+    <li>Aucun contact, photo ou fichier n'est lu.</li>
+    <li>Aucune analyse du comportement des utilisateurs (analytics) n'a lieu.</li>
+  </ul>
+
+  <h2>3. Hébergement et données techniques d'accès</h2>
+  <p>Le contenu est fourni via GitHub Pages (GitHub Inc., ou GitHub B.V. dans l'UE).
+  Comme pour toute visite de site web, GitHub traite automatiquement des données techniques d'accès
+  (par ex. adresse IP, moment de l'accès, user agent) dans le cadre du fonctionnement normal du serveur.
+  Ce traitement échappe à mon contrôle ; plus d'informations dans la
+  <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">déclaration de confidentialité de GitHub</a>.</p>
+
+  <h2>4. Autorisations de l'app</h2>
+  <p>L'app nécessite uniquement une connexion internet existante pour afficher le contenu du site.
+  Aucune autre autorisation d'appareil (caméra, microphone, contacts, localisation, etc.) n'est demandée.</p>
+
+  <h2>5. Polices externes</h2>
+  <p>Pour un affichage uniforme, le site charge les polices « Inter » et
+  « JetBrains Mono » via Google Fonts. Ton navigateur établit ainsi une connexion aux
+  serveurs de Google. Cela transmet techniquement ton adresse IP, des informations sur le navigateur,
+  ainsi que l'heure et le fichier demandé à Google.</p>
+
+  <h2>6. Tableau de bord musical, Stats.fm Wrapped et services externes</h2>
+  <p>Le tableau de bord musical récupère les informations du titre en cours via l'API de
+  <strong>npc-api.aikins.xyz</strong>. Si ce service ne fournit aucune donnée actuelle, les informations publiques du titre en cours du profil <code>gamingpig</code> sont récupérées via <strong>stats.fm</strong> (api.stats.fm). Pour les paroles, <strong>LRCLIB</strong> (avec l'en-tête officiel <code>Lrclib-Client</code>) ainsi que des interfaces de secours pour <strong>NetEase Cloud Music</strong> et des bases de données ouvertes de musique et de paroles sont contactés. Lors de la synchronisation automatique, seules les métadonnées assainies de titre et d'artiste sont transmises sans identifiant ni cookie. Pour soulager les API et éviter les limites de débit (HTTP 429), les paroles sont conservées temporairement dans la mémoire volatile de session du navigateur. Afin d'afficher de manière fiable des pochettes d'albums en haute résolution,
+  une chaîne de requêtes séquentielles est utilisée : d'abord l'<strong>API Apple iTunes Lookup</strong>
+  en cas d'identifiant Apple Music, puis le service officiel <strong>Spotify oEmbed</strong> (open.spotify.com/oembed),
+  l'<strong>API Apple iTunes Search</strong> et une recherche JSONP auprès de <strong>Deezer</strong>,
+  avant qu'une image de remplacement locale ne soit utilisée en dernier recours.
+  Pour les <strong>statistiques musicales / Spotify Wrapped</strong>, seules des données publiques agrégées du profil <code>gamingpig</code> sont consultées via l'API officielle de <strong>stats.fm</strong> (api.stats.fm).
+  À aucun moment des données personnelles des visiteurs ne sont transmises à stats.fm ou Spotify.
+  Comme pour toute requête directe sur Internet, les fournisseurs respectifs ne reçoivent que des données de connexion techniquement nécessaires (par ex. adresse IP et user agent).</p>
+
+  <p>Le contenu externe n'est traité qu'une fois la fonction concernée chargée ou
+  utilisée. Le traitement par les fournisseurs tiers est soumis à leurs propres
+  politiques de confidentialité ; je n'ai aucune influence sur leur durée de conservation ni sur
+  le traitement ultérieur.</p>
+
+  <h2>7. Narration vocale (fonction de lecture à voix haute)</h2>
+  <p>Le site propose à de nombreux endroits une fonction optionnelle de lecture à voix haute, qui ne démarre
+  que lors d'un clic actif sur le bouton correspondant. Cette fonction utilise la synthèse vocale
+  intégrée au navigateur (Web Speech API). Selon le navigateur et le système d'exploitation, le
+  traitement vocal peut avoir lieu entièrement en local sur ton appareil, ou le
+  navigateur peut envoyer le texte à lire à un service cloud du
+  fournisseur concerné pour traitement (par ex. Google pour les voix système de Chrome). Je n'ai aucune
+  influence là-dessus - quelles voix fonctionnent localement ou via le cloud est déterminé par ton navigateur ou
+  ton système d'exploitation. Seul le contenu visible de la page (par ex.
+  paroles, textes descriptifs) est lu à voix haute, aucune donnée personnelle ou saisie.</p>
+
+  <h2>8. Widget Discord dans la section support</h2>
+  <p>Dans la section support du site, le nombre actuel de membres et de personnes
+  en ligne de mon serveur Discord est affiché en direct. Pour cela, ton navigateur appelle automatiquement
+  l'API publique d'invitation de <strong>discord.com</strong> lors du chargement de la page. Cela transmet les
+  données de connexion techniques habituelles (adresse IP, heure, informations sur le navigateur) à
+  Discord Inc. Aucun compte utilisateur ni autre donnée personnelle
+  te concernant n'est transmis à Discord. Plus d'informations dans la
+  <a href="https://discord.com/privacy" target="_blank" rel="noopener">politique de confidentialité de Discord</a>.</p>
+
+  <h2>9. Stockage local dans le navigateur (localStorage)</h2>
+  <p>Le navigateur conserve langue, design, lecture, chansons et versions. Il conserve aussi les clés aléatoires (<code>gp_roadmap_identity_v2</code>), envois en attente (<code>gp_roadmap_pending_v2</code>) et cache (<code>gp_roadmap_cache_v2</code>). La clé privée n’est pas envoyée au service ; le code facultatif la transfère entre tes appareils. Identifiant public, signature et contenu sont transmis lors de l’envoi. La synchronisation remplace le cache et retire les envois confirmés par GitHub, sans expiration automatique locale. D’anciennes idées peuvent rester récupérables. Effacer le navigateur ne supprime pas GitHub et peut perdre l’accès au vote sans copie du code.</p>
+
+  <h2>10. Notifications Web Push et Alertes d'Incidents</h2>
+  <p>Le site et la PWA proposent des alertes d'incidents facultatives (Web Push). L'activation repose sur votre consentement explicite (Art. 6, par. 1, point a du RGPD). Pour la distribution technique, votre navigateur génère un point de terminaison pseudonymisé (via Google FCM ou Apple Push). Aucun nom ni profil de suivi n'est associé. Vous pouvez désactiver les notifications à tout moment sur la page de statut ou dans les paramètres du navigateur.</p>
+
+  <p>Les endpoints push, clés et langue sont chiffrés avant l’envoi à ntfy avec AES-GCM et RSA. GitHub Actions les déchiffre et les conserve chiffrés dans data/subscribers.enc.json ; les clés privées restent dans Actions Secrets. Les fournisseurs traitent les métadonnées de connexion, dont IP et date. La pause désabonne le navigateur sans effacer immédiatement les données ni l’historique Git. Les anciennes versions stockaient les données publiquement. Pour leur suppression, utilisez le contact ci-dessus.</p>
+
+  <h2>11. Modifications de cette politique</h2>
+  <p>Cette politique de confidentialité peut être mise à jour si nécessaire, par ex. lors de l'ajout de nouvelles
+  fonctionnalités. La version actuelle est toujours disponible sur cette page.</p>
+
+  <h2>12. Contact</h2>
+  <p>Pour toute question sur la confidentialité, tu peux me contacter à tout moment par email à
+  <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>.</p>
+
+  <h2>13. Droits d'Auteur et Protection Légale</h2>
+  <p>Tous les contenus, designs, logos, icônes, code source et composants logiciels de ce site et de cette application sont protégés par le droit d'auteur : <strong>&copy; 2026 Gamingpig &middot; Tous droits réservés</strong>. Toute reproduction, distribution ou modification non autorisée est strictement interdite.</p>
+
+  <h2 id="github-roadmap-fr">14. Votes directs et idées publiques via ntfy et GitHub</h2>
+  <p>Le but est de planifier ensemble et d’afficher votes et idées entre appareils, sans compte. Une identité aléatoire du navigateur associe tes votes ; le code privé facultatif permet de la partager entre tes appareils. Aucune personne n’est ainsi vérifiée.</p>
+  <p>Voter ou envoyer transmet à <code>ntfy.sh</code> un ID, identifiant de clé publique, signature et votes ou nom/pseudonyme, catégorie, titre et description. La file séparée est publique. Un workflow importe les entrées valides dans <code>data/roadmap.json</code> du dépôt public <code>Gamingpig/About-Gamingpig</code>, avec identifiants, votes et dates. N’envoie pas de données confidentielles ou d’autrui.</p>
+  <p>ntfy conserve temporairement les messages. Seul le commit GitHub confirme le stockage durable. Le workflow prévu toutes les 15 minutes peut être retardé. Les envois en attente restent visibles et peuvent être renvoyés. La page visible consulte <code>raw.githubusercontent.com</code> environ toutes les cinq minutes et au retour, au maximum une fois par minute. ntfy et GitHub reçoivent IP, heure et informations du navigateur.</p>
+  <p>La base du fonctionnement de la feuille de route et de l’affichage des contributions volontairement publiées est l’art. 6(1)(f) RGPD : l’intérêt légitime à planifier des fonctions ensemble et à fournir un affichage fiable. Participer est facultatif. « Compris » accuse réception de l’avis et ne consent pas à des traitements supplémentaires.</p>
+  <p>Il n’y a pas de suppression automatique ; des versions peuvent rester dans l’historique Git. Retirer ton vote avec la même identité ne supprime pas cet historique. Pour supprimer une idée ou un identifiant, envoie l’ID à <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>, jamais ton code privé. Copies, historique et caches peuvent nécessiter un traitement séparé ; la synchronisation réussie remplace le cache.</p>
+  <p>GitHub traite aussi des données aux États-Unis. Consulte sa <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">déclaration de confidentialité</a> et celle de <a href="https://docs.ntfy.sh/privacy/" target="_blank" rel="noopener">ntfy</a> pour les traitements, conservation et transferts.</p>
+  <p>Selon le RGPD, tu disposes des droits d’accès, rectification, effacement, limitation, opposition et réclamation auprès d’une autorité de contrôle. Contacte l’adresse ci-dessus concernant nos traitements.</p>
+
+  <footer>
+    &copy; 2026 Gamingpig &middot; Tous droits réservés &middot; Protégé par le droit d'auteur &middot; <a href="impressum.html" style="color:var(--text-muted, #94a3b8);text-decoration:underline;">Mentions Légales</a> &middot; Portfolio privé non commercial
+  </footer>
+
+</div>
+
+<div class="lang-block" data-lang="pt" style="display:none;">
+  <header>
+    <h1>Política de Privacidade</h1>
+    <p>Gamingpig Portfolio · Atualizado em: 15 de outubro de 2026</p>
+  </header>
+
+  <div class="card">
+    <p>Este app é uma chamada Trusted Web Activity (TWA) e exibe exclusivamente o
+    conteúdo do site <a href="https://gamingpig.github.io/About-Gamingpig/">gamingpig.github.io/About-Gamingpig</a>.
+    Trata-se de um projeto de portfólio privado e sem fins comerciais.</p>
+  </div>
+
+  <h2>1. Responsável</h2>
+  <p>
+    Gamingpig<br>
+    Email: <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>
+  </p>
+
+  <h2>2. Quais dados são coletados?</h2>
+  <p>O site não tem contas, análise comportamental ou publicidade. Votos e ideias não exigem login. Identificadores pseudônimos e textos voluntários passam pelo ntfy ao GitHub e são públicos (seção 14). Serviços externos recebem dados técnicos.</p>
+  <ul>
+    <li>Nenhum dado de localização é coletado.</li>
+    <li>Nenhum contato, foto ou arquivo é lido.</li>
+    <li>Não é realizada nenhuma análise do comportamento do usuário (analytics).</li>
+  </ul>
+
+  <h2>3. Hospedagem e dados técnicos de acesso</h2>
+  <p>O conteúdo é entregue via GitHub Pages (GitHub Inc., ou GitHub B.V. na UE).
+  Como em qualquer visita a um site, o GitHub processa automaticamente dados técnicos de acesso
+  (ex.: endereço IP, momento do acesso, user agent) como parte da operação normal do servidor.
+  Esse processamento está fora do meu controle; mais informações na
+  <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Declaração de Privacidade do GitHub</a>.</p>
+
+  <h2>4. Permissões do app</h2>
+  <p>O app requer apenas uma conexão com a internet existente para exibir o conteúdo do site.
+  Nenhuma outra permissão do dispositivo (câmera, microfone, contatos, localização etc.) é solicitada.</p>
+
+  <h2>5. Fontes externas</h2>
+  <p>Para uma exibição uniforme, o site carrega as fontes "Inter" e
+  "JetBrains Mono" via Google Fonts. Com isso, seu navegador estabelece uma conexão com os
+  servidores do Google. Isso transmite tecnicamente seu endereço IP, informações do navegador,
+  além do momento e do arquivo solicitado, ao Google.</p>
+
+  <h2>6. Painel de música, Stats.fm Wrapped e serviços externos</h2>
+  <p>O painel de música obtém informações da faixa atual via a API de
+  <strong>npc-api.aikins.xyz</strong>. Se esse serviço não fornecer dados atuais, as informações públicas da faixa atual do perfil <code>gamingpig</code> serão obtidas alternativamente através do <strong>stats.fm</strong> (api.stats.fm). Para as letras de música, o <strong>LRCLIB</strong> (utilizando o cabeçalho oficial <code>Lrclib-Client</code>) assim como interfaces alternativas para <strong>NetEase Cloud Music</strong> e bases de dados abertas de música e letras são consultadas. Na sincronização automática, apenas metadados limpos de título e artista são transmitidos sem dados pessoais ou cookies. Para aliviar as APIs e prevenir limites de requisição (HTTP 429), as letras são mantidas temporariamente na memória volátil de sessão do navegador. Para garantir a exibição confiável de capas de álbum em alta definição,
+  uma cadeia de busca sequencial é utilizada: primeiro, se houver um Apple Music ID, consulta-se a
+  <strong>Apple iTunes Lookup API</strong>, seguida pelo serviço oficial <strong>Spotify oEmbed</strong>
+  (open.spotify.com/oembed), a <strong>Apple iTunes Search API</strong> e uma busca JSONP no <strong>Deezer</strong>,
+  antes de exibir uma imagem de espaço reservado local como último recurso.
+  Para o <strong>Spotify Wrapped / Estatísticas de Música</strong>, apenas dados de agregação públicos do perfil <code>gamingpig</code> são obtidos através da API oficial do <strong>stats.fm</strong> (api.stats.fm).
+  Em nenhum momento dados pessoais dos visitantes são transmitidos ao stats.fm ou ao Spotify.
+  Como em qualquer requisição direta à internet, os respectivos provedores recebem apenas dados de conexão tecnicamente necessários (ex.: endereço IP e user agent).</p>
+
+  <p>Conteúdo externo só é processado quando a respectiva função é carregada ou
+  usada. O processamento por provedores terceiros está sujeito às suas próprias
+  políticas de privacidade; não tenho influência sobre o período de retenção ou o
+  processamento posterior por parte deles.</p>
+
+  <h2>7. Narração por voz (função de leitura em voz alta)</h2>
+  <p>O site oferece em muitos lugares uma função opcional de leitura em voz alta, que só inicia
+  ao clicar ativamente no botão correspondente. Essa função usa a síntese de voz
+  embutida no navegador (Web Speech API). Dependendo do navegador e sistema operacional, o
+  processamento de voz pode ocorrer inteiramente local no seu dispositivo, ou o
+  navegador pode enviar o texto a ser lido para um serviço em nuvem do
+  respectivo provedor para processamento (ex.: Google no caso das vozes do sistema do Chrome). Não tenho
+  influência sobre isso - quais vozes rodam localmente ou pela nuvem é decidido pelo seu navegador ou
+  sistema operacional. Apenas o conteúdo visível da página (ex.:
+  letra da música, textos descritivos) é lido em voz alta, nenhum dado pessoal ou inserido.</p>
+
+  <h2>8. Widget do Discord na seção de suporte</h2>
+  <p>Na seção de suporte do site, o número atual de membros e status online
+  do meu servidor do Discord é exibido ao vivo. Para isso, seu navegador chama automaticamente
+  a API pública de convite de <strong>discord.com</strong> ao carregar a página. Isso transmite os
+  dados técnicos de conexão usuais (endereço IP, momento, informações do navegador) para a
+  Discord Inc. Nenhuma conta de usuário ou outro dado pessoal
+  seu é transmitido ao Discord. Mais informações na
+  <a href="https://discord.com/privacy" target="_blank" rel="noopener">Política de Privacidade do Discord</a>.</p>
+
+  <h2>9. Armazenamento local no navegador (localStorage)</h2>
+  <p>O navegador guarda idioma, design, leitura, músicas e versões. Também guarda chaves aleatórias (<code>gp_roadmap_identity_v2</code>), envios pendentes (<code>gp_roadmap_pending_v2</code>) e cache (<code>gp_roadmap_cache_v2</code>). A chave privada não é enviada ao serviço; o código opcional a transfere entre seus aparelhos. Identificador público, assinatura e conteúdo são enviados ao submeter. Sincronizar substitui cache e remove pendentes confirmados, sem expiração automática local. Ideias antigas podem ser recuperáveis. Apagar o navegador não apaga GitHub e pode perder acesso ao voto sem cópia do código.</p>
+
+  <h2>10. Notificações Web Push e Alertas de Falhas</h2>
+  <p>O site e PWA oferecem alertas opcionais de falha de serviços (Web Push). A ativação é voluntária mediante seu consentimento explícito (Art. 6º, 1, a do RGPD). Para a entrega técnica, seu navegador gera um endpoint pseudonimizado (via Google FCM ou Apple Push). Não há coleta de nomes ou perfis de rastreamento. Você pode desativar as notificações a qualquer momento na página de status ou nas opções do navegador.</p>
+
+  <p>Endpoints push, chaves e idioma são criptografados antes do envio ao ntfy com AES-GCM e RSA. GitHub Actions descriptografa e salva os registros criptografados em data/subscribers.enc.json; chaves privadas ficam em Actions Secrets. Os provedores processam metadados de conexão, incluindo IP e horário. Pausar push cancela a assinatura do navegador, mas não apaga imediatamente registros nem histórico Git. Versões anteriores salvavam dados publicamente. Solicite exclusão ao contato acima.</p>
+
+  <h2>11. Alterações nesta política</h2>
+  <p>Esta política de privacidade pode ser atualizada conforme necessário, ex.: quando novas
+  funcionalidades são adicionadas. A versão atual está sempre disponível nesta página.</p>
+
+  <h2>12. Contato</h2>
+  <p>Se tiver dúvidas sobre privacidade, você pode entrar em contato a qualquer momento por email em
+  <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>.</p>
+
+  <h2>13. Direitos Autorais e Proteção Legal</h2>
+  <p>Todos os conteúdos, designs, logotipos, ícones, código-fonte e componentes de software deste site e aplicativo estão protegidos por direitos autorais: <strong>&copy; 2026 Gamingpig &middot; Todos os direitos reservados</strong>. Qualquer reprodução, distribuição ou modificação não autorizada é estritamente proibida.</p>
+
+  <h2 id="github-roadmap-pt">14. Votos diretos e ideias públicas pelo ntfy e GitHub</h2>
+  <p>O objetivo é planejar recursos e mostrar votos e ideias entre dispositivos, sem conta. Uma identidade aleatória do navegador associa seus votos; o código privado opcional compartilha a identidade entre seus aparelhos. Isso não verifica uma pessoa.</p>
+  <p>Votar ou enviar transmite ID, identificador de chave pública, assinatura e votos ou nome/pseudônimo, categoria, título e descrição ao <code>ntfy.sh</code>. A fila separada é pública. Um workflow importa entradas válidas em <code>data/roadmap.json</code> do repositório público <code>Gamingpig/About-Gamingpig</code>, incluindo identificadores, votos e datas. Não envie dados confidenciais ou de outras pessoas.</p>
+  <p>ntfy é temporário, com retenção limitada. Só o commit GitHub confirma armazenamento durável. O workflow programado a cada 15 minutos pode atrasar. Pendentes são mostrados e podem ser reenviados. A página visível consulta <code>raw.githubusercontent.com</code> a cada cinco minutos e ao retornar, no máximo uma vez por minuto. ntfy e GitHub recebem IP, horário e dados do navegador.</p>
+  <p>A base para a página pública e a exibição das contribuições publicadas voluntariamente é o art. 6(1)(f) RGPD: interesse legítimo em planejamento conjunto e exibição confiável. Participar é opcional. “Entendido” apenas reconhece o aviso, sem consentir em tratamento adicional.</p>
+  <p>Não há exclusão automática; versões podem permanecer no histórico Git. Retirar seu voto com a mesma identidade não exclui versões antigas. Para excluir ideia ou identificador, envie o ID a <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>, nunca o código privado. Cópias, histórico e caches podem exigir tratamento separado; sincronizar substitui o cache local.</p>
+  <p>O GitHub também trata dados nos EUA. Veja sua <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">política de privacidade</a> e a do <a href="https://docs.ntfy.sh/privacy/" target="_blank" rel="noopener">ntfy</a> sobre tratamento, retenção e transferências.</p>
+  <p>Conforme o RGPD, existem direitos de acesso, retificação, exclusão, limitação, oposição e reclamação à autoridade de controle. Contate o endereço acima sobre nosso tratamento.</p>
+
+  <footer>
+    &copy; 2026 Gamingpig &middot; Todos os direitos reservados &middot; Protegido por direitos autorais &middot; <a href="impressum.html" style="color:var(--text-muted, #94a3b8);text-decoration:underline;">Aviso Legal</a> &middot; Portfólio privado
+  </footer>
+
+</div>
+
+<div class="lang-block" data-lang="tr" style="display:none;">
+  <header>
+    <h1>Gizlilik Politikası</h1>
+    <p>Gamingpig Portfolio · Güncelleme: 15 Ekim 2026</p>
+  </header>
+
+  <div class="card">
+    <p>Bu uygulama, Trusted Web Activity (TWA) olarak adlandırılan bir yapıdır ve yalnızca
+    <a href="https://gamingpig.github.io/About-Gamingpig/">gamingpig.github.io/About-Gamingpig</a> web
+    sitesinin içeriğini gösterir. Özel, ticari olmayan bir portfolyo projesidir.</p>
+  </div>
+
+  <h2>1. Sorumlu Kişi</h2>
+  <p>
+    Gamingpig<br>
+    E-posta: <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>
+  </p>
+
+  <h2>2. Hangi veriler toplanıyor?</h2>
+  <p>Sitede hesap, davranış analizi veya reklam yoktur. Oy ve fikirler giriş gerektirmez. Takma tarayıcı kimlikleri ve gönüllü metinler ntfy üzerinden GitHub’a gönderilir ve herkese açıktır (bölüm 14). Dış hizmetler teknik veri alır.</p>
+  <ul>
+    <li>Hiçbir konum verisi toplanmaz.</li>
+    <li>Hiçbir kişi, fotoğraf veya dosya okunmaz.</li>
+    <li>Kullanıcı davranışının analizi (analytics) yapılmaz.</li>
+  </ul>
+
+  <h2>3. Barındırma ve teknik erişim verileri</h2>
+  <p>İçerik, GitHub Pages (GitHub Inc. veya AB'de GitHub B.V.) üzerinden sunulmaktadır.
+  Her web sitesi ziyaretinde olduğu gibi, GitHub normal sunucu işleyişinin bir parçası olarak
+  otomatik olarak teknik erişim verilerini (ör. IP adresi, erişim zamanı, user agent) işler.
+  Bu işleme benim kontrolüm dışındadır; daha fazla bilgi için
+  <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Gizlilik Bildirimi</a>ne bakabilirsiniz.</p>
+
+  <h2>4. Uygulama izinleri</h2>
+  <p>Uygulama, web sitesi içeriğini görüntülemek için yalnızca mevcut bir internet bağlantısına ihtiyaç duyar.
+  Başka herhangi bir cihaz izni (kamera, mikrofon, kişiler, konum vb.) istenmez.</p>
+
+  <h2>5. Harici yazı tipleri</h2>
+  <p>Tutarlı bir görünüm için web sitesi, "Inter" ve "JetBrains Mono" yazı tiplerini
+  Google Fonts üzerinden yükler. Bu sırada tarayıcınız Google sunucularına bağlantı kurar.
+  Bu işlem sırasında IP adresiniz, tarayıcı bilgileriniz, erişim zamanı ve talep edilen dosya
+  teknik olarak Google'a iletilir.</p>
+
+  <h2>6. Müzik paneli, Stats.fm Wrapped ve harici hizmetler</h2>
+  <p>Müzik paneli, güncel parça bilgilerini <strong>npc-api.aikins.xyz</strong> API'si üzerinden alır. Bu hizmet güncel veri sağlamazsa <code>gamingpig</code> profilinin herkese açık güncel parça bilgileri alternatif olarak <strong>stats.fm</strong> (api.stats.fm) üzerinden alınır.
+  Şarkı sözleri için <strong>LRCLIB</strong> (resmi <code>Lrclib-Client</code> başlığı kullanılarak) ile birlikte alternatif olarak <strong>NetEase Cloud Music</strong> ve entegre açık müzik/şarkı sözü veri tabanları ile iletişime geçilir. Otomatik senkronizasyon sırasında yalnızca temizlenmiş parça ve sanatçı bilgileri aktarılır; hiçbir kişisel veri veya çerez paylaşılmaz. API'leri korumak ve hız sınırlarını (HTTP 429) engellemek için sözler geçici olarak tarayıcı oturum belleğinde saklanır. Yüksek çözünürlüklü albüm kapaklarının
+  güvenilir bir şekilde gösterilmesi için çok aşamalı sıralı bir sorgu zinciri kullanılır: Öncelikle bir Apple Music ID varsa
+  <strong>Apple iTunes Lookup API</strong> sorgulanır, ardından resmi <strong>Spotify oEmbed hizmeti</strong>
+  (open.spotify.com/oembed), Apple'ın <strong>iTunes Search API</strong>'si ve <strong>Deezer</strong> JSONP araması yapılır,
+  son çare olarak yerel bir yer tutucu görsel gösterilir.
+  <strong>Spotify Wrapped / Müzik İstatistikleri</strong> için yalnızca <code>gamingpig</code> profilinin halka açık toplu verileri resmi <strong>stats.fm</strong> API'si (api.stats.fm) üzerinden alınır.
+  Ziyaretçilerin kişisel verileri hiçbir zaman stats.fm veya Spotify'a iletilmez.
+  Her doğrudan internet isteğinde olduğu gibi, ilgili sağlayıcılar yalnızca teknik olarak gerekli bağlantı verilerini (örneğin IP adresi ve user agent) alır.</p>
+
+  <p>Harici içerik yalnızca ilgili özellik yüklendiğinde veya kullanıldığında işlenir.
+  Üçüncü taraf sağlayıcılar tarafından yapılan işleme kendi gizlilik politikalarına tabidir;
+  saklama süreleri ve sonraki işlemleri üzerinde hiçbir etkim yoktur.</p>
+
+  <h2>7. Sesli anlatım (sesli okuma özelliği)</h2>
+  <p>Web sitesi birçok yerde, yalnızca ilgili butona tıklandığında başlayan isteğe bağlı bir
+  sesli okuma özelliği sunar. Bu özellik, tarayıcının yerleşik ses sentezini (Web Speech API)
+  kullanır. Tarayıcı ve işletim sistemine bağlı olarak, ses işleme tamamen cihazınızda yerel
+  olarak gerçekleşebilir veya tarayıcı, okunacak metni işlenmek üzere ilgili sağlayıcının bulut
+  hizmetine gönderebilir (ör. Chrome sistem sesleri için Google). Bunun üzerinde hiçbir etkim
+  yoktur - hangi seslerin yerel olarak veya bulut üzerinden çalıştığını tarayıcınız veya
+  işletim sisteminiz belirler. Yalnızca sayfadaki görünür içerik (ör. şarkı sözleri, açıklama
+  metinleri) sesli okunur, kişisel veya girilen veriler değil.</p>
+
+  <h2>8. Destek bölümündeki Discord widget'ı</h2>
+  <p>Web sitesinin destek bölümünde, Discord sunucumun güncel üye ve çevrimiçi sayısı canlı
+  olarak gösterilir. Bunun için tarayıcınız sayfa yüklenirken otomatik olarak
+  <strong>discord.com</strong>'un genel davet API'sini çağırır. Bu sırada olağan teknik
+  bağlantı verileri (IP adresi, zaman, tarayıcı bilgileri) Discord Inc.'e iletilir. Sizden
+  Discord'a hiçbir kullanıcı hesabı veya başka kişisel veri iletilmez. Daha fazla bilgi için
+  <a href="https://discord.com/privacy" target="_blank" rel="noopener">Discord Gizlilik Politikası</a>na bakabilirsiniz.</p>
+
+  <h2>9. Tarayıcıda yerel depolama (localStorage)</h2>
+  <p>Tarayıcı dil, tasarım, okuma, şarkı ve sürümleri saklar. Rastgele anahtarlar (<code>gp_roadmap_identity_v2</code>), bekleyen girişler (<code>gp_roadmap_pending_v2</code>) ve önbellek (<code>gp_roadmap_cache_v2</code>) de saklanır. Özel anahtar hizmete gönderilmez; isteğe bağlı cihaz kodu kendi cihazlarına aktarır. Açık kimlik, imza ve içerik gönderimle aktarılır. Eşitleme önbelleği yeniler, GitHub onaylı girişleri kaldırır; otomatik yerel süre sonu yoktur. Eski fikirler kurtarılabilir. Tarayıcıyı silmek GitHub verilerini silmez; kod yedeği olmadan kendi oyuna erişimi kaybettirebilir.</p>
+
+  <h2>10. Web Push Bildirimleri ve Kesinti Uyarıları</h2>
+  <p>Web sitesi ve PWA, isteğe bağlı kesinti ve arıza uyarıları (Web Push) sunar. Etkinleştirme tamamen açık rızanıza bağlıdır (GDPR Madde 6(1)(a)). Bildirimlerin iletilmesi için tarayıcınız anonim bir push uç noktası (Google FCM veya Apple Push üzerinden) oluşturur. Kişisel isimler veya izleme profilleri ilişkilendirilmez. Bildirimleri istediğiniz zaman durum sayfasından veya tarayıcı ayarlarınızdan kapatabilirsiniz.</p>
+
+  <p>Push uç noktası, anahtarlar ve dil ntfy’ye gönderilmeden önce AES-GCM ve RSA ile şifrelenir. GitHub Actions kaydı açar ve data/subscribers.enc.json içinde yeniden şifreleyerek saklar; özel anahtarlar Actions Secrets içindedir. Sağlayıcılar IP ve zaman gibi bağlantı verilerini işler. Push duraklatma tarayıcı aboneliğini iptal eder; kayıtları ve Git geçmişini hemen silmez. Önceki sürümler verileri açık saklıyordu. Silme talepleri için yukarıdaki iletişim adresini kullanın.</p>
+
+  <h2>11. Bu politikadaki değişiklikler</h2>
+  <p>Bu gizlilik politikası, ör. yeni özellikler eklendiğinde, gerektiğinde güncellenebilir.
+  Güncel sürüm her zaman bu sayfada mevcuttur.</p>
+
+  <h2>12. İletişim</h2>
+  <p>Gizlilikle ilgili sorularınız için bana istediğiniz zaman e-posta yoluyla ulaşabilirsiniz:
+  <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a>.</p>
+
+  <h2>13. Telif Hakkı ve Yasal Koruma</h2>
+  <p>Bu web sitesinde ve uygulamada sunulan tüm içerikler, tasarımlar, logolar, simgeler, kaynak kodları ve yazılım bileşenleri telif hakkı ile korunmaktadır: <strong>&copy; 2026 Gamingpig &middot; Tüm Hakları Saklıdır</strong>. Yazılı izin olmaksızın izinsiz çoğaltılması, dağıtılması veya değiştirilmesi yasaktır.</p>
+
+  <h2 id="github-roadmap-tr">14. ntfy ve GitHub ile doğrudan oy ve herkese açık fikirler</h2>
+  <p>Amaç hesapsız ortak planlama ve cihazlar arasında oy ve fikir gösterimidir. Rastgele tarayıcı kimliği oylarını ilişkilendirir; özel cihaz kodu kendi cihazlarında paylaşmanı sağlar. Bu bir kişinin doğrulanmış kimliği değildir.</p>
+  <p>Oy veya gönderim sırasında ID, açık anahtar kimliği, imza ve oylar ya da ad/takma ad, kategori, başlık ve açıklama <code>ntfy.sh</code> adresine gider. Ayrı kuyruk herkese açıktır. Workflow geçerli girişleri herkese açık <code>Gamingpig/About-Gamingpig</code> deposundaki <code>data/roadmap.json</code> dosyasına kimlik, oy ve tarihle aktarır. Gizli veya başkalarının verisini gönderme.</p>
+  <p>ntfy sınırlı süreli geçici depodur. Kalıcı kayıt ancak GitHub commit’iyle onaylanır. 15 dakikada bir planlanan workflow gecikebilir. Bekleyenler gösterilir ve yeniden gönderilebilir. Görünür sayfa <code>raw.githubusercontent.com</code> üzerinden yaklaşık beş dakikada bir ve dönüşte, dakikada en fazla bir kez okur. ntfy ve GitHub IP, saat ve tarayıcı bilgisi alır.</p>
+  <p>Herkese açık yol haritasının işletilmesi ve gönüllü yayımlanan katkıların gösterilmesinin dayanağı GDPR madde 6(1)(f): ortak planlama ve güvenilir gösterimde meşru menfaattir. Katılım isteğe bağlıdır. “Anlaşıldı” bildirimin görüldüğünü belirtir; ek veri işlemeye onay değildir.</p>
+  <p>Otomatik silme yoktur; sürümler Git geçmişinde kalabilir. Aynı kimlikle oyunu geri çekmek geçmişi silmez. Fikir veya kimlik silmek için giriş ID’sini <a href="mailto:gamingpig.support@gmail.com">gamingpig.support@gmail.com</a> adresine gönder; özel kodunu asla gönderme. Kopyalar, geçmiş ve önbellekler ayrı işlem gerektirebilir; başarılı eşitleme yerel önbelleği yeniler.</p>
+  <p>GitHub ABD’de de veri işler. İşleme, saklama ve aktarımlar için <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub gizlilik bildirimi</a> ve <a href="https://docs.ntfy.sh/privacy/" target="_blank" rel="noopener">ntfy bildirimi</a>ne bak.</p>
+  <p>GDPR kapsamında erişim, düzeltme, silme, kısıtlama, itiraz ve denetim makamına şikâyet hakları vardır. İşlememizle ilgili yukarıdaki adrese başvurabilirsin.</p>
+
+  <footer>
+    &copy; 2026 Gamingpig &middot; Tüm Hakları Saklıdır &middot; Telif Hakkı ile Korunmaktadır &middot; <a href="impressum.html" style="color:var(--text-muted, #94a3b8);text-decoration:underline;">Künye</a> &middot; Özel portfolyo projesi
+  </footer>
+
+</div>
+</div>
+
+<script>
+  let privacyTtsSpeed = 1.0;
+  try {
+    const savedSpeed = AppStorage.getItem('gp_tts_speed');
+    if (savedSpeed) privacyTtsSpeed = parseFloat(savedSpeed) || 1.0;
+  } catch(e) {}
+
+  function updatePrivacyTtsSpeedUI() {
+    const el = document.getElementById('privacy-speed-val');
+    if (el) el.innerText = privacyTtsSpeed.toFixed(1) + 'x';
+    document.querySelectorAll('.privacy-pill').forEach(btn => {
+      btn.classList.toggle('active', Math.abs(parseFloat(btn.dataset.speed) - privacyTtsSpeed) < 0.05);
+    });
+  }
+
+  function setPrivacyTtsSpeed(rate) {
+    privacyTtsSpeed = parseFloat(rate) || 1.0;
+    try { AppStorage.setItem('gp_tts_speed', privacyTtsSpeed.toString()); } catch(e) {}
+    if (window.ReadAloudService && typeof window.ReadAloudService.setSpeed === 'function') {
+      window.ReadAloudService.setSpeed(privacyTtsSpeed);
+    }
+    updatePrivacyTtsSpeedUI();
+    if (window.ReadAloudService && window.ReadAloudService.isPlaying()) {
+      togglePrivacySpeak(true);
+    }
+  }
+
+  function togglePrivacyTtsMenu() {
+    const menu = document.getElementById('privacy-tts-menu');
+    if (menu) menu.classList.toggle('hidden');
+  }
+
+  const PRIVACY_BACK_TEXTS = {
+    de: '← Hauptseite',
+    en: '← Main Page',
+    es: '← Página Principal',
+    fr: '← Page Principale',
+    pt: '← Página Principal',
+    tr: '← Ana Sayfa'
+  };
+
+  function setPrivacyLang(lang) {
+    const supported = ['de', 'en', 'es', 'fr', 'pt', 'tr'];
+    const safeLang = supported.includes(lang) ? lang : 'de';
+
+    const blocks = document.querySelectorAll('.lang-block');
+    const buttons = document.querySelectorAll('.lang-btn');
+
+    blocks.forEach(b => {
+      b.style.display = (b.getAttribute('data-lang') === safeLang) ? 'block' : 'none';
+    });
+
+    buttons.forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === safeLang);
+    });
+
+    const backBtnEl = document.getElementById('privacy-back-btn');
+    if (backBtnEl) backBtnEl.textContent = PRIVACY_BACK_TEXTS[safeLang] || PRIVACY_BACK_TEXTS.de;
+
+    document.documentElement.setAttribute('lang', safeLang);
+
+    if (window.I18nManager && typeof window.I18nManager.setLanguage === 'function') {
+      if (window.I18nManager.getLanguage() !== safeLang) {
+        window.I18nManager.setLanguage(safeLang);
+      }
+    } else {
+      try {
+        AppStorage.setItem('app_language', safeLang);
+        AppStorage.setItem('selectedLanguage', safeLang);
+      } catch(e) {}
+    }
+
+    if (window.ReadAloudService && window.ReadAloudService.isPlaying()) {
+      togglePrivacySpeak(true);
+    }
+  }
+
+  // Initial language resolution
+  (function initLang() {
+    let initial = 'de';
+    if (window.I18nManager && typeof window.I18nManager.getLanguage === 'function') {
+      initial = window.I18nManager.getLanguage();
+    } else {
+      try {
+        const saved = AppStorage.getItem('app_language') || AppStorage.getItem('selectedLanguage');
+        if (saved && ['de','en','es','fr','pt','tr'].includes(saved)) initial = saved;
+      } catch(e) {}
+    }
+    setPrivacyLang(initial);
+    updatePrivacyTtsSpeedUI();
+  })();
+
+  // Listen for language change events
+  window.addEventListener('app:languageChanged', (e) => {
+    if (e.detail && e.detail.lang) {
+      setPrivacyLang(e.detail.lang);
+    }
+  });
+
+  window.addEventListener('storage', (e) => {
+    if ((e.key === 'app_language' || e.key === 'selectedLanguage') && e.newValue) {
+      setPrivacyLang(e.newValue);
+    } else if (e.key === 'gp_tts_speed' && e.newValue) {
+      privacyTtsSpeed = parseFloat(e.newValue) || 1.0;
+      updatePrivacyTtsSpeedUI();
+    }
+  });
+
+  // TTS Read-Aloud Integration
+  function updatePrivacyTtsUI(isSpeaking) {
+    const btn = document.getElementById('privacy-speak-btn');
+    const label = document.getElementById('privacy-speak-label');
+    if (btn) {
+      btn.classList.toggle('speaking', !!isSpeaking);
+      const iconSpan = btn.querySelector('span:first-child');
+      if (iconSpan) iconSpan.textContent = isSpeaking ? '⏹' : '🔊';
+    }
+    if (label) {
+      label.innerText = isSpeaking ? 'Stoppen' : 'Vorlesen';
+    }
+  }
+
+  function stopPrivacySpeech() {
+    if (window.ReadAloudService && typeof window.ReadAloudService.stop === 'function') {
+      window.ReadAloudService.stop();
+    } else if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    updatePrivacyTtsUI(false);
+    const menu = document.getElementById('privacy-tts-menu');
+    if (menu) menu.classList.add('hidden');
+  }
+
+  async function togglePrivacySpeak(forceRestart) {
+    const isCurrentlySpeaking = window.ReadAloudService
+      ? window.ReadAloudService.isPlaying()
+      : (window.speechSynthesis && (window.speechSynthesis.speaking || window.speechSynthesis.pending));
+
+    if (isCurrentlySpeaking && !forceRestart) {
+      stopPrivacySpeech();
+      return;
+    }
+
+    const activeBlock = Array.from(document.querySelectorAll('.lang-block')).find(b => b.style.display === 'block');
+    if (!activeBlock) return;
+
+    const textToRead = activeBlock.innerText || '';
+    if (!textToRead.trim()) return;
+
+    const currentLang = document.documentElement.getAttribute('lang') || 'de';
+
+    if (window.ReadAloudService && typeof window.ReadAloudService.speak === 'function') {
+      if (window.ReadAloudService.setSpeed) {
+        window.ReadAloudService.setSpeed(privacyTtsSpeed);
+      }
+      updatePrivacyTtsUI(true);
+      await window.ReadAloudService.speak(textToRead, currentLang, {
+        onStart: () => updatePrivacyTtsUI(true),
+        onEnd: () => updatePrivacyTtsUI(false),
+        onError: () => updatePrivacyTtsUI(false)
+      });
+    } else if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(textToRead);
+      u.lang = currentLang;
+      u.rate = privacyTtsSpeed;
+      u.onend = () => updatePrivacyTtsUI(false);
+      u.onerror = () => updatePrivacyTtsUI(false);
+      updatePrivacyTtsUI(true);
+      window.speechSynthesis.speak(u);
+    }
+  }
+
+  window.addEventListener('tts:stateChange', (e) => {
+    if (e.detail) {
+      updatePrivacyTtsUI(e.detail.state === 'speaking');
+    }
+  });
+
+  window.addEventListener('tts:speedChange', (e) => {
+    if (e.detail && e.detail.speed) {
+      privacyTtsSpeed = e.detail.speed;
+      updatePrivacyTtsSpeedUI();
+    }
+  });
+
+    // Service Worker Update-Registration mit Anti-Loop Guard
+  if ('serviceWorker' in navigator) {
+    let hadController = Boolean(navigator.serviceWorker.controller);
+    let isRefreshing = false;
+
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (isRefreshing) return;
+      if (!hadController) {
+        hadController = true;
+        return;
+      }
+      const now = Date.now();
+      const lastReload = parseInt(AppSession.getItem('sw_last_reload') || '0', 10);
+      if (now - lastReload < 10000) return;
+      isRefreshing = true;
+      AppSession.setItem('sw_last_reload', now.toString());
+      window.location.reload();
+    });
+
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
+        .then((reg) => { if (reg) reg.update().catch(() => {}); })
+        .catch(() => {});
+    });
+  }
+</script>
+<script src="js/community-glass.20260910.js?v=v24.213.0"></script>
+<script data-pplx-inline-edit>
+(function () {
+  if (window === window.top) return;
+
+  const allowedParentOrigins = ["https://www.perplexity.ai","https://perplexity.ai","https://testing.perplexity.ai","https://staging.perplexity.ai","https://*.preview.i.perplexity.ai","http://perplexity.localhost","http://localhost:1420","http://127.0.0.1:1420","http://localhost:3000","http://127.0.0.1:3000","http://localhost:5173","http://127.0.0.1:5173"];
+  const MAX_FONT_BYTES = 500 * 1024;
+  const MAX_TOTAL_FONT_BYTES = 2 * 1024 * 1024;
+  let scrollForwarding = false;
+  let scrollRaf = 0;
+  let trustedTopOrigin = null;
+
+  // Allow entries like "https://*.preview.i.perplexity.ai" — the wildcard
+  // matches a single DNS label (no dots), so "https://*.foo" cannot stretch
+  // across multiple labels.
+  function matchesAllowedOrigin(origin) {
+    if (!origin) return false;
+    for (const entry of allowedParentOrigins) {
+      if (!entry.includes("*")) {
+        if (entry === origin) return true;
+        continue;
+      }
+      const pattern = new RegExp(
+        "^" +
+          entry.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^.]+") +
+          "$",
+      );
+      if (pattern.test(origin)) return true;
+    }
+    return false;
+  }
+
+  // Trust decision: when the sender is same-origin-visible (event.origin is a
+  // real origin like https://www.perplexity.ai) we trust event.origin directly.
+  // When event.origin is "null" (opaque broker srcdoc), we fall back to the
+  // broker's stamped `parentOrigin` to identify the top window. The fallback
+  // is claim-only — we rely on the browser's native `targetOrigin` enforcement
+  // on the response path (see postToTrustedTop) to ensure replies can't be
+  // delivered to anyone but the actual top window of that claimed origin.
+  function getTrustedParentOrigin(event) {
+    const forwardedParentOrigin =
+      typeof event.data.parentOrigin === "string" ? event.data.parentOrigin : null;
+    const parentOrigin = event.origin === "null" ? forwardedParentOrigin : event.origin;
+    return matchesAllowedOrigin(parentOrigin) ? parentOrigin : null;
+  }
+
+  // All responses go to window.top with targetOrigin = the allowlisted origin.
+  // An attacker that iframes us inside their own null-origin broker can claim
+  // any parentOrigin they like, but the browser will drop the reply whenever
+  // the real top's origin doesn't match — so the screenshot never leaves.
+  function postToTrustedTop(message) {
+    if (!trustedTopOrigin) return;
+    try {
+      window.top.postMessage(message, trustedTopOrigin);
+    } catch (_error) {}
+  }
+
+  function inlineAll(original, clone) {
+    if (original.nodeType !== 1 || clone.nodeType !== 1) return;
+
+    try {
+      const computedStyle = getComputedStyle(original);
+      // cssText on a computed style is the serialized declaration in modern
+      // Chromium/Safari — a single read beats enumerating ~400 longhand
+      // properties. Firefox returns "" here, so we fall back on empty.
+      const serialized = computedStyle.cssText;
+      if (serialized) {
+        clone.style.cssText = serialized;
+      } else {
+        const parts = new Array(computedStyle.length);
+        for (let index = 0; index < computedStyle.length; index += 1) {
+          const property = computedStyle[index];
+          parts[index] = `${property}:${computedStyle.getPropertyValue(property)};`;
+        }
+        clone.style.cssText = parts.join("");
+      }
+    } catch (_error) {}
+
+    const originalChildren = original.children;
+    const clonedChildren = clone.children;
+    for (
+      let index = 0;
+      index < originalChildren.length && index < clonedChildren.length;
+      index += 1
+    ) {
+      inlineAll(originalChildren[index], clonedChildren[index]);
+    }
+  }
+
+  function extractFontUrl(srcValue) {
+    const matches = [
+      ...srcValue.matchAll(
+        /url\(["']?([^"')]+)["']?\)(?:\s*format\(["']?([^"')]+)["']?\))?/gi,
+      ),
+    ];
+    if (matches.length === 0) return null;
+    const woff2 = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff2"));
+    if (woff2) return woff2[1];
+    const woff = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff"));
+    if (woff) return woff[1];
+    return matches[0][1];
+  }
+
+  // Cache resolved font URL -> data URI across captures. Fonts on a page
+  // essentially never change, and a batch run emits multiple captures back to
+  // back — without this we'd refetch + re-base64 every time.
+  const fontDataUriCache = new Map();
+  const SRC_DECLARATION_RE = /src\s*:\s*[^;}]+/i;
+
+  async function fetchAsDataUri(url) {
+    if (fontDataUriCache.has(url)) return fontDataUriCache.get(url);
+    let dataUri = null;
+    try {
+      const response = await fetch(url, { mode: "cors", credentials: "omit" });
+      if (response.ok) {
+        const blob = await response.blob();
+        if (blob.size <= MAX_FONT_BYTES) {
+          dataUri = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () =>
+              resolve(typeof reader.result === "string" ? reader.result : null);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(blob);
+          });
+        }
+      }
+    } catch (_error) {
+      dataUri = null;
+    }
+    fontDataUriCache.set(url, dataUri);
+    return dataUri;
+  }
+
+  function collectFontFaceRuleTexts() {
+    const rules = [];
+    for (const sheet of document.styleSheets) {
+      let cssRules;
+      try {
+        cssRules = sheet.cssRules;
+      } catch (_error) {
+        continue;
+      }
+      if (!cssRules) continue;
+      for (const rule of cssRules) {
+        const cssText = rule.cssText || "";
+        if (cssText.startsWith("@font-face")) rules.push(cssText);
+      }
+    }
+    return rules;
+  }
+
+  async function buildInlinedFontCss() {
+    const ruleTexts = collectFontFaceRuleTexts();
+    if (ruleTexts.length === 0) return null;
+
+    const resolved = ruleTexts.map((cssText) => {
+      if (!SRC_DECLARATION_RE.test(cssText)) return null;
+      const srcMatch = cssText.match(/src\s*:\s*([^;}]+)[;}]/i);
+      if (!srcMatch) return null;
+      const url = extractFontUrl(srcMatch[1]);
+      if (!url) return null;
+      try {
+        return { cssText, url: new URL(url, document.baseURI).href };
+      } catch (_error) {
+        return null;
+      }
+    });
+
+    const dataUris = await Promise.all(
+      resolved.map((entry) => (entry ? fetchAsDataUri(entry.url) : Promise.resolve(null))),
+    );
+
+    const inlined = [];
+    let totalBytes = 0;
+    for (let index = 0; index < resolved.length; index += 1) {
+      const entry = resolved[index];
+      const dataUri = dataUris[index];
+      if (!entry || !dataUri) continue;
+      const approxBytes = dataUri.length * 0.75;
+      if (totalBytes + approxBytes > MAX_TOTAL_FONT_BYTES) break;
+      totalBytes += approxBytes;
+      inlined.push(entry.cssText.replace(SRC_DECLARATION_RE, `src: url("${dataUri}")`));
+    }
+    return inlined.length > 0 ? inlined.join("\n") : null;
+  }
+
+  function stripExternal(clone) {
+    const images = clone.querySelectorAll("img");
+    for (let index = 0; index < images.length; index += 1) {
+      const src = images[index].getAttribute("src");
+      if (src && !src.startsWith("data:")) images[index].removeAttribute("src");
+    }
+
+    const elements = clone.querySelectorAll("*");
+    for (let index = 0; index < elements.length; index += 1) {
+      const style = elements[index].style.cssText;
+      if (style && style.includes("url(")) {
+        elements[index].style.cssText = style.replace(
+          /url\(["']?(?!data:)[^)"']*["']?\)/gi,
+          "none",
+        );
+      }
+    }
+  }
+
+  function emitScroll() {
+    scrollRaf = 0;
+    if (!scrollForwarding) return;
+    postToTrustedTop({
+      type: "INLINE_EDIT_SCROLL",
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
+    });
+  }
+
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (!scrollForwarding || scrollRaf) return;
+      scrollRaf = requestAnimationFrame(emitScroll);
+    },
+    { passive: true, capture: true },
+  );
+
+  async function handleCaptureRequest(event) {
+    const requestId = event.data.requestId;
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    function postResult(dataUrl) {
+      postToTrustedTop({
+        type: "INLINE_EDIT_SCREENSHOT_RESULT",
+        requestId,
+        dataUrl,
+        scrollX,
+        scrollY,
+      });
+    }
+
+    try {
+      // Wait for any pending web fonts to resolve so both inline metrics and
+      // the @font-face inlining below see the same loaded faces.
+      if (document.fonts && document.fonts.ready) {
+        try {
+          await document.fonts.ready;
+        } catch (_error) {}
+      }
+
+      const clone = document.documentElement.cloneNode(true);
+      inlineAll(document.documentElement, clone);
+
+      const removedNodes = clone.querySelectorAll("script,link[rel=\"stylesheet\"],style");
+      for (let index = 0; index < removedNodes.length; index += 1) {
+        removedNodes[index].remove();
+      }
+
+      stripExternal(clone);
+
+      // Re-embed web fonts as data-URI @font-face rules so the SVG rasterizer
+      // can resolve them — external font URLs aren't fetched during
+      // foreignObject rendering, which would otherwise force a fallback face
+      // and change text metrics.
+      const inlinedFontCss = await buildInlinedFontCss();
+      if (inlinedFontCss) {
+        const styleEl = document.createElement("style");
+        styleEl.textContent = inlinedFontCss;
+        const head = clone.querySelector("head");
+        if (head) head.appendChild(styleEl);
+        else clone.insertBefore(styleEl, clone.firstChild);
+      }
+
+      const html = new XMLSerializer().serializeToString(clone);
+      const svg =
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
+        '<foreignObject width="100%" height="100%">' +
+        `<div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;overflow:hidden">` +
+        `<div style="position:relative;left:-${scrollX}px;top:-${scrollY}px">` +
+        html +
+        "</div></div></foreignObject></svg>";
+      const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      const image = new Image();
+      image.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(image, 0, 0);
+        postResult(canvas.toDataURL("image/png"));
+      };
+      image.onerror = function () {
+        postResult(null);
+      };
+      image.src = svgUrl;
+    } catch (_error) {
+      postResult(null);
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    if (!event.data) return;
+    // Only accept messages from the direct parent frame. Blocks sibling /
+    // unrelated-window postMessage senders that could otherwise reach us.
+    if (event.source !== window.parent) return;
+
+    const trustedParentOrigin = getTrustedParentOrigin(event);
+    if (!trustedParentOrigin) return;
+    trustedTopOrigin = trustedParentOrigin;
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_START") {
+      scrollForwarding = true;
+      emitScroll();
+      return;
+    }
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_STOP") {
+      scrollForwarding = false;
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
+      scrollRaf = 0;
+      return;
+    }
+
+    if (event.data.type !== "INLINE_EDIT_CAPTURE_REQUEST") return;
+
+    handleCaptureRequest(event);
+  });
+})();
+
+
+</script></body>
+</html>

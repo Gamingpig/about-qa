@@ -3371,6 +3371,12 @@
         try { savedStrat = localStorage.getItem('gp_glass_render_strategy') || ''; } catch(e){}
         if (!savedStrat) savedStrat = (isAndroid || isPixel || isMobileOrTouch) ? 'shield' : 'auto';
         root.classList.add('glass-strat-' + savedStrat);
+        
+        // Layout Mode Manager: desktop/mobile
+        var savedLayout = '';
+        try { savedLayout = localStorage.getItem('gp_layout_mode') || ''; } catch(e){}
+        if (!savedLayout) savedLayout = (isMobileOrTouch) ? 'mobile' : 'desktop';
+        root.classList.add('gp-' + savedLayout);
     }catch(e){}})();
     </script>
     <script src="./js/core/push-config.js"></script>
@@ -3387,6 +3393,7 @@
     <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.245.90</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
+    <script src="js/core/update-manager.js"></script>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -4697,6 +4704,16 @@ body.liquid-glass-active :is(.glass-card, #header-section, #footer-bubble, #foot
     transition: opacity 0.4s var(--apple-ease);
     pointer-events: none;
 }
+/* Desktop Grid Layout Optimization (v24.246.1) */
+html.gp-desktop #main-content {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 40px !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+}
+
 :is(html.gp-android, html.gp-mobile) :is(.glass-card, #header-section, #footer-bubble, #footer-expandable-menu)::before { display: none !important; }
 :is(html.gp-android, html.gp-mobile) :is(.glass-card:not(#back-to-top), #header-section, #footer-bubble, #footer-expandable-menu)::after { display: none !important; }
 .dark body.liquid-glass-active :is(.glass-card, #header-section, #footer-bubble, #footer-expandable-menu)::before {
@@ -7873,12 +7890,13 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             position: absolute; inset: -28px; z-index: 0;
             border-radius: calc(var(--standby-radius, 32px) + 24px);
             background-size: cover; background-position: center;
-            filter: none !important;
-            -webkit-filter: none !important;
-            opacity: 0.28 !important;
+            /* Restore hardware-accelerated blur */
+            filter: blur(18px) brightness(1.1) !important;
+            -webkit-filter: blur(18px) brightness(1.1) !important;
+            opacity: 0.35 !important;
             transform: scale(1.04);
             pointer-events: none;
-            will-change: auto !important;
+            will-change: transform !important;
             contain: strict !important;
         }
         #standby-eq { contain: strict; }
@@ -8497,6 +8515,20 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         /* --- StandBy: Idle-Zustand (keine Musik) - Cover, EQ & Timeline ausblenden --- */
         #standby-nowplaying.standby-idle #standby-card-blur-bg {
             display: none !important;
+        }
+        /* FIX CHROME STANDBY GPU (v24.246.0): Disable backdrop-filter on Desktop to fix layer thrashing */
+        html.gp-desktop #standby-overlay {
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+        
+        /* Fix for Chrome Standby Card rendering issues */
+        @media screen and (-webkit-min-device-pixel-ratio:0) {
+            #standby-nowplaying {
+                contain: none !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
         }
         #standby-overlay.standby-active:has(#standby-nowplaying.standby-idle) #standby-bg {
             filter: none !important;
@@ -10222,7 +10254,7 @@ html.gp-android:not(.dark) #ui-controls {
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="xxs:w-4 xxs:h-4 sm:w-5 sm:h-5"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/></svg>
                                     </button>
                                     <!-- Das Lyrics Settings Menü Fenster (Direkt am Button im Lyrics Center verankert!) -->
-                                    <div id="lyrics-settings-menu" class="absolute top-full right-0 mt-2 xxs:mt-3 bg-[#0f172a] border border-slate-700/80 rounded-2xl p-2.5 xxs:p-3 sm:p-3.5 shadow-2xl hidden flex flex-col gap-2 w-[285px] xxs:w-[315px] sm:w-[345px] max-w-[calc(100vw-1.5rem)] z-[9999] origin-top-right max-h-[75vh] sm:max-h-[460px] overflow-y-auto" style="-webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;" onclick="event.stopPropagation()">
+                                    <div id="lyrics-settings-menu" class="absolute top-full right-0 mt-2 xxs:mt-3 bg-black border border-slate-700/80 rounded-2xl p-2.5 xxs:p-3 sm:p-3.5 shadow-2xl hidden flex flex-col gap-2 w-[285px] xxs:w-[315px] sm:w-[345px] max-w-[calc(100vw-1.5rem)] z-[9999] origin-top-right max-h-[75vh] sm:max-h-[460px] overflow-y-auto" style="-webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; background-color: #000 !important; backdrop-filter: none !important; opacity: 1.0 !important;" onclick="event.stopPropagation()">
                                     <!-- Header -->
                                     <div class="flex items-center justify-between pb-1.5 mb-0.5 border-b border-white/10">
                                         <span class="text-xs font-black uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
@@ -11452,6 +11484,20 @@ html.gp-android:not(.dark) #ui-controls {
                     <span>140%</span>
                 </div>
             </div>
+            <!-- Layout Modus -->
+            <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-sm shrink-0">🖥️</div>
+                    <div>
+                        <label class="text-xs sm:text-sm font-bold text-slate-100 block">Layout-Modus</label>
+                        <span class="text-xs text-slate-400">Desktop-Grid vs Mobile</span>
+                    </div>
+                </div>
+                <div class="flex bg-slate-900 rounded-lg p-1 border border-slate-700">
+                    <button onclick="localStorage.setItem('gp_layout_mode', 'mobile'); location.reload();" class="px-3 py-1 rounded-md text-xs font-bold transition-all hover:bg-slate-700">Mobile</button>
+                    <button onclick="localStorage.setItem('gp_layout_mode', 'desktop'); location.reload();" class="px-3 py-1 rounded-md text-xs font-bold transition-all bg-blue-600/20 text-blue-300">Desktop</button>
+                </div>
+            </div>
             <!-- Canvas Glow Radius & Blur Einstellungen -->
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between">
@@ -11725,7 +11771,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
         </div>
         <!-- SUBPAGE 7: SYSTEM-INFO (NEU!) -->
-        <div id="subpage-cat-info" class="settings-category settings-subpage hidden space-y-3">
+        <div id="subpage-cat-info" class="settings-category settings-subpage space-y-3">
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
@@ -11745,6 +11791,14 @@ html.gp-android:not(.dark) #ui-controls {
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
                     <span id="settings-info-pwa-val" class="text-xs font-bold text-emerald-400">Aktiv ✓</span>
+                </div>
+                <!-- Software-Updates -->
+                <div class="pt-2 border-t border-white/5">
+                    <label class="text-xs font-bold text-slate-400 block mb-2">Software-Updates</label>
+                    <button onclick="checkManualUpdates()" class="w-full py-2.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 text-xs font-bold transition-all border border-blue-500/30 cursor-pointer">
+                        Auf Updates prüfen
+                    </button>
+                    <div id="settings-update-status" class="mt-2 text-[10px] text-slate-400 font-mono text-center">Kein Update verfügbar</div>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">Release Notes</span>
@@ -18526,28 +18580,7 @@ html.gp-android:not(.dark) #ui-controls {
             });
             setInterval(checkSWUpdates, 60000);
 
-            // Version Watcher: Prüft version.json direkt ohne Cache (nur wenn Tab aktiv)
-            async function pollVersion() {
-                if (document.hidden) return;
-                try {
-                    const res = await fetch('./version.json?_t=' + Date.now(), { cache: 'no-store' });
-                    if (!res.ok) return;
-                    const data = await res.json();
-                    const liveVer = (data && data.version ? String(data.version) : '').replace(/^v/, '').trim();
-                    const currentVer = String(window.ONBOARDING_VERSION || '').split(' · ')[0].replace(/^v/, '').trim();
-                    const liveNum = typeof parseVersionNum === 'function' ? parseVersionNum(liveVer) : 0;
-                    const curNum = typeof parseVersionNum === 'function' ? parseVersionNum(currentVer) : 0;
-                    const hasWaiting = Boolean(swRegistration && swRegistration.waiting);
-                    if (hasWaiting || (liveVer && currentVer && liveNum > curNum)) {
-                        console.log('[VersionWatcher] Update verfügbar:', currentVer, '->', liveVer);
-                        showUpdatePrompt('Version v' + liveVer + ' verfügbar!', liveVer, data.shortNotes || []);
-                    }
-                } catch(_) {}
-            }
-            (function setupVersionWatcher() {
-                setTimeout(pollVersion, 3000);
-                setInterval(pollVersion, 60000);
-            })();
+
 
             // Manuelle Update-Prüfung (z. B. aus Android-Style Settings-Karte)
             window.manualCheckForUpdates = async function(userInitiated = false) {

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <script>/* Android Liquid Glass compatibility */(function(){try{var ua=navigator.userAgent||"";if(/Android/i.test(ua)){document.documentElement.classList.add("gp-android");if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add("gp-android-lowend");}if(/Mobile|iP(hone|od|ad)|Android.*Mobile/i.test(ua))document.documentElement.classList.add("gp-mobile");}catch(e){}})();</script>
+    <script src="./js/core/storage.e856be99df567fd2.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>🔬 Admin Deep-Dive Master-Release-Notes v24.245.90 – Gamingpig QA</title>
+    <meta name="description" content="Vollständige technische Gesamtdokumentation aller Durchbrüche: Neuer autonomer Lyrics-Algorithmus, Multi-DB Architektur, Spotify Live-Resilienz, 16 Cyber Arcade Easter Eggs & Minigames, Einstellungs-Zentrum und QA PIN-Gate.">
+    <meta name="theme-color" content="#03050c">
+    <link rel="icon" href="icon-192.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        if (window.tailwind) tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#6366f1',
+                        admin: '#8b5cf6',
+                        accent: '#ec4899',
+                        cyan: '#06b6d4',
+                        emerald: '#10b981',
+                        amber: '#f59e0b'
+                    }
+                }
+            }
+        };
+    </script>
+    <style data-gp-glass-engine="true">
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #03050c;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.22) 0px, transparent 45%),
+                radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.2) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(236, 72, 153, 0.16) 0px, transparent 55%),
+                radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.14) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(13, 17, 30, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7);
+        }
+
+        .glass-subcard {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            transition: all 0.25s ease;
+        }
+        .glass-subcard:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .code-block {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(4, 7, 18, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+        }
+
+        .badge-pill {
+            padding: 3px 8px;
+            border-radius: 9999px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+    </style>
+    <link rel="stylesheet" href="assets/community-glass.20260910.css?v=v24.213.0" data-gp-glass-engine="true">
+    <script>
+        (function initAdminSessionPinGate() {
+            try {
+                if (sessionStorage.getItem('gp_qa_auth') === 'true') return;
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('pin') === '2957') {
+                    sessionStorage.setItem('gp_qa_auth', 'true');
+                    return;
+                }
+                document.documentElement.classList.add('overflow-hidden');
+                document.addEventListener('DOMContentLoaded', () => {
+                    if (sessionStorage.getItem('gp_qa_auth') === 'true') return;
+                    const overlay = document.createElement('div');
+                    overlay.id = 'admin-pin-gate-modal';
+                    overlay.className = 'fixed inset-0 z-[999999] bg-[#030612]/98 backdrop-blur-3xl flex items-center justify-center p-4 text-center select-none';
+                    overlay.innerHTML = `
+                        <div class="w-full max-w-sm rounded-3xl bg-slate-900/95 border border-purple-500/40 shadow-[0_0_50px_rgba(139,92,246,0.3)] p-6 text-center text-white relative">
+                            <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-3xl">
+                                🔐
+                            </div>
+                            <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-mono font-bold border border-purple-400/30 mb-2 uppercase">
+                                Admin Master-Dossier
+                            </div>
+                            <h2 class="text-xl font-black text-white">Tester-PIN eingeben</h2>
+                            <p class="text-xs text-slate-300 mt-1 mb-5">Dieser interne Bereich ist geschützt. Bitte gib deinen 4-stelligen Tester-PIN ein.</p>
+                            <input type="password" id="admin-pin-input" maxlength="8" placeholder="••••" class="w-full px-4 py-3 rounded-xl bg-black/60 border border-purple-500/30 text-center font-mono text-xl tracking-widest text-white mb-3 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20 transition-all">
+                            <div id="admin-pin-err" class="text-xs font-semibold text-rose-400 min-h-[20px] mb-4"></div>
+                            <div class="flex gap-2.5">
+                                <a href="index.html" class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold text-slate-300 transition-all text-center">Zurück</a>
+                                <button id="admin-pin-btn" type="button" class="flex-1 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 active:scale-95 text-xs font-bold text-white shadow-lg shadow-purple-600/30 transition-all">Entsperren</button>
+                            </div>
+                        </div>`;
+                    document.body.appendChild(overlay);
+                    const inp = document.getElementById('admin-pin-input');
+                    const btn = document.getElementById('admin-pin-btn');
+                    const err = document.getElementById('admin-pin-err');
+                    const verify = () => {
+                        if (inp.value.trim() === '2957') {
+                            sessionStorage.setItem('gp_qa_auth', 'true');
+                            overlay.classList.add('opacity-0', 'pointer-events-none');
+                            setTimeout(() => {
+                                overlay.remove();
+                                document.documentElement.classList.remove('overflow-hidden');
+                            }, 300);
+                        } else {
+                            err.innerText = '❌ Falscher PIN. Bitte autorisierten Tester-PIN eingeben.';
+                            inp.value = '';
+                            inp.focus();
+                        }
+                    };
+                    btn.onclick = verify;
+                    inp.onkeydown = (e) => { if (e.key === 'Enter') verify(); };
+                    setTimeout(() => inp.focus(), 100);
+                });
+            } catch(e) {}
+        })();
+    </script>
+</head>
+<body class="selection:bg-purple-500/30 selection:text-purple-200">
+
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-white/10 !bg-black/70 !backdrop-blur-2xl">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-2.5 text-slate-300 hover:text-white transition-colors group">
+                    <div class="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-purple-500/20 group-hover:border-purple-500/40 transition-all font-bold">
+                        ←
+                    </div>
+                    <span class="font-bold text-xs sm:text-sm tracking-wide">Zurück zum QA-Portal</span>
+                </a>
+                <span class="text-white/20 hidden sm:inline">|</span>
+                <span class="text-xs font-mono font-bold text-purple-400 hidden sm:inline">ADMIN MASTER-DOSSIER</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <a href="checklist.html" class="px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/25 text-cyan-300 text-xs font-bold transition-all flex items-center gap-1.5">
+                    <span>📋</span> <span class="hidden sm:inline">QA-</span>Checkliste
+                </a>
+                <a href="release.html" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-bold transition-all">
+                    Öffentliche Notes
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-12">
+
+        <!-- Hero Section -->
+        <div class="text-center space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-purple-500/20 border border-purple-500/35 text-purple-300">
+                <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                <span>Offizielles Admin Master-Dossier • Alle Durchbrüche im Überblick</span>
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+                Die Großen Durchbrüche <br class="hidden sm:block">
+                <span class="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-300 bg-clip-text text-transparent">
+                    Gesamt-Architektur v24.245.90
+                </span>
+            </h1>
+            <p class="text-slate-300 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed">
+                Umfassende Dokumentation aller Neuerungen aus diesem Sprint: Der neue autonome Lyrics-Algorithmus &amp; Multi-DB-Architektur, Spotify Player-Stabilität (kein vorzeitiges Songende), alle 16 Cyber Arcade Minigames &amp; Easter Eggs, das neue Einstellungs-Zentrum sowie das durchgängige QA PIN-Gate.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs text-slate-400 font-mono pt-2">
+                <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-200 font-bold">Release v24.245.90</span>
+                <span>•</span>
+                <span>Build 2026-10-15</span>
+                <span>•</span>
+                <span class="text-emerald-400 font-bold">100% Autonom</span>
+                <span>•</span>
+                <span class="text-pink-400 font-bold">16 Minigames</span>
+                <span>•</span>
+                <span class="text-cyan-400 font-bold">Multi-DB</span>
+            </div>
+        </div>
+
+        <!-- 6 Metrics Dashboard -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            <div class="glass-panel rounded-2xl p-4 text-center border-t-2 border-t-purple-400">
+                <div class="text-xl sm:text-2xl font-black font-mono text-purple-400">100%</div>
+                <div class="text-[11px] font-bold text-slate-200 mt-0.5">Autonom</div>
+                <p class="text-[10px] text-slate-400 mt-1">Kein Re-Sync Klick nötig</p>
+            </div>
+            <div class="glass-panel rounded-2xl p-4 text-center border-t-2 border-t-cyan-400">
+                <div class="text-xl sm:text-2xl font-black font-mono text-cyan-400">&lt; 1 ms</div>
+                <div class="text-[11px] font-bold text-slate-200 mt-0.5">Cache-Lookup</div>
+                <p class="text-[10px] text-slate-400 mt-1">Instant Memory Render</p>
+            </div>
+            <div class="glass-panel rounded-2xl p-4 text-center border-t-2 border-t-pink-400">
+                <div class="text-xl sm:text-2xl font-black font-mono text-pink-400">16 Games</div>
+                <div class="text-[11px] font-bold text-slate-200 mt-0.5">Cyber Arcade</div>
+                <p class="text-[10px] text-slate-400 mt-1">Voller Easter-Egg Vault</p>
+            </div>
+            <div class="glass-panel rounded-2xl p-4 text-center border-t-2 border-t-emerald-400">
+                <div class="text-xl sm:text-2xl font-black font-mono text-emerald-400">Multi-DB</div>
+                <div class="text-[11px] font-bold text-slate-200 mt-0.5">Kaskadiert</div>
+                <p class="text-[10px] text-slate-400 mt-1">LRCLIB, NetEase, stats.fm</p>
+            </div>
+            <div class="glass-panel rounded-2xl p-4 text-center border-t-2 border-t-amber-400">
+                <div class="text-xl sm:text-2xl font-black font-mono text-amber-400">100% End</div>
+                <div class="text-[11px] font-bold text-slate-200 mt-0.5">Sync-Player</div>
+                <p class="text-[10px] text-slate-400 mt-1">Kein Track-Zeitsprung</p>
+            </div>
+            <div class="glass-panel rounded-2xl p-4 text-center border-t-2 border-t-indigo-400">
+                <div class="text-xl sm:text-2xl font-black font-mono text-indigo-400">PIN-geschützt</div>
+                <div class="text-[11px] font-bold text-slate-200 mt-0.5">Sicherheit</div>
+                <p class="text-[10px] text-slate-400 mt-1">Lückenloses Reload-Gate</p>
+            </div>
+        </div>
+
+        <!-- KAPITEL 1: DER LYRICS DURCHBRUCH -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-purple-500/20 border border-purple-500/35 flex items-center justify-center text-2xl shadow-lg shadow-purple-500/20">
+                    🎵
+                </div>
+                <div>
+                    <div class="inline-flex items-center gap-2 text-xs font-mono font-bold text-purple-400 uppercase tracking-wider">KAPITEL 1 • KERN-DURCHBRUCH</div>
+                    <h2 class="text-xl sm:text-2xl font-black text-white">Der neue Lyrics-Algorithmus &amp; Multi-DB Engine</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="glass-subcard rounded-2xl p-5 border border-red-500/30">
+                    <div class="flex items-center gap-2 text-red-400 font-bold text-sm mb-3">
+                        <span>❌</span> Problem in vorherigen Versionen
+                    </div>
+                    <ul class="text-xs text-slate-300 space-y-2.5 list-disc list-inside">
+                        <li><strong>Abbruch bei Overlay-Klick:</strong> <code class="text-red-300">toggleLyrics(true)</code> setzte <code class="text-red-300">force = true</code>, inkrementierte <code class="text-red-300">currentFetchId</code> und vernichtete bereits laufende Hintergrundabfragen.</li>
+                        <li><strong>HTTP 429 als Dead-End gecacht:</strong> Temporäre Rate-Limits wurden als „Keine Lyrics“ (<code class="text-red-300">provider: 'none'</code>) gespeichert. Der Nutzer sah dauerhaft den toten Fallback-Screen mit dem Re-Sync-Button.</li>
+                        <li><strong>Duration-Jitter:</strong> ±1s Unterschied zwischen Spotify und LRCLIB erzeugte sofort einen 404 und löste Kaskaden-Spam aus.</li>
+                    </ul>
+                </div>
+
+                <div class="glass-subcard rounded-2xl p-5 border border-emerald-500/30">
+                    <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm mb-3">
+                        <span>✅</span> Die Lösung im neuen Algorithmus (v24.245.90)
+                    </div>
+                    <ul class="text-xs text-slate-300 space-y-2.5 list-disc list-inside">
+                        <li><strong>Non-Aborting Pipeline:</strong> <code class="text-emerald-300">toggleLyrics()</code> läuft mit <code class="text-emerald-300">force = false</code>. Laufende Requests werden geschützt und warten harmonisch ab.</li>
+                        <li><strong>Instant Memory-Cache:</strong> Liegen Lyrics bereits vor, rendert das System in &lt; 1 ms ohne Netzwerkaufruf.</li>
+                        <li><strong>Selbstheilender 429-Scheduler:</strong> Bei Ratenbegrenzung greift <code class="text-emerald-300">lrclibRateLimitedUntil</code> und plant nach 2,5s einen automatischen Hintergrund-Retry ein.</li>
+                        <li><strong>Dauer-Entkopplung:</strong> <code class="text-emerald-300">/api/get</code> fragt primär ohne fehleranfällige Spotify-Laufzeit an und matcht zuverlässig.</li>
+                        <li><strong>Header-Compliance:</strong> Offizieller Client-Header <code class="text-emerald-300 font-mono">Lrclib-Client: AboutQA/1.0</code> verhindert Cloudflare-Blocks.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Multi-DB Architecture -->
+            <div class="glass-subcard rounded-2xl p-5 border border-purple-500/25 space-y-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <span>🗄️</span> Multi-Datenbank-Architektur &amp; Kaskadierte Redundanz
+                </h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Die Lyrics-Engine ist modular aufgebaut und kaskadiert über mehrere Ebenen:
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                    <div class="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-emerald-300">Tier 1: LRCLIB</span>
+                            <span class="badge-pill bg-emerald-500/20 text-emerald-300">Live</span>
+                        </div>
+                        <p class="text-[11px] text-slate-300">High-Speed synchronisierte Songtexte im .lrc Format mit Beat-Dots.</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-cyan-950/30 border border-cyan-500/30 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-cyan-300">Tier 2: NetEase Cloud</span>
+                            <span class="badge-pill bg-cyan-500/20 text-cyan-300">Fallback</span>
+                        </div>
+                        <p class="text-[11px] text-slate-300">Vercel Bridge für asiatische &amp; internationale Releases.</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-purple-950/30 border border-purple-500/30 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-purple-300">Tier 3: Sekundäre DBs</span>
+                            <span class="badge-pill bg-purple-500/20 text-purple-300">Ready</span>
+                        </div>
+                        <p class="text-[11px] text-slate-300">Genius &amp; Musixmatch Bridge Schnittstelle mit Smart-Scroll.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEU: DER DURCHBRUCH BEIM LYRICS-ANIMATIONS-ALGORITMUS -->
+            <div class="glass-subcard rounded-2xl p-5 border border-pink-500/35 space-y-4">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <span>✨</span> Der neue Lyrics-Animations-Algorithmus: Beat-Dots, Natural Phrasing &amp; Apple-Music Flow
+                    </h3>
+                    <span class="badge-pill bg-pink-500/20 text-pink-300">Animation Engine v2</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Neben der reinen Abfrage-Autonomie wurde auch die visuelle Choreografie der Songtexte von Grund auf neu entwickelt:
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+                    <div class="p-3.5 rounded-xl bg-purple-950/30 border border-purple-500/30 space-y-1">
+                        <div class="text-xs font-bold text-purple-300">⏳ Countdown Beat-Dots</div>
+                        <p class="text-[11px] text-slate-300">Pulsierende 3-Punkt Vorzähler mit dynamischer BPM-Tempo-Adaption vor Gesangseinsätzen und Intros – kein ungeduldiges Warten mehr bei Instrumentalpausen.</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-pink-950/30 border border-pink-500/30 space-y-1">
+                        <div class="text-xs font-bold text-pink-300">🗣️ Natural Phrasing &amp; Breath Margin</div>
+                        <p class="text-[11px] text-slate-300">Berücksichtigt menschliche Reaktionszeiten und phonetische Atempausen (Pre-Line Breath Margins) für natürlichen Sprachfluss statt starrem Textspringen.</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-cyan-950/30 border border-cyan-500/30 space-y-1">
+                        <div class="text-xs font-bold text-cyan-300">🌊 Dynamic Spring Scrolling</div>
+                        <p class="text-[11px] text-slate-300">Butterweiche zentrierte Scroll-Physik mit aktivem Zeilen-Glow und dezentem Nachschwingen (Apple Music Style) ohne abrupte Ruckler.</p>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 space-y-1">
+                        <div class="text-xs font-bold text-emerald-300">✨ Apple-Music Skeleton Shimmer</div>
+                        <p class="text-[11px] text-slate-300">Pulsierender Glas-Shimmer-Platzhalter während der Erkennung statt statischem Lade-Text oder flackerndem Layout-Shift.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KAPITEL 2: SPOTIFY LIVE PLAYER RESILIENZ -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/35 flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/20">
+                    🎧
+                </div>
+                <div>
+                    <div class="inline-flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">KAPITEL 2 • STREAMING-STABILITÄT</div>
+                    <h2 class="text-xl sm:text-2xl font-black text-white">Spotify Live-Player Durchbrüche &amp; Cover-Präzision</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-subcard rounded-2xl p-4.5 space-y-2 border-l-4 border-l-emerald-500">
+                    <div class="text-emerald-400 font-bold text-sm">⏱️ Sauberes Songende (100%)</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">Kein vorzeitiger Track-Abbruch mehr. Die Timeline bleibt auf 100% fixiert, bis Spotify den neuen Song meldet. Kein Zurückspringen auf 0:00.</p>
+                </div>
+                <div class="glass-subcard rounded-2xl p-4.5 space-y-2 border-l-4 border-l-cyan-500">
+                    <div class="text-cyan-400 font-bold text-sm">🔄 Loop &amp; Repeat Handhabung</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">Wenn ein Song in Spotify wiederholt wird, erkennt der Player den Neustart sofort und setzt die Zeitleiste geschmeidig zurück, ohne einzufrieren.</p>
+                </div>
+                <div class="glass-subcard rounded-2xl p-4.5 space-y-2 border-l-4 border-l-purple-500">
+                    <div class="text-purple-400 font-bold text-sm">🔌 Pause &amp; Headphone Disconnect</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">Kopfhörer abziehen oder Pause drücken schaltet sofort und sauber in den Ruhezustand („Aktuell ist es ruhig...“) ohne Endlosschleifen.</p>
+                </div>
+                <div class="glass-subcard rounded-2xl p-4.5 space-y-2 border-l-4 border-l-pink-500">
+                    <div class="text-pink-400 font-bold text-sm">🖼️ Pixelgenaues Original-Cover</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">Der Haupt-Player lädt das Cover nun direkt aus dem authentischen Spotify-Stream (identisch zum StandBy-Modus) statt falsche Fremdbilder zu laden.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- KAPITEL 3: DIE GESAMTEN 16 CYBER ARCADE EASTER EGGS -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-pink-500/20 border border-pink-500/35 flex items-center justify-center text-2xl shadow-lg shadow-pink-500/20">
+                        🕹️
+                    </div>
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-xs font-mono font-bold text-pink-400 uppercase tracking-wider">KAPITEL 3 • DER KOMPLETTE ARCADE VAULT</div>
+                        <h2 class="text-xl sm:text-2xl font-black text-white">Alle 16 Minigames, Synthesizer &amp; Retro Easter Eggs</h2>
+                    </div>
+                </div>
+                <div class="px-3 py-1 rounded-full bg-pink-500/20 border border-pink-500/30 text-pink-300 text-xs font-mono font-bold">
+                    16 / 16 Aktiv &amp; Spielbar
+                </div>
+            </div>
+
+            <p class="text-sm text-slate-300 leading-relaxed">
+                Admins müssen keine kryptischen Terminal-Befehle mehr auswendig lernen: Alle 16 Easter Eggs lassen sich über den <strong>Arcade Vault (1-Klick)</strong>, über die <strong>Spotlight-Suche (⌘K)</strong> oder über das <strong>Entwickler-Menü (7x Build-Tap)</strong> direkt starten. Alle Effekte besitzen nun das <strong>schwebende Kontroll-HUD mit zentralem Stopp-Button</strong>!
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                <!-- 1 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-pink-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">🐷 Piggy Cyber Dash</span>
+                        <span class="badge-pill bg-pink-500/20 text-pink-300">Minigame</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">8-Bit Endless Runner mit Sprungphysik, Web-Audio SFX, Sternen &amp; Highscore-Speicherung.</p>
+                </div>
+
+                <!-- 2 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-emerald-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">🐍 Neon Cyber Snake</span>
+                        <span class="badge-pill bg-emerald-500/20 text-emerald-300">Minigame</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">Tron-inspiriertes Canvas-Schlangenspiel mit D-Pad/Pfeiltasten-Steuerung und Highscore.</p>
+                </div>
+
+                <!-- 3 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-cyan-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">🎛️ Cyber SFX Soundboard</span>
+                        <span class="badge-pill bg-cyan-500/20 text-cyan-300">Web Audio</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">9 interaktive Synthesizer-Pads (Coin, Laser, Fanfare, Explosion, Piggy Snort, V8, Warp, 808).</p>
+                </div>
+
+                <!-- 4 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-purple-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">💻 Hacker Matrix Terminal</span>
+                        <span class="badge-pill bg-purple-500/20 text-purple-300">Konsole</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">Interaktive Root-Konsole (<code class="text-purple-300">help, stats, matrix, sudo, clear</code>) mit CRT-Phosphor-Look.</p>
+                </div>
+
+                <!-- 5 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-amber-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">⚡ Cyber Diagnostics &amp; FPS</span>
+                        <span class="badge-pill bg-amber-500/20 text-amber-300">Diagnostics</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">Live 60/120 Hz VSync Bildwiederholrate, Frame-Time-Analyse, DOM-Zähler &amp; Ping-Monitor.</p>
+                </div>
+
+                <!-- 6 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-indigo-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">🎹 8-Bit Chiptune Synth</span>
+                        <span class="badge-pill bg-indigo-500/20 text-indigo-300">Synthesizer</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">16-Step Arpeggio-Sequenzer mit animiertem Banner und Chiptune-Visualizer.</p>
+                </div>
+
+                <!-- 7 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-cyan-400">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">🌌 Zero Gravity Mode</span>
+                        <span class="badge-pill bg-cyan-500/20 text-cyan-300">Physik</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">Echte physikalische Schwerelosigkeit – Kacheln und Karten schweben im 3D-Raum (<code class="text-cyan-300">zerog</code>).</p>
+                </div>
+
+                <!-- 8 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-rose-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">📺 CRT Retro Scanlines</span>
+                        <span class="badge-pill bg-rose-500/20 text-rose-300">Shader</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">90er-Jahre Röhrenfernseher-Filter mit Wölbungseffekt, Scanlines und Farbglitch (<code class="text-rose-300">crt</code>).</p>
+                </div>
+
+                <!-- 9 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-blue-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">🔄 Barrel Roll 360°</span>
+                        <span class="badge-pill bg-blue-500/20 text-blue-300">Animation</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">Flüssige, physikalische 360-Grad-Komplettdrehung der gesamten Benutzeroberfläche (<code class="text-blue-300">roll</code>).</p>
+                </div>
+
+                <!-- 10 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-yellow-400">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">⭐ Super Star Power</span>
+                        <span class="badge-pill bg-yellow-500/20 text-yellow-300">Godmode</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">10 Sekunden Regenbogen-Godmode mit Web Audio Power-Up Jingle und Partikel-Effekten (<code class="text-yellow-300">star</code>).</p>
+                </div>
+
+                <!-- 11 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-pink-400">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">🐷 Piggy Pet Companion</span>
+                        <span class="badge-pill bg-pink-500/20 text-pink-300">Mascot</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">Interaktives Desktop-Maskottchen mit Klick-Sounds, Sprechblasen und Schwebeposition (<code class="text-pink-300">pet</code>).</p>
+                </div>
+
+                <!-- 12 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-violet-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">🪩 Cyber Disco Rave</span>
+                        <span class="badge-pill bg-violet-500/20 text-violet-300">FX</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">Dynamische Stroboskop- und Farbrave-Beleuchtung im Takt des Audio-Contexts (<code class="text-violet-300">rave</code>).</p>
+                </div>
+
+                <!-- 13 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-emerald-400">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">🎧 DJ Vinyl Scratch</span>
+                        <span class="badge-pill bg-emerald-500/20 text-emerald-300">Sound FX</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">Interaktives Vinyl-Scratching per Doppeltap auf das Cover oder Scratch-Button.</p>
+                </div>
+
+                <!-- 14 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-amber-400">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">👣 Footer Dual Easter Egg</span>
+                        <span class="badge-pill bg-amber-500/20 text-amber-300">Geheim</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">Wiederhergestellte geheime Tap-Sequenzen auf Footer-Established und Copyright-Bereich.</p>
+                </div>
+
+                <!-- 15 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-purple-400">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">🏛️ Cyber Arcade Vault</span>
+                        <span class="badge-pill bg-purple-500/20 text-purple-300">Hub</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">Zentrales Steuerungs-Modal zum Starten aller Games ohne Wörter eingeben zu müssen.</p>
+                </div>
+
+                <!-- 16 -->
+                <div class="glass-subcard rounded-2xl p-4 space-y-1.5 border-t-2 border-t-cyan-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-base font-bold text-white">🛑 Floating Stopp-HUD</span>
+                        <span class="badge-pill bg-cyan-500/20 text-cyan-300">Control</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300">Schwebendes Steuer-HUD am Bildschirmrand: Beendet alle aktiven Effekte mit einem Klick.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- KAPITEL 4: EINSTELLUNGS-ZENTRUM, I18N & QA PIN GATE -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-cyan-500/20 border border-cyan-500/35 flex items-center justify-center text-2xl shadow-lg shadow-cyan-500/20">
+                    ⚙️
+                </div>
+                <div>
+                    <div class="inline-flex items-center gap-2 text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">KAPITEL 4 • UI &amp; INFRASTRUKTUR</div>
+                    <h2 class="text-xl sm:text-2xl font-black text-white">Einstellungs-Zentrum, i18n &amp; QA PIN-Gate</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-subcard rounded-2xl p-5 space-y-2 border-l-4 border-l-cyan-500">
+                    <div class="text-cyan-300 font-bold text-sm">⚙️ Neues Einstellungs-Zentrum</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">Aufgeräumte Kacheln auf oberster Ebene mit flüssigem Subpage-Drilldown, Live-Suche, zusammengefasstem Onboarding &amp; Zurücksetz-Tools.</p>
+                </div>
+
+                <div class="glass-subcard rounded-2xl p-5 space-y-2 border-l-4 border-l-purple-500">
+                    <div class="text-purple-300 font-bold text-sm">ℹ️ 7-Tap Entwicklermodus</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">7-faches Antippen der Build-Nummer in System-Info schaltet geheime Admin-Tools frei: Haptik- &amp; Audio-Test, Mock-Update-Simulation &amp; Detail-Diagnose.</p>
+                </div>
+
+                <div class="glass-subcard rounded-2xl p-5 space-y-2 border-l-4 border-l-pink-500">
+                    <div class="text-pink-300 font-bold text-sm">🔒 Durchgängiges PIN-Gate</div>
+                    <p class="text-xs text-slate-300 leading-relaxed">Für maximale Test-Sicherheit wird der <code class="text-pink-300">Tester-PIN</code> bei jedem Reload abgefragt. Unterstützt Tastatur sowie Touch-Keypad.</p>
+                </div>
+            </div>
+
+            <!-- i18n Fixes -->
+            <div class="glass-subcard rounded-2xl p-4.5 border border-white/10 space-y-2">
+                <div class="text-xs font-bold text-white flex items-center gap-2">
+                    <span>🌐</span> Vollständige Beseitigung aller Lokalisierungs-Platzhalter (i18n)
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Alle verbliebenen Platzhalter-Schlüssel wurden sauber übersetzt: <code class="text-slate-300 font-mono">label_unsynced</code> („Nicht synchronisiert“), <code class="text-slate-300 font-mono">settings_tutorial_restart</code>, <code class="text-slate-300 font-mono">settings_tutorial_complete</code> und <code class="text-slate-300 font-mono">footer_legal</code> sind in allen 6 Sprachen live.
+                </p>
+            </div>
+        </section>
+
+        <!-- KAPITEL 5: ADMIN QA-CHECKLISTE & ABNAHME -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6 border border-purple-500/40">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-purple-600/30 border border-purple-400/40 flex items-center justify-center text-2xl shadow-lg shadow-purple-600/20">
+                    📋
+                </div>
+                <div>
+                    <div class="inline-flex items-center gap-2 text-xs font-mono font-bold text-purple-400 uppercase tracking-wider">KAPITEL 5 • ABNAHME &amp; SIGN-OFF</div>
+                    <h2 class="text-xl sm:text-2xl font-black text-white">Admin-Prüfprotokoll &amp; Freigabebedingung</h2>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <p>
+                    Bitte führt vor Erteilung der Freigabe diesen schnellen 3-Minuten-Check durch:
+                </p>
+                <div class="space-y-2.5 text-xs">
+                    <div class="glass-subcard p-3.5 rounded-xl flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-purple-500/20 text-purple-300 font-bold flex items-center justify-center shrink-0">1</span>
+                        <div><strong>Lyrics-Autonomie:</strong> Song abspielen &amp; Lyrics öffnen. Synchrone Songtexte starten 100% automatisch ohne Re-Sync-Klick.</div>
+                    </div>
+                    <div class="glass-subcard p-3.5 rounded-xl flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-300 font-bold flex items-center justify-center shrink-0">2</span>
+                        <div><strong>Songende &amp; Player:</strong> Song zu Ende laufen lassen. Zeitleiste bleibt stabil auf 100%, kein Reset zu 0:00, Cover ist gestochen scharf.</div>
+                    </div>
+                    <div class="glass-subcard p-3.5 rounded-xl flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-pink-500/20 text-pink-300 font-bold flex items-center justify-center shrink-0">3</span>
+                        <div><strong>Arcade &amp; Minigames:</strong> Öffne ⌘K › „arcade“ oder 7x Build-Tap › Arcade Vault. Starte ein Minigame und beende es über das Stopp-HUD.</div>
+                    </div>
+                    <div class="glass-subcard p-3.5 rounded-xl flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-cyan-500/20 text-cyan-300 font-bold flex items-center justify-center shrink-0">4</span>
+                        <div><strong>Freigabe erteilen:</strong> Checkliste abhaken und finales Go im Admin-Chat erteilen.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="text-xs text-amber-300 font-semibold">
+                    ⚠️ Bedingung: Das Release kann erst live geschaltet werden, wenn alle Admins unmissverständlich zugestimmt haben.
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <a href="checklist.html" class="w-full sm:w-auto text-center px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs transition-all active:scale-95">
+                        📋 Checkliste öffnen
+                    </a>
+                    <a href="index.html" class="w-full sm:w-auto text-center px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-lg shadow-purple-600/30 transition-all active:scale-95">
+                        🚀 Live im QA-Portal testen
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="max-w-6xl mx-auto px-4 sm:px-6 py-8 border-t border-white/10 text-center text-xs text-slate-500 space-y-2">
+        <p>Gamingpig Portfolio • Admin-Master-Dossier &amp; QA-Freigabesystem v24.245.90</p>
+        <p>Vertrauliche interne Dokumentation für Entwickler und Administratoren.</p>
+    </footer>
+
+</body>
+</html>

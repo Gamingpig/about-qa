@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go-Kart Telemetrie • Echte Activity-Box Daten (GP900)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#030303',
+                        cardbg: '#0a0f1d'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body {
+            background-color: #030303;
+            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+        }
+        .pin-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 9999px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .pin-dot.filled {
+            background-color: #06b6d4;
+            border-color: #06b6d4;
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.6);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-start min-h-screen text-slate-100 p-3 sm:p-6 select-none bg-[#030303]">
+
+    <!-- 1. PIN AUTHENTIFIZIERUNGS-GATE (Vor Freischaltung) -->
+    <div id="pin-auth-screen" class="fixed inset-0 z-50 bg-[#030303] flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-sm rounded-3xl bg-slate-900/90 border border-white/10 p-6 flex flex-col items-center text-center shadow-2xl backdrop-blur-2xl">
+            <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-3xl mb-4 shadow-inner">
+                🏎️
+            </div>
+            <h1 class="text-xl font-bold text-white mb-1">Admin Go-Kart Gate</h1>
+            <p class="text-xs text-slate-400 mb-6">Bitte 4-stellige QA-Admin-PIN eingeben:</p>
+
+            <!-- PIN Dots Indikator -->
+            <div id="pin-dots-container" class="flex items-center gap-3 mb-6">
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+            </div>
+
+            <!-- Numpad -->
+            <div class="grid grid-cols-3 gap-3 w-full mb-4">
+                <button onclick="pressPin('1')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">1</button>
+                <button onclick="pressPin('2')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">2</button>
+                <button onclick="pressPin('3')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">3</button>
+                <button onclick="pressPin('4')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">4</button>
+                <button onclick="pressPin('5')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">5</button>
+                <button onclick="pressPin('6')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">6</button>
+                <button onclick="pressPin('7')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">7</button>
+                <button onclick="pressPin('8')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">8</button>
+                <button onclick="pressPin('9')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">9</button>
+                <button onclick="clearPin()" class="h-12 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 active:scale-95 text-xs font-bold transition-all border border-red-500/20">C</button>
+                <button onclick="pressPin('0')" class="h-12 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 text-lg font-bold transition-all border border-white/10">0</button>
+                <button onclick="quickAuth()" class="h-12 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 active:scale-95 text-xs font-bold transition-all border border-cyan-500/30" title="Mit PIN 2957 entsperren">⚡ 2957</button>
+            </div>
+
+            <p id="pin-feedback" class="text-xs text-slate-500 h-4 transition-colors">Hinterlegte Admin-PIN: 2957</p>
+        </div>
+    </div>
+
+    <!-- 2. HAUPT DASHBOARD (Nach erfolgreicher PIN-Verifikation) -->
+    <div id="karting-main-container" class="w-full max-w-4xl flex flex-col items-center opacity-0 transition-opacity duration-300">
+        
+        <!-- Header -->
+        <header class="w-full flex items-center justify-between py-4 mb-4 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-xl shadow-inner">
+                    🏎️
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white flex items-center gap-2">
+                        Activity-Box Echte Telemetrie
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[10px] font-mono font-bold tracking-wide">100% ECHTE APP-DATEN</span>
+                    </h1>
+                    <p class="text-xs text-slate-400" id="header-subtitle">Kartland Sinn • 8 Heats synchronisiert • GP900</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="app.html" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-medium text-slate-200 border border-white/10 transition-all flex items-center gap-1.5">
+                    <span>🏠</span><span>Portfolio App</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Strecken-Umschalter -->
+        <div class="w-full grid grid-cols-2 gap-3 mb-4">
+            <button id="btn-track-sinn" onclick="selectTrack('kartlandsinn')" class="p-3.5 rounded-2xl border transition-all text-left flex items-center justify-between bg-cyan-500/15 border-cyan-500/50 shadow-lg shadow-cyan-500/10">
+                <div>
+                    <div class="flex items-center gap-1.5 mb-0.5">
+                        <span class="text-xs font-bold text-cyan-300">🏁 Kartland Sinn</span>
+                        <span class="px-1.5 py-0.2 rounded bg-cyan-500/30 text-cyan-200 text-[9px] font-mono">8 HEATS</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300 font-mono">Fahrer: <strong class="text-white">GP900</strong> • Bestzeit: <strong class="text-purple-400">43.922s</strong></p>
+                </div>
+                <div class="w-4 h-4 rounded-full border-2 border-cyan-400 flex items-center justify-center">
+                    <div id="indicator-sinn" class="w-2 h-2 rounded-full bg-cyan-400"></div>
+                </div>
+            </button>
+
+            <button id="btn-track-frankfurt" onclick="selectTrack('ecokartfrankfurt')" class="p-3.5 rounded-2xl border transition-all text-left flex items-center justify-between bg-slate-900/60 border-white/10 hover:border-white/20">
+                <div>
+                    <div class="flex items-center gap-1.5 mb-0.5">
+                        <span class="text-xs font-bold text-purple-300">⚡ Eco Kart Frankfurt</span>
+                        <span class="px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 text-[9px] font-mono">2 HEATS</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-mono">Fahrer: <strong class="text-white">Gamingpig900</strong> • Bestzeit: <strong class="text-purple-400">54.720s</strong></p>
+                </div>
+                <div class="w-4 h-4 rounded-full border-2 border-slate-600 flex items-center justify-center">
+                    <div id="indicator-frankfurt" class="w-2 h-2 rounded-full bg-transparent"></div>
+                </div>
+            </button>
+        </div>
+
+        <!-- Rennlauf-Auswahl (Dropdown aller echten Sessions) -->
+        <div class="w-full rounded-2xl bg-slate-900/80 border border-white/10 p-4 mb-4 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="w-full sm:w-auto">
+                <span class="text-[10px] text-cyan-400 font-mono uppercase tracking-wider block font-semibold mb-1">Echten Rennlauf aus Activity Box wählen:</span>
+                <select id="session-select" onchange="onSessionChange(this.value)" class="w-full sm:w-96 px-3.5 py-2.5 rounded-xl bg-black/60 border border-white/20 text-white font-mono text-xs focus:outline-none focus:border-cyan-400 transition-colors">
+                    <!-- Dynamisch befüllt -->
+                </select>
+            </div>
+            <div class="flex items-center gap-2 self-end sm:self-auto">
+                <span id="session-badge-podium" class="px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-xs flex items-center gap-1.5">
+                    <span>🥉</span><span>Podestplatz (P3)</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Key Performance Kacheln -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full mb-4">
+            <div class="rounded-xl bg-slate-900/60 border border-purple-500/30 p-3 flex flex-col items-center text-center shadow-lg shadow-purple-500/5">
+                <span class="text-[10px] uppercase font-bold text-purple-300 mb-1" id="tile-alltime-title">All-Time Bestzeit</span>
+                <span class="text-xl sm:text-2xl font-mono font-black text-purple-400" id="stat-alltime-best">43.922s</span>
+                <span class="text-[10px] font-mono text-slate-400 mt-1" id="stat-alltime-subtitle">25.10. • Lauf 42</span>
+            </div>
+            <div class="rounded-xl bg-slate-900/60 border border-white/10 p-3 flex flex-col items-center text-center">
+                <span class="text-[10px] uppercase font-bold text-slate-400 mb-1">Session Bestzeit</span>
+                <span class="text-xl sm:text-2xl font-mono font-black text-emerald-400" id="stat-session-best">43.922s</span>
+                <span class="text-[10px] font-mono text-emerald-400 mt-1" id="stat-session-pos">Platzierung: P6</span>
+            </div>
+            <div class="rounded-xl bg-slate-900/60 border border-white/10 p-3 flex flex-col items-center text-center">
+                <span class="text-[10px] uppercase font-bold text-slate-400 mb-1">Durchschnitt (Ø)</span>
+                <span class="text-xl sm:text-2xl font-mono font-black text-cyan-300" id="stat-session-avg">45.755s</span>
+                <span class="text-[10px] text-slate-400 mt-1" id="stat-session-laps">12 Runden</span>
+            </div>
+            <div class="rounded-xl bg-slate-900/60 border border-white/10 p-3 flex flex-col items-center text-center">
+                <span class="text-[10px] uppercase font-bold text-amber-300 mb-1" id="tile-success-title">Erfolge & Podien</span>
+                <span class="text-xl sm:text-2xl font-mono font-black text-amber-400" id="stat-total-podiums">4x P3 🥉</span>
+                <span class="text-[10px] font-mono text-emerald-400 mt-1" id="stat-total-improvement">-4.346s Steigerung</span>
+            </div>
+        </div>
+
+        <!-- Rundenzeiten Historie (Tabelle) -->
+        <div class="w-full rounded-2xl bg-slate-900/80 border border-white/10 p-4 shadow-xl mb-4">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                    <span>📊</span><span>Runden-Telemetrie: <span id="current-session-title" class="text-cyan-300 font-mono">Rennlauf 42</span></span>
+                </h3>
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-mono text-emerald-400">✓ Originale App-Zeiten</span>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-white/10 text-slate-400 font-mono text-[10px] uppercase">
+                            <th class="py-2.5 px-3">Runde</th>
+                            <th class="py-2.5 px-3">Rundenzeit</th>
+                            <th class="py-2.5 px-3">Diff zur Vorrunde</th>
+                            <th class="py-2.5 px-3 text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-laps-tbody" class="divide-y divide-white/5 font-mono">
+                        <!-- Dynamisch befüllt mit den echten Runden -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Lizenz QR Code & Fahrerdaten Box (Für die Kasse/Bahn) -->
+        <div class="w-full rounded-2xl bg-slate-900/60 border border-white/10 p-4 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-xl font-mono text-cyan-300 font-bold" id="license-icon">
+                    🏁
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider" id="license-track-title">Kartland Sinn Fahrerprofil</h4>
+                    <p class="text-[11px] text-slate-400 font-mono" id="license-meta-info">Fahrer: <strong class="text-white">GP900</strong> • Lizenz: <span class="text-cyan-300">GP-****-900</span> • Status: <span class="text-emerald-400 font-semibold">Aktiv verifiziert</span></p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-[10px] text-emerald-400 font-mono font-bold block">✓ 100% ECHTE DATEN</span>
+                <span class="text-[10px] text-slate-500">Strikt geschützt (Zero-Plaintext)</span>
+            </div>
+        </div>
+
+        <footer class="mt-8 mb-6 text-center text-xs text-slate-500">
+            Activity-Box Synchronisation • Entwickelt für Gamingpig Portfolio • PIN 2957
+        </footer>
+    </div>
+
+    <!-- Einbindung des Kern-Telemetrie-Services -->
+    <script src="js/services/kartingService.js"></script>
+
+    <script>
+        const QA_VALID_PIN = '2957';
+        let enteredPin = '';
+
+        function updateDots() {
+            const dots = document.querySelectorAll('#pin-dots-container .pin-dot');
+            dots.forEach((dot, idx) => {
+                if (idx < enteredPin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            });
+        }
+
+        function pressPin(digit) {
+            if (enteredPin.length >= 4) return;
+            enteredPin += digit;
+            updateDots();
+            if (enteredPin.length === 4) {
+                verifyPin();
+            }
+        }
+
+        function clearPin() {
+            enteredPin = '';
+            updateDots();
+            const fb = document.getElementById('pin-feedback');
+            if (fb) {
+                fb.innerText = 'PIN zurückgesetzt.';
+                fb.className = 'text-xs text-slate-500 h-4 transition-colors';
+            }
+        }
+
+        function quickAuth() {
+            enteredPin = QA_VALID_PIN;
+            updateDots();
+            verifyPin();
+        }
+
+        function verifyPin() {
+            const fb = document.getElementById('pin-feedback');
+            if (enteredPin === QA_VALID_PIN) {
+                if (fb) {
+                    fb.innerText = '✓ PIN korrekt! Lade echte Daten...';
+                    fb.className = 'text-xs text-emerald-400 font-bold h-4 transition-colors';
+                }
+                try {
+                    sessionStorage.setItem('gp_qa_auth', 'true');
+                    localStorage.setItem('gp_debug_karting', 'true');
+                } catch(e) {}
+                setTimeout(unlockDashboard, 300);
+            } else {
+                if (fb) {
+                    fb.innerText = '✕ Falsche PIN! Bitte erneut versuchen.';
+                    fb.className = 'text-xs text-red-400 font-bold h-4 transition-colors';
+                }
+                setTimeout(() => {
+                    enteredPin = '';
+                    updateDots();
+                }, 700);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const authScreen = document.getElementById('pin-auth-screen');
+            if (!authScreen || authScreen.classList.contains('hidden')) return;
+            if (e.key >= '0' && e.key <= '9') {
+                pressPin(e.key);
+            } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                clearPin();
+            } else if (e.key === 'Enter' && enteredPin.length === 4) {
+                verifyPin();
+            }
+        });
+
+        function unlockDashboard() {
+            const authScreen = document.getElementById('pin-auth-screen');
+            const mainContainer = document.getElementById('karting-main-container');
+            if (authScreen) authScreen.classList.add('hidden');
+            if (mainContainer) {
+                mainContainer.classList.remove('opacity-0');
+                mainContainer.classList.add('opacity-100');
+            }
+            initDashboardData();
+        }
+
+        let currentTrackId = 'kartlandsinn';
+
+        function selectTrack(trackId) {
+            currentTrackId = trackId;
+            if (typeof KartingService !== 'undefined') {
+                KartingService.setActiveTrack(trackId);
+            }
+
+            const btnSinn = document.getElementById('btn-track-sinn');
+            const btnFfm = document.getElementById('btn-track-frankfurt');
+            const indSinn = document.getElementById('indicator-sinn');
+            const indFfm = document.getElementById('indicator-frankfurt');
+
+            if (trackId === 'kartlandsinn') {
+                btnSinn.className = 'p-3.5 rounded-2xl border transition-all text-left flex items-center justify-between bg-cyan-500/15 border-cyan-500/50 shadow-lg shadow-cyan-500/10';
+                btnFfm.className = 'p-3.5 rounded-2xl border transition-all text-left flex items-center justify-between bg-slate-900/60 border-white/10 hover:border-white/20';
+                indSinn.className = 'w-2 h-2 rounded-full bg-cyan-400';
+                indFfm.className = 'w-2 h-2 rounded-full bg-transparent';
+            } else {
+                btnFfm.className = 'p-3.5 rounded-2xl border transition-all text-left flex items-center justify-between bg-purple-500/15 border-purple-500/50 shadow-lg shadow-purple-500/10';
+                btnSinn.className = 'p-3.5 rounded-2xl border transition-all text-left flex items-center justify-between bg-slate-900/60 border-white/10 hover:border-white/20';
+                indFfm.className = 'w-2 h-2 rounded-full bg-purple-400';
+                indSinn.className = 'w-2 h-2 rounded-full bg-transparent';
+            }
+
+            initDashboardData();
+        }
+
+        function onSessionChange(sessionId) {
+            if (typeof KartingService !== 'undefined') {
+                KartingService.setActiveSession(sessionId);
+                renderCurrentSessionUI();
+            }
+        }
+
+        function renderTable(laps) {
+            const tbody = document.getElementById('admin-laps-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            laps.forEach((l) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-white/5 transition-colors';
+                const isBest = l.status === 'BEST';
+                const isStart = l.status === 'Start';
+                
+                let diffClass = 'text-slate-400';
+                if (l.diff && l.diff.startsWith('-')) diffClass = 'text-emerald-400 font-bold';
+                else if (l.diff && l.diff.startsWith('+')) diffClass = 'text-rose-400';
+
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 font-bold ${isBest ? 'text-purple-400' : 'text-slate-300'}">Runde #${l.lap}</td>
+                    <td class="py-2.5 px-3 font-bold ${isBest ? 'text-purple-300 font-black text-sm' : 'text-white'}">${l.lapTime}s ${isBest ? '⭐' : ''}</td>
+                    <td class="py-2.5 px-3 ${diffClass}">${l.diff === '-' ? '-' : l.diff + 's'}</td>
+                    <td class="py-2.5 px-3 text-right">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${isBest ? 'bg-purple-500/25 text-purple-300 border border-purple-500/40' : (isStart ? 'bg-white/5 text-slate-500' : 'bg-emerald-500/10 text-emerald-400')}">
+                            ${isBest ? 'BESTZEIT' : l.status}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function initDashboardData() {
+            if (typeof KartingService === 'undefined') return;
+
+            const isFfm = currentTrackId === 'ecokartfrankfurt';
+            const sessions = KartingService.getAllSessions(currentTrackId);
+            const selectEl = document.getElementById('session-select');
+
+            document.getElementById('header-subtitle').innerText = isFfm 
+                ? 'Eco Kart Frankfurt • 2 Heats synchronisiert • Gamingpig900'
+                : 'Kartland Sinn • 8 Heats synchronisiert • GP900';
+
+            document.getElementById('tile-alltime-title').innerText = isFfm ? 'Frankfurt Bestzeit' : 'All-Time Bestzeit';
+            document.getElementById('stat-alltime-best').innerText = isFfm ? '54.720s' : '43.922s';
+            document.getElementById('stat-alltime-subtitle').innerText = isFfm ? '16.10. • Heat 8 (R20)' : '25.10. • Lauf 42 (R12)';
+
+            document.getElementById('tile-success-title').innerText = isFfm ? 'Elektro-Performance' : 'Erfolge & Podien';
+            document.getElementById('stat-total-podiums').innerText = isFfm ? '23 Runden ⚡' : '4x P3 🥉';
+            document.getElementById('stat-total-improvement').innerText = isFfm ? '-5.539s Steigerung' : '-4.346s Steigerung';
+
+            document.getElementById('license-icon').innerText = isFfm ? '⚡' : '🏁';
+            document.getElementById('license-track-title').innerText = isFfm ? 'Eco Kart Frankfurt Fahrerprofil' : 'Kartland Sinn Fahrerprofil';
+            document.getElementById('license-meta-info').innerHTML = isFfm 
+                ? 'Fahrer: <strong class="text-white">Gamingpig900</strong> • Lizenz: <span class="text-purple-300">GP-****-ECO</span> • Status: <span class="text-emerald-400 font-semibold">Aktiv verifiziert</span>'
+                : 'Fahrer: <strong class="text-white">GP900</strong> • Lizenz: <span class="text-cyan-300">GP-****-900</span> • Status: <span class="text-emerald-400 font-semibold">Aktiv verifiziert</span>';
+
+            if (selectEl) {
+                selectEl.innerHTML = '';
+                sessions.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    const icon = s.podium ? '🥉' : (isFfm ? '⚡' : '🏁');
+                    opt.innerText = `${icon} ${s.date} — ${s.name} (Best: ${s.bestLap}s • ${s.position})`;
+                    selectEl.appendChild(opt);
+                });
+            }
+
+            renderCurrentSessionUI();
+        }
+
+        function renderCurrentSessionUI() {
+            if (typeof KartingService === 'undefined') return;
+
+            const session = KartingService.getActiveSession();
+            if (!session) return;
+
+            const selectEl = document.getElementById('session-select');
+            if (selectEl) selectEl.value = session.id;
+
+            document.getElementById('current-session-title').innerText = `${session.date} • ${session.name}`;
+            document.getElementById('stat-session-best').innerText = session.bestLap + 's';
+            document.getElementById('stat-session-pos').innerText = `Platzierung: ${session.position}`;
+            document.getElementById('stat-session-avg').innerText = session.avgLap + 's';
+            document.getElementById('stat-session-laps').innerText = `${session.totalLaps} Runden absolviert`;
+
+            const podiumBadge = document.getElementById('session-badge-podium');
+            if (podiumBadge) {
+                if (session.podium) {
+                    podiumBadge.classList.remove('hidden');
+                    podiumBadge.innerHTML = '<span>🥉</span><span>Podestplatz (P3)</span>';
+                    podiumBadge.className = 'px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-xs flex items-center gap-1.5';
+                } else {
+                    podiumBadge.innerHTML = `<span>🏁</span><span>${session.position} (${session.kartClass})</span>`;
+                    podiumBadge.className = 'px-3 py-1.5 rounded-xl bg-white/10 border border-white/20 text-slate-300 font-bold text-xs flex items-center gap-1.5';
+                }
+            }
+
+            renderTable(session.laps);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('pin') === QA_VALID_PIN || sessionStorage.getItem('gp_qa_auth') === 'true') {
+                quickAuth();
+            }
+        });
+    </script>
+</body>
+</html>

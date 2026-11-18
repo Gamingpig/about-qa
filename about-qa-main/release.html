@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+  <script>/* Android Liquid Glass compatibility */(function(){try{var ua=navigator.userAgent||"";if(/Android/i.test(ua)){document.documentElement.classList.add("gp-android");if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add("gp-android-lowend");}if(/Mobile|iP(hone|od|ad)|Android.*Mobile/i.test(ua))document.documentElement.classList.add("gp-mobile");}catch(e){}})();</script>
+  <script src="./js/core/storage.e856be99df567fd2.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Release Notes v24.245.90 – Gamingpig</title>
+  <meta name="description" content="Offizielle Release Notes für Gamingpig v24.245.90: Der große Lyrics-Synchronisations-Durchbruch, 100% autonome Songtext-Erkennung, HTTP 429 Rate-Limit Shield und Multi-DB Vorbereitung.">
+  <meta name="theme-color" content="#090a0f">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script>
+    try {
+      var savedAppLang = (window.AppStorage ? AppStorage.getItem('selectedLanguage') || AppStorage.getItem('app_language') : null);
+      if (savedAppLang) document.documentElement.setAttribute('lang', savedAppLang);
+    } catch(e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    if (window.tailwind) tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          },
+          colors: {
+            brand: {
+              400: "#818cf8",
+              500: "#6366f1",
+              600: "#4f46e5"
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: rgba(18, 20, 29, 0.72);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover-border: rgba(99, 102, 241, 0.4);
+    }
+    body {
+      background-color: var(--bg);
+      color: #f3f4f6;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+    .glass-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-panel:hover {
+      border-color: var(--card-hover-border);
+      box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
+    }
+    .badge-pill {
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      color: #a5b4fc;
+    }
+    .mesh-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+    }
+  </style>
+  <link rel="stylesheet" href="assets/community-glass.20260910.css?v=v24.245.90" data-gp-glass-engine="true">
+</head>
+<body class="selection:bg-indigo-500/30 selection:text-indigo-200">
+  <div class="mesh-bg"></div>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header style="padding-top: max(0px, env(safe-area-inset-top, 0px));" class="sticky top-0 z-50 glass-panel border-b border-white/5 !bg-black/40 !backdrop-blur-xl">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3 group text-gray-300 hover:text-white transition-colors relative z-50 cursor-pointer touch-manipulation">
+        <div class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-indigo-500/20 group-hover:border-indigo-500/40 transition-all">
+          <svg class="w-4 h-4 text-gray-300 group-hover:text-indigo-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+        </div>
+        <span class="font-semibold text-sm tracking-wide">Zurück zu Gamingpig</span>
+      </a>
+
+      <!-- Right controls: TTS Reader + Language Selector -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Audio TTS Briefing Button -->
+        <button id="tts-btn" onclick="toggleAudioBriefing()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 transition-all active:scale-95">
+          <svg id="tts-icon" class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+          </svg>
+          <span id="tts-label">30s Briefing vorlesen</span>
+        </button>
+
+        <!-- Language Dropdown -->
+        <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-white/5 border border-white/10 rounded-full px-3 py-1.5 text-xs font-medium text-gray-200 focus:outline-none focus:border-indigo-500 cursor-pointer">
+          <option value="de" selected class="bg-gray-900 text-white">🇩🇪 DE</option>
+          <option value="en" class="bg-gray-900 text-white">🇬🇧 EN</option>
+          <option value="fr" class="bg-gray-900 text-white">🇫🇷 FR</option>
+          <option value="es" class="bg-gray-900 text-white">🇪🇸 ES</option>
+          <option value="pt" class="bg-gray-900 text-white">🇧🇷 PT</option>
+          <option value="tr" class="bg-gray-900 text-white">🇹🇷 TR</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <!-- Hero Header -->
+    <div class="text-center space-y-4 mb-14">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold badge-pill">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="hero-tag">Offizielles Update • Jetzt Live</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
+        Gamingpig <span class="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">v24.245.90</span>
+      </h1>
+      <p id="hero-subtitle" class="text-gray-400 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
+        Der große Lyrics-Durchbruch: 100% autonome Songtext-Erkennung, intelligentes Rate-Limit Shield und Multi-DB Vorbereitung.
+      </p>
+      <div class="flex items-center justify-center gap-4 text-xs text-gray-500 font-mono pt-2">
+        <span>15. Oktober 2026</span>
+        <span>•</span>
+        <span>Build 2026.10.15</span>
+        <span>•</span>
+        <span class="text-emerald-400 font-medium">100% Produktionsreif</span>
+      </div>
+    </div>
+
+    <!-- 4 High-Impact Metric Chips -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-12">
+      <div class="glass-panel rounded-2xl p-4 text-center">
+        <div class="text-2xl sm:text-3xl font-extrabold text-indigo-400 font-mono">100%</div>
+        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_fade">Autonomer Sync</div>
+      </div>
+      <div class="glass-panel rounded-2xl p-4 text-center">
+        <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono">&lt; 1ms</div>
+        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_tts">Cache-Lookup</div>
+      </div>
+      <div class="glass-panel rounded-2xl p-4 text-center">
+        <div class="text-2xl sm:text-3xl font-extrabold text-pink-400 font-mono">0 Klicks</div>
+        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_freeze">Kein Re-Sync</div>
+      </div>
+      <div class="glass-panel rounded-2xl p-4 text-center">
+        <div class="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono">Multi-DB</div>
+        <div class="text-xs text-gray-400 mt-1 font-medium" data-i18n="metric_reset">Lyrics-Provider</div>
+      </div>
+    </div>
+
+    <!-- Core Highlights Cards -->
+    <div class="space-y-6">
+      <h2 id="section-title" class="text-xl font-bold text-white flex items-center gap-2">
+        <span>⚡</span> Was ist neu in v24.245.90
+      </h2>
+
+      <!-- Card 1: Revolutionärer Lyrics-Algorithmus -->
+      <article class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex-shrink-0 flex items-center justify-center text-xl">
+            ✨
+          </div>
+          <div class="flex-1 space-y-2">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h3 class="text-lg font-bold text-white" data-i18n="card1_title">Revolutionärer Lyrics-Algorithmus (100% Autonom)</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Durchbruch</span>
+            </div>
+            <p class="text-sm text-gray-300 leading-relaxed" data-i18n="card1_desc">
+              Manueller Klick auf 'Re-Sync' ist endgültig Geschichte: Die neue Abfrage-Pipeline erkennt synchrone Songtexte vollautomatisch im Hintergrund. Gepaart mit der neuen Animations-Engine (Countdown Beat-Dots vor Gesangseinsätzen, Natural Phrasing mit Atempausen &amp; butterweichem Apple-Music Spring-Scrolling) laufen Songtexte ab der ersten Sekunde perfekt mit.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: Intelligente Selbstheilung & HTTP 429 Shield -->
+      <article class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex-shrink-0 flex items-center justify-center text-xl">
+            🛡️
+          </div>
+          <div class="flex-1 space-y-2">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h3 class="text-lg font-bold text-white" data-i18n="card2_title">Intelligente Selbstheilung &amp; HTTP 429 Shield</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Resilienz</span>
+            </div>
+            <p class="text-sm text-gray-300 leading-relaxed" data-i18n="card2_desc">
+              Nie wieder falsche 'Keine Lyrics vorhanden'-Meldungen: Temporäre Ratenbegrenzungen der externen API werden über einen automatischen 2.5s Exponential-Backoff Scheduler im Hintergrund abgefangen und wiederholt. Der Nutzer landet nie mehr auf einem toten Fallback-Screen.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3: Non-Aborting Pipeline & Ultra-Fast Caching -->
+      <article class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex-shrink-0 flex items-center justify-center text-xl">
+            ⚡
+          </div>
+          <div class="flex-1 space-y-2">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h3 class="text-lg font-bold text-white" data-i18n="card3_title">Non-Aborting Pipeline &amp; Ultra-Fast Caching</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-500/15 text-pink-300 border border-pink-500/30">Performance</span>
+            </div>
+            <p class="text-sm text-gray-300 leading-relaxed" data-i18n="card3_desc">
+              Das Öffnen des Lyrics-Overlays oder der Wechsel in den Standby-Modus bricht laufende Hintergrundabfragen nicht mehr ab. Zudem prüft das System vor jedem Netzwerkaufruf den flüchtigen Memory-Cache: Bei bereits gehörten Songs erscheinen Songtexte in unter 1 ms Latenz.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4: Multi-DB Architektur & Datenschutz (DSGVO) -->
+      <article class="glass-panel rounded-2xl p-6 relative overflow-hidden">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex-shrink-0 flex items-center justify-center text-xl">
+            🌐
+          </div>
+          <div class="flex-1 space-y-2">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h3 class="text-lg font-bold text-white" data-i18n="card4_title">Multi-DB Architektur &amp; Datenschutz (DSGVO)</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">Datenschutz</span>
+            </div>
+            <p class="text-sm text-gray-300 leading-relaxed" data-i18n="card4_desc">
+              Vorbereitung für sekundäre Songtext- und Metadaten-Datenbanken bei voller DSGVO-Konformität: Alle Anfragen übermitteln ausschließlich anonymisierten Track- und Künstlernamen. Keine Cookies, kein Nutzer-Tracking und keine Verknüpfung persönlicher Daten.
+            </p>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Actions Footer -->
+    <div class="mt-14 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="text-xs text-gray-500 text-center sm:text-left">
+        Gamingpig Web App • Built with ❤️, Web Audio API & Tailwind CSS.
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="px-5 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95">
+          App jetzt öffnen
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const I18N = {
+      de: {
+        tag: "Offizielles Update • Jetzt Live",
+        subtitle: "Der große Lyrics-Durchbruch: 100% autonome Songtext-Erkennung, intelligentes Rate-Limit Shield und Multi-DB Vorbereitung.",
+        metric_fade: "Autonomer Sync",
+        metric_tts: "Cache-Lookup",
+        metric_freeze: "Kein Re-Sync",
+        metric_reset: "Lyrics-Provider",
+        section: "⚡ Was ist neu in v24.245.90",
+        card1_title: "Revolutionärer Lyrics-Algorithmus (100% Autonom)",
+        card1_desc: "Manueller Klick auf 'Re-Sync' ist endgültig Geschichte: Die neue Abfrage-Pipeline erkennt synchrone Songtexte vollautomatisch im Hintergrund. Gepaart mit der neuen Animations-Engine (Countdown Beat-Dots vor Gesangseinsätzen, Natural Phrasing mit Atempausen & butterweichem Apple-Music Spring-Scrolling) laufen Songtexte ab der ersten Sekunde perfekt mit.",
+        card2_title: "Intelligente Selbstheilung & HTTP 429 Shield",
+        card2_desc: "Nie wieder falsche 'Keine Lyrics vorhanden'-Meldungen: Temporäre Ratenbegrenzungen der externen API werden über einen automatischen 2.5s Exponential-Backoff Scheduler im Hintergrund abgefangen und wiederholt. Der Nutzer landet nie mehr auf einem toten Fallback-Screen.",
+        card3_title: "Non-Aborting Pipeline & Ultra-Fast Caching",
+        card3_desc: "Das Öffnen des Lyrics-Overlays oder der Wechsel in den Standby-Modus bricht laufende Hintergrundabfragen nicht mehr ab. Zudem prüft das System vor jedem Netzwerkaufruf den flüchtigen Memory-Cache: Bei bereits gehörten Songs erscheinen Songtexte in unter 1 ms Latenz.",
+        card4_title: "Multi-DB Architektur & Datenschutz (DSGVO)",
+        card4_desc: "Vorbereitung für sekundäre Songtext- und Metadaten-Datenbanken bei voller DSGVO-Konformität: Alle Anfragen übermitteln ausschließlich anonymisierten Track- und Künstlernamen. Keine Cookies, kein Nutzer-Tracking und keine Verknüpfung persönlicher Daten.",
+        tts_read: "30s Briefing vorlesen",
+        tts_stop: "Vorlesen stoppen",
+        speech_text: "Willkommen zum Gamingpig Update v24.245.90! Dieses Release bringt den großen Lyrics-Durchbruch: 100 Prozent autonome Songtext-Erkennung ohne manuellen Re-Sync, neue Countdown Beat-Dots Animationen und eine zukunftssichere Multi-Datenbank-Architektur bei vollem Datenschutz. Viel Spaß!"
+      },
+      en: {
+        tag: "Official Update • Live Now",
+        subtitle: "The major lyrics breakthrough: 100% autonomous synced lyrics detection, intelligent rate-limit shield, and multi-DB readiness.",
+        metric_fade: "Autonomous Sync",
+        metric_tts: "Cache Lookup",
+        metric_freeze: "Zero Re-Sync",
+        metric_reset: "Lyrics Providers",
+        section: "⚡ What is New in v24.245.90",
+        card1_title: "Revolutionary Lyrics Algorithm (100% Autonomous)",
+        card1_desc: "Manual re-sync clicking is completely eliminated: The new query pipeline detects synchronized lyrics fully autonomously. Combined with the new animation engine (countdown beat-dots before vocals, natural phrasing with breath margins & spring physics scrolling), lyrics flow seamlessly from beat one.",
+        card2_title: "Intelligent Self-Healing & HTTP 429 Shield",
+        card2_desc: "No more false 'no lyrics found' states: Temporary API rate limits trigger an automatic 2.5s exponential backoff scheduler in the background with automatic retries.",
+        card3_title: "Non-Aborting Pipeline & Ultra-Fast Caching",
+        card3_desc: "Opening the lyrics view or switching to standby mode never aborts active background fetches. In-memory cache returns cached lyrics in under 1 ms.",
+        card4_title: "Multi-DB Architecture & GDPR Compliance",
+        card4_desc: "Architected for secondary lyrics and metadata databases with complete GDPR adherence: Queries contain only sanitized track metadata without PII or tracking cookies.",
+        tts_read: "Read 30s Briefing",
+        tts_stop: "Stop Reading",
+        speech_text: "Welcome to Gamingpig update v24.245.90! This release brings the major lyrics breakthrough: 100% autonomous synced lyrics without manual re-sync, self-healing rate limit protection, and multi-database architecture. Enjoy!"
+      },
+      fr: {
+        tag: "Mise à jour officielle • En direct",
+        subtitle: "La percée majeure des paroles : détection 100% autonome des paroles synchronisées, bouclier anti-limite et architecture multi-BDD.",
+        metric_fade: "Sync Autonome",
+        metric_tts: "Recherche Cache",
+        metric_freeze: "Zéro Re-Sync",
+        metric_reset: "Sources BDD",
+        section: "⚡ Nouveautés de la version 24.222.7",
+        card1_title: "Algorithme de Paroles Révolutionnaire (100% Autonome)",
+        card1_desc: "Plus besoin de cliquer sur Re-Sync : le nouveau pipeline détecte automatiquement les paroles synchronisées en arrière-plan sans aucune intervention manuelle.",
+        card2_title: "Auto-Guérison Intelligente & Bouclier HTTP 429",
+        card2_desc: "Fini les faux messages d'absence de paroles : les limitations de débit sont gérées automatiquement avec un nouvel essai en arrière-plan après 2,5s.",
+        card3_title: "Pipeline Sans Interruption & Cache Ultra-Rapide",
+        card3_desc: "L'ouverture du lecteur ou de la vue plein écran n'interrompt plus les requêtes en cours. Le cache mémoire restitue les paroles en moins d'une milliseconde.",
+        card4_title: "Architecture Multi-BDD & Conformité RGPD",
+        card4_desc: "Préparation pour de multiples bases de données musicales dans le respect strict du RGPD : requêtes anonymes sans traceurs ni cookies.",
+        tts_read: "Écouter le briefing (30s)",
+        tts_stop: "Arrêter l'audio",
+        speech_text: "Bienvenue dans la version 24.222.7 de Gamingpig ! Profitez de la synchronisation 100% autonome des paroles, du bouclier anti-limite et de notre nouvelle architecture multi-bases de données."
+      },
+      es: {
+        tag: "Actualización oficial • Ya disponible",
+        subtitle: "El gran avance en letras: detección 100% autónoma de letras sincronizadas, protección contra límite de peticiones y soporte multi-BD.",
+        metric_fade: "Sync Autónomo",
+        metric_tts: "Búsqueda Caché",
+        metric_freeze: "Cero Re-Sync",
+        metric_reset: "Bases de Datos",
+        section: "⚡ Novedades en v24.245.90",
+        card1_title: "Algoritmo de Letras Revolucionario (100% Autónomo)",
+        card1_desc: "El botón manual de re-sincronización es historia: el nuevo sistema detecta letras sincronizadas automáticamente en segundo plano sin intervención del usuario.",
+        card2_title: "Autocorrección Inteligente y Escudo HTTP 429",
+        card2_desc: "Sin avisos falsos de 'sin letras': los límites de peticiones se gestionan mediante reintentos automáticos tras 2,5 segundos en segundo plano.",
+        card3_title: "Pipeline Ininterrumpido y Caché Ultra-Rápido",
+        card3_desc: "Abrir la vista de letras o cambiar al modo reposo no interrumpe las consultas activas. Las letras cacheadas cargan en menos de 1 ms.",
+        card4_title: "Arquitectura Multi-BD y Privacidad RGPD",
+        card4_desc: "Preparado para múltiples bases de datos de letras con cumplimiento estricto del RGPD: consultas anonimizadas sin rastreadores ni cookies.",
+        tts_read: "Escuchar resumen (30s)",
+        tts_stop: "Detener audio",
+        speech_text: "¡Bienvenido a la actualización v24.245.90 de Gamingpig! Estrena el gran avance de sincronización autónoma de letras, escudo contra límites de peticiones y arquitectura multi-base de datos."
+      },
+      pt: {
+        tag: "Atualização Oficial • Disponível Agora",
+        subtitle: "O grande marco nas letras: detecção 100% autônoma de letras sincronizadas, proteção anti-limite e suporte a múltiplos bancos de dados.",
+        metric_fade: "Sync Autônomo",
+        metric_tts: "Busca em Cache",
+        metric_freeze: "Zero Re-Sync",
+        metric_reset: "Bancos de Letras",
+        section: "⚡ O que há de novo na v24.245.90",
+        card1_title: "Algoritmo de Letras Revolucionário (100% Autônomo)",
+        card1_desc: "O re-sync manual ficou no passado: o novo pipeline detecta letras sincronizadas automaticamente em segundo plano, sem necessidade de cliques.",
+        card2_title: "Auto-Recuperação Inteligente e Escudo HTTP 429",
+        card2_desc: "Sem falsas mensagens de ausência de letras: bloqueios temporários de taxa disparam retentativas automáticas em segundo plano após 2,5 segundos.",
+        card3_title: "Pipeline Sem Interrupções e Cache Ultra-Rápido",
+        card3_desc: "Alternar telas ou abrir o overlay não cancela buscas em andamento. Letras em cache aparecem instantaneamente em menos de 1 ms.",
+        card4_title: "Arquitetura Multi-DB e Privacidade RGPD",
+        card4_desc: "Pronto para fontes secundárias de letras sob total conformidade de privacidade: metadados sanitizados sem identificadores pessoais ou cookies.",
+        tts_read: "Ouvir resumo (30s)",
+        tts_stop: "Parar leitura",
+        speech_text: "Bem-vindo à atualização v24.245.90 do Gamingpig! Conheça a sincronização autônoma de letras, o escudo contra limites de requisições e a nova arquitetura multi-banco."
+      },
+      tr: {
+        tag: "Resmi Güncelleme • Şimdi Yayında",
+        subtitle: "Şarkı sözlerinde büyük dönüm noktası: %100 otonom senkronize söz algılama, hız sınırı koruması ve çoklu veri tabanı mimarisi.",
+        metric_fade: "Otonom Sync",
+        metric_tts: "Önbellek Erişimi",
+        metric_freeze: "Sıfır Re-Sync",
+        metric_reset: "Söz Sağlayıcıları",
+        section: "⚡ v24.245.90 ile Neler Yeni?",
+        card1_title: "Devrim Niteliğinde Şarkı Sözü Algoritması (%100 Otonom)",
+        card1_desc: "Manuel Re-Sync tıklaması artık tamamen gereksiz: Yeni sorgu hattı senkronize şarkı sözlerini arka planda otonom olarak algılar ve anında görüntüler.",
+        card2_title: "Akıllı Kendi Kendini İyileştirme ve HTTP 429 Kalkanı",
+        card2_desc: "Yanlış 'söz bulunamadı' ekranlarına son: Geçici API hız sınırları 2,5 saniyelik otomatik arka plan yeniden denemesiyle sorunsuz aşılır.",
+        card3_title: "Kesintisiz Akış Hattı ve Ultra Hızlı Önbellek",
+        card3_desc: "Söz ekranını açmak devam eden arka plan sorgularını kesmez. Önbellekteki şarkı sözleri 1 milisaniyenin altında gecikmeyle açılır.",
+        card4_title: "Çoklu DB Mimarisi ve KVKK/GDPR Gizlilik Güvencesi",
+        card4_desc: "İkincil şarkı sözü ve meta veri tabanlarına tam uyumlu altyapı: Tüm istekler çerez ve kullanıcı takibi olmaksızın anonimleştirilmiştir.",
+        tts_read: "30sn Özeti Seslendir",
+        tts_stop: "Seslendirmeyi Durdur",
+        speech_text: "Gamingpig v24.245.90 güncellemesine hoş geldiniz! %100 otonom şarkı sözü senkronizasyonu, hız sınırı kalkanı ve çoklu veri tabanı altyapısı şimdi sizlerle."
+      }
+    };
+
+    let currentLang = "de";
+
+    function changeLanguage(lang) {
+      if (!I18N[lang]) return;
+      currentLang = lang;
+      try {
+        if (window.AppStorage) {
+          AppStorage.setItem('selectedLanguage', lang);
+          AppStorage.setItem('app_language', lang);
+        } else {
+          localStorage.setItem('selectedLanguage', lang);
+          localStorage.setItem('app_language', lang);
+        }
+      } catch(e) {}
+      document.documentElement.setAttribute('lang', lang);
+      const selectEl = document.getElementById('lang-select');
+      if (selectEl && selectEl.value !== lang) selectEl.value = lang;
+
+      const t = I18N[lang];
+
+      document.getElementById("hero-tag").textContent = t.tag;
+      document.getElementById("hero-subtitle").textContent = t.subtitle;
+      document.getElementById("section-title").innerHTML = t.section;
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (t[key]) el.textContent = t[key];
+      });
+
+      if (!isSpeaking) {
+        document.getElementById("tts-label").textContent = t.tts_read;
+      }
+    }
+
+    // Web Speech API Text-to-Speech Engine
+    let isSpeaking = false;
+
+    function toggleAudioBriefing() {
+      if (!("speechSynthesis" in window)) {
+        alert("Text-to-Speech wird von deinem Browser leider nicht unterstützt.");
+        return;
+      }
+
+      if (isSpeaking) {
+        window.speechSynthesis.cancel();
+        isSpeaking = false;
+        document.getElementById("tts-label").textContent = I18N[currentLang].tts_read;
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const text = I18N[currentLang].speech_text;
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      const langCodes = { de: "de-DE", en: "en-US", fr: "fr-FR", es: "es-ES", pt: "pt-BR", tr: "tr-TR" };
+      utterance.lang = langCodes[currentLang] || "de-DE";
+      utterance.rate = 1.05;
+      utterance.pitch = 1.0;
+
+      utterance.onstart = () => {
+        isSpeaking = true;
+        document.getElementById("tts-label").textContent = I18N[currentLang].tts_stop;
+      };
+
+      utterance.onend = utterance.onerror = () => {
+        isSpeaking = false;
+        document.getElementById("tts-label").textContent = I18N[currentLang].tts_read;
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      let initLang = 'de';
+      try {
+        initLang = (window.AppStorage ? AppStorage.getItem('selectedLanguage') || AppStorage.getItem('app_language') : null) || localStorage.getItem('selectedLanguage') || localStorage.getItem('app_language') || document.documentElement.lang || 'de';
+      } catch(e) {}
+      if (initLang && I18N[initLang]) {
+        changeLanguage(initLang);
+      }
+    });
+  </script>
+  <script src="js/community-glass.20260910.js?v=v24.245.90"></script>
+</body>
+</html>

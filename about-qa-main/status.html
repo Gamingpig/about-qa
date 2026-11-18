@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <script>/* Android Liquid Glass compatibility */(function(){try{var ua=navigator.userAgent||"";if(/Android/i.test(ua)){document.documentElement.classList.add("gp-android");if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add("gp-android-lowend");}if(/Mobile|iP(hone|od|ad)|Android.*Mobile/i.test(ua))document.documentElement.classList.add("gp-mobile");}catch(e){}})();</script>
+    <script src="./js/core/push-config.js"></script>
+    <script src="./js/services/push-registration.dac93cbcb3758c9f.js"></script>
+    <script src="./js/core/storage.e856be99df567fd2.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>🟢 Live System-Status & Störungsmelder – Gamingpig</title>
+    <link rel="icon" href="icon-192.png" type="image/png">
+    <script>
+        try {
+            const savedAppLang = AppStorage.getItem('selectedLanguage');
+            if (savedAppLang) document.documentElement.setAttribute('lang', savedAppLang);
+        } catch(e) {}
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        if (window.tailwind) tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style data-gp-glass-engine="true">
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #03050c;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.18) 0px, transparent 45%),
+                radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.22) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(168, 85, 247, 0.15) 0px, transparent 55%),
+                radial-gradient(at 50% 100%, rgba(245, 158, 11, 0.12) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        @media screen and (max-width: 768px) {
+            input, select, textarea { font-size: 16px !important; }
+        }
+
+        .glow-card {
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            transition: all 0.25s ease;
+        }
+
+        .glow-card:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.95), 0 0 25px rgba(16, 185, 129, 0.15);
+        }
+
+        .status-pulse {
+            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.9; }
+            50% { transform: scale(1.15); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.9; }
+        }
+
+        .spin-slow {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+<link rel="stylesheet" href="assets/community-glass.20260910.css?v=v24.222.7" data-gp-glass-engine="true">
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col items-center justify-between p-3.5 sm:p-6 md:p-10 selection:bg-emerald-500/40" style="padding-top: max(16px, env(safe-area-inset-top, 16px));">
+
+    <!-- Top Navigation Bar -->
+    <header class="max-w-4xl w-full flex flex-wrap gap-3 items-center justify-between py-3.5 px-4 sm:px-6 rounded-2xl bg-slate-900/85 border border-slate-800 backdrop-blur-xl mb-6 sm:mb-8 shadow-2xl relative z-40">
+        <a href="index.html" class="flex items-center gap-2 text-white hover:text-emerald-400 font-extrabold text-xs sm:text-sm transition-colors group relative z-50 cursor-pointer touch-manipulation">
+            <span class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:-translate-x-1 transition-transform">←</span>
+            <span id="nav-back">Hauptseite</span>
+        </a>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+            <!-- TTS Button & Speed Menu Container -->
+            <div class="relative inline-flex flex-col items-end">
+                <div class="inline-flex items-center rounded-xl bg-slate-800 border border-slate-700 shadow-md">
+                    <button id="tts-toggle-btn" onclick="toggleReadAloud()" class="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 text-slate-200 hover:bg-slate-700 rounded-l-xl text-[11px] sm:text-xs font-bold transition-all active:scale-95">
+                        <span id="tts-icon">🔊</span>
+                        <span id="tts-label">Vorlesen</span>
+                    </button>
+                    <button id="tts-speed-btn" onclick="toggleTtsSpeedMenu()" class="px-1.5 py-1.5 sm:py-2 text-slate-400 hover:text-emerald-400 hover:bg-slate-700 rounded-r-xl border-l border-slate-700 text-[10px] sm:text-xs font-mono font-bold transition-colors" title="Sprachgeschwindigkeit anpassen">
+                        <span id="tts-speed-indicator">1.0x</span>
+                    </button>
+                </div>
+
+                <!-- Speed Menu Dropdown -->
+                <div id="tts-speed-menu" class="hidden absolute top-full right-0 mt-2 z-50 p-2 rounded-xl bg-slate-900/95 border border-slate-700 shadow-2xl backdrop-blur-xl min-w-[170px] animate-fadeIn">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
+                        <span>Tempo</span>
+                        <button onclick="stopSpeech()" class="text-rose-400 hover:text-rose-300 transition-colors font-sans">⏹ Stopp</button>
+                    </div>
+                    <div class="grid grid-cols-5 gap-1 mt-1">
+                        <button onclick="setTtsSpeed(0.8)" data-rate="0.8" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">0.8x</button>
+                        <button onclick="setTtsSpeed(1.0)" data-rate="1.0" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-emerald-600 text-white transition-all">1.0x</button>
+                        <button onclick="setTtsSpeed(1.2)" data-rate="1.2" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">1.2x</button>
+                        <button onclick="setTtsSpeed(1.5)" data-rate="1.5" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">1.5x</button>
+                        <button onclick="setTtsSpeed(2.0)" data-rate="2.0" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">2.0x</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Language Dropdown -->
+            <div class="relative">
+                <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-[11px] sm:text-xs py-1.5 px-2.5 sm:py-2 sm:px-3 rounded-xl border border-slate-700 cursor-pointer outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-md">
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="pt">🇧🇷 Português</option>
+                    <option value="tr">🇹🇷 Türkçe</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl w-full my-auto pb-28 space-y-6 sm:space-y-8">
+        
+        <!-- Hero Header -->
+        <div class="text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] sm:text-xs font-black uppercase tracking-widest mb-4">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block"></span>
+                <span id="badge-title">LIVE-TELEMETRIE & SYSTEMGESUNDHEIT</span>
+            </div>
+
+            <h1 id="hero-title" class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-3 uppercase">
+                System-Status & Störungsmelder
+            </h1>
+
+            <p id="hero-subtitle" class="text-slate-300 text-xs sm:text-base max-w-2xl mx-auto leading-relaxed">
+                Echtzeit-Überwachung aller APIs, Musik-Streams, Lyrics-Server und Pipelines. Hier siehst du sofort, ob ein Dienst gestört ist, und erhältst direkte Troubleshooting-Lösungen.
+            </p>
+        </div>
+
+        <!-- Overall Health Banner -->
+        <div id="overall-banner" class="glow-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3.5 sm:gap-5 w-full sm:w-auto">
+                <div id="overall-icon-bg" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-lg">
+                    <span id="overall-icon">🟢</span>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2">
+                        <span id="overall-status-text" class="text-base sm:text-xl font-black text-white">Alle Systeme betriebsbereit</span>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold" id="overall-pct">100% OK</span>
+                    </div>
+                    <p id="overall-subtext" class="text-xs sm:text-sm text-slate-400 mt-0.5">Spotify, Stats.fm, Lyrics und CDNs antworten ohne Verzögerung.</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <span id="last-checked-time" class="text-[10px] sm:text-xs text-slate-400 font-mono">Gerade eben</span>
+                <button id="btn-refresh" onclick="runDiagnostics(true)" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 active:scale-95 transition-all shadow-md flex items-center gap-1.5 text-xs font-bold">
+                    <span id="refresh-spinner" class="inline-block">🔄</span>
+                    <span id="btn-refresh-text">Prüfen</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Android, iOS & Desktop Push Notification Card -->
+        <div class="glow-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-indigo-500/30 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="flex items-start sm:items-center gap-3.5">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center text-xl shrink-0">
+                        🔔
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h2 id="push-card-title" class="font-extrabold text-sm sm:text-base text-white">Störungs-Push für Android, iOS &amp; Desktop</h2>
+                            <span id="push-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 border border-white/10">Nicht aktiviert</span>
+                        </div>
+                        <p id="push-card-desc" class="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
+                            Lasse dich bei Ausfällen (z. B. Spotify API oder Lyrics offline) automatisch per System-Push über GitHub Actions benachrichtigen – auch bei geschlossener App.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 w-full sm:w-auto shrink-0 justify-end flex-wrap">
+                    <button id="btn-push-token" onclick="copyMyDeviceToken()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 shadow-sm" title="Geräte-Token für Push-Registrierung kopieren">
+                        <span>📋</span> <span id="btn-push-token-text">Token kopieren</span>
+                    </button>
+                    <button id="btn-push-test" onclick="sendTestPush()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-bold transition-all active:scale-95 hidden">
+                        <span id="btn-push-test-text">📲 Test-Push</span>
+                    </button>
+                    <button id="btn-push-toggle" onclick="togglePushNotifications()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-all shadow-lg active:scale-95">
+                        <span id="btn-push-toggle-text">Push aktivieren</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Optional Collapsible Token Box -->
+            <div id="status-token-box" class="hidden mt-3 p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-[10px] font-mono text-slate-400 break-all select-all"></div>
+
+            <!-- Platform Push & Token Guide -->
+            <div class="mt-3.5 pt-3 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[11px] text-slate-400 leading-snug">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <span id="push-guide-android-badge" class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold text-[10px]">🤖 Android &amp; PC</span>
+                    <span id="push-guide-android-text">Verbinden sich <strong>vollautomatisch</strong> im Hintergrund – kein Token-Kopieren nötig!</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <span id="push-guide-ios-badge" class="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold text-[10px]">🍏 iOS (Safari PWA)</span>
+                    <span id="push-guide-ios-text">Verbindet sich als Home-Bildschirm-App (PWA) <strong>vollautomatisch</strong> im Hintergrund – kein Token-Kopieren nötig!</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Services Health Grid -->
+        <section>
+            <div class="flex items-center justify-between mb-3 px-1">
+                <h3 id="section-services-title" class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                    <span>📡</span> Einzelne Dienste & APIs
+                </h3>
+                <span id="services-online-counter" class="text-[11px] font-mono text-emerald-400 font-bold">7 / 7 online</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="services-grid">
+                
+                <!-- Service 1: Spotify Live Telemetry -->
+                <div class="glow-card p-4 rounded-2xl flex flex-col justify-between" id="card-service-spotify">
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl">🎵</span>
+                            <div>
+                                <h4 class="text-xs sm:text-sm font-bold text-white" id="service-spotify-name">Spotify Live-Player & Stream</h4>
+                                <p class="text-[10px] text-slate-400" id="service-spotify-desc">Live-Synchronisation des aktuellen Titels</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400" id="status-badge-spotify">🟢 OK</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 border-t border-white/5 pt-2 mt-1">
+                        <span>Latenz: <strong class="text-emerald-300" id="ping-spotify">-- ms</strong></span>
+                        <span id="type-spotify">Direct / Bridge</span>
+                    </div>
+                </div>
+
+                <!-- Service 2: Stats.fm API -->
+                <div class="glow-card p-4 rounded-2xl flex flex-col justify-between" id="card-service-statsfm">
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl">📊</span>
+                            <div>
+                                <h4 class="text-xs sm:text-sm font-bold text-white" id="service-statsfm-name">stats.fm API & Stories</h4>
+                                <p class="text-[10px] text-slate-400" id="service-statsfm-desc">Wiedergabestatistiken, Top-Tracks & Wrapped</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400" id="status-badge-statsfm">🟢 OK</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 border-t border-white/5 pt-2 mt-1">
+                        <span>Latenz: <strong class="text-emerald-300" id="ping-statsfm">-- ms</strong></span>
+                        <span id="type-statsfm">REST API v1</span>
+                    </div>
+                </div>
+
+                <!-- Service 3: LrcLib Lyrics -->
+                <div class="glow-card p-4 rounded-2xl flex flex-col justify-between" id="card-service-lyrics">
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl">📝</span>
+                            <div>
+                                <h4 class="text-xs sm:text-sm font-bold text-white" id="service-lyrics-name">LrcLib Lyrics Engine</h4>
+                                <p class="text-[10px] text-slate-400" id="service-lyrics-desc">Synchronisierte Songtexte & Wort-Timings</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400" id="status-badge-lyrics">🟢 OK</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 border-t border-white/5 pt-2 mt-1">
+                        <span>Latenz: <strong class="text-emerald-300" id="ping-lyrics">-- ms</strong></span>
+                        <span id="type-lyrics">Synced DB</span>
+                    </div>
+                </div>
+
+                <!-- Service 4: Cover Resolver CDN -->
+                <div class="glow-card p-4 rounded-2xl flex flex-col justify-between" id="card-service-cover">
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl">🖼️</span>
+                            <div>
+                                <h4 class="text-xs sm:text-sm font-bold text-white" id="service-cover-name">Album Cover CDNs</h4>
+                                <p class="text-[10px] text-slate-400" id="service-cover-desc">Apple Music, Spotify, Deezer Pipeline</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400" id="status-badge-cover">🟢 OK</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 border-t border-white/5 pt-2 mt-1">
+                        <span>Latenz: <strong class="text-emerald-300" id="ping-cover">-- ms</strong></span>
+                        <span id="type-cover">Multi-CDN (640px)</span>
+                    </div>
+                </div>
+
+                <!-- Service 5: Discord Widget API -->
+                <div class="glow-card p-4 rounded-2xl flex flex-col justify-between" id="card-service-discord">
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl">💬</span>
+                            <div>
+                                <h4 class="text-xs sm:text-sm font-bold text-white" id="service-discord-name">Discord Support & Widget</h4>
+                                <p class="text-[10px] text-slate-400" id="service-discord-desc">Server-Mitglieder & Online-Zähler</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400" id="status-badge-discord">🟢 OK</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 border-t border-white/5 pt-2 mt-1">
+                        <span>Latenz: <strong class="text-emerald-300" id="ping-discord">-- ms</strong></span>
+                        <span id="type-discord">Multi-Proxy</span>
+                    </div>
+                </div>
+
+                <!-- Service 6: PWA Service Worker & Cache -->
+                <div class="glow-card p-4 rounded-2xl flex flex-col justify-between" id="card-service-pwa">
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl">⚡</span>
+                            <div>
+                                <h4 class="text-xs sm:text-sm font-bold text-white" id="service-pwa-name">PWA Cache & Service Worker</h4>
+                                <p class="text-[10px] text-slate-400" id="service-pwa-desc">Offline-Speicher, Assets & Update-Handler</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400" id="status-badge-pwa">🟢 OK</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 border-t border-white/5 pt-2 mt-1">
+                        <span>Status: <strong class="text-emerald-300" id="ping-pwa">Aktiv</strong></span>
+                        <span id="type-pwa">v24.222.7</span>
+                    </div>
+                </div>
+
+                <!-- Service 7: Client Network -->
+                <div class="glow-card p-4 rounded-2xl flex flex-col justify-between sm:col-span-2" id="card-service-network">
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl">🌐</span>
+                            <div>
+                                <h4 class="text-xs sm:text-sm font-bold text-white" id="service-network-name">Deine Internetverbindung & Browser-Netzwerk</h4>
+                                <p class="text-[10px] text-slate-400" id="service-network-desc">Echter Ping zum Server & Konnektivität</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400" id="status-badge-network">🟢 Verbunden</span>
+                    </div>
+                    <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 border-t border-white/5 pt-2 mt-1">
+                        <span>Latenz: <strong class="text-emerald-300" id="ping-network">-- ms</strong></span>
+                        <span id="type-network">Online</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Troubleshooting & Self-Service Help -->
+        <section class="glow-card p-5 sm:p-7 rounded-2xl sm:rounded-3xl border-slate-800">
+            <div class="flex items-center justify-between gap-2.5 mb-4 flex-wrap">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">💡</span>
+                    <div>
+                        <h3 id="help-title" class="font-black text-base sm:text-lg text-white">Sofort-Hilfe & Troubleshooting</h3>
+                        <p id="help-subtitle" class="text-xs text-slate-400">Schnelle Lösungen für bekannte Phänomene – ohne Wartezeit auf den Support.</p>
+                    </div>
+                </div>
+                <button id="tts-help-btn" onclick="toggleReadAloudHelp()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer">
+                    <span id="tts-help-icon">🔊</span>
+                    <span id="tts-help-label">Hilfe vorlesen</span>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-xs text-slate-300">
+                <!-- Tip 1: Lyrics missing -->
+                <div class="p-3.5 rounded-xl bg-slate-900/60 border border-white/5">
+                    <h4 id="tip1-title" class="font-bold text-slate-200 mb-1 flex items-center gap-1.5">
+                        <span>🎵</span> Warum laden bei manchen Songs keine Songtexte?
+                    </h4>
+                    <p id="tip1-desc" class="text-slate-400 leading-relaxed">
+                        Nicht jeder Track hat in öffentlichen Musikdatenbanken synchronisierte Texte hinterlegt (vor allem Instrumental-Tracks, DJ-Mixe oder ganz neue Releases). Sobald ein bekannter Song startet, blendet das Dashboard die Lyrics automatisch wieder ein.
+                    </p>
+                </div>
+
+                <!-- Tip 2: Cover black or delayed -->
+                <div class="p-3.5 rounded-xl bg-slate-900/60 border border-white/5">
+                    <h4 id="tip2-title" class="font-bold text-slate-200 mb-1 flex items-center gap-1.5">
+                        <span>🖼️</span> Albumcover lädt verzögert oder bleibt dunkel?
+                    </h4>
+                    <p id="tip2-desc" class="text-slate-400 leading-relaxed">
+                        Die Portfolio-App fragt 4 voneinander unabhängige CDNs ab. Der integrierte Race-Condition-Schutz verwirft verspätete Antworten automatisch, damit immer das Artwork des echten Songs angezeigt wird. Bei langsamer mobiler Verbindung kann das Laden 1-2 Sekunden dauern.
+                    </p>
+                </div>
+
+                <!-- Tip 3: Discord widget fails -->
+                <div class="p-3.5 rounded-xl bg-slate-900/60 border border-white/5">
+                    <h4 id="tip3-title" class="font-bold text-slate-200 mb-1 flex items-center gap-1.5">
+                        <span>💬</span> Discord-Widget zeigt keine Mitgliederzahl an?
+                    </h4>
+                    <p id="tip3-desc" class="text-slate-400 leading-relaxed">
+                        Einige strenge Werbeblocker oder Schul-/Firmennetzwerke blockieren Drittanbieter-Anfragen an Discord. Der Support-Server ist davon nicht betroffen: Klicke einfach auf den Direktlink <a href="https://discord.gg/E8BS9BDAst" target="_blank" class="text-blue-400 font-bold hover:underline">discord.gg/E8BS9BDAst</a>, um beizutreten.
+                    </p>
+                </div>
+
+                <!-- Tip 4: Old cache -->
+                <div class="p-3.5 rounded-xl bg-slate-900/60 border border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div>
+                        <h4 id="tip4-title" class="font-bold text-slate-200 mb-1 flex items-center gap-1.5">
+                            <span>🔄</span> Seite zeigt nach einem Update noch alte Inhalte?
+                        </h4>
+                        <p id="tip4-desc" class="text-slate-400 leading-relaxed">
+                            Du kannst den internen Service-Worker- und Asset-Cache mit einem Klick leeren. Deine Lautstärke- und Design-Einstellungen bleiben dabei erhalten.
+                        </p>
+                    </div>
+                    <button onclick="clearAppCache()" id="btn-clear-cache" class="px-3.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 text-xs font-bold whitespace-nowrap active:scale-95 transition-all">
+                        Cache leeren & neu laden
+                    </button>
+                </div>
+            </div>
+
+            <!-- Diagnostic Report Action -->
+            <div class="mt-5 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p id="diag-copy-hint" class="text-[11px] text-slate-400 text-center sm:text-left">
+                    Problem besteht weiterhin? Kopiere den automatischen Diagnosebericht für ein schnelles Discord-Ticket.
+                </p>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <button onclick="copyDiagnosticReport()" id="btn-copy-report" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all active:scale-95 flex items-center justify-center gap-1.5 shadow-md">
+                        <span>📋</span> <span id="btn-copy-report-text">Diagnose-Bericht kopieren</span>
+                    </button>
+                    <a href="https://discord.gg/E8BS9BDAst" target="_blank" rel="noopener" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#5865F2] hover:brightness-110 text-white font-bold text-xs transition-all active:scale-95 text-center shadow-md">
+                        Discord Support
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-4xl w-full text-center py-6 pb-12 mb-16 text-xs text-slate-500 border-t border-slate-900 mt-6 px-3">
+        <div class="flex items-center justify-center gap-2 sm:gap-4 flex-wrap mb-2">
+            <a href="index.html" id="footer-portfolio" class="hover:text-slate-300 transition-colors">Portfolio</a>
+            <span>•</span>
+            <a href="release.html" id="footer-release" class="hover:text-slate-300 transition-colors">Release</a>
+            <span>•</span>
+            <a href="roadmap.html" id="footer-roadmap" class="hover:text-purple-400 text-purple-300 font-bold transition-colors">🔮 Roadmap</a>
+            <span>•</span>
+            <a href="privacy.html" id="footer-privacy" class="hover:text-slate-300 transition-colors">Datenschutz</a>
+            <span>•</span>
+            <a href="impressum.html" id="footer-impressum" class="hover:text-slate-300 transition-colors">Impressum</a>
+            <span>•</span>
+            <span id="footer-status" class="text-emerald-400 font-bold">Live Status</span>
+            <span>•</span>
+            <a href="push-admin.html" id="footer-admin" class="hover:text-indigo-400 transition-colors">🔐 Admin</a>
+        </div>
+        <p id="footer-copyright">© 2026 Gamingpig • Alle Rechte vorbehalten • Automatische Status-Telemetrie</p>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-xl bg-slate-900/95 border border-emerald-500/40 text-white text-xs font-bold shadow-2xl backdrop-blur-xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
+        <span id="toast-icon">✅</span>
+        <span id="toast-msg">Meldung</span>
+    </div>
+
+    <script>
+        // ==========================================
+        // 🌐 ULTRA MULTILINGUAL SYSTEM (DE, EN, ES, FR, PT, TR)
+        // ==========================================
+        const I18N = {
+            de: {
+                nav_back: "Hauptseite",
+                tts_read: "Vorlesen",
+                tts_stop: "Stopp",
+                tts_help_read: "Hilfe vorlesen",
+                tts_help_stop: "Stopp",
+                badge_title: "LIVE-TELEMETRIE & SYSTEMGESUNDHEIT",
+                hero_title: "System-Status & Störungsmelder",
+                hero_subtitle: "Echtzeit-Überwachung aller APIs, Musik-Streams, Lyrics-Server und Pipelines. Hier siehst du sofort, ob ein Dienst gestört ist, und erhältst direkte Troubleshooting-Lösungen.",
+                overall_ok_title: "Alle Systeme betriebsbereit",
+                overall_ok_sub: "Spotify, Stats.fm, Lyrics und CDNs antworten ohne Verzögerung.",
+                overall_degraded_title: "Eingeschränkter Betrieb",
+                overall_degraded_sub: "Mindestens ein Dienst nutzt Fallback-Routen oder antwortet verzögert.",
+                overall_down_title: "Störung erkannt / Offline",
+                overall_down_sub: "Keine Verbindung zum Netzwerk oder kritische Endpunkte nicht erreichbar.",
+                btn_refresh_text: "Prüfen",
+                push_card_title: "Störungs-Push für Android, iOS & Desktop",
+                push_card_desc: "Lasse dich bei Ausfällen (z. B. Spotify API oder Lyrics offline) und anschließender Wiederherstellung sofort per System-Benachrichtigung auf deinem Smartphone informieren.",
+                push_enabled: "Aktiviert",
+                push_disabled: "Nicht aktiviert",
+                push_blocked: "Blockiert",
+                btn_push_enable: "Push aktivieren",
+                btn_push_disable: "Push deaktivieren",
+                btn_push_test: "📲 Test-Push",
+                btn_push_token: "Token kopieren",
+                push_guide_android_badge: "🤖 Android & PC",
+                push_guide_android_text: "Verbinden sich <strong>vollautomatisch</strong> im Hintergrund – kein Token-Kopieren nötig!",
+                push_guide_ios_badge: "🍏 iOS (Safari PWA)",
+                push_guide_ios_text: "Verbindet sich als Home-Bildschirm-App (PWA) <strong>vollautomatisch</strong> – kein Token-Kopieren nötig!",
+                section_services_title: "Einzelne Dienste & APIs",
+                service_spotify_name: "Spotify Live-Player & Stream",
+                service_spotify_desc: "Live-Synchronisation des aktuellen Titels",
+                service_statsfm_name: "stats.fm API & Stories",
+                service_statsfm_desc: "Wiedergabestatistiken, Top-Tracks & Wrapped",
+                service_lyrics_name: "LrcLib Lyrics Engine",
+                service_lyrics_desc: "Synchronisierte Songtexte & Wort-Timings",
+                service_cover_name: "Album Cover CDNs",
+                service_cover_desc: "Apple Music, Spotify, Deezer Pipeline",
+                service_discord_name: "Discord Support & Widget",
+                service_discord_desc: "Server-Mitglieder & Online-Zähler",
+                service_pwa_name: "PWA Cache & Service Worker",
+                service_pwa_desc: "Offline-Speicher, Assets & Update-Handler",
+                service_network_name: "Deine Internetverbindung & Browser-Netzwerk",
+                service_network_desc: "Echter Ping zum Server & Konnektivität",
+                help_title: "Sofort-Hilfe & Troubleshooting",
+                help_subtitle: "Schnelle Lösungen für bekannte Phänomene – ohne Wartezeit auf den Support.",
+                tip1_title: "Warum laden bei manchen Songs keine Songtexte?",
+                tip1_desc: "Nicht jeder Track hat in öffentlichen Musikdatenbanken synchronisierte Texte hinterlegt (vor allem Instrumental-Tracks, DJ-Mixe oder ganz neue Releases). Sobald ein bekannter Song startet, blendet das Dashboard die Lyrics automatisch wieder ein.",
+                tip2_title: "Albumcover lädt verzögert oder bleibt dunkel?",
+                tip2_desc: "Die Portfolio-App fragt 4 voneinander unabhängige CDNs ab. Der integrierte Race-Condition-Schutz verwirft verspätete Antworten automatisch, damit immer das Artwork des echten Songs angezeigt wird. Bei langsamer mobiler Verbindung kann das Laden 1-2 Sekunden dauern.",
+                tip3_title: "Discord-Widget zeigt keine Mitgliederzahl an?",
+                tip3_desc: "Einige strenge Werbeblocker oder Schul-/Firmennetzwerke blockieren Drittanbieter-Anfragen an Discord. Der Support-Server ist davon nicht betroffen: Klicke einfach auf den Direktlink discord.gg/E8BS9BDAst, um beizutreten.",
+                tip4_title: "Seite zeigt nach einem Update noch alte Inhalte?",
+                tip4_desc: "Du kannst den internen Service-Worker- und Asset-Cache mit einem Klick leeren. Deine Lautstärke- und Design-Einstellungen bleiben dabei erhalten.",
+                btn_clear_cache: "Cache leeren & neu laden",
+                diag_copy_hint: "Problem besteht weiterhin? Kopiere den automatischen Diagnosebericht für ein schnelles Discord-Ticket.",
+                btn_copy_report_text: "Diagnose-Bericht kopieren",
+                footer_portfolio: "Portfolio",
+                footer_release: "Release v24.222.7",
+                footer_privacy: "Datenschutz",
+                footer_impressum: "Impressum",
+                footer_status: "Live Status",
+                footer_admin: "🔐 Admin",
+                footer_copyright: "© 2026 Gamingpig • Automatische Status-Telemetrie",
+                last_checked_just_now: "Gerade eben",
+                toast_copied: "Diagnose-Bericht in Zwischenablage kopiert!",
+                toast_push_active: "🔔 Push-Benachrichtigungen aktiviert!",
+                toast_push_registered: "Gerät erfolgreich für automatischen Störungs-Push registriert!",
+                toast_push_sent: "📲 Test-Push an Smartphone gesendet!",
+                toast_cache_cleared: "Cache geleert! Seite lädt neu...",
+                toast_token_copied: "📋 Token kopiert! (Gerät verbindet sich bereits vollautomatisch – Token nur für manuelle Tests nötig)",
+                toast_token_unsupported: "Web Push wird von diesem Browser nicht unterstützt.",
+                toast_token_ios_hint: "Auf iOS: Tippe erst auf Teilen 📤 → 'Zum Home-Bildschirm', um Push zu nutzen.",
+                push_test_title: "📲 Test-Alarm: Alle Systeme laufen",
+                push_test_body: "Android- & iOS-Push funktioniert perfekt! Bei echten Störungen wirst du automatisch benachrichtigt.",
+                push_active_title: "🔔 Gamingpig Störungs-Alarm aktiv",
+                push_active_body: "Du wirst ab sofort bei Ausfällen oder Störungen benachrichtigt!",
+                push_online_title: "✅ Wieder online",
+                push_online_body: "Internetverbindung wiederhergestellt. Alle Dienste synchronisieren sich wieder.",
+                push_offline_title: "⚠️ Offline-Modus aktiv",
+                push_offline_body: "Keine Internetverbindung erkannt. Die Gamingpig PWA läuft nun im Offline-Cache.",
+                push_update_title: "🚀 Neues Update verfügbar!",
+                push_update_body: "Gamingpig Portfolio v24.222.7 ist jetzt live mit neuen Features und Optimierungen.",
+                toast_push_paused: "⏸️ Push-Benachrichtigungen pausiert.",
+                toast_push_blocked: "🔒 Benachrichtigungen im Browser blockiert.",
+                toast_push_https: "Push-Benachrichtigungen erfordern HTTPS."
+            },
+            en: {
+                nav_back: "Main Page",
+                tts_read: "Read Aloud",
+                tts_stop: "Stop",
+                tts_help_read: "Read Help",
+                tts_help_stop: "Stop",
+                badge_title: "LIVE TELEMETRY & SYSTEM HEALTH",
+                hero_title: "System Status & Incident Monitor",
+                hero_subtitle: "Real-time monitoring of all APIs, music streams, lyrics engines, and pipelines. Instantly see degraded services with immediate troubleshooting tips.",
+                overall_ok_title: "All Systems Operational",
+                overall_ok_sub: "Spotify, Stats.fm, Lyrics and CDNs are responding normally without delay.",
+                overall_degraded_title: "Degraded Performance",
+                overall_degraded_sub: "At least one service is using fallback pipelines or experiencing delays.",
+                overall_down_title: "Outage Detected / Offline",
+                overall_down_sub: "No network connection or critical endpoints are unreachable.",
+                btn_refresh_text: "Check",
+                push_card_title: "Outage Alerts for Android, iOS & Desktop",
+                push_card_desc: "Get instant device notifications whenever Spotify, Lyrics, or APIs go down and when service is restored.",
+                push_enabled: "Active",
+                push_disabled: "Inactive",
+                push_blocked: "Blocked",
+                btn_push_enable: "Enable Push",
+                btn_push_disable: "Disable Push",
+                btn_push_test: "📲 Test Push",
+                btn_push_token: "Copy Token",
+                push_guide_android_badge: "🤖 Android & PC",
+                push_guide_android_text: "Connects <strong>automatically</strong> in background – no token copying needed!",
+                push_guide_ios_badge: "🍏 iOS (Safari PWA)",
+                push_guide_ios_text: "Connects <strong>automatically</strong> as a Home Screen PWA – no token copying needed!",
+                section_services_title: "Individual Services & APIs",
+                service_spotify_name: "Spotify Live Player & Stream",
+                service_spotify_desc: "Real-time track sync with Gamingpig",
+                service_statsfm_name: "stats.fm API & Stories",
+                service_statsfm_desc: "Streaming counts, top tracks & wrapped",
+                service_lyrics_name: "LrcLib Lyrics Engine",
+                service_lyrics_desc: "Synchronized lyrics & syllable timings",
+                service_cover_name: "Album Cover CDNs",
+                service_cover_desc: "Apple Music, Spotify, Deezer Pipeline",
+                service_discord_name: "Discord Support & Widget",
+                service_discord_desc: "Server members & online counter",
+                service_pwa_name: "PWA Cache & Service Worker",
+                service_pwa_desc: "Offline storage, assets & update handler",
+                service_network_name: "Your Internet & Browser Connection",
+                service_network_desc: "Live round-trip ping and connectivity",
+                help_title: "Instant Help & Troubleshooting",
+                help_subtitle: "Fast solutions for common phenomena without waiting for support.",
+                tip1_title: "Why are lyrics missing for certain songs?",
+                tip1_desc: "Not every track has synchronized lyrics in public databases (especially instrumental tracks, DJ sets, or brand-new releases). As soon as a recognized song starts, the dashboard displays lyrics automatically.",
+                tip2_title: "Album artwork loads slowly or appears dark?",
+                tip2_desc: "The app queries four separate CDNs in parallel. Built-in race-condition protection drops stale responses so the current track's artwork is always displayed accurately.",
+                tip3_title: "Discord widget not displaying active members?",
+                tip3_desc: "Strict adblockers or school/corporate networks may restrict third-party calls to Discord. The server itself is online: visit discord.gg/E8BS9BDAst directly to join.",
+                tip4_title: "Seeing outdated content after a recent release?",
+                tip4_desc: "You can clear the internal service worker and asset cache with one tap. Your volume and theme settings are safely preserved.",
+                btn_clear_cache: "Clear Cache & Reload",
+                diag_copy_hint: "Issue still persists? Copy the automated diagnostic report for a swift Discord support ticket.",
+                btn_copy_report_text: "Copy Diagnostic Report",
+                footer_portfolio: "Portfolio",
+                footer_release: "Release v24.222.7",
+                footer_privacy: "Privacy Policy",
+                footer_impressum: "Legal Notice",
+                footer_status: "Live Status",
+                footer_admin: "🔐 Admin",
+                footer_copyright: "© 2026 Gamingpig • Automated Status Telemetry",
+                last_checked_just_now: "Just now",
+                toast_copied: "Diagnostic report copied to clipboard!",
+                toast_push_active: "🔔 Push notifications enabled!",
+                toast_push_registered: "Device registered successfully for automatic outage push alerts!",
+                toast_push_sent: "📲 Test push sent to device!",
+                toast_cache_cleared: "Cache cleared! Reloading page...",
+                toast_token_copied: "📋 Token copied! (Device connects automatically – token only needed for manual tests)",
+                toast_token_unsupported: "Web Push is not supported by this browser.",
+                toast_token_ios_hint: "On iOS: Tap Share 📤 → 'Add to Home Screen' first to enable Push.",
+                push_test_title: "📲 Test Alert: All Systems Operational",
+                push_test_body: "Push notifications work perfectly! You will automatically receive alerts during outages.",
+                push_active_title: "🔔 Gamingpig Outage Alerts Active",
+                push_active_body: "You will now receive automatic alerts when services go down or recover!",
+                push_online_title: "✅ Back Online",
+                push_online_body: "Internet connection restored. All services are resynchronizing.",
+                push_offline_title: "⚠️ Offline Mode Active",
+                push_offline_body: "No internet connection detected. The Gamingpig PWA is running in offline cache.",
+                push_update_title: "🚀 New Update Available!",
+                push_update_body: "Gamingpig Portfolio v24.222.7 is live with fresh features and performance improvements.",
+                toast_push_paused: "⏸️ Push notifications paused.",
+                toast_push_blocked: "🔒 Notifications blocked in browser settings.",
+                toast_push_https: "Push notifications require HTTPS."
+            },
+            es: {
+                nav_back: "Página Principal",
+                tts_read: "Leer en voz alta",
+                tts_stop: "Parar",
+                tts_help_read: "Leer ayuda",
+                tts_help_stop: "Parar",
+                badge_title: "TELEMETRÍA EN VIVO Y ESTADO DEL SISTEMA",
+                hero_title: "Estado del Sistema y Monitor de Fallos",
+                hero_subtitle: "Monitoreo en tiempo real de APIs, streaming de música, letras y servidores. Consulta el estado de los servicios y soluciones rápidas.",
+                overall_ok_title: "Todos los Sistemas Operativos",
+                overall_ok_sub: "Spotify, Stats.fm, letras y servidores CDN responden con normalidad.",
+                overall_degraded_title: "Rendimiento Degradado",
+                overall_degraded_sub: "Al menos un servicio está usando rutas alternativas.",
+                overall_down_title: "Fallo Detectado / Desconectado",
+                overall_down_sub: "Sin conexión de red o endpoints críticos no disponibles.",
+                btn_refresh_text: "Verificar",
+                push_card_title: "Alertas Push para Android, iOS y Desktop",
+                push_card_desc: "Recibe notificaciones automáticas en tu teléfono ante caídas o restablecimiento de servicios.",
+                push_enabled: "Activo",
+                push_disabled: "Inactivo",
+                push_blocked: "Bloqueado",
+                btn_push_enable: "Activar Push",
+                btn_push_disable: "Desactivar Push",
+                btn_push_test: "📲 Push de Prueba",
+                btn_push_token: "Copiar Token",
+                push_guide_android_badge: "🤖 Android & PC",
+                push_guide_android_text: "Se conectan <strong>automáticamente</strong> en segundo plano – ¡sin copiar token!",
+                push_guide_ios_badge: "🍏 iOS (Safari PWA)",
+                push_guide_ios_text: "Se conecta <strong>automáticamente</strong> como PWA en pantalla de inicio – ¡sin copiar token!",
+                section_services_title: "Servicios y APIs",
+                service_spotify_name: "Spotify Live Player",
+                service_spotify_desc: "Sincronización de música en vivo",
+                service_statsfm_name: "stats.fm API",
+                service_statsfm_desc: "Estadísticas y Wrapped Stories",
+                service_lyrics_name: "Motor de Letras LrcLib",
+                service_lyrics_desc: "Letras sincronizadas y timings",
+                service_cover_name: "CDNs de Portadas",
+                service_cover_desc: "Apple Music, Spotify, Deezer",
+                service_discord_name: "Soporte de Discord y Widget",
+                service_discord_desc: "Miembros y contador en vivo",
+                service_pwa_name: "Caché PWA y Service Worker",
+                service_pwa_desc: "Almacenamiento sin conexión",
+                service_network_name: "Tu Conexión a Internet",
+                service_network_desc: "Ping y conectividad real",
+                help_title: "Ayuda Inmediata y Soluciones",
+                help_subtitle: "Respuestas directas sin esperar al equipo de soporte.",
+                tip1_title: "¿Por qué faltan letras en algunas canciones?",
+                tip1_desc: "No todos los temas tienen letras sincronizadas en bases de datos públicas (especialmente instrumentales o lanzamientos muy recientes). En cuanto suene un tema reconocido, las letras se mostrarán.",
+                tip2_title: "¿La portada del álbum tarda en cargar?",
+                tip2_desc: "La aplicación consulta 4 redes CDN independientes. La protección integrada descarta respuestas obsoletas para mostrar siempre la carátula correcta.",
+                tip3_title: "¿El widget de Discord no muestra los miembros?",
+                tip3_desc: "Bloqueadores de anuncios estrictos pueden restringir peticiones a Discord. Puedes unirte directamente en discord.gg/E8BS9BDAst.",
+                tip4_title: "¿La página muestra contenido antiguo tras actualizar?",
+                tip4_desc: "Puedes vaciar la caché del Service Worker con un solo clic. Tus ajustes y tema se mantendrán intactos.",
+                btn_clear_cache: "Limpiar Caché y Recargar",
+                diag_copy_hint: "¿Persiste el problema? Copia el reporte de diagnóstico para Discord.",
+                btn_copy_report_text: "Copiar Reporte",
+                footer_portfolio: "Portafolio",
+                footer_release: "Notas v24.222.7",
+                footer_privacy: "Privacidad",
+                footer_impressum: "Aviso Legal",
+                footer_status: "Estado en Vivo",
+                footer_admin: "🔐 Admin",
+                footer_copyright: "© 2026 Gamingpig • Telemetría de estado automatizada",
+                last_checked_just_now: "Hace un momento",
+                toast_copied: "¡Reporte copiado al portapapeles!",
+                toast_push_active: "🔔 ¡Notificaciones push activadas!",
+                toast_push_registered: "¡Dispositivo registrado con éxito para alertas automáticas de fallos!",
+                toast_push_sent: "📲 ¡Push de prueba enviado!",
+                toast_cache_cleared: "¡Caché borrada! Recargando...",
+                toast_token_copied: "📋 ¡Token copiado! (El dispositivo se conecta solo – token únicamente para pruebas)",
+                toast_token_unsupported: "Web Push no es compatible con este navegador.",
+                toast_token_ios_hint: "En iOS: Toca Compartir 📤 → 'Añadir a pantalla de inicio' primero.",
+                push_test_title: "📲 Alerta de prueba: Todos los sistemas operativos",
+                push_test_body: "¡Las notificaciones push funcionan genial! Recibirás alertas automáticas ante cualquier fallo.",
+                push_active_title: "🔔 Alertas del sistema Gamingpig activadas",
+                push_active_body: "¡Recibirás alertas inmediatas ante caídas o restablecimiento de servicios!",
+                push_online_title: "✅ Conexión restablecida",
+                push_online_body: "Conexión a internet restablecida. Todos los servicios se están sincronizando.",
+                push_offline_title: "⚠️ Modo sin conexión activo",
+                push_offline_body: "Sin conexión a internet. La PWA Gamingpig está funcionando desde la caché.",
+                push_update_title: "🚀 ¡Nueva actualización disponible!",
+                push_update_body: "Gamingpig Portfolio v24.222.7 ya está disponible con mejoras de rendimiento y funciones.",
+                toast_push_paused: "⏸️ Notificaciones push pausadas.",
+                toast_push_blocked: "🔒 Notificaciones bloqueadas en los ajustes del navegador.",
+                toast_push_https: "Las notificaciones push requieren HTTPS."
+            },
+            fr: {
+                nav_back: "Page Principale",
+                tts_read: "Lecture vocale",
+                tts_stop: "Arrêter",
+                tts_help_read: "Lire l'aide",
+                tts_help_stop: "Arrêter",
+                badge_title: "TÉLÉMÉTRIE EN DIRECT ET SANTÉ SYSTÈME",
+                hero_title: "État du Système & Diagnostic",
+                hero_subtitle: "Surveillance en temps réel de toutes les API, du streaming, des paroles et des serveurs avec solutions de dépannage instantanées.",
+                overall_ok_title: "Tous les Systèmes Opérationnels",
+                overall_ok_sub: "Spotify, Stats.fm, Paroles et CDNs répondent normalement.",
+                overall_degraded_title: "Performance Dégradée",
+                overall_degraded_sub: "Au moins un service utilise un circuit de secours.",
+                overall_down_title: "Panne Détectée / Hors-ligne",
+                overall_down_sub: "Connexion impossible aux serveurs essentiels.",
+                btn_refresh_text: "Vérifier",
+                push_card_title: "Alertes Push pour Android, iOS & Desktop",
+                push_card_desc: "Soyez prévenu instantanément sur votre smartphone lors d'une panne ou d'un retour à la normale.",
+                push_enabled: "Actif",
+                push_disabled: "Inactif",
+                push_blocked: "Bloqué",
+                btn_push_enable: "Activer Push",
+                btn_push_disable: "Désactiver Push",
+                btn_push_test: "📲 Push Test",
+                btn_push_token: "Copier le Token",
+                push_guide_android_badge: "🤖 Android & PC",
+                push_guide_android_text: "Connexion <strong>automatique</strong> en arrière-plan – aucun token à copier !",
+                push_guide_ios_badge: "🍏 iOS (Safari PWA)",
+                push_guide_ios_text: "Connexion <strong>automatique</strong> en tant que PWA sur l'écran d'accueil – aucun token à copier !",
+                section_services_title: "Services & APIs",
+                service_spotify_name: "Lecteur Spotify en Direct",
+                service_spotify_desc: "Synchronisation de la piste active",
+                service_statsfm_name: "API stats.fm & Stories",
+                service_statsfm_desc: "Statistiques et Top Titres",
+                service_lyrics_name: "Moteur de Paroles LrcLib",
+                service_lyrics_desc: "Paroles synchronisées mot à mot",
+                service_cover_name: "CDNs de Pochettes",
+                service_cover_desc: "Apple Music, Spotify, Deezer",
+                service_discord_name: "Support Discord & Widget",
+                service_discord_desc: "Membres et compteur en direct",
+                service_pwa_name: "Cache PWA & Service Worker",
+                service_pwa_desc: "Gestion hors-ligne et mises à jour",
+                service_network_name: "Votre Connexion Internet",
+                service_network_desc: "Ping et stabilité réseau",
+                help_title: "Aide Rapide & Dépannage",
+                help_subtitle: "Des réponses immédiates sans devoir surcharger le support.",
+                tip1_title: "Pourquoi certaines paroles sont-elles manquantes ?",
+                tip1_desc: "Tous les morceaux n'ont pas de paroles synchronisées enregistrées dans les bases publiques. Dès qu'un titre reconnu est lu, les paroles réapparaissent automatiquement.",
+                tip2_title: "La pochette d'album met du temps à s'afficher ?",
+                tip2_desc: "L'application interroge 4 serveurs CDN en parallèle afin d'afficher la meilleure illustration sans retard ni doublon.",
+                tip3_title: "Le widget Discord n'affiche aucun membre ?",
+                tip3_desc: "Certains bloqueurs stricts bloquent les requêtes vers Discord. Rejoignez directement le serveur via discord.gg/E8BS9BDAst.",
+                tip4_title: "Contenu ancien affiché après une mise à jour ?",
+                tip4_desc: "Vous pouvez vider le cache du Service Worker en un clic tout en conservant vos réglages et préférences.",
+                btn_clear_cache: "Vider le Cache & Recharger",
+                diag_copy_hint: "Le problème persiste ? Copiez le rapport pour le support Discord.",
+                btn_copy_report_text: "Copier le Rapport",
+                footer_portfolio: "Portfolio",
+                footer_release: "Notes v24.222.7",
+                footer_privacy: "Confidentialité",
+                footer_impressum: "Mentions Légales",
+                footer_status: "État en Direct",
+                footer_admin: "🔐 Admin",
+                footer_copyright: "© 2026 Gamingpig • Télémétrie d'état automatisée",
+                last_checked_just_now: "À l'instant",
+                toast_copied: "Rapport copié dans le presse-papiers !",
+                toast_push_active: "🔔 Notifications push activées !",
+                toast_push_registered: "Appareil enregistré avec succès pour les alertes de panne !",
+                toast_push_sent: "📲 Notification test envoyée !",
+                toast_cache_cleared: "Cache vidé ! Rechargement en cours...",
+                toast_token_copied: "📋 Token copié ! (L'appareil se connecte automatiquement – token uniquement pour tests)",
+                toast_token_unsupported: "Web Push n'est pas supporté par ce navigateur.",
+                toast_token_ios_hint: "Sur iOS : Appuyez d'abord sur Partager 📤 → « Sur l'écran d'accueil ».",
+                push_test_title: "📲 Alerte test : Tous les systèmes sont opérationnels",
+                push_test_body: "Les notifications push fonctionnent parfaitement ! Vous recevrez des alertes automatiques en cas de panne.",
+                push_active_title: "🔔 Alertes système Gamingpig activées",
+                push_active_body: "Vous recevrez des alertes instantanées lors des pannes ou retours en ligne !",
+                push_online_title: "✅ De retour en ligne",
+                push_online_body: "Connexion Internet rétablie. Tous les services se resynchronisent.",
+                push_offline_title: "⚠️ Mode hors ligne actif",
+                push_offline_body: "Aucune connexion Internet. La PWA Gamingpig fonctionne sur le cache hors ligne.",
+                push_update_title: "🚀 Nouvelle mise à jour disponible !",
+                push_update_body: "Gamingpig Portfolio v24.222.7 est disponible avec de nouvelles fonctionnalités.",
+                toast_push_paused: "⏸️ Notifications push en pause.",
+                toast_push_blocked: "🔒 Notifications bloquées dans les paramètres du navigateur.",
+                toast_push_https: "Les notifications push nécessitent HTTPS."
+            },
+            pt: {
+                nav_back: "Página Principal",
+                tts_read: "Ler em voz alta",
+                tts_stop: "Parar",
+                tts_help_read: "Ler ajuda",
+                tts_help_stop: "Parar",
+                badge_title: "TELEMETRIA AO VIVO E ESTADO DO SISTEMA",
+                hero_title: "Status do Sistema e Monitor de Falhas",
+                hero_subtitle: "Monitoramento em tempo real de APIs, streaming de música e letras com dicas de auto-resolução.",
+                overall_ok_title: "Todos os Sistemas Operacionais",
+                overall_ok_sub: "Spotify, Stats.fm, Letras e CDNs respondem perfeitamente.",
+                overall_degraded_title: "Desempenho Reduzido",
+                overall_degraded_sub: "Pelo menos um serviço está usando rota alternativa.",
+                overall_down_title: "Falha Detectada / Desconectado",
+                overall_down_sub: "Sem conexão com a rede ou servidores fora do ar.",
+                btn_refresh_text: "Verificar",
+                push_card_title: "Alertas Push para Android, iOS & Desktop",
+                push_card_desc: "Receba alertas no smartphone em caso de falha de APIs e quando os serviços voltarem.",
+                push_enabled: "Ativo",
+                push_disabled: "Inativo",
+                push_blocked: "Bloqueado",
+                btn_push_enable: "Ativar Push",
+                btn_push_disable: "Desativar Push",
+                btn_push_test: "📲 Push de Teste",
+                btn_push_token: "Copiar Token",
+                push_guide_android_badge: "🤖 Android & PC",
+                push_guide_android_text: "Conectam-se <strong>automaticamente</strong> em segundo plano – sem copiar token!",
+                push_guide_ios_badge: "🍏 iOS (Safari PWA)",
+                push_guide_ios_text: "Conecta-se <strong>automaticamente</strong> como PWA na tela de início – sem necessidade de copiar token!",
+                section_services_title: "Serviços Individuais & APIs",
+                service_spotify_name: "Spotify Player ao Vivo",
+                service_spotify_desc: "Sincronização de faixa ativa",
+                service_statsfm_name: "API stats.fm & Stories",
+                service_statsfm_desc: "Contadores e Top Faixas",
+                service_lyrics_name: "Motor de Letras LrcLib",
+                service_lyrics_desc: "Letras sincronizadas palavra por palavra",
+                service_cover_name: "CDNs de Capas",
+                service_cover_desc: "Apple Music, Spotify, Deezer",
+                service_discord_name: "Suporte do Discord & Widget",
+                service_discord_desc: "Membros e status online",
+                service_pwa_name: "Cache PWA & Service Worker",
+                service_pwa_desc: "Armazenamento offline e updates",
+                service_network_name: "Sua Conexão de Internet",
+                service_network_desc: "Ping e latência em tempo real",
+                help_title: "Ajuda Imediata & Soluções",
+                help_subtitle: "Resolva dúvidas rapidamente sem precisar abrir chamado de suporte.",
+                tip1_title: "Por que algumas músicas não exibem letras?",
+                tip1_desc: "Nem todas as faixas possuem letras sincronizadas registradas em bancos públicos. Assim que uma faixa reconhecida tocar, as letras surgem automaticamente.",
+                tip2_title: "A capa do álbum demora para carregar?",
+                tip2_desc: "O app consulta 4 CDNs independentes com proteção anti-concorrência para exibir a capa correta com máxima nitidez.",
+                tip3_title: "O widget do Discord não mostra os membros?",
+                tip3_desc: "Alguns bloqueadores restringem chamadas ao Discord. Entre no servidor diretamente pelo link discord.gg/E8BS9BDAst.",
+                tip4_title: "Página exibindo conteúdo antigo após atualização?",
+                tip4_desc: "Você pode limpar o cache do Service Worker com um clique sem perder suas preferências de tema e volume.",
+                btn_clear_cache: "Limpar Cache & Recarregar",
+                diag_copy_hint: "Problema persiste? Copie o relatório de diagnóstico para o Discord.",
+                btn_copy_report_text: "Copiar Relatório",
+                footer_portfolio: "Portfólio",
+                footer_release: "Notas v24.222.7",
+                footer_privacy: "Privacidade",
+                footer_impressum: "Aviso Legal",
+                footer_status: "Status ao Vivo",
+                footer_admin: "🔐 Admin",
+                footer_copyright: "© 2026 Gamingpig • Telemetria de status automatizada",
+                last_checked_just_now: "Agora mesmo",
+                toast_copied: "Relatório copiado para a área de transferência!",
+                toast_push_active: "🔔 Notificações push ativadas!",
+                toast_push_registered: "Dispositivo registrado com sucesso para alertas automáticos!",
+                toast_push_sent: "📲 Push de teste enviado!",
+                toast_cache_cleared: "Cache limpo! Recarregando...",
+                toast_token_copied: "📋 Token copiado! (O dispositivo conecta-se automaticamente – token apenas para testes)",
+                toast_token_unsupported: "Web Push não é suportado neste navegador.",
+                toast_token_ios_hint: "No iOS: Toque em Compartilhar 📤 → 'Adicionar à Tela de Início' primeiro.",
+                push_test_title: "📲 Alerta de teste: Todos os sistemas operacionais",
+                push_test_body: "As notificações push estão funcionando perfeitamente! Você receberá alertas automáticos em caso de falha.",
+                push_active_title: "🔔 Alertas de sistema Gamingpig ativados",
+                push_active_body: "Você receberá alertas instantâneos em caso de quedas ou recuperação de serviços!",
+                push_online_title: "✅ Conexão restabelecida",
+                push_online_body: "Conexão com a internet restabelecida. Todos os serviços estão sincronizando.",
+                push_offline_title: "⚠️ Modo offline ativo",
+                push_offline_body: "Sem conexão com a internet. O PWA Gamingpig está rodando a partir do cache.",
+                push_update_title: "🚀 Nova atualização disponível!",
+                push_update_body: "Gamingpig Portfolio v24.222.7 está disponível com novos recursos e melhorias.",
+                toast_push_paused: "⏸️ Notificações push pausadas.",
+                toast_push_blocked: "🔒 Notificações bloqueadas nas configurações do navegador.",
+                toast_push_https: "As notificações push exigem HTTPS."
+            },
+            tr: {
+                nav_back: "Ana Sayfa",
+                tts_read: "Sesli Oku",
+                tts_stop: "Durdur",
+                tts_help_read: "Yardımı Oku",
+                tts_help_stop: "Durdur",
+                badge_title: "CANLI TELEMETRİ VE SİSTEM SAĞLIĞI",
+                hero_title: "Sistem Durumu ve Arıza Takibi",
+                hero_subtitle: "Tüm API'lerin, müzik akışlarının ve şarkı sözü sunucularının gerçek zamanlı canlı teşhisi.",
+                overall_ok_title: "Tüm Sistemler Çalışıyor",
+                overall_ok_sub: "Spotify, Stats.fm, Şarkı Sözleri ve CDN'ler gecikmesiz yanıt veriyor.",
+                overall_degraded_title: "Performans Düşüklüğü",
+                overall_degraded_sub: "En az bir servis yedek rota kullanıyor veya gecikiyor.",
+                overall_down_title: "Kesinti / Çevrimdışı",
+                overall_down_sub: "Ağ bağlantısı yok veya kritik sunuculara ulaşılamıyor.",
+                btn_refresh_text: "Kontrol Et",
+                push_card_title: "Android, iOS & Masaüstü Bildirimi",
+                push_card_desc: "Kesintilerde veya sistemler normale döndüğünde telefonunuza anında bildirim alın.",
+                push_enabled: "Etkin",
+                push_disabled: "Devre Dışı",
+                push_blocked: "Engellendi",
+                btn_push_enable: "Bildirimi Aç",
+                btn_push_disable: "Bildirimi Kapat",
+                btn_push_test: "📲 Test Bildirimi",
+                btn_push_token: "Tokeni Kopyala",
+                push_guide_android_badge: "🤖 Android & PC",
+                push_guide_android_text: "Arka planda <strong>otomatik</strong> bağlanır – token kopyalamaya gerek yok!",
+                push_guide_ios_badge: "🍏 iOS (Safari PWA)",
+                push_guide_ios_text: "Ana ekran PWA olarak <strong>tamamen otomatik</strong> bağlanır – token kopyalamaya gerek yok!",
+                section_services_title: "Bireysel Servisler & API'ler",
+                service_spotify_name: "Spotify Canlı Çalar",
+                service_spotify_desc: "Mevcut şarkı senkronizasyonu",
+                service_statsfm_name: "stats.fm API & Stories",
+                service_statsfm_desc: "Çalma istatistikleri ve Top 5",
+                service_lyrics_name: "LrcLib Şarkı Sözü Motoru",
+                service_lyrics_desc: "Senkronize sözler ve hece zamanları",
+                service_cover_name: "Albüm Kapağı CDN'leri",
+                service_cover_desc: "Apple Music, Spotify, Deezer",
+                service_discord_name: "Discord Destek & Widget",
+                service_discord_desc: "Sunucu üyeleri ve çevrimiçi sayacı",
+                service_pwa_name: "PWA Önbelleği & Service Worker",
+                service_pwa_desc: "Çevrimdışı depolama ve güncellemeler",
+                service_network_name: "İnternet Bağlantınız",
+                service_network_desc: "Canlı ping ve ağ kararlılığı",
+                help_title: "Anında Yardım & Çözümler",
+                help_subtitle: "Desteği meşgul etmeden hızlı çözümlere ulaşın.",
+                tip1_title: "Bazı şarkılarda neden sözler yüklenmiyor?",
+                tip1_desc: "Her parçanın halka açık veritabanlarında senkronize sözleri bulunmayabilir. Tanınan bir parça çaldığında sözler otomatik olarak belirir.",
+                tip2_title: "Albüm kapağı geç mi yükleniyor?",
+                tip2_desc: "Uygulama doğru ve en net kapağı göstermek için 4 farklı CDN sunucusunu paralel olarak sorgular.",
+                tip3_title: "Discord widget'ı üye sayısını göstermiyor mu?",
+                tip3_desc: "Katı reklam engelleyiciler Discord isteklerini engelleyebilir. discord.gg/E8BS9BDAst adresinden doğrudan katılabilirsiniz.",
+                tip4_title: "Güncelleme sonrası eski içerik mi görünüyor?",
+                tip4_desc: "Tema ve ses ayarlarınızı kaybetmeden tek tıkla Service Worker ve varlık önbelleğini temizleyebilirsiniz.",
+                btn_clear_cache: "Önbelleği Temizle & Yenile",
+                diag_copy_hint: "Sorun devam mı ediyor? Discord için otomatik teşhis raporunu kopyalayın.",
+                btn_copy_report_text: "Raporu Kopyala",
+                footer_portfolio: "Portföy",
+                footer_release: "Sürüm v24.222.7",
+                footer_privacy: "Gizlilik",
+                footer_impressum: "Künye",
+                footer_status: "Canlı Durum",
+                footer_admin: "🔐 Admin",
+                footer_copyright: "© 2026 Gamingpig • Otomatik Durum Telemetrisi",
+                last_checked_just_now: "Az önce",
+                toast_copied: "Teşhis raporu panoya kopyalandı!",
+                toast_push_active: "🔔 Bildirimler etkinleştirildi!",
+                toast_push_registered: "Cihaz otomatik kesinti bildirimleri için başarıyla kaydedildi!",
+                toast_push_sent: "📲 Test bildirimi gönderildi!",
+                toast_cache_cleared: "Önbellek temizlendi! Yeniden yükleniyor...",
+                toast_token_copied: "📋 Token kopyalandı! (Cihaz otomatik bağlanır – token yalnızca testler içindir)",
+                toast_token_unsupported: "Web Push bu tarayıcı tarafından desteklenmiyor.",
+                toast_token_ios_hint: "iOS'ta: Önce Paylaş 📤 → 'Ana Ekrana Ekle' seçeneğine dokunun.",
+                push_test_title: "📲 Test Uyarısı: Tüm sistemler çalışıyor",
+                push_test_body: "Bildirimler kusursuz çalışıyor! Kesintilerde otomatik uyarılar alacaksınız.",
+                push_active_title: "🔔 Gamingpig Sistem Bildirimleri Aktif",
+                push_active_body: "Servisler çöktüğünde veya normale döndüğünde anında bildirim alacaksınız!",
+                push_online_title: "✅ Tekrar Çevrimiçi",
+                push_online_body: "İnternet bağlantısı yeniden kuruldu. Tüm servisler senkronize ediliyor.",
+                push_offline_title: "⚠️ Çevrimdışı Mod Aktif",
+                push_offline_body: "İnternet bağlantısı algılanamadı. Gamingpig PWA önbellekten çalışıyor.",
+                push_update_title: "🚀 Yeni Güncelleme Yayında!",
+                push_update_body: "Gamingpig Portfolio v24.222.7 yeni özellikler ve performans iyileştirmeleriyle yayında.",
+                toast_push_paused: "⏸️ Bildirimler duraklatıldı.",
+                toast_push_blocked: "🔒 Bildirimler tarayıcı ayarlarından engellendi.",
+                toast_push_https: "Bildirimler HTTPS gerektirir."
+            }
+        };
+
+        let currentLang = AppStorage.getItem('selectedLanguage') || 'de';
+        let activeSpeakingMode = null; // 'status' | 'help' | null
+        let lastDiagnosticResults = {};
+
+        function t(key) {
+            return I18N[currentLang]?.[key] || I18N['de'][key] || key;
+        }
+
+        function syncLangToIndexedDB(lang) {
+            try {
+                const req = indexedDB.open('gamingpig_pwa_db', 1);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('settings')) {
+                        db.createObjectStore('settings');
+                    }
+                };
+                req.onsuccess = (e) => {
+                    try {
+                        const db = e.target.result;
+                        const tx = db.transaction('settings', 'readwrite');
+                        tx.objectStore('settings').put(lang, 'app_lang');
+                    } catch(err) {}
+                };
+            } catch(e) {}
+        }
+
+        function applyTranslations(lang) {
+            if (!I18N[lang]) lang = 'de';
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            try {
+                AppStorage.setItem('selectedLanguage', lang);
+                syncLangToIndexedDB(lang);
+            } catch(e) {}
+
+            const selectEl = document.getElementById('lang-select');
+            if (selectEl && selectEl.value !== lang) selectEl.value = lang;
+            
+            const translatable = [
+                'nav-back', 'badge-title', 'hero-title', 'hero-subtitle',
+                'btn-refresh-text', 'push-card-title', 'push-card-desc',
+                'btn-push-token-text', 'btn-push-test-text',
+                'push-guide-android-badge', 'push-guide-android-text',
+                'push-guide-ios-badge', 'push-guide-ios-text',
+                'section-services-title', 'service-spotify-name', 'service-spotify-desc',
+                'service-statsfm-name', 'service-statsfm-desc', 'service-lyrics-name',
+                'service-lyrics-desc', 'service-cover-name', 'service-cover-desc',
+                'service-discord-name', 'service-discord-desc', 'service-pwa-name',
+                'service-pwa-desc', 'service-network-name', 'service-network-desc',
+                'help-title', 'help-subtitle', 'btn-clear-cache', 'diag-copy-hint',
+                'btn-copy-report-text',
+                'tip1-title', 'tip1-desc', 'tip2-title', 'tip2-desc',
+                'tip3-title', 'tip3-desc', 'tip4-title', 'tip4-desc',
+                'footer-portfolio', 'footer-release', 'footer-privacy', 'footer-impressum',
+                'footer-status', 'footer-admin', 'footer-copyright',
+                'last-checked-time'
+            ];
+
+            translatable.forEach(id => {
+                const el = document.getElementById(id);
+                const key = id.replace(/-/g, '_');
+                if (el && t(key)) {
+                    if (t(key).includes('<')) {
+                        el.innerHTML = t(key);
+                    } else {
+                        el.innerText = t(key);
+                    }
+                }
+            });
+
+            const ttsLabel = document.getElementById('tts-label');
+            if (ttsLabel) ttsLabel.innerText = (activeSpeakingMode === 'status') ? t('tts_stop') : t('tts_read');
+
+            const ttsHelpLabel = document.getElementById('tts-help-label');
+            if (ttsHelpLabel) ttsHelpLabel.innerText = (activeSpeakingMode === 'help') ? t('tts_help_stop') : t('tts_help_read');
+
+            updatePushUI();
+            updateOverallUI();
+        }
+
+        function changeLanguage(lang) {
+            AppStorage.setItem('selectedLanguage', lang);
+            applyTranslations(lang);
+        }
+
+        // ========================================================= //
+        // Toast Notifier                                            //
+        // ========================================================= //
+        function showToast(msg, icon = '✅') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icon');
+            if (!toast) return;
+            toastMsg.innerText = msg;
+            toastIcon.innerText = icon;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 3500);
+        }
+
+        // ========================================================= //
+        // Live Diagnostics Engine                                   //
+        // ========================================================= //
+        async function pingEndpoint(url, timeoutMs = 8000) {
+            const start = performance.now();
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+            // 1. Primary CORS fetch
+            try {
+                const res = await fetch(url, { 
+                    method: 'GET', 
+                    cache: 'no-store',
+                    mode: 'cors',
+                    signal: controller.signal 
+                });
+                clearTimeout(timeoutId);
+                const duration = Math.round(performance.now() - start);
+                return { ok: true, duration: Math.max(1, duration), status: res.status };
+            } catch (err) {
+                clearTimeout(timeoutId);
+                if (err.name === 'AbortError') {
+                    return { ok: false, duration: timeoutMs, error: 'Timeout' };
+                }
+            }
+
+            // 2. Dual Fallback: mode 'no-cors' (Measures exact network latency on Apple CDN, Discord & stats.fm without CORS blocks)
+            const startFallback = performance.now();
+            const controllerFallback = new AbortController();
+            const timeoutIdFallback = setTimeout(() => controllerFallback.abort(), timeoutMs);
+
+            try {
+                await fetch(url, {
+                    method: 'GET',
+                    cache: 'no-store',
+                    mode: 'no-cors',
+                    signal: controllerFallback.signal
+                });
+                clearTimeout(timeoutIdFallback);
+                const duration = Math.round(performance.now() - startFallback);
+                return { ok: true, duration: Math.max(1, duration), status: 'OK' };
+            } catch (errFallback) {
+                clearTimeout(timeoutIdFallback);
+                const duration = Math.round(performance.now() - startFallback);
+                return { ok: false, duration: duration > 0 ? duration : timeoutMs, error: 'NetworkError' };
+            }
+        }
+
+        async function runDiagnostics(userTriggered = false) {
+            const spinner = document.getElementById('refresh-spinner');
+            if (spinner) spinner.classList.add('spin-slow');
+
+            // Show immediate loading feedback for latencies
+            ['spotify', 'statsfm', 'lyrics', 'cover', 'discord', 'network'].forEach(id => {
+                const el = document.getElementById('ping-' + id);
+                if (el && (!lastDiagnosticResults[id] || !lastDiagnosticResults[id].duration)) {
+                    el.innerText = 'Messe...';
+                    el.className = 'text-blue-400 animate-pulse font-mono font-bold';
+                }
+            });
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const lastCheckedEl = document.getElementById('last-checked-time');
+            if (lastCheckedEl) lastCheckedEl.innerText = timeStr;
+
+            // 1. Client Internet Check (Real latency measurement via static asset fetch)
+            const isOnline = navigator.onLine;
+            let netDuration = 12;
+            if (isOnline) {
+                const localPing = await pingEndpoint('./manifest.json?_t=' + Date.now(), 2500);
+                netDuration = localPing.duration || 12;
+            }
+            lastDiagnosticResults.network = {
+                ok: isOnline,
+                duration: isOnline ? netDuration : 9999,
+                status: isOnline ? 'Online' : 'Offline'
+            };
+
+            // 2. stats.fm API check (real-time stream verification with dual fallback)
+            let statsData = null;
+            let statsfmOk = false;
+            let statsDuration = 45;
+            try {
+                const sStart = performance.now();
+                const sRes = await fetch('https://api.stats.fm/api/v1/users/gamingpig/streams/current', { cache: 'no-store' });
+                statsDuration = Math.max(1, Math.round(performance.now() - sStart));
+                if (sRes.ok) {
+                    statsData = await sRes.json();
+                    statsfmOk = true;
+                } else if (sRes.status === 404 || sRes.status === 204 || sRes.status === 429) {
+                    statsfmOk = true;
+                }
+            } catch (e) {
+                const fallbackPing = await pingEndpoint('https://api.stats.fm/api/v1/users/gamingpig', 8000);
+                statsfmOk = fallbackPing.ok;
+                statsDuration = fallbackPing.duration;
+            }
+            lastDiagnosticResults.statsData = statsData;
+            lastDiagnosticResults.statsfm = { ok: statsfmOk, duration: statsDuration, status: statsfmOk ? 'Operational' : 'Offline' };
+
+            // 3. Spotify Live Player & Raspberry Pi Stream
+            const isSpotifyStreaming = !!(statsData && statsData.item && statsData.item.isPlaying);
+            const currentTrack = (statsData && statsData.item && statsData.item.track) ? statsData.item.track.name : null;
+            const currentArtist = (statsData && statsData.item && statsData.item.track && statsData.item.track.artists && statsData.item.track.artists[0]) ? statsData.item.track.artists[0].name : null;
+
+            const npcRes = await pingEndpoint('https://npc-api.aikins.xyz/v1/users/gamingpig/now');
+            const npcOk = npcRes.ok && (npcRes.status === 200 || npcRes.status === 204);
+            const npcHasData = (npcRes.status === 200);
+
+            // Pi Discrepancy Check: Spotify is playing on account, but Pi is not sending data
+            if (isSpotifyStreaming && !npcHasData) {
+                lastDiagnosticResults.spotify = {
+                    ...npcRes,
+                    ok: false,
+                    degraded: true,
+                    piOffline: true,
+                    trackName: currentTrack,
+                    artistName: currentArtist,
+                    status: 'Pi offline (Aktiv auf Gerät)'
+                };
+            } else if (!npcOk) {
+                lastDiagnosticResults.spotify = {
+                    ...npcRes,
+                    ok: false,
+                    artistName: currentArtist,
+                    status: 'NPC-API Nicht erreichbar'
+                };
+            } else {
+                lastDiagnosticResults.spotify = {
+                    ...npcRes,
+                    ok: true,
+                    trackName: currentTrack,
+                    artistName: currentArtist,
+                    status: npcHasData ? 'Live Playing' : 'Standby / Bereit'
+                };
+            }
+
+            // 4. LrcLib Lyrics Provider
+            const lyricsRes = await pingEndpoint('https://lrclib.net/api/get?track_name=test&artist_name=test');
+            lastDiagnosticResults.lyrics = lyricsRes;
+
+            // 5. Album Artwork CDNs (any HTTP response including 404 = CDN is reachable)
+            const coverRes = await pingEndpoint('https://is1-ssl.mzstatic.com/image/thumb/Music/v4/00/00/00/000000.jpg/100x100bb.jpg');
+            const coverOk = coverRes.ok || (coverRes.status && coverRes.status > 0 && coverRes.status < 600 && coverRes.status !== 0);
+            lastDiagnosticResults.cover = {
+                ok: coverOk,
+                duration: coverRes.duration,
+                status: coverOk ? 'Operational' : 'Unreachable'
+            };
+
+            // 6. Discord Widget API
+            let discordData = null;
+            const discordRes = await pingEndpoint('https://discord.com/api/v10/invites/E8BS9BDAst?with_counts=true');
+            if (discordRes.ok) {
+                try {
+                    const dFetch = await fetch('https://discord.com/api/v10/invites/E8BS9BDAst?with_counts=true');
+                    if (dFetch.ok) discordData = await dFetch.json();
+                } catch(e) {}
+            }
+            lastDiagnosticResults.discord = discordRes;
+            lastDiagnosticResults.discordData = discordData;
+
+            // 7. PWA Service Worker & Cache
+            const hasSW = 'serviceWorker' in navigator && !!navigator.serviceWorker.controller;
+            const hasCaches = 'caches' in window;
+            let swVersion = 'v24.222.7';
+            try {
+                if (hasSW) {
+                    const reg = await Promise.race([
+                        navigator.serviceWorker.ready,
+                        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 1500))
+                    ]);
+                    if (reg && reg.active) swVersion = reg.active.scriptURL.includes('sw.js') ? 'v24.222.7' : 'Active';
+                }
+            } catch (e) {}
+            lastDiagnosticResults.pwa = {
+                ok: hasSW || hasCaches,
+                duration: hasSW ? 0 : -1,
+                status: hasSW ? ('Active ' + swVersion) : (hasCaches ? 'Cache Ready' : 'Unregistered')
+            };
+
+            renderDiagnosticResults();
+
+            if (spinner) {
+                setTimeout(() => spinner.classList.remove('spin-slow'), 500);
+            }
+
+            if (userTriggered) {
+                const online = Object.values(lastDiagnosticResults).filter(r => r && r.ok).length;
+                const total = Object.keys(lastDiagnosticResults).length || 7;
+                if (online >= total) {
+                    showToast(t('overall_ok_title'), '✅');
+                } else if (online >= Math.floor(total * 0.7)) {
+                    showToast(t('overall_degraded_title') + ' (' + online + '/' + total + ')', '🟡');
+                } else {
+                    showToast(t('overall_down_title'), '🔴');
+                }
+            }
+        }
+
+        function renderDiagnosticResults() {
+            let totalServices = 7;
+            let onlineServices = 0;
+
+            const mapService = (key, pingId, badgeId, isDuration = true) => {
+                const data = lastDiagnosticResults[key];
+                const pingEl = document.getElementById(pingId);
+                const badgeEl = document.getElementById(badgeId);
+                if (!data || !pingEl || !badgeEl) return;
+
+                if (data.ok) {
+                    onlineServices++;
+                    badgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                    badgeEl.innerText = "🟢 OK";
+                    pingEl.className = "text-emerald-300 font-bold";
+                    if (!isDuration) {
+                        pingEl.innerText = data.status || 'OK';
+                    } else if (data.duration > 0) {
+                        pingEl.innerText = data.duration + ' ms';
+                    } else {
+                        pingEl.innerText = data.status || 'OK';
+                    }
+                } else if (data.degraded || data.piOffline) {
+                    badgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                    badgeEl.innerText = data.piOffline ? "🟡 Pi offline" : "🟡 Degraded";
+                    pingEl.className = "text-amber-300 font-bold";
+                    pingEl.innerText = data.status || 'Eingeschränkt';
+                } else {
+                    badgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30";
+                    badgeEl.innerText = "🔴 Offline";
+                    pingEl.className = "text-rose-300 font-bold";
+                    pingEl.innerText = !isDuration ? (data.status || 'Nicht verfügbar') : (data.duration > 0 ? data.duration + ' ms (Fehler)' : 'Timeout');
+                }
+            };
+
+            mapService('spotify', 'ping-spotify', 'status-badge-spotify');
+            mapService('statsfm', 'ping-statsfm', 'status-badge-statsfm');
+            mapService('lyrics', 'ping-lyrics', 'status-badge-lyrics');
+            mapService('cover', 'ping-cover', 'status-badge-cover');
+            mapService('discord', 'ping-discord', 'status-badge-discord');
+            mapService('pwa', 'ping-pwa', 'status-badge-pwa', false);
+            mapService('network', 'ping-network', 'status-badge-network');
+
+            const counterEl = document.getElementById('services-online-counter');
+            if (counterEl) counterEl.innerText = onlineServices + ' / ' + totalServices + ' online';
+
+            updateOverallUI(onlineServices, totalServices);
+        }
+
+        function updateOverallUI(online = 7, total = 7) {
+            const banner = document.getElementById('overall-banner');
+            const iconBg = document.getElementById('overall-icon-bg');
+            const icon = document.getElementById('overall-icon');
+            const title = document.getElementById('overall-status-text');
+            const sub = document.getElementById('overall-subtext');
+            const pct = document.getElementById('overall-pct');
+
+            if (!banner || !title || !sub) return;
+
+            if (online >= total) {
+                banner.className = "glow-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-4";
+                iconBg.className = "w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-lg";
+                icon.innerText = "🟢";
+                title.innerText = t('overall_ok_title');
+                sub.innerText = t('overall_ok_sub');
+                pct.innerText = "100% OK";
+                pct.className = "px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold";
+            } else if (online >= 5) {
+                banner.className = "glow-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-amber-500/40 flex flex-col sm:flex-row items-center justify-between gap-4";
+                iconBg.className = "w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-lg";
+                icon.innerText = "🟡";
+                title.innerText = t('overall_degraded_title');
+                sub.innerText = t('overall_degraded_sub');
+                pct.innerText = Math.round((online / total) * 100) + "% TEILWEISE";
+                pct.className = "px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold";
+            } else {
+                banner.className = "glow-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-rose-500/50 flex flex-col sm:flex-row items-center justify-between gap-4";
+                iconBg.className = "w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center text-2xl sm:text-3xl shrink-0 shadow-lg";
+                icon.innerText = "🔴";
+                title.innerText = t('overall_down_title');
+                sub.innerText = t('overall_down_sub');
+                pct.innerText = "STÖRUNG";
+                pct.className = "px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-mono font-bold";
+            }
+        }
+
+        // ========================================================= //
+        // Multi-Platform Web Push Notification Handler             //
+        // Android, iOS (PWA), Desktop (Chrome, Edge, Firefox, Safari)//
+        // ========================================================= //
+        const VAPID_PUBLIC_KEY = PushConfig.vapidPublicKey;
+        const PUSH_SYNC_TOPIC = 'gamingpig_push_sub_vault_9f8a2b3c4d5e';
+        const PUSH_SYNC_URL = 'https://ntfy.sh/' + PUSH_SYNC_TOPIC;
+
+        function urlB64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding)
+                .replace(/\-/g, '+')
+                .replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        function isPushEnabled() {
+            if (typeof Notification === 'undefined') return false;
+            if (Notification.permission !== 'granted') return false;
+            return AppStorage.getItem('pushAlertsEnabled') !== 'false';
+        }
+
+        function updatePushUI() {
+            const badge = document.getElementById('push-status-badge');
+            const btnToggle = document.getElementById('btn-push-toggle');
+            const btnTest = document.getElementById('btn-push-test');
+            if (!badge || !btnToggle) return;
+
+            if (typeof Notification === 'undefined') {
+                const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+                badge.innerText = isIOS ? "PWA erforderlich" : "Nicht unterstützt";
+                badge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-amber-400 border border-amber-500/20";
+                btnToggle.innerText = isIOS ? "Zum Home-Bildschirm 📤" : t('push_disabled');
+                btnToggle.disabled = false;
+                if (btnTest) btnTest.classList.add('hidden');
+                return;
+            }
+
+            const perm = Notification.permission;
+            const enabled = isPushEnabled();
+
+            if (enabled) {
+                badge.innerText = "🟢 " + t('push_enabled');
+                badge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                btnToggle.innerText = t('btn_push_disable');
+                btnToggle.disabled = false;
+                btnToggle.className = "px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-all active:scale-95 border border-slate-700 cursor-pointer";
+                if (btnTest) btnTest.classList.remove('hidden');
+
+                // Automatische Hintergrund-Synchronisation & Self-Healing des Abonnements
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.ready.then(async (reg) => {
+                        try {
+                            let sub = await reg.pushManager.getSubscription();
+                    if (sub && sub.options.applicationServerKey) {
+                        const existingKey = new Uint8Array(sub.options.applicationServerKey);
+                        const nextKey = urlB64ToUint8Array(VAPID_PUBLIC_KEY);
+                        if (existingKey.length !== nextKey.length || existingKey.some((byte, index) => byte !== nextKey[index])) {
+                            if (!await sub.unsubscribe()) throw new Error('Push key rotation requires resubscription.');
+                            sub = null;
+                        }
+                    }
+                            if (!sub && typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+                                console.log('[Push] Self-healing push subscription in status page...');
+                                const subJson = await subscribeToWebPush();
+                                if (subJson) {
+                                    AppStorage.setItem('gp_last_sub_sync', Date.now().toString());
+                                    await autoRegisterSubscription(subJson);
+                                }
+                            } else if (sub) {
+                                const lastSync = parseInt(AppStorage.getItem('gp_last_sub_sync') || '0', 10);
+                                if (Date.now() - lastSync > 12 * 60 * 60 * 1000) {
+                                    AppStorage.setItem('gp_last_sub_sync', Date.now().toString());
+                                    await autoRegisterSubscription(JSON.stringify(sub.toJSON()));
+                                }
+                            }
+                        } catch (e) {
+                            console.warn('[Push] Status sync error:', e);
+                        }
+                    }).catch(() => {});
+                }
+            } else {
+                badge.innerText = "⚪ " + t('push_disabled');
+                badge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 border border-white/10";
+                btnToggle.innerText = t('btn_push_enable');
+                btnToggle.disabled = false;
+                btnToggle.className = "px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-all shadow-lg active:scale-95 cursor-pointer";
+                if (btnTest) btnTest.classList.add('hidden');
+            }
+
+            const btnTokenText = document.getElementById('btn-push-token-text');
+            if (btnTokenText) btnTokenText.innerText = t('btn_push_token');
+            const btnTestText = document.getElementById('btn-push-test-text');
+            if (btnTestText) btnTestText.innerText = t('btn_push_test');
+        }
+
+        async function subscribeToWebPush() {
+            if (!('serviceWorker' in navigator)) return null;
+            try {
+                const reg = await navigator.serviceWorker.ready;
+                let sub = await reg.pushManager.getSubscription();
+                    if (sub && sub.options.applicationServerKey) {
+                        const existingKey = new Uint8Array(sub.options.applicationServerKey);
+                        const nextKey = urlB64ToUint8Array(VAPID_PUBLIC_KEY);
+                        if (existingKey.length !== nextKey.length || existingKey.some((byte, index) => byte !== nextKey[index])) {
+                            if (!await sub.unsubscribe()) throw new Error('Push key rotation requires resubscription.');
+                            sub = null;
+                        }
+                    }
+                if (!sub) {
+                    sub = await reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY)
+                    });
+                }
+                const subJson = JSON.stringify(sub.toJSON());
+                AppStorage.setItem('webPushSubscription', subJson);
+                return subJson;
+            } catch (e) {
+                console.warn('Web Push subscription failed:', e);
+                return null;
+            }
+        }
+
+        function requestNotificationPermissionSafe() {
+            return new Promise((resolve) => {
+                if (typeof Notification === 'undefined') return resolve('unsupported');
+                try {
+                    const result = Notification.requestPermission((perm) => {
+                        resolve(perm || Notification.permission);
+                    });
+                    if (result && typeof result.then === 'function') {
+                        result.then(resolve).catch(() => resolve(Notification.permission));
+                    }
+                } catch (e) {
+                    resolve(Notification.permission || 'denied');
+                }
+            });
+        }
+
+        async function autoRegisterSubscription(subJson) {
+            const sub = typeof subJson === 'string' ? JSON.parse(subJson) : subJson;
+            await PushRegistration.register(sub, currentLang || 'de');
+            AppStorage.setItem('gamingpig_push_sub', JSON.stringify(sub));
+            AppStorage.setItem('webPushSubscription', JSON.stringify(sub));
+            showToast('Verschlüsselt eingereicht. Aktivierung nach dem nächsten GitHub-Sync.', '⏳');
+        }
+
+        async function copyMyDeviceToken() {
+            if (typeof Notification === 'undefined') {
+                const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+                if (isIOS) {
+                    showToast('Auf iOS: Tippe erst auf Teilen 📤 → "Zum Home-Bildschirm", um Push zu nutzen.', '📲');
+                } else {
+                    showToast('Web Push wird von diesem Browser nicht unterstützt.', '⚠️');
+                }
+                return;
+            }
+            try {
+                if (Notification.permission !== 'granted') {
+                    const perm = await requestNotificationPermissionSafe();
+                    if (perm !== 'granted') {
+                        showToast('Benachrichtigungen wurden im Browser blockiert.', '🔒');
+                        return;
+                    }
+                }
+                const reg = await navigator.serviceWorker.ready;
+                let sub = await reg.pushManager.getSubscription();
+                    if (sub && sub.options.applicationServerKey) {
+                        const existingKey = new Uint8Array(sub.options.applicationServerKey);
+                        const nextKey = urlB64ToUint8Array(VAPID_PUBLIC_KEY);
+                        if (existingKey.length !== nextKey.length || existingKey.some((byte, index) => byte !== nextKey[index])) {
+                            if (!await sub.unsubscribe()) throw new Error('Push key rotation requires resubscription.');
+                            sub = null;
+                        }
+                    }
+                if (!sub) {
+                    sub = await reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY)
+                    });
+                }
+                const subStr = JSON.stringify(sub.toJSON());
+                const box = document.getElementById('status-token-box');
+                if (box) {
+                    box.innerText = subStr;
+                    box.classList.remove('hidden');
+                }
+                if (typeof autoRegisterSubscription === 'function') {
+                    await autoRegisterSubscription(subStr);
+                }
+                await navigator.clipboard.writeText(subStr);
+                showToast(t('toast_token_copied'), '✅');
+            } catch(e) {
+                showToast((t('toast_token_error') || 'Konnte Token nicht kopieren: ') + (e.message || 'Error'), '⚠️');
+            }
+        }
+
+        async function togglePushNotifications() {
+            try {
+                if (!('serviceWorker' in navigator) || typeof Notification === 'undefined') throw new Error(t('toast_token_unsupported'));
+                const reg = await navigator.serviceWorker.ready;
+                const existing = await reg.pushManager.getSubscription();
+                if (existing && AppStorage.getItem('pushAlertsEnabled') !== 'false') {
+                    if (!await existing.unsubscribe()) throw new Error('Push konnte nicht pausiert werden.');
+                    AppStorage.setItem('pushAlertsEnabled', 'false');
+                    updatePushUI();
+                    showToast(t('toast_push_paused'), 'ℹ️');
+                    return;
+                }
+                if (!PushConfig.vapidPublicKey || !PushConfig.registrationPublicKey) throw new Error('Push wird gewartet: neue Schlüssel müssen eingerichtet werden.');
+                const permission = await requestNotificationPermissionSafe();
+                if (permission !== 'granted') throw new Error(t('toast_push_blocked'));
+                const sub = await subscribeToWebPush();
+                if (!sub) throw new Error('Push-Abonnement nicht verfügbar.');
+                await autoRegisterSubscription(sub);
+                AppStorage.setItem('pushAlertsEnabled', 'true');
+                updatePushUI();
+            } catch (error) {
+                AppStorage.setItem('pushAlertsEnabled', 'false');
+                updatePushUI();
+                showToast(error.message, '⚠️');
+            }
+        }
+
+        async function sendSystemNotification(title, body) {
+            if (!('Notification' in window)) return;
+            if (Notification.permission !== 'granted') return;
+            if (AppStorage.getItem('pushAlertsEnabled') === 'false') return;
+
+            if ('serviceWorker' in navigator) {
+                try {
+                    const reg = await navigator.serviceWorker.ready;
+                    if (reg && reg.showNotification) {
+                        await reg.showNotification(title, {
+                            body: body,
+                            icon: 'icon-192.png',
+                            badge: 'icon-192.png',
+                            vibrate: [200, 100, 200, 100, 300],
+                            tag: 'gamingpig-status-alert-' + Date.now(),
+                            renotify: true,
+                            data: { url: 'status.html' }
+                        });
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('SW notification failed:', e);
+                }
+            }
+
+            try {
+                new Notification(title, {
+                    body: body,
+                    icon: 'icon-192.png'
+                });
+            } catch (e) {
+                console.warn('Standard notification failed:', e);
+            }
+        }
+
+        function sendTestPush() {
+            sendSystemNotification(
+                t('push_test_title') || '📲 Test-Alarm: Alle Systeme laufen',
+                t('push_test_body') || 'Android- & iOS-Push funktioniert perfekt! Bei echten Störungen wirst du automatisch benachrichtigt.'
+            );
+            showToast(t('toast_push_sent'), '📲');
+        }
+
+        // ========================================================= //
+        // Cache Invalidation & Diagnostic Report Actions            //
+        // ========================================================= //
+        async function clearAppCache() {
+            if ('caches' in window) {
+                try {
+                    const keys = await caches.keys();
+                    await Promise.all(keys.map(k => caches.delete(k)));
+                } catch (e) {}
+            }
+            if ('serviceWorker' in navigator) {
+                try {
+                    const regs = await navigator.serviceWorker.getRegistrations();
+                    for (const reg of regs) {
+                        await reg.update();
+                    }
+                } catch (e) {}
+            }
+            showToast(t('toast_cache_cleared'), '🔄');
+            setTimeout(() => location.reload(true), 1200);
+        }
+
+        function copyDiagnosticReport() {
+            // Sanitize userAgent to protect user's device model, hostname, or private identifiers
+            const rawUa = navigator.userAgent || '';
+            const isMobile = /Mobi|Android|iPhone|iPad/i.test(rawUa);
+            const isApple = /Mac|iPhone|iPad/i.test(rawUa);
+            const isWindows = /Win/i.test(rawUa);
+            const isLinux = /Linux/i.test(rawUa) && !/Android/i.test(rawUa);
+            const osType = isApple ? 'Apple/WebKit' : (isWindows ? 'Windows' : (isLinux ? 'Linux' : (isMobile ? 'Mobile' : 'Desktop')));
+
+            const report = {
+                timestamp: new Date().toISOString(),
+                clientType: `${osType} (${isMobile ? 'Mobile' : 'Desktop'})`,
+                language: currentLang,
+                screen: `${window.innerWidth}x${window.innerHeight} (dpr: ${window.devicePixelRatio})`,
+                connection: navigator.connection ? {
+                    effectiveType: navigator.connection.effectiveType,
+                    rtt: navigator.connection.rtt,
+                    downlink: navigator.connection.downlink
+                } : 'N/A',
+                pushPermission: typeof Notification !== 'undefined' ? Notification.permission : 'unsupported',
+                serviceWorkerActive: !!navigator.serviceWorker?.controller,
+                results: lastDiagnosticResults
+            };
+
+            const text = "```json\n" + JSON.stringify(report, null, 2) + "\n```";
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(t('toast_copied'), '📋');
+            }).catch(() => {
+                showToast('Fehler beim Kopieren des Reports.', '⚠️');
+            });
+        }
+
+        // ========================================================= //
+        // 🎙️ ULTRA-INTELLIGENTE SPRACHAUSGABE & BRIEFINGS           //
+        // ========================================================= //
+        window._ttsUtterances = [];
+
+        function getBestVoice(langCode) {
+            if (!('speechSynthesis' in window)) return null;
+            const voices = window.speechSynthesis.getVoices() || [];
+            if (voices.length === 0) return null;
+
+            const prefix = langCode.slice(0, 2).toLowerCase();
+            const matching = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
+            if (matching.length === 0) return null;
+
+            const premium = matching.find(v => 
+                v.name.includes('Google') || 
+                v.name.includes('Natural') || 
+                v.name.includes('Neural') || 
+                v.name.includes('Premium') ||
+                v.name.includes('Siri')
+            );
+            return premium || matching[0];
+        }
+
+        function pickStatusRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function generateIntelligentBriefing(lang) {
+            const results = lastDiagnosticResults || {};
+            const serviceKeys = ['spotify', 'statsfm', 'lyrics', 'cover', 'discord', 'pwa', 'network'];
+            const totalServices = serviceKeys.length; // 7
+
+            const onlineCount = serviceKeys.filter(k => results[k] && results[k].ok).length;
+            const degradedServices = serviceKeys.filter(k => results[k] && (results[k].degraded || results[k].piOffline));
+            const offlineServices = serviceKeys.filter(k => results[k] && !results[k].ok && !results[k].degraded && !results[k].piOffline);
+            const isAllOk = (onlineCount >= 6 && offlineServices.length === 0);
+
+            const hour = new Date().getHours();
+            
+            // Reale Telemetrie-Werte
+            const spotifyLatency = (results.spotify?.duration && results.spotify.duration > 0 && results.spotify.duration < 9999) 
+                ? `${results.spotify.duration} Millisekunden` 
+                : 'unter 150 Millisekunden';
+            const networkPing = (results.network?.duration && results.network.duration > 0 && results.network.duration < 9999) 
+                ? `${results.network.duration} Millisekunden` 
+                : 'hervorragend';
+
+            // Dynamische tageszeitabhängige Begrüßungen
+            const greetingDe = hour < 6 ? 'Gute Nacht!' : (hour < 11 ? 'Guten Morgen!' : (hour < 18 ? 'Schönen Tag!' : 'Guten Abend!'));
+            const greetingEn = hour < 6 ? 'Good night!' : (hour < 12 ? 'Good morning!' : (hour < 18 ? 'Good afternoon!' : 'Good evening!'));
+            const greetingEs = hour < 6 ? '¡Buenas noches!' : (hour < 12 ? '¡Buenos días!' : (hour < 20 ? '¡Buenas tardes!' : '¡Buenas noches!'));
+            const greetingFr = hour < 6 ? 'Bonne nuit !' : (hour < 12 ? 'Bonjour !' : (hour < 18 ? 'Bon après-midi !' : 'Bonsoir !'));
+            const greetingPt = hour < 6 ? 'Boa noite!' : (hour < 12 ? 'Bom dia!' : (hour < 18 ? 'Boa tarde!' : 'Boa noite!'));
+            const greetingTr = hour < 6 ? 'İyi geceler!' : (hour < 11 ? 'Günaydın!' : (hour < 18 ? 'İyi günler!' : 'İyi akşamlar!'));
+
+            // Spotify Live-Track Kontext (Gerätenamen aus Datenschutzgründen entfernt)
+            const spTrack = results.spotify?.trackName || null;
+            const spArtist = results.spotify?.artistName || null;
+            const discordOnline = results.discordData?.approximate_presence_count || results.discord?.presence_count || null;
+
+            // Witzige Sysadmin / Gamer Punchlines
+            const funPunchlinesDe = [
+                'Server-Last liegt im absoluten Wohlfühlbereich, kein Paketverlust und der Kaffee-Pegel steht bei 100%.',
+                'Null Kernel-Panics in Sicht – der ADHS-Hyperfokus-Modus läuft auf maximaler Taktfrequenz.',
+                'Docker-Container schnurren wie ein Kätzchen, alle Pipelines laufen im grünen Bereich.',
+                'Perfekter Sync: Alle APIs antworten synchron, kein Lag im gesamten Datenfluss.'
+            ];
+            const funPunchlinesEn = [
+                'Server load is at optimal baseline with 0% packet loss and peak coffee levels.',
+                'Zero kernel panics detected. ADHS hyperfocus engine operating at maximum clock speed.',
+                'Docker containers humming smoothly with all monitoring pipelines fully green.',
+                'Flawless synchronization: zero telemetry lag across all external APIs.'
+            ];
+            const funPunchlinesEs = [
+                'La carga del servidor está en zona óptima, cero pérdida de paquetes y nivel de café al 100%.',
+                'Cero kernel panics. Motor de hiperfoco TDAH funcionando a máxima frecuencia de reloj.',
+                'Contenedores Docker ronroneando como gatitos y todas las alertas en verde.',
+                'Sincronización impecable: todas las APIs responden sin retardo alguno.'
+            ];
+            const funPunchlinesFr = [
+                'Charge serveur optimale, zéro perte de paquets et niveau de café à 100%.',
+                'Aucun kernel panic en vue. Moteur d\'hyperfocus TDAH cadencé à fréquence maximale.',
+                'Conteneurs Docker ronronnant comme un chaton, tous les voyants au vert.',
+                'Synchronisation parfaite : toutes les APIs répondent sans aucun lag.'
+            ];
+            const funPunchlinesPt = [
+                'Carga do servidor na faixa ideal, zero perda de pacotes e nível de café a 100%.',
+                'Nenhum kernel panic detectado. Motor de hiperfoco TDAH operando em frequência máxima.',
+                'Contêineres Docker rodando perfeitamente e todos os pipelines no verde.',
+                'Sincronização impecável: todas as APIs respondendo sem nenhum atraso.'
+            ];
+            const funPunchlinesTr = [
+                'Sunucu yükü mükemmel seviyede, sıfır paket kaybı ve kahve seviyesi %100.',
+                'Sıfır kernel panic. DEHB hiperodak motoru maksimum saat hızında çalışıyor.',
+                'Docker konteynerleri kusursuz çalışıyor, tüm izleme hatları yemyeşil.',
+                'Kusursuz senkronizasyon: tüm harici APIler sıfır gecikmeyle yanıt veriyor.'
+            ];
+
+            const punchlineDe = pickStatusRandom(funPunchlinesDe);
+            const punchlineEn = pickStatusRandom(funPunchlinesEn);
+            const punchlineEs = pickStatusRandom(funPunchlinesEs);
+            const punchlineFr = pickStatusRandom(funPunchlinesFr);
+            const punchlinePt = pickStatusRandom(funPunchlinesPt);
+            const punchlineTr = pickStatusRandom(funPunchlinesTr);
+
+            if (lang === 'de') {
+                if (isAllOk) {
+                    let musicPart = spTrack ? `Auf Spotify läuft gerade '${spTrack}'${spArtist ? ' von ' + spArtist : ''}. ` : `Spotify im Standby. `;
+                    let discordPart = discordOnline ? `Discord zählt ${discordOnline} aktive Member. ` : '';
+                    return `${greetingDe} Gamingpig Telemetrie-Cockpit online. Live-Status: Alle Systeme laufen bei 100% (${onlineCount} von ${totalServices} Diensten online). Spotify-API antwortet in ${spotifyLatency}, Netzwerk-Ping bei ${networkPing}. ${musicPart}${discordPart}${punchlineDe}`;
+                }
+                return `System-Hinweis: ${onlineCount} von ${totalServices} Diensten aktiv. Siehe Dashboard für Details.`;
+            } else if (lang === 'en') {
+                if (isAllOk) {
+                    let musicPart = spTrack ? `Streaming '${spTrack}'${spArtist ? ' by ' + spArtist : ''}. ` : `Spotify in standby. `;
+                    let discordPart = discordOnline ? `Discord shows ${discordOnline} active members. ` : '';
+                    return `${greetingEn} Gamingpig Telemetry Cockpit online. Diagnosis: All systems operational (${onlineCount} of ${totalServices} services online). Spotify latency ${spotifyLatency}, network ping ${networkPing}. ${musicPart}${discordPart}${punchlineEn}`;
+                }
+                return `System notice: ${onlineCount} of ${totalServices} services operational. Check dashboard for details.`;
+            } else if (lang === 'es') {
+                if (isAllOk) {
+                    let musicPart = spTrack ? `En Spotify suena '${spTrack}'${spArtist ? ' de ' + spArtist : ''}. ` : `Spotify en espera. `;
+                    let discordPart = discordOnline ? `Discord tiene ${discordOnline} miembros activos. ` : '';
+                    return `${greetingEs} Cabina de telemetría Gamingpig activa. Diagnóstico: Todos los sistemas operativos (${onlineCount} de ${totalServices} servicios online). Latencia Spotify ${spotifyLatency}, ping ${networkPing}. ${musicPart}${discordPart}${punchlineEs}`;
+                }
+                return `Alerta del sistema: ${onlineCount} de ${totalServices} servicios operativos. Consulta el panel.`;
+            } else if (lang === 'fr') {
+                if (isAllOk) {
+                    let musicPart = spTrack ? `Sur Spotify : '${spTrack}'${spArtist ? ' par ' + spArtist : ''}. ` : `Spotify en veille. `;
+                    let discordPart = discordOnline ? `Discord affiche ${discordOnline} membres connectés. ` : '';
+                    return `${greetingFr} Cockpit de télémétrie Gamingpig en ligne. Diagnostic : Tous systèmes opérationnels (${onlineCount} services sur ${totalServices} en ligne). Latence Spotify ${spotifyLatency}, ping ${networkPing}. ${musicPart}${discordPart}${punchlineFr}`;
+                }
+                return `Avis système : ${onlineCount} services sur ${totalServices} opérationnels. Voir tableau.`;
+            } else if (lang === 'pt') {
+                if (isAllOk) {
+                    let musicPart = spTrack ? `No Spotify tocando '${spTrack}'${spArtist ? ' de ' + spArtist : ''}. ` : `Spotify em standby. `;
+                    let discordPart = discordOnline ? `Discord tem ${discordOnline} membros ativos. ` : '';
+                    return `${greetingPt} Cockpit de telemetria Gamingpig online. Diagnóstico: Sistemas 100% operacionais (${onlineCount} de ${totalServices} serviços online). Latência Spotify ${spotifyLatency}, ping ${networkPing}. ${musicPart}${discordPart}${punchlinePt}`;
+                }
+                return `Alerta de sistema: ${onlineCount} de ${totalServices} serviços operacionais. Verifique.`;
+            } else if (lang === 'tr') {
+                if (isAllOk) {
+                    let musicPart = spTrack ? `Spotify'da '${spTrack}'${spArtist ? ' - ' + spArtist : ''} çalıyor. ` : `Spotify beklemede. `;
+                    let discordPart = discordOnline ? `Discord'da ${discordOnline} aktif üye var. ` : '';
+                    return `${greetingTr} Gamingpig Telemetri Kokpiti devrede. Teşhis: Tüm sistemler sorunsuz çalışıyor (${totalServices} servisten ${onlineCount} tanesi aktif). Spotify gecikmesi ${spotifyLatency}, ağ gecikmesi ${networkPing}. ${musicPart}${discordPart}${punchlineTr}`;
+                }
+                return `Sistem bildirimi: ${totalServices} servisten ${onlineCount} tanesi aktif. Paneli kontrol edin.`;
+            }
+            return `Systemstatus: ${onlineCount} von ${totalServices} online.`;
+        }
+
+        function generateIntelligentHelpBriefing(lang) {
+            if (lang === 'de') return `Hier ist der Sofort-Hilfe-Assistent für das Gamingpig Portfolio. Wir überwachen alle Dienste kontinuierlich. Bei Lyrics-Problemen: Oft fehlen Datenbankeinträge für Instrumentals. Discord-Widget-Probleme liegen meist an Adblockern. Cache-Reset geht über den gelben Button.`;
+            if (lang === 'en') return `Here is your Gamingpig Portfolio troubleshooting assistant. We monitor all services 24/7. Missing lyrics are usually due to missing database records for instrumentals. Discord widget issues are often caused by adblockers. Use the yellow button to clear the cache.`;
+            if (lang === 'es') return `Asistente de ayuda: El Portfolio Gamingpig supervisa todo 24/7. Si no ves letras, es probable que no existan en la base de datos pública. Los problemas de Discord suelen ser bloqueadores de anuncios. Usa el botón amarillo para limpiar la caché.`;
+            if (lang === 'fr') return `Assistant d'aide : Le Portfolio Gamingpig surveille tout 24/7. Paroles manquantes : probablement dues à l'absence d'enregistrement dans la base de données. Widget Discord : souvent bloqué par les bloqueurs de pub. Utilisez le bouton jaune pour vider le cache.`;
+            if (lang === 'pt') return `Assistente de ajuda: O Portfólio Gamingpig monitora tudo 24/7. Letras ausentes: geralmente falta de dados públicos. Problemas no Discord: costumam ser bloqueadores de anúncios. Use o botão amarelo para limpar o cache.`;
+            if (lang === 'tr') return `Yardım asistanı: Gamingpig Portfolyosu her şeyi 7/24 izler. Şarkı sözü yoksa veritabanında kayıt yoktur. Discord widget sorunları reklam engelleyicilerden kaynaklanır. Önbelleği temizlemek için sarı butonu kullanın.`;
+            return `Help assistant ready.`;
+        }
+
+        // ========================================================= //
+        // 🎙️ ULTRA-INTELLIGENTE SPRACHAUSGABE & BRIEFINGS           //
+        // ========================================================= //
+        window._ttsUtterances = [];
+        let currentTtsSpeed = parseFloat(AppStorage.getItem('gp_tts_speed') || '1.0');
+        let currentSpeakingText = null;
+
+        function sanitizeTextForSpeech(text, lang = 'de') {
+            if (!text) return '';
+            let s = String(text);
+
+            // 1. Markdown, HTML & URLs bereinigen
+            s = s.replace(/https?:\/\/[^\s]+/gi, '');
+            s = s.replace(/`{1,3}[^`]*`{1,3}/g, '');
+            s = s.replace(/[*_#~]/g, '');
+
+            // 2. Klammern auflösen, damit Browser nicht "Klammer auf ... Klammer zu" vorliest
+            // Z.B. "(6 von 7 Diensten online)" -> ", 6 von 7 Diensten online,"
+            s = s.replace(/\(([^)]+)\)/g, ', $1,');
+
+            // 3. Emojis entfernen (verhindert robotisches Vorlesen von Bildbeschreibungen)
+            s = s.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}]/gu, '');
+
+            // 4. Einheiten, Versionen & Akronyme sprachabhängig lesbar machen
+            if (lang === 'de') {
+                s = s.replace(/(\d+)\s*ms\b/gi, '$1 Millisekunden');
+                s = s.replace(/(\d+)%/g, '$1 Prozent');
+                s = s.replace(/\bv(\d+)\.(\d+)\.(\d+)\b/gi, 'Version $1 Punkt $2');
+                s = s.replace(/\bAPI\b/g, 'A P I');
+                s = s.replace(/\bAPIs\b/g, 'A P Is');
+                s = s.replace(/\bLrcLib\b/gi, 'L R C Lib');
+                s = s.replace(/\bstats\.fm\b/gi, 'Stats F M');
+                s = s.replace(/\bPWA\b/g, 'P W A');
+                s = s.replace(/\bCDN\b/g, 'C D N');
+                s = s.replace(/\bCDNs\b/g, 'C D Ns');
+                s = s.replace(/\bPi\b/g, 'Raspberry Pi');
+            } else if (lang === 'en') {
+                s = s.replace(/(\d+)\s*ms\b/gi, '$1 milliseconds');
+                s = s.replace(/(\d+)%/g, '$1 percent');
+                s = s.replace(/\bv(\d+)\.(\d+)\.(\d+)\b/gi, 'version $1 point $2');
+                s = s.replace(/\bAPI\b/g, 'A P I');
+                s = s.replace(/\bAPIs\b/g, 'A P Is');
+                s = s.replace(/\bLrcLib\b/gi, 'L R C Lib');
+                s = s.replace(/\bstats\.fm\b/gi, 'Stats F M');
+                s = s.replace(/\bPWA\b/g, 'P W A');
+                s = s.replace(/\bCDN\b/g, 'C D N');
+                s = s.replace(/\bCDNs\b/g, 'C D Ns');
+                s = s.replace(/\bPi\b/g, 'Raspberry Pi');
+            } else {
+                s = s.replace(/(\d+)\s*ms\b/gi, '$1 ms');
+                s = s.replace(/\bAPI\b/g, 'A P I');
+                s = s.replace(/\bPi\b/g, 'Raspberry Pi');
+            }
+
+            // Mehrfache Leerzeichen und Kommas bereinigen
+            s = s.replace(/\s+,/g, ',');
+            s = s.replace(/,+/g, ',');
+            s = s.replace(/\s{2,}/g, ' ').trim();
+            return s;
+        }
+
+        function setTtsSpeed(rate) {
+            currentTtsSpeed = Number(rate) || 1.0;
+            AppStorage.setItem('gp_tts_speed', currentTtsSpeed.toString());
+            updateTtsSpeedUI();
+
+            // Falls gerade gesprochen wird: flüssig mit neuer Geschwindigkeit fortsetzen
+            if ('speechSynthesis' in window && window.speechSynthesis.speaking && currentSpeakingText) {
+                const text = currentSpeakingText;
+                const mode = activeSpeakingMode;
+                window.speechSynthesis.cancel();
+                executeSpeechQueue(text, () => {
+                    activeSpeakingMode = mode;
+                }, () => {
+                    stopSpeech();
+                });
+            }
+        }
+
+        function updateTtsSpeedUI() {
+            const ind = document.getElementById('tts-speed-indicator');
+            if (ind) ind.innerText = `${currentTtsSpeed.toFixed(1)}x`;
+
+            document.querySelectorAll('.tts-speed-pill').forEach(btn => {
+                const btnRate = parseFloat(btn.getAttribute('data-rate'));
+                if (Math.abs(btnRate - currentTtsSpeed) < 0.05) {
+                    btn.classList.add('bg-emerald-600', 'text-white');
+                    btn.classList.remove('bg-slate-800', 'text-slate-300');
+                } else {
+                    btn.classList.remove('bg-emerald-600', 'text-white');
+                    btn.classList.add('bg-slate-800', 'text-slate-300');
+                }
+            });
+        }
+
+        function toggleTtsSpeedMenu(forceState) {
+            const menu = document.getElementById('tts-speed-menu');
+            if (!menu) return;
+            if (typeof forceState === 'boolean') {
+                if (forceState) menu.classList.remove('hidden');
+                else menu.classList.add('hidden');
+            } else {
+                menu.classList.toggle('hidden');
+            }
+        }
+
+        function executeSpeechQueue(textToRead, onStartCallback, onEndCallback) {
+            if (!('speechSynthesis' in window)) {
+                showToast(t('toast_token_unsupported') || 'Sprachausgabe wird von diesem Browser nicht unterstützt.', '⚠️');
+                return;
+            }
+
+            if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+
+            const langCode = currentLang || 'de';
+            const cleanText = sanitizeTextForSpeech(textToRead, langCode);
+            currentSpeakingText = cleanText;
+
+            const u = new SpeechSynthesisUtterance(cleanText);
+            u.lang = langCode === 'en' ? 'en-US' : (langCode === 'es' ? 'es-ES' : (langCode === 'fr' ? 'fr-FR' : (langCode === 'pt' ? 'pt-BR' : (langCode === 'tr' ? 'tr-TR' : 'de-DE'))));
+            u.voice = getBestVoice(u.lang);
+            u.rate = currentTtsSpeed;
+
+            u.onstart = () => {
+                toggleTtsSpeedMenu(true);
+                if (onStartCallback) onStartCallback();
+            };
+            u.onend = () => {
+                currentSpeakingText = null;
+                if (onEndCallback) onEndCallback();
+            };
+            u.onerror = () => {
+                currentSpeakingText = null;
+                stopSpeech();
+            };
+
+            window.speechSynthesis.speak(u);
+        }
+
+        async function toggleReadAloud() {
+            if (activeSpeakingMode === 'status') {
+                stopSpeech();
+                return;
+            }
+
+            stopSpeech();
+
+            if (!lastDiagnosticResults || Object.keys(lastDiagnosticResults).length === 0) {
+                await runDiagnostics();
+            }
+
+            const textToRead = generateIntelligentBriefing(currentLang);
+
+            executeSpeechQueue(
+                textToRead,
+                () => {
+                    activeSpeakingMode = 'status';
+                    const btn = document.getElementById('tts-toggle-btn');
+                    const text = document.getElementById('tts-label');
+                    const icon = document.getElementById('tts-icon');
+                    if (btn) {
+                        btn.classList.add('bg-emerald-600', 'text-white');
+                        btn.classList.remove('text-slate-200');
+                    }
+                    if (text) text.innerText = t('tts_stop') || 'Stopp';
+                    if (icon) icon.innerText = '⏹️';
+                },
+                () => {
+                    stopSpeech();
+                }
+            );
+        }
+
+        function toggleReadAloudHelp() {
+            if (activeSpeakingMode === 'help') {
+                stopSpeech();
+                return;
+            }
+
+            stopSpeech();
+            const textToRead = generateIntelligentHelpBriefing(currentLang);
+
+            executeSpeechQueue(
+                textToRead,
+                () => {
+                    activeSpeakingMode = 'help';
+                    const btn = document.getElementById('tts-help-btn');
+                    const text = document.getElementById('tts-help-label');
+                    const icon = document.getElementById('tts-help-icon');
+                    if (btn) {
+                        btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-500');
+                        btn.classList.remove('bg-slate-800', 'text-slate-200');
+                    }
+                    if (text) text.innerText = t('tts_help_stop') || 'Stopp';
+                    if (icon) icon.innerText = '⏹️';
+                },
+                () => {
+                    stopSpeech();
+                }
+            );
+        }
+
+        // Backward compatibility
+        function toggleReadHelp() {
+            toggleReadAloudHelp();
+        }
+
+        function stopSpeech() {
+            activeSpeakingMode = null;
+            currentSpeakingText = null;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+
+            const btn1 = document.getElementById('tts-toggle-btn');
+            const text1 = document.getElementById('tts-label');
+            const icon1 = document.getElementById('tts-icon');
+            if (btn1) {
+                btn1.classList.remove('bg-emerald-600', 'text-white');
+                btn1.classList.add('text-slate-200');
+            }
+            if (text1) text1.innerText = t('tts_read') || 'Vorlesen';
+            if (icon1) icon1.innerText = '🔊';
+
+            const btn2 = document.getElementById('tts-help-btn');
+            const text2 = document.getElementById('tts-help-label');
+            const icon2 = document.getElementById('tts-help-icon');
+            if (btn2) {
+                btn2.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-500');
+                btn2.classList.add('bg-slate-800', 'text-slate-200');
+            }
+            if (text2) text2.innerText = t('tts_help_read') || 'Hilfe vorlesen';
+            if (icon2) icon2.innerText = '🔊';
+        }
+
+        // ========================================================= //
+        // Service Worker & Startup Listeners                        //
+        // ========================================================= //
+        if ('serviceWorker' in navigator) {
+            let hadController = Boolean(navigator.serviceWorker.controller);
+            let isRefreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (isRefreshing) return;
+                if (!hadController) {
+                    hadController = true;
+                    return;
+                }
+                const now = Date.now();
+                const lastReload = parseInt(AppSession.getItem('sw_last_reload') || '0', 10);
+                if (now - lastReload < 10000) {
+                    return;
+                }
+                isRefreshing = true;
+                AppSession.setItem('sw_last_reload', now.toString());
+                window.location.reload();
+            });
+
+            const registerSW = () => {
+                const swUrl = new URL('sw.js', window.location.href).href;
+                navigator.serviceWorker.register(swUrl, { updateViaCache: 'none' })
+                    .then((reg) => {
+                        if (reg) {
+                            reg.update().catch(() => {});
+                            reg.addEventListener('updatefound', () => {
+                                const newWorker = reg.installing;
+                                if (newWorker) {
+                                    newWorker.addEventListener('statechange', () => {
+                                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    })
+                    .catch(() => {});
+            };
+
+            if (document.readyState === 'complete') {
+                registerSW();
+            } else {
+                window.addEventListener('load', registerSW);
+            }
+        }
+
+        // Auto Network Status Listeners
+        window.addEventListener('online', () => {
+            sendSystemNotification(
+                t('push_online_title') || '✅ Wieder online',
+                t('push_online_body') || 'Internetverbindung wiederhergestellt. Alle Dienste synchronisieren sich wieder.'
+            );
+            runDiagnostics();
+        });
+
+        window.addEventListener('offline', () => {
+            sendSystemNotification(
+                t('push_offline_title') || '⚠️ Offline-Modus aktiv',
+                t('push_offline_body') || 'Keine Internetverbindung erkannt. Die Gamingpig PWA läuft nun im Offline-Cache.'
+            );
+            runDiagnostics();
+        });
+
+        function initStatusPage() {
+            const selectEl = document.getElementById('lang-select');
+            if (selectEl) selectEl.value = currentLang;
+            applyTranslations(currentLang);
+            updatePushUI();
+            updateTtsSpeedUI();
+            runDiagnostics();
+
+            setInterval(() => {
+                runDiagnostics();
+            }, 45000);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initStatusPage);
+        } else {
+            initStatusPage();
+        }
+
+        // Klick außerhalb schließt das Speed-Menü
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('tts-speed-menu');
+            const btn = document.getElementById('tts-speed-btn');
+            const toggleBtn = document.getElementById('tts-toggle-btn');
+            if (!menu || menu.classList.contains('hidden')) return;
+            if (!menu.contains(e.target) && !btn?.contains(e.target) && !toggleBtn?.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+    </script>
+<script src="js/community-glass.20260910.js?v=v24.222.7"></script>
+<script data-pplx-inline-edit>
+(function () {
+  if (window === window.top) return;
+
+  const allowedParentOrigins = ["https://www.perplexity.ai","https://perplexity.ai","https://testing.perplexity.ai","https://staging.perplexity.ai","https://*.preview.i.perplexity.ai","http://perplexity.localhost","http://localhost:1420","http://127.0.0.1:1420","http://localhost:3000","http://127.0.0.1:3000","http://localhost:5173","http://127.0.0.1:5173"];
+  const MAX_FONT_BYTES = 500 * 1024;
+  const MAX_TOTAL_FONT_BYTES = 2 * 1024 * 1024;
+  let scrollForwarding = false;
+  let scrollRaf = 0;
+  let trustedTopOrigin = null;
+
+  // Allow entries like "https://*.preview.i.perplexity.ai" — the wildcard
+  // matches a single DNS label (no dots), so "https://*.foo" cannot stretch
+  // across multiple labels.
+  function matchesAllowedOrigin(origin) {
+    if (!origin) return false;
+    for (const entry of allowedParentOrigins) {
+      if (!entry.includes("*")) {
+        if (entry === origin) return true;
+        continue;
+      }
+      const pattern = new RegExp(
+        "^" +
+          entry.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^.]+") +
+          "$",
+      );
+      if (pattern.test(origin)) return true;
+    }
+    return false;
+  }
+
+  // Trust decision: when the sender is same-origin-visible (event.origin is a
+  // real origin like https://www.perplexity.ai) we trust event.origin directly.
+  // When event.origin is "null" (opaque broker srcdoc), we fall back to the
+  // broker's stamped `parentOrigin` to identify the top window. The fallback
+  // is claim-only — we rely on the browser's native `targetOrigin` enforcement
+  // on the response path (see postToTrustedTop) to ensure replies can't be
+  // delivered to anyone but the actual top window of that claimed origin.
+  function getTrustedParentOrigin(event) {
+    const forwardedParentOrigin =
+      typeof event.data.parentOrigin === "string" ? event.data.parentOrigin : null;
+    const parentOrigin = event.origin === "null" ? forwardedParentOrigin : event.origin;
+    return matchesAllowedOrigin(parentOrigin) ? parentOrigin : null;
+  }
+
+  // All responses go to window.top with targetOrigin = the allowlisted origin.
+  // An attacker that iframes us inside their own null-origin broker can claim
+  // any parentOrigin they like, but the browser will drop the reply whenever
+  // the real top's origin doesn't match — so the screenshot never leaves.
+  function postToTrustedTop(message) {
+    if (!trustedTopOrigin) return;
+    try {
+      window.top.postMessage(message, trustedTopOrigin);
+    } catch (_error) {}
+  }
+
+  function inlineAll(original, clone) {
+    if (original.nodeType !== 1 || clone.nodeType !== 1) return;
+
+    try {
+      const computedStyle = getComputedStyle(original);
+      // cssText on a computed style is the serialized declaration in modern
+      // Chromium/Safari — a single read beats enumerating ~400 longhand
+      // properties. Firefox returns "" here, so we fall back on empty.
+      const serialized = computedStyle.cssText;
+      if (serialized) {
+        clone.style.cssText = serialized;
+      } else {
+        const parts = new Array(computedStyle.length);
+        for (let index = 0; index < computedStyle.length; index += 1) {
+          const property = computedStyle[index];
+          parts[index] = `${property}:${computedStyle.getPropertyValue(property)};`;
+        }
+        clone.style.cssText = parts.join("");
+      }
+    } catch (_error) {}
+
+    const originalChildren = original.children;
+    const clonedChildren = clone.children;
+    for (
+      let index = 0;
+      index < originalChildren.length && index < clonedChildren.length;
+      index += 1
+    ) {
+      inlineAll(originalChildren[index], clonedChildren[index]);
+    }
+  }
+
+  function extractFontUrl(srcValue) {
+    const matches = [
+      ...srcValue.matchAll(
+        /url\(["']?([^"')]+)["']?\)(?:\s*format\(["']?([^"')]+)["']?\))?/gi,
+      ),
+    ];
+    if (matches.length === 0) return null;
+    const woff2 = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff2"));
+    if (woff2) return woff2[1];
+    const woff = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff"));
+    if (woff) return woff[1];
+    return matches[0][1];
+  }
+
+  // Cache resolved font URL -> data URI across captures. Fonts on a page
+  // essentially never change, and a batch run emits multiple captures back to
+  // back — without this we'd refetch + re-base64 every time.
+  const fontDataUriCache = new Map();
+  const SRC_DECLARATION_RE = /src\s*:\s*[^;}]+/i;
+
+  async function fetchAsDataUri(url) {
+    if (fontDataUriCache.has(url)) return fontDataUriCache.get(url);
+    let dataUri = null;
+    try {
+      const response = await fetch(url, { mode: "cors", credentials: "omit" });
+      if (response.ok) {
+        const blob = await response.blob();
+        if (blob.size <= MAX_FONT_BYTES) {
+          dataUri = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () =>
+              resolve(typeof reader.result === "string" ? reader.result : null);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(blob);
+          });
+        }
+      }
+    } catch (_error) {
+      dataUri = null;
+    }
+    fontDataUriCache.set(url, dataUri);
+    return dataUri;
+  }
+
+  function collectFontFaceRuleTexts() {
+    const rules = [];
+    for (const sheet of document.styleSheets) {
+      let cssRules;
+      try {
+        cssRules = sheet.cssRules;
+      } catch (_error) {
+        continue;
+      }
+      if (!cssRules) continue;
+      for (const rule of cssRules) {
+        const cssText = rule.cssText || "";
+        if (cssText.startsWith("@font-face")) rules.push(cssText);
+      }
+    }
+    return rules;
+  }
+
+  async function buildInlinedFontCss() {
+    const ruleTexts = collectFontFaceRuleTexts();
+    if (ruleTexts.length === 0) return null;
+
+    const resolved = ruleTexts.map((cssText) => {
+      if (!SRC_DECLARATION_RE.test(cssText)) return null;
+      const srcMatch = cssText.match(/src\s*:\s*([^;}]+)[;}]/i);
+      if (!srcMatch) return null;
+      const url = extractFontUrl(srcMatch[1]);
+      if (!url) return null;
+      try {
+        return { cssText, url: new URL(url, document.baseURI).href };
+      } catch (_error) {
+        return null;
+      }
+    });
+
+    const dataUris = await Promise.all(
+      resolved.map((entry) => (entry ? fetchAsDataUri(entry.url) : Promise.resolve(null))),
+    );
+
+    const inlined = [];
+    let totalBytes = 0;
+    for (let index = 0; index < resolved.length; index += 1) {
+      const entry = resolved[index];
+      const dataUri = dataUris[index];
+      if (!entry || !dataUri) continue;
+      const approxBytes = dataUri.length * 0.75;
+      if (totalBytes + approxBytes > MAX_TOTAL_FONT_BYTES) break;
+      totalBytes += approxBytes;
+      inlined.push(entry.cssText.replace(SRC_DECLARATION_RE, `src: url("${dataUri}")`));
+    }
+    return inlined.length > 0 ? inlined.join("\n") : null;
+  }
+
+  function stripExternal(clone) {
+    const images = clone.querySelectorAll("img");
+    for (let index = 0; index < images.length; index += 1) {
+      const src = images[index].getAttribute("src");
+      if (src && !src.startsWith("data:")) images[index].removeAttribute("src");
+    }
+
+    const elements = clone.querySelectorAll("*");
+    for (let index = 0; index < elements.length; index += 1) {
+      const style = elements[index].style.cssText;
+      if (style && style.includes("url(")) {
+        elements[index].style.cssText = style.replace(
+          /url\(["']?(?!data:)[^)"']*["']?\)/gi,
+          "none",
+        );
+      }
+    }
+  }
+
+  function emitScroll() {
+    scrollRaf = 0;
+    if (!scrollForwarding) return;
+    postToTrustedTop({
+      type: "INLINE_EDIT_SCROLL",
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
+    });
+  }
+
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (!scrollForwarding || scrollRaf) return;
+      scrollRaf = requestAnimationFrame(emitScroll);
+    },
+    { passive: true, capture: true },
+  );
+
+  async function handleCaptureRequest(event) {
+    const requestId = event.data.requestId;
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    function postResult(dataUrl) {
+      postToTrustedTop({
+        type: "INLINE_EDIT_SCREENSHOT_RESULT",
+        requestId,
+        dataUrl,
+        scrollX,
+        scrollY,
+      });
+    }
+
+    try {
+      // Wait for any pending web fonts to resolve so both inline metrics and
+      // the @font-face inlining below see the same loaded faces.
+      if (document.fonts && document.fonts.ready) {
+        try {
+          await document.fonts.ready;
+        } catch (_error) {}
+      }
+
+      const clone = document.documentElement.cloneNode(true);
+      inlineAll(document.documentElement, clone);
+
+      const removedNodes = clone.querySelectorAll("script,link[rel=\"stylesheet\"],style");
+      for (let index = 0; index < removedNodes.length; index += 1) {
+        removedNodes[index].remove();
+      }
+
+      stripExternal(clone);
+
+      // Re-embed web fonts as data-URI @font-face rules so the SVG rasterizer
+      // can resolve them — external font URLs aren't fetched during
+      // foreignObject rendering, which would otherwise force a fallback face
+      // and change text metrics.
+      const inlinedFontCss = await buildInlinedFontCss();
+      if (inlinedFontCss) {
+        const styleEl = document.createElement("style");
+        styleEl.textContent = inlinedFontCss;
+        const head = clone.querySelector("head");
+        if (head) head.appendChild(styleEl);
+        else clone.insertBefore(styleEl, clone.firstChild);
+      }
+
+      const html = new XMLSerializer().serializeToString(clone);
+      const svg =
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
+        '<foreignObject width="100%" height="100%">' +
+        `<div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;overflow:hidden">` +
+        `<div style="position:relative;left:-${scrollX}px;top:-${scrollY}px">` +
+        html +
+        "</div></div></foreignObject></svg>";
+      const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      const image = new Image();
+      image.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(image, 0, 0);
+        postResult(canvas.toDataURL("image/png"));
+      };
+      image.onerror = function () {
+        postResult(null);
+      };
+      image.src = svgUrl;
+    } catch (_error) {
+      postResult(null);
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    if (!event.data) return;
+    // Only accept messages from the direct parent frame. Blocks sibling /
+    // unrelated-window postMessage senders that could otherwise reach us.
+    if (event.source !== window.parent) return;
+
+    const trustedParentOrigin = getTrustedParentOrigin(event);
+    if (!trustedParentOrigin) return;
+    trustedTopOrigin = trustedParentOrigin;
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_START") {
+      scrollForwarding = true;
+      emitScroll();
+      return;
+    }
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_STOP") {
+      scrollForwarding = false;
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
+      scrollRaf = 0;
+      return;
+    }
+
+    if (event.data.type !== "INLINE_EDIT_CAPTURE_REQUEST") return;
+
+    handleCaptureRequest(event);
+  });
+})();
+
+
+</script></body>
+</html>

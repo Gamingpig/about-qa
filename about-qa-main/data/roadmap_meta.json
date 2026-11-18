@@ -1,0 +1,53 @@
+{
+  "releaseVersion": "v24.221.0",
+  "items": {
+    "1": {
+      "title": "Echtzeit Kartbahn Telemetrie & Live-Tracker",
+      "desc": "Integration von echten Rundenzeiten, Renn-Statistiken, Track-Karten und Live-Ergebnissen direkt aus der Kart-Community – synchronisiert im Portfolio-Dashboard.",
+      "target": "Ziel: unbekannt",
+      "category": "Motorsport",
+      "status": "research",
+      "icon": "🏎️"
+    },
+    "2": {
+      "title": "KI-DJ & Nahtlose 3D Audio-Transitionen",
+      "desc": "Crossfader-Algorithmus mit Tonhöhen- und Beat-Angleichung zwischen Songs, animierte 3D-Kassetten und Raumklang-Visualisierung über Web Audio API.",
+      "target": "Ziel: Konzept & Prototyp",
+      "category": "Sound & Audio",
+      "status": "research",
+      "icon": "🎚️"
+    },
+    "3": {
+      "title": "Community Mini-Game (Retro Arcade)",
+      "desc": "Das erste spielbare Mini-Game ist jetzt als geheimes Easter Egg live. Wir sammeln ab sofort eure Ideen und Wünsche für neue Level, Musik und Spielmodi!",
+      "target": "Ziel: Live / Verfügbar",
+      "category": "Gaming",
+      "status": "live",
+      "icon": "🎮"
+    },
+    "4": {
+      "title": "Interaktive Widgets für Homescreen & StandBy",
+      "desc": "Now-Playing Lockscreen-Widgets, StandBy-Shortcuts und konfigurierbare Live-Activities für das Smartphone ohne Installation aus dem App Store.",
+      "target": "Ziel: Geplant",
+      "category": "Mobile PWA",
+      "status": "planned",
+      "icon": "📲"
+    },
+    "5": {
+      "title": "Überall Liquid Glass Design",
+      "desc": "Kristallklares Apple-Glas mit edler Lichtbrechung, Tiefenschärfe und dynamischen Hintergründen auf allen Unterseiten und Menüs.",
+      "target": "Ziel: Live / Verfügbar",
+      "category": "🎨 Design & UI",
+      "status": "live",
+      "icon": "✨"
+    },
+    "6": {
+      "title": "Modernes Einstellungs-Zentrum & System-Update Hub",
+      "desc": "Vollständig renoviertes Einstellungsmenü mit übersichtlicher Kategorien-Einteilung, Subpage-Drilldown, Entwickleroptionen per 7-Tap und manueller Update-Kontrolle.",
+      "target": "Ziel: Live / Verfügbar",
+      "category": "⚙️ System & Settings",
+      "status": "live",
+      "icon": "⚙️"
+    }
+  }
+}

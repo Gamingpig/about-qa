@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <script>/* Android Liquid Glass compatibility */(function(){try{var ua=navigator.userAgent||"";if(/Android/i.test(ua)){document.documentElement.classList.add("gp-android");if((navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4))document.documentElement.classList.add("gp-android-lowend");}if(/Mobile|iP(hone|od|ad)|Android.*Mobile/i.test(ua))document.documentElement.classList.add("gp-mobile");}catch(e){}})();</script>
+    <script src="./js/core/storage.e856be99df567fd2.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>🚀 Zukunfts-Roadmap & Update-Zentrale – Gamingpig</title>
+    <link rel="icon" href="icon-192.png" type="image/png">
+    <script>
+        try {
+            const savedAppLang = AppStorage.getItem('selectedLanguage');
+            if (savedAppLang) document.documentElement.setAttribute('lang', savedAppLang);
+        } catch(e) {}
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        if (window.tailwind) tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style data-gp-glass-engine="true">
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #03050c;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.22) 0px, transparent 45%),
+                radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.25) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(236, 72, 153, 0.18) 0px, transparent 55%),
+                radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .glow-card {
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glow-card:hover {
+            border-color: rgba(255, 255, 255, 0.28);
+            transform: translateY(-3px) scale-[1.008];
+            box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.95), 0 0 30px rgba(168, 85, 247, 0.2);
+        }
+
+        .hero-glow-badge {
+            background: linear-gradient(135deg, #a855f7, #3b82f6, #06b6d4);
+            box-shadow: 0 0 35px rgba(168, 85, 247, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        }
+
+        .lawine-badge {
+            background: linear-gradient(135deg, #ef4444, #f97316, #eab308);
+            box-shadow: 0 0 25px rgba(249, 115, 22, 0.4);
+        }
+    </style>
+    <script defer src="js/roadmap-protocol.0d283f073353011c.js"></script>
+    <script defer src="js/github-roadmap.6d5d949a55d29080.js"></script>
+<link rel="stylesheet" href="assets/community-glass.20260910.css?v=v24.222.7" data-gp-glass-engine="true">
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col items-center p-4 sm:p-6 md:p-8 relative selection:bg-purple-500 selection:text-white" style="padding-top: max(16px, env(safe-area-inset-top, 16px));">
+
+    <!-- Top Navigation Header -->
+    <header class="max-w-4xl w-full flex items-center justify-between py-4 mb-6 border-b border-white/10 flex-wrap gap-4 z-40 relative">
+        <a href="index.html" class="inline-flex items-center gap-2 text-xs sm:text-sm font-black uppercase tracking-wider text-slate-300 hover:text-white transition-all group bg-white/5 hover:bg-white/10 px-3.5 py-2 rounded-2xl border border-white/10 active:scale-95 shadow-lg relative z-50 cursor-pointer touch-manipulation">
+            <span class="text-base group-hover:-translate-x-1 transition-transform">←</span>
+            <span id="nav-back">Zurück zum Portfolio</span>
+        </a>
+
+        <!-- Controls: TTS with Speed Selector & Language -->
+        <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <div class="relative inline-flex items-center rounded-xl bg-slate-800 border border-slate-700 shadow-md">
+                <button id="tts-toggle-btn" onclick="toggleReadAloud()" class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 text-slate-200 hover:bg-slate-700 rounded-l-xl text-xs sm:text-sm font-bold transition-all active:scale-95">
+                    <span id="tts-icon">🔊</span>
+                    <span id="tts-label">Vorlesen</span>
+                </button>
+                <button id="tts-speed-btn" onclick="toggleTtsSpeedMenu()" class="px-2 py-1.5 sm:py-2 text-purple-400 hover:text-purple-300 hover:bg-slate-700 rounded-r-xl border-l border-slate-700 text-xs font-mono font-bold transition-colors" title="Sprachgeschwindigkeit anpassen">
+                    <span id="tts-speed-indicator">1.0x</span>
+                </button>
+
+                <div id="tts-speed-menu" class="hidden absolute top-full right-0 mt-2 z-50 p-2.5 rounded-2xl bg-slate-900/95 border border-slate-700 shadow-2xl backdrop-blur-xl min-w-[190px]">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
+                        <span id="tts-menu-tempo">Tempo</span>
+                        <button onclick="stopSpeech()" class="text-rose-400 hover:text-rose-300 transition-colors font-sans">⏹ Stopp</button>
+                    </div>
+                    <div class="grid grid-cols-5 gap-1 mt-1.5">
+                        <button onclick="setTtsSpeed(0.8)" data-rate="0.8" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">0.8x</button>
+                        <button onclick="setTtsSpeed(1.0)" data-rate="1.0" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-purple-600 text-white transition-all">1.0x</button>
+                        <button onclick="setTtsSpeed(1.2)" data-rate="1.2" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">1.2x</button>
+                        <button onclick="setTtsSpeed(1.5)" data-rate="1.5" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">1.5x</button>
+                        <button onclick="setTtsSpeed(2.0)" data-rate="2.0" class="tts-speed-pill px-1.5 py-1 rounded-lg text-center font-mono text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">2.0x</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative">
+                <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm py-1.5 px-2.5 sm:py-2 sm:px-3 rounded-xl border border-slate-700 cursor-pointer outline-none focus:ring-2 focus:ring-purple-500 transition-all shadow-md">
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="pt">🇧🇷 Português</option>
+                    <option value="tr">🇹🇷 Türkçe</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl w-full my-auto pb-28 space-y-10 sm:space-y-12">
+
+        <!-- Hero Header -->
+        <div class="text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full hero-glow-badge text-white text-[10px] sm:text-xs font-black uppercase tracking-widest mb-4">
+                <span>🔮 ZUKUNFT & COMMUNITY</span>
+                <span>•</span>
+                <span>FEATURE-ROADMAP</span>
+            </div>
+
+            <h1 id="hero-title" class="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white mb-4 uppercase font-mono">
+                Zukunfts-Roadmap <br>
+                <span class="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-300 bg-clip-text text-transparent drop-shadow">
+                    & Wunsch-Zentrale 🚀
+                </span>
+            </h1>
+
+            <p id="hero-subtitle" class="text-slate-200 text-sm sm:text-lg max-w-2xl mx-auto font-medium leading-relaxed drop-shadow">
+                Verfolge geplante Features, stimme für deine Favoriten ab, reiche eigene Vorschläge ein oder entdecke bereits erfolgreich fertiggestellte Meilensteine!
+            </p>
+        </div>
+
+        <!-- HIGHLIGHT: SYSTEM-UPDATE & LOGBUCH LINK -->
+        <div class="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-purple-900/40 via-slate-900/80 to-blue-900/40 border border-purple-500/30 backdrop-blur-xl shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="space-y-1 text-center sm:text-left">
+                <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase tracking-wider">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>System-Update Center & Logbuch</span>
+                </div>
+                <h2 class="text-base sm:text-lg font-black text-white">Suchst du die offiziellen Release Notes & Changelogs?</h2>
+                <p class="text-xs text-slate-300 max-w-xl">
+                    Alle bereits fertiggestellten Updates, technischen Details und Neuerungen findest du übersichtlich in unserem offiziellen Logbuch oder direkt im Einstellungsmenü der App.
+                </p>
+            </div>
+            <a href="release.html" class="shrink-0 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-xs uppercase tracking-wider shadow-lg active:scale-95 transition-all flex items-center gap-2">
+                <span>📖</span> <span>Release Notes öffnen</span>
+            </a>
+        </div>
+
+        <!-- SECTION: ZUKUNFTS-ROADMAP & COMMUNITY PROJEKTE -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between gap-3 flex-wrap px-1">
+                <div>
+                    <h2 id="future-title" class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+                        <span>🔮</span> <span>Community-Roadmap & Projekte</span>
+                    </h2>
+                    <p id="future-subtitle" class="text-xs text-slate-400">Stimme für deine Favoriten ab oder verfolge den aktuellen Entwicklungsstand:</p>
+                </div>
+
+                <div class="inline-flex rounded-xl bg-slate-900/90 border border-slate-800 p-1 text-xs font-bold flex-wrap gap-1" id="filter-tabs">
+                    <button onclick="filterRoadmap('all')" class="tab-btn px-3 py-1.5 rounded-lg bg-purple-600 text-white shadow" data-tab="all">Alle</button>
+                    <button onclick="filterRoadmap('in_progress')" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white" data-tab="in_progress">🔨 In Arbeit</button>
+                    <button onclick="filterRoadmap('planned')" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white" data-tab="planned">📋 Geplant</button>
+                    <button onclick="filterRoadmap('research')" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white" data-tab="research">💡 Konzept</button>
+                    <button onclick="filterRoadmap('live')" class="tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white" data-tab="live">✅ Fertig / Live</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Roadmap Grid (Loaded from roadmap_meta.json or Fallback) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="roadmap-grid">
+                <!-- Fallback Initial Template Cards (Will be fully replaced/updated by applyDynamicRoadmapMeta) -->
+                <div class="glow-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl border-l-4 border-l-amber-500 flex flex-col justify-between" data-category="in_progress" data-card-id="1">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> In Arbeit
+                            </span>
+                            <span class="text-xs font-mono text-slate-400">Ziel: v24.160</span>
+                        </div>
+                        <h3 class="text-lg font-black text-white mb-2 flex items-center gap-2">
+                            <span>🏎️</span> <span id="card-1-title">Echtzeit Kartbahn Telemetrie & Live-Tracker</span>
+                        </h3>
+                        <p id="card-1-desc" class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                            Integration von echten Rundenzeiten, Renn-Statistiken, Track-Karten und Live-Ergebnissen direkt aus der Kart-Community – synchronisiert im Portfolio-Dashboard.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-white/10">
+                        <span class="text-[10px] font-mono text-slate-400">Kategorie: Motorsport</span>
+                        <div class="flex flex-wrap items-center justify-end gap-2">
+                            <button onclick="voteFeature(1, this)" class="vote-btn px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
+                                <span>▲</span> <span class="vote-count" data-feature-id="1">–</span> Votes
+                            </button>
+                            <span id="vote-status-1" class="text-[10px] font-medium text-emerald-400" role="status" aria-live="polite" hidden></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glow-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl border-l-4 border-l-cyan-500 flex flex-col justify-between" data-category="in_progress" data-card-id="2">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span> In Arbeit
+                            </span>
+                            <span class="text-xs font-mono text-slate-400">Ziel: v24.165</span>
+                        </div>
+                        <h3 class="text-lg font-black text-white mb-2 flex items-center gap-2">
+                            <span>🎚️</span> <span id="card-2-title">KI-DJ & Nahtlose 3D Audio-Transitionen</span>
+                        </h3>
+                        <p id="card-2-desc" class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                            Crossfader-Algorithmus mit Tonhöhen- und Beat-Angleichung zwischen Songs, animierte 3D-Kassetten und Raumklang-Visualisierung über Web Audio API.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-white/10">
+                        <span class="text-[10px] font-mono text-slate-400">Kategorie: Sound & Audio</span>
+                        <div class="flex flex-wrap items-center justify-end gap-2">
+                            <button onclick="voteFeature(2, this)" class="vote-btn px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
+                                <span>▲</span> <span class="vote-count" data-feature-id="2">–</span> Votes
+                            </button>
+                            <span id="vote-status-2" class="text-[10px] font-medium text-emerald-400" role="status" aria-live="polite" hidden></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glow-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl border-l-4 border-l-emerald-500 flex flex-col justify-between" data-category="live" data-card-id="3">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                🚀 Live / Verfügbar
+                            </span>
+                            <span class="text-xs font-mono text-slate-400">Ziel: v24.222.7 (Live)</span>
+                        </div>
+                        <h3 class="text-lg font-black text-white mb-2 flex items-center gap-2">
+                            <span>🎮</span> <span id="card-3-title">Community Mini-Game (Retro Arcade)</span>
+                        </h3>
+                        <p id="card-3-desc" class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                            Das erste spielbare Mini-Game ist jetzt als geheimes Easter Egg live. Wir sammeln ab sofort eure Ideen und Wünsche für neue Level, Musik und Spielmodi!
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-white/10">
+                        <span class="text-[10px] font-mono text-slate-400">Kategorie: Gaming</span>
+                        <div class="flex flex-wrap items-center justify-end gap-2">
+                            <button onclick="voteFeature(3, this)" class="vote-btn px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
+                                <span>▲</span> <span class="vote-count" data-feature-id="3">–</span> Votes
+                            </button>
+                            <span id="vote-status-3" class="text-[10px] font-medium text-emerald-400" role="status" aria-live="polite" hidden></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glow-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl border-l-4 border-l-purple-500 flex flex-col justify-between" data-category="planned" data-card-id="4">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                📋 Geplant
+                            </span>
+                            <span class="text-xs font-mono text-slate-400">Ziel: Herbst 2026</span>
+                        </div>
+                        <h3 class="text-lg font-black text-white mb-2 flex items-center gap-2">
+                            <span>📲</span> <span id="card-4-title">Interaktive Widgets für iOS & Android Homescreen</span>
+                        </h3>
+                        <p id="card-4-desc" class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                            Now-Playing Lockscreen-Widgets, StandBy-Shortcuts und konfigurierbare Live-Activities für das Smartphone ohne Installation aus dem App Store.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-white/10">
+                        <span class="text-[10px] font-mono text-slate-400">Kategorie: Mobile PWA</span>
+                        <div class="flex flex-wrap items-center justify-end gap-2">
+                            <button onclick="voteFeature(4, this)" class="vote-btn px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
+                                <span>▲</span> <span class="vote-count" data-feature-id="4">–</span> Votes
+                            </button>
+                            <span id="vote-status-4" class="text-[10px] font-medium text-emerald-400" role="status" aria-live="polite" hidden></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glow-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl border-l-4 border-l-blue-500 flex flex-col justify-between" data-category="research" data-card-id="5">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                💡 Konzept
+                            </span>
+                            <span class="text-xs font-mono text-slate-400">Machbarkeitsphase</span>
+                        </div>
+                        <h3 class="text-lg font-black text-white mb-2 flex items-center gap-2">
+                            <span>🌐</span> <span id="card-5-title">Community Discord Synchronized Listening Room</span>
+                        </h3>
+                        <p id="card-5-desc" class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                            Gemeinsam mit Freunden auf der Website Musik hören in synchronem Takt – mit Live-Chat und gemeinsamer Song-Warteschlange für den Discord-Server.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-white/10">
+                        <span class="text-[10px] font-mono text-slate-400">Kategorie: Community</span>
+                        <div class="flex flex-wrap items-center justify-end gap-2">
+                            <button onclick="voteFeature(5, this)" class="vote-btn px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
+                                <span>▲</span> <span class="vote-count" data-feature-id="5">–</span> Votes
+                            </button>
+                            <span id="vote-status-5" class="text-[10px] font-medium text-emerald-400" role="status" aria-live="polite" hidden></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glow-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl border-l-4 border-l-blue-500 flex flex-col justify-between" data-category="research" data-card-id="6">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                💡 Konzept
+                            </span>
+                            <span class="text-xs font-mono text-slate-400">Community-Vorschlag</span>
+                        </div>
+                        <h3 class="text-lg font-black text-white mb-2 flex items-center gap-2">
+                            <span>🎙️</span> <span id="card-6-title">Eigene KI-Stimmen für Songtext-Vorlesen</span>
+                        </h3>
+                        <p id="card-6-desc" class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                            Individuell wählbare Custom Voices mit natürlichen Stimmfarben und Akzenten, die sich noch harmonischer an Rap, Pop und Rock-Lyrics anpassen.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-white/10">
+                        <span class="text-[10px] font-mono text-slate-400">Kategorie: KI & Stimme</span>
+                        <div class="flex flex-wrap items-center justify-end gap-2">
+                            <button onclick="voteFeature(6, this)" class="vote-btn px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
+                                <span>▲</span> <span class="vote-count" data-feature-id="6">–</span> Votes
+                            </button>
+                            <span id="vote-status-6" class="text-[10px] font-medium text-emerald-400" role="status" aria-live="polite" hidden></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="text-xs text-slate-400 px-2 space-y-2" aria-live="polite">
+            <p id="github-vote-hint">Direkt abstimmen, ohne Anmeldung. Gemeinsame Ergebnisse werden nach dem GitHub-Abgleich aktualisiert.</p>
+            <p id="github-sync-status">Daten werden geladen …</p>
+            <button id="roadmap-retry" type="button" hidden class="text-purple-400 underline">Erneut senden</button>
+            <div class="flex flex-wrap gap-3">
+                <button id="roadmap-copy" type="button" class="text-purple-400 underline">Gerätecode kopieren</button>
+                <button id="roadmap-paste" type="button" class="text-purple-400 underline">Gerätecode einfügen</button>
+            </div>
+            <a id="github-all-wishes" href="https://github.com/Gamingpig/About-Gamingpig/blob/main/data/roadmap.json" target="_blank" rel="noopener noreferrer" class="text-purple-400 underline">Alle gespeicherten Wünsche ansehen ↗</a>
+        </div>
+
+        <!-- SECTION 3: WUNSCH-ZENTRALE -->
+        <section id="wish-form-section" class="glow-card p-6 sm:p-8 rounded-3xl border-purple-500/40 relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-56 h-56 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-xl mb-6">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 font-black text-[10px] uppercase tracking-wider mb-2">
+                    <span>💌</span> <span id="wish-tag">DEINE IDEE ZÄHLT</span>
+                </div>
+                <h2 id="form-title" class="text-xl sm:text-2xl font-black text-white mb-2">Wunsch oder Feature-Idee einreichen</h2>
+                <p id="form-subtitle" class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    Beschreibe deine Idee und sende sie direkt hier ab.
+                </p>
+            </div>
+
+            <form id="wish-form" onsubmit="submitWish(event)" class="space-y-4">
+                <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
+                    <div class="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-300">
+                        <label class="inline-flex items-center gap-2 cursor-pointer">
+                            <input type="radio" id="wish-type-new" name="wish-type" value="new" checked class="accent-purple-500">
+                            <span>Neuer eigenständiger Wunsch</span>
+                        </label>
+                        <label class="inline-flex items-center gap-2 cursor-pointer">
+                            <input type="radio" id="wish-type-reply" name="wish-type" value="reply" class="accent-cyan-400">
+                            <span>Ergänzung / Feedback zu einem existierenden Wunsch</span>
+                        </label>
+                    </div>
+                    <div id="parent-wish-wrapper" style="display: none;">
+                        <label for="parent-wish-select" class="block text-xs font-bold text-cyan-300 mb-1">Bezug wählen (Roadmap-Karte oder bestehender Wunsch)</label>
+                        <select id="parent-wish-select" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-cyan-500/40 text-sm text-white focus:outline-none focus:border-cyan-400 transition-colors">
+                            <option value="">-- Bitte Thema wählen --</option>
+                            <optgroup label="🔮 Roadmap-Karten" id="optgroup-roadmap-cards"></optgroup>
+                            <optgroup label="💌 Community-Wünsche" id="optgroup-community-wishes"></optgroup>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label id="form-label-author" class="block text-xs font-bold text-slate-300 mb-1">Dein Name / Discord-Tag</label>
+                        <input type="text" id="wish-author" maxlength="60" placeholder="z. B. Noel#1234 oder Gast" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors">
+                    </div>
+                    <div>
+                        <label id="form-label-cat" class="block text-xs font-bold text-slate-300 mb-1">Kategorie</label>
+                        <select id="wish-category" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors">
+                            <option value="Audio & Lyrics">🎵 Audio & Lyrics</option>
+                            <option value="Motorsport & Kart">🏎️ Motorsport & Kart</option>
+                            <option value="Performance & Code">⚡ Performance & Code</option>
+                            <option value="Easter Egg">🥚 Easter Egg & Secret</option>
+                            <option value="Design & UI">🎨 Design & UI</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label id="form-label-title" class="block text-xs font-bold text-slate-300 mb-1">Titel deines Wunsches</label>
+                    <input type="text" id="wish-title" maxlength="100" placeholder="Kurz & knackig (z. B. Retro-Synth Visualizer)" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors">
+                </div>
+
+                <div>
+                    <label id="form-label-desc" class="block text-xs font-bold text-slate-300 mb-1">Erklärung & Warum das cool wäre</label>
+                    <textarea id="wish-desc" maxlength="500" rows="3" placeholder="Beschreibe kurz, wie das Feature funktionieren soll..." required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between pt-2 flex-wrap gap-3">
+                    <div class="text-[11px] text-slate-400">
+                        <span id="form-hint">Dein Wunsch wird über ntfy an das öffentliche GitHub-Repository gesendet. Bitte keine vertraulichen Daten eintragen.</span>
+                        <a id="roadmap-privacy-link" href="privacy.html" target="_blank" rel="noopener noreferrer" class="block mt-1 text-purple-400 underline">Datenschutz: Speicherung bei ntfy und GitHub ↗</a>
+                    </div>
+                    <button type="submit" id="btn-submit-wish" class="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-500 text-white font-black text-xs uppercase tracking-wider shadow-xl hover:scale-102 active:scale-95 transition-all">
+                        Wunsch einreichen
+                    </button>
+                </div>
+            </form>
+
+            <div id="community-wishes-container" class="mt-8 pt-6 border-t border-white/10 hidden">
+                <h3 id="user-wishes-title" class="text-sm font-black uppercase text-purple-400 tracking-wider mb-3">Community-Wünsche (neueste 30)</h3>
+                <div class="space-y-2.5" id="user-wishes-list"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-4xl w-full text-center py-6 pb-12 mb-16 text-xs text-slate-500 border-t border-slate-900 mt-6 px-3">
+        <div class="flex items-center justify-center gap-2 sm:gap-4 flex-wrap mb-2">
+            <a href="index.html" class="hover:text-slate-300 transition-colors">Portfolio</a>
+            <span>•</span>
+            <a id="footer-release-link" href="release.html" class="hover:text-slate-300 transition-colors">Release v24.222.7</a>
+            <span>•</span>
+            <a href="status.html" class="hover:text-slate-300 transition-colors">Live-Status</a>
+            <span>•</span>
+            <a href="privacy.html" class="hover:text-slate-300 transition-colors">Datenschutz</a>
+            <span>•</span>
+            <a href="impressum.html" class="hover:text-slate-300 transition-colors">Impressum</a>
+        </div>
+        <p id="footer-copy">© 2026 Gamingpig • Alle Rechte vorbehalten • Community Driven Development</p>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-xl bg-slate-900/95 border border-purple-500/40 text-white text-xs font-bold shadow-2xl backdrop-blur-xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
+        <span id="toast-icon">✅</span>
+        <span id="toast-msg">Meldung</span>
+    </div>
+
+    <script>
+        const I18N = {
+            de: {
+                nav_back: "Zurück zum Portfolio",
+                tts_read: "Vorlesen",
+                tts_stop: "Stopp",
+                tts_tempo: "Tempo",
+                hero_tag: "🔮 WAS WIR ALS NÄCHSTES PLANEN • UPDATE-LAWINE & ROADMAP",
+                hero_title_1: "Zukunfts-Roadmap",
+                hero_title_2: "& Wunsch-Zentrale 🚀",
+                hero_sub: "Hier erfährst du schwarz auf weiß alles über unsere gigantische Update-Lawine, warum wir diese Optimierungen gebaut haben, und du kannst für kommende Meilensteine abstimmen oder eigene Wünsche einreichen!",
+                lawine_tag: "⚡ OFFIZIELLE UPDATE-LAWINE • JETZT LIVE",
+                lawine_title: "📢 Hallo Community – Große Neuigkeiten!",
+                lawine_intro: "Jetzt, wo es in der letzten Zeit etwas ruhiger mit Updates war, haben wir ausgiebig weiter getestet und immer nur kleine Optimierungen, Integrationen von Wunsch-Features, nötige Fehlerbehebungen sowie Leistungs-Optimierungen aufgespielt. Heute wird diese Ruhe von einer riesigen Update-Lawine überrollt! Hier seht ihr einfach und verständlich erklärt, was wir gebaut haben und auch warum:",
+                l1_t: "1. Intelligentes Sichtfeld-Laden (Bis zu 50% weniger Last)",
+                l1_d: "Bisher hat dein Handy alles gleichzeitig berechnet, auch Bereiche, die du gerade gar nicht siehst. Jetzt schalten sich Elemente außerhalb des Bildschirms automatisch schlafen. Das spart spürbar Akku und macht das Scrollen butterweich.",
+                l2_t: "2. Transparente Dynamic-Island-Info",
+                l2_d: "Wir möchten niemanden verwirren oder nerven. Wer die Musik öffnet, sieht nun einen dezenten Hinweis darauf, wo sich die Dynamic Island befindet – inklusive eines praktischen 'Nicht mehr anzeigen'-Schalters.",
+                l3_t: "3. Eigene Zoom-Engine für Handys & Tablets",
+                l3_d: "Normales Browser-Zoomen zerreißt oft das Design und schneidet Menüs ab. Unsere intelligente Zoom-Engine skaliert die gesamte Benutzeroberfläche gestochen scharf und sauber proportional per Doppeltippen auf 115%.",
+                l4_t: "4. Eigenständiges Einstellungsmenü",
+                l4_d: "Viele Anpassungen wie Designs, Effekte und Performance waren früher in den Songtexten versteckt. Jetzt kommst du jederzeit von oben und unten sofort in deine Einstellungen, ohne die Musik öffnen zu müssen.",
+                l5_t: "5. Ruckelfreie Songtext-Animationsliste",
+                l5_d: "Das Durchscrollen von über 50 Animationen konnte bei 120Hz-Displays ins Stocken geraten. Durch entkoppeltes Rendering öffnen sich die Menüs jetzt absolut verzögerungsfrei.",
+                l6_t: "6. Bessere Animations-Vorschau",
+                l6_d: "Man wusste vorher nicht immer genau, wie eine Animation im Song wirkt. Die Vorschau unterscheidet nun Buchstaben- von Zeileneffekten und erklärt freundlich, wenn der Energiesparmodus aktiv ist.",
+                l7_t: "7. Komplett neues „Learning by Doing“-Tutorial",
+                l7_d: "Niemand liest gerne lange Anleitungen. Stattdessen gibt es jetzt eine interaktive Entdecker-Questleiste: Wer eine Karte öffnet, die Suche nutzt oder Einstellungen testet, schließt Missionen ab und wird gefeiert!",
+                l8_t: "8. Zurück-Button auf der Datenschutz-Seite",
+                l8_d: "Eine einheitliche, intuitive Navigation gehört zum guten Ton. Der elegante Zurück-Button bringt dich mit einem Klick genau dorthin zurück, wo du zuvor warst.",
+                future_title: "🔮 Zukünftige Community-Projekte",
+                future_sub: "Stimme für deine Favoriten ab oder verfolge den Entwicklungsstand:",
+                form_title: "Wunsch oder Feature-Idee einreichen",
+                form_sub: "Beschreibe deine Idee und sende sie direkt hier ab.",
+                form_send: "Wunsch einreichen"
+            },
+            en: {
+                nav_back: "Back to Portfolio",
+                tts_read: "Read Aloud",
+                tts_stop: "Stop",
+                tts_tempo: "Speed",
+                hero_tag: "🔮 WHAT WE'RE PLANNING NEXT • UPDATE AVALANCHE & ROADMAP",
+                hero_title_1: "Future Roadmap",
+                hero_title_2: "& Community Wish Hub 🚀",
+                hero_sub: "Discover everything about our massive update avalanche, why we built these optimizations, and vote for upcoming milestones or submit your own ideas!",
+                lawine_tag: "⚡ OFFICIAL UPDATE AVALANCHE • NOW LIVE",
+                lawine_title: "📢 Hello Community – Huge News!",
+                lawine_intro: "While updates were quieter recently, we spent the time testing extensively, deploying small tweaks, community wishes, bugfixes, and performance boosts. Today, that quiet is broken by a massive avalanche of updates! Here is a simple explanation of what was built and why:",
+                l1_t: "1. Intelligent Viewport Rendering (Up to 50% Less Load)",
+                l1_d: "Previously your phone computed everything at once, even offscreen content. Now, offscreen elements sleep automatically. This saves massive battery life and makes scrolling buttery smooth.",
+                l2_t: "2. Transparent Dynamic Island Info",
+                l2_d: "We want to keep things clear and unobtrusive. When opening music, a subtle hint indicates where the Dynamic Island lives – with a handy 'Don't show again' toggle.",
+                l3_t: "3. Custom Zoom Engine for Phones & Tablets",
+                l3_d: "Standard browser zooming breaks layouts and cuts off menus. Our smart zoom engine scales the entire UI crisp and cleanly to 115% on double-tap.",
+                l4_t: "4. Standalone Settings Menu",
+                l4_d: "Customizations like themes, effects, and performance were previously tucked inside lyrics. Now you can open settings directly from the top or bottom at any time.",
+                l5_t: "5. Stutter-Free Lyrics Animation List",
+                l5_d: "Scrolling through 50+ animations on 120Hz displays could stutter. Decoupled rendering ensures instantaneous, fluid menu opening.",
+                l6_t: "6. Enhanced Animation Preview",
+                l6_d: "It wasn't always obvious how an animation looks in a song. The preview now distinguishes character vs line effects and informs you if battery saver is active.",
+                l7_t: "7. All-New 'Learning by Doing' Tutorial",
+                l7_d: "Nobody likes reading manuals. Instead, an interactive Quest HUD tracks your actions: open a card, test search, or tweak settings to complete missions and celebrate!",
+                l8_t: "8. Back Button on Privacy Policy",
+                l8_d: "Seamless navigation matters. The sleek back button returns you right to where you were with a single tap.",
+                future_title: "🔮 Upcoming Community Projects",
+                future_sub: "Vote for your favorites or track the development progress:",
+                form_title: "Submit a Wish or Feature Idea",
+                form_sub: "Have an awesome idea for an animation, tool, or easter egg? Write it down – your proposal enters our roadmap pipeline immediately!",
+                form_send: "🚀 Submit Wish Now"
+            }
+        };
+
+        let currentLang = AppStorage.getItem('selectedLanguage') || 'de';
+        let currentTtsSpeed = parseFloat(AppStorage.getItem('gp_tts_speed') || '1.0');
+        let isSpeaking = false;
+
+        function showToast(msg, icon = '✅') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icon');
+            if (!toast) return;
+            toastMsg.innerText = msg;
+            toastIcon.innerText = icon;
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 3000);
+        }
+
+        function getBestVoice(langCode) {
+            if (!('speechSynthesis' in window)) return null;
+            const voices = window.speechSynthesis.getVoices() || [];
+            if (voices.length === 0) return null;
+            const prefix = langCode.slice(0, 2).toLowerCase();
+            const matching = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
+            return matching.find(v => v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Neural')) || matching[0] || null;
+        }
+
+        function setTtsSpeed(rate) {
+            currentTtsSpeed = Number(rate) || 1.0;
+            AppStorage.setItem('gp_tts_speed', currentTtsSpeed.toString());
+            updateTtsSpeedUI();
+            if (isSpeaking && 'speechSynthesis' in window && window.speechSynthesis.speaking) {
+                stopSpeech();
+                toggleReadAloud();
+            }
+        }
+
+        function updateTtsSpeedUI() {
+            const ind = document.getElementById('tts-speed-indicator');
+            if (ind) ind.innerText = currentTtsSpeed.toFixed(1) + 'x';
+            document.querySelectorAll('.tts-speed-pill').forEach(btn => {
+                const btnRate = parseFloat(btn.getAttribute('data-rate'));
+                if (Math.abs(btnRate - currentTtsSpeed) < 0.05) {
+                    btn.classList.add('bg-purple-600', 'text-white');
+                    btn.classList.remove('bg-slate-800', 'text-slate-300');
+                } else {
+                    btn.classList.remove('bg-purple-600', 'text-white');
+                    btn.classList.add('bg-slate-800', 'text-slate-300');
+                }
+            });
+        }
+
+        function toggleTtsSpeedMenu(forceState) {
+            const menu = document.getElementById('tts-speed-menu');
+            if (!menu) return;
+            if (typeof forceState === 'boolean') {
+                if (forceState) menu.classList.remove('hidden');
+                else menu.classList.add('hidden');
+            } else {
+                menu.classList.toggle('hidden');
+            }
+        }
+
+        function stopSpeech() {
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            isSpeaking = false;
+            const ttsLabel = document.getElementById('tts-label');
+            const ttsIcon = document.getElementById('tts-icon');
+            const t = I18N[currentLang] || I18N.de;
+            if (ttsLabel) ttsLabel.innerText = t.tts_read;
+            if (ttsIcon) ttsIcon.innerText = '🔊';
+            toggleTtsSpeedMenu(false);
+        }
+
+        function toggleReadAloud() {
+            if (!('speechSynthesis' in window)) return showToast('TTS nicht unterstützt.', '⚠️');
+            if (isSpeaking) return stopSpeech();
+
+            const dict = I18N[currentLang] || I18N.de;
+            const title = document.getElementById('hero-title').innerText.replace(/\n/g, ' ');
+            const sub = document.getElementById('hero-subtitle').innerText;
+            const intro = dict.future_sub || '';
+            const utterance = new SpeechSynthesisUtterance(title + ". " + sub + ". " + intro);
+            utterance.lang = currentLang === 'de' ? 'de-DE' : 'en-US';
+            utterance.rate = currentTtsSpeed;
+            const bestVoice = getBestVoice(utterance.lang);
+            if (bestVoice) utterance.voice = bestVoice;
+            utterance.onend = () => stopSpeech();
+            utterance.onerror = () => stopSpeech();
+            window.speechSynthesis.speak(utterance);
+            isSpeaking = true;
+            document.getElementById('tts-label').innerText = dict.tts_stop;
+            document.getElementById('tts-icon').innerText = '⏹️';
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            AppStorage.setItem('selectedLanguage', lang);
+            document.documentElement.setAttribute('lang', lang);
+            const t = I18N[lang] || I18N.de;
+            const setTxt = (id, val) => { const el = document.getElementById(id); if (el && val) el.innerText = val; };
+            setTxt('nav-back', t.nav_back);
+            setTxt('tts-label', isSpeaking ? t.tts_stop : t.tts_read);
+            setTxt('tts-menu-tempo', t.tts_tempo);
+            setTxt('section-lawine-tag', t.lawine_tag);
+            setTxt('lawine-title', t.lawine_title);
+            setTxt('lawine-intro', t.lawine_intro);
+            setTxt('future-title', t.future_title);
+            setTxt('future-subtitle', t.future_sub);
+            setTxt('form-title', t.form_title);
+            setTxt('form-subtitle', t.form_sub);
+            setTxt('btn-submit-wish', t.form_send);
+        }
+
+        function filterRoadmap(category) {
+            const cards = document.querySelectorAll('#roadmap-grid > div');
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                const match = tab.getAttribute('data-tab') === category;
+                tab.className = match ? "tab-btn px-3 py-1.5 rounded-lg bg-purple-600 text-white shadow" : "tab-btn px-3 py-1.5 rounded-lg text-slate-400 hover:text-white";
+            });
+            cards.forEach(card => {
+                card.classList.toggle('hidden', category !== 'all' && card.getAttribute('data-category') !== category);
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#tts-speed-btn') && !e.target.closest('#tts-speed-menu')) toggleTtsSpeedMenu(false);
+        });
+
+        // ========================================================= //
+        // 🔄 DYNAMIC ROADMAP INJECTOR (FROM ADMIN STUDIO)          //
+        // ========================================================= //
+        async function applyDynamicRoadmapMeta() {
+            try {
+                const res = await fetch('data/roadmap_meta.json', { cache: 'no-cache' });
+                if (!res.ok) return;
+                const meta = await res.json();
+
+                // 1. Release Badge & Footer Version aktualisieren
+                if (meta.releaseVersion) {
+                    const badge = document.getElementById('lawine-release-badge');
+                    if (badge) badge.innerText = 'Release: ' + meta.releaseVersion;
+                    const footerLink = document.getElementById('footer-release-link');
+                    if (footerLink) footerLink.innerText = 'Release ' + meta.releaseVersion;
+                }
+
+                // 2. Dynamische Karten rendern
+                if (meta.items && Object.keys(meta.items).length > 0) {
+                    const grid = document.getElementById('roadmap-grid');
+                    grid.innerHTML = '';
+
+                    const statusStyles = {
+                        in_progress: {
+                            border: 'border-l-amber-500',
+                            badge: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+                            dot: '<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>',
+                            label: 'In Arbeit'
+                        },
+                        planned: {
+                            border: 'border-l-purple-500',
+                            badge: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+                            dot: '',
+                            label: '📋 Geplant'
+                        },
+                        research: {
+                            border: 'border-l-blue-500',
+                            badge: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+                            dot: '',
+                            label: '💡 Konzept'
+                        },
+                        live: {
+                            border: 'border-l-emerald-500',
+                            badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+                            dot: '',
+                            label: '🚀 Live / Verfügbar'
+                        }
+                    };
+
+                    Object.entries(meta.items).forEach(([id, item]) => {
+                        const st = statusStyles[item.status] || statusStyles.planned;
+                        const card = document.createElement('div');
+                        card.className = `glow-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl border-l-4 ${st.border} flex flex-col justify-between`;
+                        card.setAttribute('data-category', item.status);
+                        card.setAttribute('data-card-id', id);
+
+                        card.innerHTML = `
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-3">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${st.badge} flex items-center gap-1">
+                                        ${st.dot} ${st.label}
+                                    </span>
+                                    <span class="text-xs font-mono text-slate-400">${item.target || ''}</span>
+                                </div>
+                                <h3 class="text-lg font-black text-white mb-2 flex items-center gap-2">
+                                    <span>${item.icon || '📌'}</span> <span id="card-${id}-title">${item.title}</span>
+                                </h3>
+                                <p id="card-${id}-desc" class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                                    ${item.desc}
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-white/10">
+                                <span class="text-[10px] font-mono text-slate-400">Kategorie: ${item.category || 'Feature'}</span>
+                                <div class="flex flex-wrap items-center justify-end gap-2">
+                                    <button onclick="voteFeature(${id}, this)" class="vote-btn px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
+                                        <span>▲</span> <span class="vote-count" data-feature-id="${id}">–</span> Votes
+                                    </button>
+                                    <span id="vote-status-${id}" class="text-[10px] font-medium text-emerald-400" role="status" aria-live="polite" hidden></span>
+                                </div>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    });
+
+                    populateParentWishDropdown(getRoadmapCardsList());
+                    // Vote-Counts neu abgleichen nach DOM-Generierung
+                    if (window.GitHubRoadmap?.updateCopy) {
+                        window.GitHubRoadmap.updateCopy();
+                    }
+                }
+            } catch (e) {
+                console.warn('Roadmap Meta Fallback:', e);
+            }
+        }
+
+        function setupWishThreadingUI() {
+            const newRadio = document.getElementById('wish-type-new');
+            const replyRadio = document.getElementById('wish-type-reply');
+            const wrapper = document.getElementById('parent-wish-wrapper');
+            if (newRadio && replyRadio && wrapper) {
+                const toggle = () => {
+                    wrapper.style.display = replyRadio.checked ? 'block' : 'none';
+                };
+                newRadio.addEventListener('change', toggle);
+                replyRadio.addEventListener('change', toggle);
+            }
+        }
+
+        function populateParentWishDropdown(cards, wishes) {
+            const optCards = document.getElementById('optgroup-roadmap-cards');
+            const optWishes = document.getElementById('optgroup-community-wishes');
+            if (optCards && Array.isArray(cards)) {
+                optCards.replaceChildren();
+                cards.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.textContent = c.title;
+                    opt.dataset.title = c.title;
+                    optCards.appendChild(opt);
+                });
+            }
+            if (optWishes && Array.isArray(wishes)) {
+                optWishes.replaceChildren();
+                wishes.forEach(w => {
+                    const opt = document.createElement('option');
+                    opt.value = w.id;
+                    opt.textContent = w.title;
+                    opt.dataset.title = w.title;
+                    optWishes.appendChild(opt);
+                });
+            }
+        }
+
+        function getRoadmapCardsList() {
+            const cards = [];
+            for (let i = 1; i <= 6; i++) {
+                const titleEl = document.getElementById(`card-${i}-title`);
+                let title = '';
+                if (titleEl) {
+                    const icon = titleEl.previousElementSibling?.textContent?.trim() || '';
+                    title = (icon ? icon + ' ' : '') + titleEl.textContent.trim();
+                }
+                if (!title) {
+                    const defaults = [
+                        '🏎️ Echtzeit Kartbahn Telemetrie & Live-Tracker',
+                        '🎚️ KI-DJ & Nahtlose 3D Audio-Transitionen',
+                        '🎮 Community Mini-Game (Retro Arcade)',
+                        '📲 Interaktive Widgets für iOS & Android Homescreen',
+                        '✨ Überall Liquid Glass',
+                        '🎙️ Eigene KI-Stimmen für Songtext-Vorlesen'
+                    ];
+                    title = defaults[i - 1];
+                }
+                cards.push({ id: `card-${i}`, title });
+            }
+            return cards;
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', async () => {
+            setupWishThreadingUI();
+            populateParentWishDropdown(getRoadmapCardsList(), []);
+            if (window.GitHubRoadmap?.init) window.GitHubRoadmap.init();
+            updateTtsSpeedUI();
+            const selectEl = document.getElementById('lang-select');
+            if (selectEl) selectEl.value = currentLang;
+            if (currentLang !== 'de') changeLanguage(currentLang);
+            await applyDynamicRoadmapMeta();
+            if (window.GitHubRoadmap?.updateCopy) window.GitHubRoadmap.updateCopy();
+        });
+    </script>
+<script src="js/community-glass.20260910.js?v=v24.222.7"></script>
+<script data-pplx-inline-edit>
+(function () {
+  if (window === window.top) return;
+
+  const allowedParentOrigins = ["https://www.perplexity.ai","https://perplexity.ai","https://testing.perplexity.ai","https://staging.perplexity.ai","https://*.preview.i.perplexity.ai","http://perplexity.localhost","http://localhost:1420","http://127.0.0.1:1420","http://localhost:3000","http://127.0.0.1:3000","http://localhost:5173","http://127.0.0.1:5173"];
+  const MAX_FONT_BYTES = 500 * 1024;
+  const MAX_TOTAL_FONT_BYTES = 2 * 1024 * 1024;
+  let scrollForwarding = false;
+  let scrollRaf = 0;
+  let trustedTopOrigin = null;
+
+  // Allow entries like "https://*.preview.i.perplexity.ai" — the wildcard
+  // matches a single DNS label (no dots), so "https://*.foo" cannot stretch
+  // across multiple labels.
+  function matchesAllowedOrigin(origin) {
+    if (!origin) return false;
+    for (const entry of allowedParentOrigins) {
+      if (!entry.includes("*")) {
+        if (entry === origin) return true;
+        continue;
+      }
+      const pattern = new RegExp(
+        "^" +
+          entry.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^.]+") +
+          "$",
+      );
+      if (pattern.test(origin)) return true;
+    }
+    return false;
+  }
+
+  // Trust decision: when the sender is same-origin-visible (event.origin is a
+  // real origin like https://www.perplexity.ai) we trust event.origin directly.
+  // When event.origin is "null" (opaque broker srcdoc), we fall back to the
+  // broker's stamped `parentOrigin` to identify the top window. The fallback
+  // is claim-only — we rely on the browser's native `targetOrigin` enforcement
+  // on the response path (see postToTrustedTop) to ensure replies can't be
+  // delivered to anyone but the actual top window of that claimed origin.
+  function getTrustedParentOrigin(event) {
+    const forwardedParentOrigin =
+      typeof event.data.parentOrigin === "string" ? event.data.parentOrigin : null;
+    const parentOrigin = event.origin === "null" ? forwardedParentOrigin : event.origin;
+    return matchesAllowedOrigin(parentOrigin) ? parentOrigin : null;
+  }
+
+  // All responses go to window.top with targetOrigin = the allowlisted origin.
+  // An attacker that iframes us inside their own null-origin broker can claim
+  // any parentOrigin they like, but the browser will drop the reply whenever
+  // the real top's origin doesn't match — so the screenshot never leaves.
+  function postToTrustedTop(message) {
+    if (!trustedTopOrigin) return;
+    try {
+      window.top.postMessage(message, trustedTopOrigin);
+    } catch (_error) {}
+  }
+
+  function inlineAll(original, clone) {
+    if (original.nodeType !== 1 || clone.nodeType !== 1) return;
+
+    try {
+      const computedStyle = getComputedStyle(original);
+      // cssText on a computed style is the serialized declaration in modern
+      // Chromium/Safari — a single read beats enumerating ~400 longhand
+      // properties. Firefox returns "" here, so we fall back on empty.
+      const serialized = computedStyle.cssText;
+      if (serialized) {
+        clone.style.cssText = serialized;
+      } else {
+        const parts = new Array(computedStyle.length);
+        for (let index = 0; index < computedStyle.length; index += 1) {
+          const property = computedStyle[index];
+          parts[index] = `${property}:${computedStyle.getPropertyValue(property)};`;
+        }
+        clone.style.cssText = parts.join("");
+      }
+    } catch (_error) {}
+
+    const originalChildren = original.children;
+    const clonedChildren = clone.children;
+    for (
+      let index = 0;
+      index < originalChildren.length && index < clonedChildren.length;
+      index += 1
+    ) {
+      inlineAll(originalChildren[index], clonedChildren[index]);
+    }
+  }
+
+  function extractFontUrl(srcValue) {
+    const matches = [
+      ...srcValue.matchAll(
+        /url\(["']?([^"')]+)["']?\)(?:\s*format\(["']?([^"')]+)["']?\))?/gi,
+      ),
+    ];
+    if (matches.length === 0) return null;
+    const woff2 = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff2"));
+    if (woff2) return woff2[1];
+    const woff = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff"));
+    if (woff) return woff[1];
+    return matches[0][1];
+  }
+
+  // Cache resolved font URL -> data URI across captures. Fonts on a page
+  // essentially never change, and a batch run emits multiple captures back to
+  // back — without this we'd refetch + re-base64 every time.
+  const fontDataUriCache = new Map();
+  const SRC_DECLARATION_RE = /src\s*:\s*[^;}]+/i;
+
+  async function fetchAsDataUri(url) {
+    if (fontDataUriCache.has(url)) return fontDataUriCache.get(url);
+    let dataUri = null;
+    try {
+      const response = await fetch(url, { mode: "cors", credentials: "omit" });
+      if (response.ok) {
+        const blob = await response.blob();
+        if (blob.size <= MAX_FONT_BYTES) {
+          dataUri = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () =>
+              resolve(typeof reader.result === "string" ? reader.result : null);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(blob);
+          });
+        }
+      }
+    } catch (_error) {
+      dataUri = null;
+    }
+    fontDataUriCache.set(url, dataUri);
+    return dataUri;
+  }
+
+  function collectFontFaceRuleTexts() {
+    const rules = [];
+    for (const sheet of document.styleSheets) {
+      let cssRules;
+      try {
+        cssRules = sheet.cssRules;
+      } catch (_error) {
+        continue;
+      }
+      if (!cssRules) continue;
+      for (const rule of cssRules) {
+        const cssText = rule.cssText || "";
+        if (cssText.startsWith("@font-face")) rules.push(cssText);
+      }
+    }
+    return rules;
+  }
+
+  async function buildInlinedFontCss() {
+    const ruleTexts = collectFontFaceRuleTexts();
+    if (ruleTexts.length === 0) return null;
+
+    const resolved = ruleTexts.map((cssText) => {
+      if (!SRC_DECLARATION_RE.test(cssText)) return null;
+      const srcMatch = cssText.match(/src\s*:\s*([^;}]+)[;}]/i);
+      if (!srcMatch) return null;
+      const url = extractFontUrl(srcMatch[1]);
+      if (!url) return null;
+      try {
+        return { cssText, url: new URL(url, document.baseURI).href };
+      } catch (_error) {
+        return null;
+      }
+    });
+
+    const dataUris = await Promise.all(
+      resolved.map((entry) => (entry ? fetchAsDataUri(entry.url) : Promise.resolve(null))),
+    );
+
+    const inlined = [];
+    let totalBytes = 0;
+    for (let index = 0; index < resolved.length; index += 1) {
+      const entry = resolved[index];
+      const dataUri = dataUris[index];
+      if (!entry || !dataUri) continue;
+      const approxBytes = dataUri.length * 0.75;
+      if (totalBytes + approxBytes > MAX_TOTAL_FONT_BYTES) break;
+      totalBytes += approxBytes;
+      inlined.push(entry.cssText.replace(SRC_DECLARATION_RE, `src: url("${dataUri}")`));
+    }
+    return inlined.length > 0 ? inlined.join("\n") : null;
+  }
+
+  function stripExternal(clone) {
+    const images = clone.querySelectorAll("img");
+    for (let index = 0; index < images.length; index += 1) {
+      const src = images[index].getAttribute("src");
+      if (src && !src.startsWith("data:")) images[index].removeAttribute("src");
+    }
+
+    const elements = clone.querySelectorAll("*");
+    for (let index = 0; index < elements.length; index += 1) {
+      const style = elements[index].style.cssText;
+      if (style && style.includes("url(")) {
+        elements[index].style.cssText = style.replace(
+          /url\(["']?(?!data:)[^)"']*["']?\)/gi,
+          "none",
+        );
+      }
+    }
+  }
+
+  function emitScroll() {
+    scrollRaf = 0;
+    if (!scrollForwarding) return;
+    postToTrustedTop({
+      type: "INLINE_EDIT_SCROLL",
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
+    });
+  }
+
+  window.addEventListener(
+    "scroll",
+    function () {
+      if (!scrollForwarding || scrollRaf) return;
+      scrollRaf = requestAnimationFrame(emitScroll);
+    },
+    { passive: true, capture: true },
+  );
+
+  async function handleCaptureRequest(event) {
+    const requestId = event.data.requestId;
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    function postResult(dataUrl) {
+      postToTrustedTop({
+        type: "INLINE_EDIT_SCREENSHOT_RESULT",
+        requestId,
+        dataUrl,
+        scrollX,
+        scrollY,
+      });
+    }
+
+    try {
+      // Wait for any pending web fonts to resolve so both inline metrics and
+      // the @font-face inlining below see the same loaded faces.
+      if (document.fonts && document.fonts.ready) {
+        try {
+          await document.fonts.ready;
+        } catch (_error) {}
+      }
+
+      const clone = document.documentElement.cloneNode(true);
+      inlineAll(document.documentElement, clone);
+
+      const removedNodes = clone.querySelectorAll("script,link[rel=\"stylesheet\"],style");
+      for (let index = 0; index < removedNodes.length; index += 1) {
+        removedNodes[index].remove();
+      }
+
+      stripExternal(clone);
+
+      // Re-embed web fonts as data-URI @font-face rules so the SVG rasterizer
+      // can resolve them — external font URLs aren't fetched during
+      // foreignObject rendering, which would otherwise force a fallback face
+      // and change text metrics.
+      const inlinedFontCss = await buildInlinedFontCss();
+      if (inlinedFontCss) {
+        const styleEl = document.createElement("style");
+        styleEl.textContent = inlinedFontCss;
+        const head = clone.querySelector("head");
+        if (head) head.appendChild(styleEl);
+        else clone.insertBefore(styleEl, clone.firstChild);
+      }
+
+      const html = new XMLSerializer().serializeToString(clone);
+      const svg =
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
+        '<foreignObject width="100%" height="100%">' +
+        `<div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;overflow:hidden">` +
+        `<div style="position:relative;left:-${scrollX}px;top:-${scrollY}px">` +
+        html +
+        "</div></div></foreignObject></svg>";
+      const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      const image = new Image();
+      image.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(image, 0, 0);
+        postResult(canvas.toDataURL("image/png"));
+      };
+      image.onerror = function () {
+        postResult(null);
+      };
+      image.src = svgUrl;
+    } catch (_error) {
+      postResult(null);
+    }
+  }
+
+  window.addEventListener("message", function (event) {
+    if (!event.data) return;
+    // Only accept messages from the direct parent frame. Blocks sibling /
+    // unrelated-window postMessage senders that could otherwise reach us.
+    if (event.source !== window.parent) return;
+
+    const trustedParentOrigin = getTrustedParentOrigin(event);
+    if (!trustedParentOrigin) return;
+    trustedTopOrigin = trustedParentOrigin;
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_START") {
+      scrollForwarding = true;
+      emitScroll();
+      return;
+    }
+
+    if (event.data.type === "INLINE_EDIT_SCROLL_STOP") {
+      scrollForwarding = false;
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
+      scrollRaf = 0;
+      return;
+    }
+
+    if (event.data.type !== "INLINE_EDIT_CAPTURE_REQUEST") return;
+
+    handleCaptureRequest(event);
+  });
+})();
+
+
+</script></body>
+<link rel="stylesheet" href="assets/liquid-glass-skin.0a54a0f62eb1d974.css?v=android-fix-20260914d" data-gp-glass-skin="true">
+</html>
