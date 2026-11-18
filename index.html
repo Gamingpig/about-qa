@@ -16690,7 +16690,7 @@ html.gp-android:not(.dark) #ui-controls {
                     const availW = Math.max(180, overlay.clientWidth - 40);
                     const availH = Math.max(160, (overlay.clientHeight - clockH) - 40);
                     let autoScale = Math.min(availW / (rect.width || 1), availH / (rect.height || 1));
-                    const isDesktop = document.documentElement.classList.contains("gp-desktop"); autoScale = Math.min(isDesktop ? 1.5 : 1.0, Math.max(0.4, autoScale));
+                    const isDesktop = document.documentElement.classList.contains("gp-desktop"); autoScale = Math.min(isDesktop ? 1.0 : 1.0, Math.max(0.4, autoScale));
                     if (!isFinite(autoScale) || autoScale <= 0) autoScale = 1;
                     AppStorage.setItem(cacheKey, autoScale.toString());
                     applyStandbyFitScale(card, autoScale);
