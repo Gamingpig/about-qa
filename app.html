@@ -8516,10 +8516,10 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         #standby-nowplaying.standby-idle #standby-card-blur-bg {
             display: none !important;
         }
-        /* FIX CHROME STANDBY GPU (v24.246.0): Disable backdrop-filter on Desktop to fix layer thrashing */
-        html.gp-desktop #standby-overlay {
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
+        /* Desktop Full-Width Adaptation */
+        html.gp-desktop #main-music-card {
+            max-width: none !important;
+            width: 100% !important;
         }
         
         /* Fix for Chrome Standby Card rendering issues */
