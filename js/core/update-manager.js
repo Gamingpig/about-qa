@@ -32,7 +32,7 @@ window.checkManualUpdates = async function() {
             }
 
             // 3. Force Hard Reload
-            window.location.reload(true);
+            window.location.replace(window.location.origin + window.location.pathname + '?v=' + Date.now());
         } else {
             statusDiv.innerText = "Dein System ist aktuell (v" + local.version + ")";
             statusDiv.style.color = "#10b981";
