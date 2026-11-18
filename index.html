@@ -7889,12 +7889,13 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             position: absolute; inset: -28px; z-index: 0;
             border-radius: calc(var(--standby-radius, 32px) + 24px);
             background-size: cover; background-position: center;
-            filter: none !important;
-            -webkit-filter: none !important;
-            opacity: 0.28 !important;
+            /* Restore hardware-accelerated blur */
+            filter: blur(18px) brightness(1.1) !important;
+            -webkit-filter: blur(18px) brightness(1.1) !important;
+            opacity: 0.35 !important;
             transform: scale(1.04);
             pointer-events: none;
-            will-change: auto !important;
+            will-change: transform !important;
             contain: strict !important;
         }
         #standby-eq { contain: strict; }
