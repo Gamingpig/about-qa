@@ -1685,7 +1685,7 @@
                 } catch (e) {}
             }
             showToast(t('toast_cache_cleared'), '🔄');
-            setTimeout(() => location.reload(true), 1200);
+            setTimeout(() => // location.reload(true), 1200);
         }
 
         function copyDiagnosticReport() {
@@ -2138,7 +2138,7 @@
                 }
                 isRefreshing = true;
                 AppSession.setItem('sw_last_reload', now.toString());
-                window.location.reload();
+                // window.location.reload();
             });
 
             const registerSW = () => {

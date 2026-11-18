@@ -11,7 +11,8 @@ window.checkManualUpdates = async function() {
 
     try {
         // Fetch remote version.json directly from GitHub raw
-        const res = await fetch('https://raw.githubusercontent.com/Gamingpig/about-qa/main/version.json?_t=' + Date.now());
+        // --- AUTOMATIC UPDATES DISABLED ---
+// const res = await fetch('https://raw.githubusercontent.com/Gamingpig/about-qa/main/version.json?_t=' + Date.now());
         const remote = await res.json();
         const local = await (await fetch('./version.json')).json();
 

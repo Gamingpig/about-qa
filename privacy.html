@@ -1065,7 +1065,7 @@
       if (now - lastReload < 10000) return;
       isRefreshing = true;
       AppSession.setItem('sw_last_reload', now.toString());
-      window.location.reload();
+      // window.location.reload();
     });
 
     window.addEventListener('load', () => {
