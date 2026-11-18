@@ -19058,7 +19058,7 @@ let shareCardLoading;
                 { icon: '🔥', label: 'Release Notes (Was ist neu)', keywords: 'release notes changelog update was ist neu v24 changelog', action: () => window.open('release.html', '_self') },
                 { icon: '⚖️', label: t('footer_impressum', 'Impressum / Legal Notice'), keywords: 'impressum legal notice rechtliches privacy datenschutz kontakt angaben ddg mstv', action: () => { window.location.href = 'impressum.html'; } },
                 { icon: '📋', label: t('cp_copy_link', 'Seiten-Link kopieren'), keywords: 'copy link teilen share url link kopieren', action: () => { if (typeof copyPageLink === 'function') copyPageLink(); } },
-                { icon: '🔄', label: t('cp_reload', 'Seite neu laden'), keywords: 'reload refresh neu laden aktualisieren', action: () => // window.location.reload() },
+                { icon: '🔄', label: t('cp_reload', 'Seite neu laden'), keywords: 'reload refresh neu laden aktualisieren', action: () => {} },
                 { icon: '🌐', label: t('cp_change_lang', 'Sprache ändern'), keywords: 'language sprache language change idioma langue dil', keepOpen: true, action: () => openLanguagePicker(true) }
             ];
         }
@@ -19804,7 +19804,7 @@ let shareCardLoading;
                 if (typeof showToast === 'function') {
                     showToast('✓ Tutorial auf 1 gesetzt (Abgeschlossen) – Seite lädt neu...', 2000);
                 }
-                setTimeout(() => // window.location.reload(), 350);
+                setTimeout(() => {}, 350);
             } else {
                 AppStorage.removeItem('onboarding_completed');
                 AppStorage.removeItem('tutorialCompletedV2');
@@ -20163,10 +20163,10 @@ let shareCardLoading;
                 '<h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">' + t('onboarding_exploration_done', 'Erkundung abgeschlossen') + '</h2>' +
                 '<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mb-6 leading-relaxed">' + t('onboarding_exploration_desc', 'Du hast alle Stationen des Portfolios erfolgreich kennengelernt.') + '</p>' +
                 '<div class="flex flex-col sm:flex-row items-center gap-2.5 w-full max-w-xs mx-auto">' +
-                    '<button onclick="window.setTutorialCompleted(true); AppStorage.setItem(\'onboarding_completed\', \'true\'); window.closeModal(); setTimeout(() => // window.location.reload(), 200);" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs text-center transition-all active:scale-[0.98] border border-blue-400/30">' +
+                    '<button onclick="window.setTutorialCompleted(true); AppStorage.setItem(\'onboarding_completed\', \'true\'); window.closeModal(); setTimeout(() => {}, 200);" class="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs text-center transition-all active:scale-[0.98] border border-blue-400/30">' +
                         t('onboarding_finish_reload', 'Abschließen & Neu laden ➔') +
                     '</button>' +
-                    '<button onclick="window.setTutorialCompleted(true); AppStorage.setItem(\'onboarding_completed\', \'true\'); window.closeModal(); setTimeout(() => // window.location.reload(), 200);" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs text-center transition-all active:scale-[0.98] border border-white/10">' +
+                    '<button onclick="window.setTutorialCompleted(true); AppStorage.setItem(\'onboarding_completed\', \'true\'); window.closeModal(); setTimeout(() => {}, 200);" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs text-center transition-all active:scale-[0.98] border border-white/10">' +
                         t('onboarding_maybe_later', 'Vielleicht später') +
                     '</button>' +
                 '</div>' +
@@ -35509,4 +35509,5 @@ window.setLyricsStyle = function(style) {
 </div>
 </body>
 </html>
+
 
