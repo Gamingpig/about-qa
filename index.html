@@ -18574,11 +18574,14 @@ html.gp-android:not(.dark) #ui-controls {
                     }).catch(() => {});
                 }
             }
+            /* --- AUTOMATISCHE UPDATE-PRÜFUNG DEAKTIVIERT ---
             window.addEventListener('focus', checkSWUpdates);
             document.addEventListener('visibilitychange', () => {
                 if (document.visibilityState === 'visible') checkSWUpdates();
             });
             setInterval(checkSWUpdates, 60000);
+            */
+
 
 
 
