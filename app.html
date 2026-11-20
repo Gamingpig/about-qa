@@ -4830,16 +4830,46 @@ html.gp-desktop #desktop-sidebar-col {
     flex-shrink: 0 !important;
     position: sticky !important;
     top: 5rem !important;
-    max-height: calc(100vh - 6rem) !important;
-    overflow-y: auto !important;
-    overscroll-behavior-y: contain !important;
-    scrollbar-width: thin !important;
+    max-height: calc(100vh - 6.5rem) !important;
+    overflow: visible !important;
     z-index: 20 !important;
 }
 html.gp-desktop #desktop-sidebar-col #header-section {
     margin-bottom: 0 !important;
     width: 100% !important;
+    max-height: calc(100vh - 6.5rem) !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
     padding: 1.5rem !important;
+    padding-bottom: 2rem !important;
+    box-sizing: border-box !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(56, 189, 248, 0.45) transparent !important;
+    scroll-behavior: smooth !important;
+}
+html.gp-desktop #desktop-sidebar-col #header-section::-webkit-scrollbar {
+    width: 6px !important;
+}
+html.gp-desktop #desktop-sidebar-col #header-section::-webkit-scrollbar-track {
+    background: transparent !important;
+    margin: 12px 0 !important;
+}
+html.gp-desktop #desktop-sidebar-col #header-section::-webkit-scrollbar-thumb {
+    background: rgba(56, 189, 248, 0.35) !important;
+    border-radius: 9999px !important;
+    transition: background 0.2s ease !important;
+}
+html.gp-desktop #desktop-sidebar-col #header-section::-webkit-scrollbar-thumb:hover {
+    background: rgba(56, 189, 248, 0.75) !important;
+}
+html:not(.dark).gp-desktop #desktop-sidebar-col #header-section {
+    scrollbar-color: rgba(2, 132, 199, 0.45) transparent !important;
+}
+html:not(.dark).gp-desktop #desktop-sidebar-col #header-section::-webkit-scrollbar-thumb {
+    background: rgba(2, 132, 199, 0.35) !important;
+}
+html:not(.dark).gp-desktop #desktop-sidebar-col #header-section::-webkit-scrollbar-thumb:hover {
+    background: rgba(2, 132, 199, 0.75) !important;
 }
 html.gp-desktop #desktop-sidebar-col #header-main-title {
     font-size: clamp(1.75rem, 2.2vw, 2.35rem) !important;

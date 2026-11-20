@@ -5,6 +5,8 @@
  * - B1: #ui-controls-items provides vertical and horizontal padding when open to prevent clipping of button rings
  * - B2: Buttons in #ui-controls enforce inset ring styling (--tw-ring-inset: inset) on hover and active states
  * - B3: Automatic background update checking on boot (1.5s delay) and on tab focus is active
+ * - B4: Desktop sidebar "Über Gamingpig" (#header-section) has dedicated viewport containment & scrollbar
+ * - B5: Desktop sidebar "Über Gamingpig" defines dedicated custom scrollbar styling
  */
 
 const { describe, it } = require('node:test');
@@ -36,5 +38,19 @@ describe('Control Center Button Borders & Automatic Update Verification', () => 
         assert.ok(indexHtml.includes("manualCheckForUpdates(false)"), 'Startup must call manualCheckForUpdates(false)');
         assert.ok(indexHtml.includes("window.addEventListener('focus'"), 'Focus listener for updates must exist');
         assert.ok(indexHtml.includes("document.addEventListener('visibilitychange'"), 'Visibility change listener must exist');
+    });
+
+    it('B4: Desktop sidebar "Über Gamingpig" (#header-section) has dedicated viewport containment & scrollbar', () => {
+        const desktopHeaderMatch = indexHtml.match(/html\.gp-desktop #desktop-sidebar-col #header-section\s*\{([\s\S]*?)\}/);
+        assert.ok(desktopHeaderMatch, 'CSS rule for html.gp-desktop #desktop-sidebar-col #header-section must exist');
+        const css = desktopHeaderMatch[1];
+        assert.ok(css.includes('overflow-y: auto'), 'Desktop header-section must have overflow-y: auto');
+        assert.ok(css.includes('max-height: calc(100vh - 6.5rem)'), 'Desktop header-section must constrain max-height');
+        assert.ok(css.includes('scrollbar-width: thin'), 'Desktop header-section must have scrollbar-width: thin');
+    });
+
+    it('B5: Desktop sidebar "Über Gamingpig" defines dedicated custom scrollbar styling', () => {
+        assert.ok(indexHtml.includes('html.gp-desktop #desktop-sidebar-col #header-section::-webkit-scrollbar'), 'Webkit scrollbar definition must exist for header-section');
+        assert.ok(indexHtml.includes('html.gp-desktop #desktop-sidebar-col #header-section::-webkit-scrollbar-thumb'), 'Webkit scrollbar thumb definition must exist for header-section');
     });
 });
