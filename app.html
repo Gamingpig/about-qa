@@ -5786,9 +5786,14 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             display: none !important;
             animation: none !important;
         }
-        #main-music-card:not(.playing) #ambilight-glow,
+        #main-music-card.offline #ambilight-glow,
         #main-music-card.canvas-active #ambilight-glow {
             display: none !important;
+        }
+        #main-music-card.paused #ambilight-glow {
+            opacity: 0.38 !important;
+            animation-play-state: paused !important;
+            transition: opacity 0.8s ease;
         }
         /* Mobile Liquid Glass: Statische, hardware-beschleunigte Aura ohne rechenintensive 120Hz Dauer-Blobs */
         :is(html.gp-android, html.gp-mobile) .blob-container {
@@ -6123,9 +6128,19 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             visibility: hidden !important;
         }
         body.liquid-glass-active #main-music-card:not(.canvas-active).playing #ambilight-glow {
-            opacity: 0.95 !important;
+            opacity: 0.96 !important;
             visibility: visible !important;
-            filter: blur(28px) saturate(2.4) brightness(1.25) !important;
+            filter: blur(48px) saturate(2.8) brightness(1.3) !important;
+        }
+        @media (min-width: 640px) {
+            body.liquid-glass-active #main-music-card:not(.canvas-active).playing #ambilight-glow {
+                filter: blur(75px) saturate(3.0) brightness(1.35) !important;
+            }
+        }
+        @media (min-width: 1024px) {
+            body.liquid-glass-active #main-music-card:not(.canvas-active).playing #ambilight-glow {
+                filter: blur(88px) saturate(3.2) brightness(1.38) !important;
+            }
         }
         /* Wenn Canvas aktiv ist: statischen Cover-Glow (#ambilight-glow) verbergen, damit Live-Video leuchtet */
         #main-music-card.canvas-active #ambilight-glow {
@@ -6184,32 +6199,61 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             -webkit-text-fill-color: transparent !important;
         }
         #ambilight-glow {
-            position: absolute; inset: -35px; z-index: -1; background-size: cover; background-position: center;
-            filter: blur(38px) saturate(2.8) brightness(1.3); opacity: 0; transition: opacity 0.8s ease, background-image 0.6s ease;
-            pointer-events: none; border-radius: inherit; transform: translate3d(0,0,0) scale(1.08);
-            contain: strict !important;
+            position: absolute;
+            inset: -42px;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+            filter: blur(48px) saturate(2.8) brightness(1.3);
+            opacity: 0;
+            transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), background-image 0.8s ease;
+            pointer-events: none;
+            border-radius: inherit;
+            transform: translate3d(0, 0, 0) scale(1.06);
             will-change: transform, opacity !important;
             backface-visibility: hidden !important;
         }
-        @media (min-width: 640px) { #ambilight-glow { inset: -65px; filter: blur(52px) saturate(3.0) brightness(1.35); transform: translate3d(0,0,0) scale(1.12); } }
+        @media (min-width: 640px) {
+            #ambilight-glow {
+                inset: -75px;
+                filter: blur(75px) saturate(3.0) brightness(1.35);
+                transform: translate3d(0, 0, 0) scale(1.10);
+            }
+        }
+        @media (min-width: 1024px) {
+            #ambilight-glow {
+                inset: -95px;
+                filter: blur(88px) saturate(3.2) brightness(1.38);
+                transform: translate3d(0, 0, 0) scale(1.14);
+            }
+        }
         #main-music-card.canvas-active #particles-container,
         body.low-end #particles-container {
             display: none !important;
         }
-        /* v24.8: Zurück auf "infinite" - reine scale/opacity-Animation auf einer bereits
-           statisch geblurrten Ebene ist Kompositor-seitig günstig (der Browser skaliert nur
-           die fertige Bitmap, ohne die Weichzeichnung neu zu berechnen). Der eigentliche
-           Kostentreiber war die border-radius-Animation aus v24.7 (siehe dort), nicht diese
-           Glow-Pulsation - die kann also gefahrlos ihre volle Lebendigkeit zurückbekommen. */
-        /* PERF-FIX v24.10: v24.8 hatte dies fälschlich auf "infinite" zurückgestellt, mit der
-           (unvollständigen) Annahme, scale/opacity auf einer statisch geblurrten Ebene sei
-           immer Kompositor-billig. Das stimmt nur, wenn NICHTS mit backdrop-filter darüber
-           liegt - die Haupt-Karte hat aber backdrop-filter: blur(30px) und tastet dabei live
-           ab, was im Hintergrund passiert. Jede Bewegung dieser Glow-Ebene zwingt die Karte,
-           ihre eigene Weichzeichnung neu zu berechnen. Zurück auf einmalig + forwards. */
-        .playing #ambilight-glow { animation: ambilight-pulse 6s ease-in-out 1 forwards; opacity: 1; }
-        .dark .playing #ambilight-glow { opacity: 0.85; }
-        @keyframes ambilight-pulse { 0% { transform: scale(1) translate3d(0,0,0); opacity: 0.6; } 100% { transform: scale(1.05) translate3d(0,0,0); opacity: 0.9; } }
+        /* v24.245.96: Sanft atmender Ambilight-Coverglow (reine Compositor scale/opacity 0% CPU-Last,
+           da #main-music-card keinen störenden backdrop-filter mehr trägt) */
+        .playing #ambilight-glow {
+            animation: ambilight-pulse 8s ease-in-out infinite alternate;
+            opacity: 0.96;
+        }
+        .dark .playing #ambilight-glow {
+            opacity: 0.90;
+        }
+        @keyframes ambilight-pulse {
+            0% {
+                transform: scale(1.02) translate3d(0, 0, 0);
+                opacity: 0.82;
+            }
+            50% {
+                transform: scale(1.08) translate3d(0, 0, 0);
+                opacity: 0.98;
+            }
+            100% {
+                transform: scale(1.04) translate3d(0, 0, 0);
+                opacity: 0.88;
+            }
+        }
         /* --- PARTICLES (PERMANENT DEAKTIVIERT v24.245.89) --- */
         /* Hintergrund-Partikel beim Dashboard-Glow vollständig entfernt für eine saubere, ruhige Glow-Optik und 0% GPU-Last */
         #particles-container,
@@ -9364,8 +9408,8 @@ html.glass-strat-fluid:not(.gp-android) :is(#global-settings-menu, #lyrics-setti
 }
 /* --- Mobile Thermal Relief: Reduced shader passes & particle overhead during music playback --- */
 :is(html.gp-android, html.gp-mobile, html.gp-pixel) #ambilight-glow {
-  filter: blur(20px) saturate(2.0) brightness(1.2) !important;
-  inset: -15px !important;
+  filter: blur(36px) saturate(2.4) brightness(1.25) !important;
+  inset: -32px !important;
 }
 :is(html.gp-android, html.gp-mobile, html.gp-pixel) #particles-container {
   display: none !important;
@@ -16408,6 +16452,21 @@ html.gp-android:not(.dark) #ui-controls {
                     }
                 }
                 // StandBy owns its artwork; it may show a newer track than the frozen dashboard.
+                try {
+                    const c = document.createElement('canvas');
+                    c.width = 1; c.height = 1;
+                    const cx = c.getContext('2d', { willReadFrequently: true });
+                    if (cx) {
+                        cx.drawImage(imgElement, 0, 0, 1, 1);
+                        const [r, g, b] = cx.getImageData(0, 0, 1, 1).data;
+                        if (r || g || b) {
+                            const card = document.getElementById('main-music-card');
+                            if (card) {
+                                card.style.setProperty('--track-dominant-color', `rgba(${r}, ${g}, ${b}, 0.35)`);
+                            }
+                        }
+                    }
+                } catch (e) {}
             };
             const img = new Image();
             img.crossOrigin = "anonymous";
