@@ -7,6 +7,10 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
+    [BUGFIX/UI] Release v24.245.97 · 2026-11-20: Blickdichter, kontrastreicher Hintergrund für den Lyrics Style Picker
+      - Dropdown-Liste (#lyrics-style-custom-panel) im Songtext-Einstellungsmenü mit 100% blickdichter, solider Hintergrundfarbe (#0b1120 in Dark Mode, #ffffff in Light Mode) und z-index 100 ausgestattet.
+      - Darunterliegende Elemente (Live Sync Offset, Lese-Fokus, animierter Vorschautext) scheinen nicht mehr durch die Liste durch.
+      - Eigenständige, kontrastreiche Button- und Header-Klassen (.lyrics-style-item-btn, .lyrics-style-header) für gestochen scharfe Lesbarkeit auf Desktop und Mobilgeräten.
     [FEATURE/UI] Release v24.245.90 · 2026-11-10: Pure Canvas Soft Blur & Custom Glass Lyrics Style Picker
       - Pure Canvas Cinema Modal (#canvas-cinema-glow-video): Weicher, diffuser Glow der Main Music Card übernommen (52px Blur, saturate(3.0), brightness(1.3) auf Desktop; 38px Blur, saturate(2.8), brightness(1.3) auf Mobil).
       - Reaktivierung des Custom Glass Lyrics Style Pickers (#lyrics-style-custom-btn & #lyrics-style-custom-panel) mit Kategorien-Headern und aktiver Häkchen-Anzeige (✓).
@@ -5459,6 +5463,154 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             transform: none !important;
             opacity: 0.88 !important;
         }
+
+        /* --- ROCK-SOLID OPAQUE LYRICS STYLE PICKER DROPDOWN (#lyrics-style-custom-panel) --- */
+        #lyrics-settings-menu #lyrics-style-custom-btn {
+            background-color: #1e293b !important;
+            background: #1e293b !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.16) !important;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+            transform: none !important;
+        }
+        #lyrics-settings-menu #lyrics-style-custom-btn:hover {
+            background-color: #334155 !important;
+            background: #334155 !important;
+            border-color: rgba(56, 189, 248, 0.6) !important;
+            transform: none !important;
+        }
+        html:not(.dark) #lyrics-settings-menu #lyrics-style-custom-btn {
+            background-color: #f1f5f9 !important;
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+            border: 1px solid rgba(0, 0, 0, 0.12) !important;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+        }
+        html:not(.dark) #lyrics-settings-menu #lyrics-style-custom-btn:hover {
+            background-color: #e2e8f0 !important;
+            background: #e2e8f0 !important;
+            border-color: rgba(2, 132, 199, 0.6) !important;
+        }
+
+        #lyrics-settings-menu #lyrics-style-custom-panel {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0.25rem !important;
+            background-color: #0b1120 !important;
+            background: #0b1120 !important;
+            opacity: 1 !important;
+            border: 1px solid rgba(56, 189, 248, 0.35) !important;
+            box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.98), 0 0 0 1px rgba(255, 255, 255, 0.12) !important;
+            z-index: 100 !important;
+            color: #f1f5f9 !important;
+            -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+        }
+        #lyrics-settings-menu #lyrics-style-custom-panel.hidden {
+            display: none !important;
+        }
+        html:not(.dark) #lyrics-settings-menu #lyrics-style-custom-panel {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            opacity: 1 !important;
+            border: 1px solid rgba(14, 165, 233, 0.4) !important;
+            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.08) !important;
+            color: #0f172a !important;
+        }
+
+        /* Scrollbar inside dropdown */
+        #lyrics-settings-menu #lyrics-style-custom-panel::-webkit-scrollbar {
+            width: 5px;
+        }
+        #lyrics-settings-menu #lyrics-style-custom-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #lyrics-settings-menu #lyrics-style-custom-panel::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+        }
+        #lyrics-settings-menu #lyrics-style-custom-panel::-webkit-scrollbar-thumb:hover {
+            background: rgba(56, 189, 248, 0.5);
+        }
+
+        /* Category Headers inside dropdown */
+        #lyrics-settings-menu #lyrics-style-custom-panel .lyrics-style-header {
+            background-color: #1e293b !important;
+            background: #1e293b !important;
+            color: #38bdf8 !important;
+            border-left: 3px solid #38bdf8 !important;
+            font-weight: 800 !important;
+            font-size: 9px !important;
+            letter-spacing: 0.05em !important;
+            text-transform: uppercase !important;
+            padding: 0.35rem 0.65rem !important;
+            border-radius: 0.5rem !important;
+            user-select: none !important;
+            margin-top: 0.35rem;
+        }
+        #lyrics-settings-menu #lyrics-style-custom-panel .lyrics-style-header:first-child {
+            margin-top: 0 !important;
+        }
+        html:not(.dark) #lyrics-settings-menu #lyrics-style-custom-panel .lyrics-style-header {
+            background-color: #f1f5f9 !important;
+            background: #f1f5f9 !important;
+            color: #0284c7 !important;
+            border-left: 3px solid #0284c7 !important;
+        }
+
+        /* Item Buttons inside dropdown */
+        #lyrics-settings-menu #lyrics-style-custom-panel button.lyrics-style-item-btn {
+            background-color: #162032 !important;
+            background: #162032 !important;
+            color: #cbd5e1 !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 0.75rem !important;
+            padding: 0.45rem 0.65rem !important;
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            text-align: left !important;
+            cursor: pointer !important;
+            box-shadow: none !important;
+            transform: none !important;
+            transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
+        }
+        #lyrics-settings-menu #lyrics-style-custom-panel button.lyrics-style-item-btn:hover {
+            background-color: #24344d !important;
+            background: #24344d !important;
+            color: #ffffff !important;
+            border-color: rgba(56, 189, 248, 0.45) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+        }
+        #lyrics-settings-menu #lyrics-style-custom-panel button.lyrics-style-item-btn.active {
+            background-color: rgba(6, 182, 212, 0.25) !important;
+            background: rgba(6, 182, 212, 0.25) !important;
+            color: #67e8f9 !important;
+            font-weight: 700 !important;
+            border: 1px solid rgba(34, 211, 238, 0.6) !important;
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.25) !important;
+        }
+        html:not(.dark) #lyrics-settings-menu #lyrics-style-custom-panel button.lyrics-style-item-btn {
+            background-color: #f8fafc !important;
+            background: #f8fafc !important;
+            color: #334155 !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        }
+        html:not(.dark) #lyrics-settings-menu #lyrics-style-custom-panel button.lyrics-style-item-btn:hover {
+            background-color: #e2e8f0 !important;
+            background: #e2e8f0 !important;
+            color: #0f172a !important;
+            border-color: rgba(2, 132, 199, 0.45) !important;
+        }
+        html:not(.dark) #lyrics-settings-menu #lyrics-style-custom-panel button.lyrics-style-item-btn.active {
+            background-color: #e0f2fe !important;
+            background: #e0f2fe !important;
+            color: #0369a1 !important;
+            border: 1px solid #38bdf8 !important;
+        }
         /* Dropdowns & Selects in Settings */
         :is(#global-settings-menu, #lyrics-settings-menu) select {
             -webkit-backdrop-filter: none !important;
@@ -10392,11 +10544,11 @@ html.gp-android:not(.dark) #ui-controls {
                                     <p id="label-animation-style" class="text-[8px] xxs:text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-slate-400 px-1 sticky top-0 bg-transparent py-0.5 z-10">Animation Style</p>
                                     <select id="lyrics-style-select" onchange="setLyricsStyle(this.value)" class="hidden"></select>
                                     <div class="relative w-full mb-1">
-                                        <button type="button" id="lyrics-style-custom-btn" onclick="toggleLyricsStyleCustomList(event)" class="w-full bg-slate-800/90 hover:bg-slate-800 text-white text-[11px] sm:text-xs px-3 py-2 rounded-xl border border-slate-600/80 hover:border-cyan-400/60 flex items-center justify-between gap-2 transition-all cursor-pointer shadow-inner active:scale-98">
+                                        <button type="button" id="lyrics-style-custom-btn" onclick="toggleLyricsStyleCustomList(event)" class="w-full bg-slate-800 hover:bg-slate-700 text-white text-[11px] sm:text-xs px-3 py-2 rounded-xl border border-slate-600/80 hover:border-cyan-400/60 flex items-center justify-between gap-2 transition-all cursor-pointer shadow-inner">
                                             <span id="lyrics-style-custom-current" class="truncate font-bold text-slate-100 flex items-center gap-1.5">🍏 Apple Music Pro</span>
                                             <span class="text-xs text-cyan-400 font-bold transition-transform duration-200" id="lyrics-style-custom-arrow">▾</span>
                                         </button>
-                                        <div id="lyrics-style-custom-panel" class="hidden absolute top-full left-0 right-0 mt-1 bg-slate-900/98 backdrop-blur-2xl border border-slate-700/80 rounded-2xl p-2 max-h-[260px] overflow-y-auto shadow-2xl z-30 flex flex-col gap-1 select-none" style="-webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;" onclick="event.stopPropagation()">
+                                        <div id="lyrics-style-custom-panel" class="hidden absolute top-full left-0 right-0 mt-1 bg-slate-900 border border-slate-700/80 rounded-2xl p-2 max-h-[260px] overflow-y-auto shadow-2xl z-50 flex flex-col gap-1 select-none" style="-webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; background-color: #0b1120 !important; background: #0b1120 !important; opacity: 1 !important; z-index: 100 !important;" onclick="event.stopPropagation()">
                                             <!-- Dynamisch gerendert mit Gruppen & Häkchen -->
                                         </div>
                                     </div>
@@ -15683,7 +15835,7 @@ html.gp-android:not(.dark) #ui-controls {
             panel.innerHTML = '';
             LYRICS_STYLES.forEach(group => {
                 const header = document.createElement('div');
-                header.className = 'px-2.5 py-1 text-[9px] uppercase tracking-wider font-black text-cyan-400/90 bg-slate-800/80 rounded-lg mt-1.5 first:mt-0 border-l-2 border-cyan-400 select-none';
+                header.className = 'lyrics-style-header px-2.5 py-1 text-[9px] uppercase tracking-wider font-black text-cyan-400/90 bg-slate-800 rounded-lg mt-1.5 first:mt-0 border-l-2 border-cyan-400 select-none';
                 header.textContent = group.cat;
                 panel.appendChild(header);
 
@@ -15693,10 +15845,10 @@ html.gp-android:not(.dark) #ui-controls {
                     btn.onclick = () => selectCustomLyricsStyle(id);
                     const isActive = (id === activeId);
                     if (isActive) {
-                        btn.className = 'w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm';
+                        btn.className = 'lyrics-style-item-btn active w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer bg-cyan-500/25 text-cyan-300 border border-cyan-400/50 shadow-sm';
                         btn.innerHTML = '<span class="truncate">' + label + '</span><span class="text-cyan-400 font-black text-xs shrink-0 ml-2">✓</span>';
                     } else {
-                        btn.className = 'w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all cursor-pointer text-slate-300 hover:bg-white/10 hover:text-white';
+                        btn.className = 'lyrics-style-item-btn w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all cursor-pointer text-slate-300 bg-slate-800/60 hover:bg-slate-700 hover:text-white';
                         btn.innerHTML = '<span class="truncate">' + label + '</span>';
                     }
                     panel.appendChild(btn);
@@ -28058,6 +28210,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
             } else {
                 lyricsSettingsResizeObserver?.disconnect();
                 stopLyricsStylePreviewLoop();
+                if (typeof closeLyricsStyleCustomList === 'function') closeLyricsStyleCustomList();
                 lyricsMenu.classList.remove('settings-opening', 'is-open');
                 lyricsMenu.classList.add('settings-closing');
                 const isLiquid = document.body.classList.contains('liquid-glass-active');
