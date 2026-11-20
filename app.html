@@ -3398,7 +3398,7 @@
     <link rel="preconnect" href="https://r.jina.ai" crossorigin>
     <link rel="preconnect" href="https://api.allorigins.win" crossorigin>
     <link rel="dns-prefetch" href="https://i.scdn.co">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.245.95</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.245.97</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <script src="js/core/update-manager.js"></script>
@@ -3424,7 +3424,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.245.95 · 2026-11-20';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.245.97 · 2026-11-20';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -4412,6 +4412,12 @@ body.liquid-glass-active .mesh-gradient {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
 }
+#ui-controls button:hover,
+#ui-controls button:focus-visible,
+#ui-controls button.ring-2,
+#ui-controls button[class*="ring-2"] {
+    --tw-ring-inset: inset !important;
+}
 #ui-controls-items {
     max-width: 0;
     opacity: 0;
@@ -4421,9 +4427,15 @@ body.liquid-glass-active .mesh-gradient {
     transition: max-width 0.32s cubic-bezier(0.16, 1, 0.3, 1),
                 opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
                 transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-                margin 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+                margin 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                padding 0.28s cubic-bezier(0.16, 1, 0.3, 1);
     margin-right: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 0;
+    padding-right: 0;
     will-change: max-width, opacity, transform;
+    box-sizing: border-box;
 }
 #ui-controls.is-open #ui-controls-items,
 #ui-controls.ui-controls-open #ui-controls-items {
@@ -4432,11 +4444,19 @@ body.liquid-glass-active .mesh-gradient {
     pointer-events: auto;
     transform: scale(1);
     margin-right: 6px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 @media (min-width: 640px) {
     #ui-controls.is-open #ui-controls-items,
     #ui-controls.ui-controls-open #ui-controls-items {
         margin-right: 10px;
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 6px;
+        padding-bottom: 6px;
     }
 }
 #ui-controls.is-open #ui-controls-toggle #ui-controls-toggle-icon,
@@ -4450,10 +4470,18 @@ body.tutorial-mode #ui-controls-items {
     pointer-events: auto !important;
     transform: scale(1) !important;
     margin-right: 6px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
 }
 @media (min-width: 640px) {
     body.tutorial-mode #ui-controls-items {
         margin-right: 10px !important;
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
     }
 }
 #header-section {
@@ -10010,7 +10038,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.95</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.97</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -10047,7 +10075,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.95 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.95 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.97 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.97 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -11852,7 +11880,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.245.95</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.245.97</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -12208,7 +12236,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.245.95</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.245.97</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -12219,7 +12247,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.245.95</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.245.97</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -12270,7 +12298,7 @@ html.gp-android:not(.dark) #ui-controls {
         </div>
     </div>
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.245.95</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.245.97</p>
 </div>
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
@@ -19063,13 +19091,29 @@ html.gp-android:not(.dark) #ui-controls {
                     }).catch(() => {});
                 }
             }
-            /* --- AUTOMATISCHE UPDATE-PRÜFUNG DEAKTIVIERT ---
-            window.addEventListener('focus', checkSWUpdates);
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') checkSWUpdates();
+            // AUTOMATISCHE UPDATE-PRÜFUNG:
+            // Prüft kurz nach dem Laden und bei Tab-Fokus im Hintergrund auf neue Releases.
+            setTimeout(() => {
+                if (typeof manualCheckForUpdates === 'function') {
+                    manualCheckForUpdates(false);
+                }
+            }, 1500);
+
+            window.addEventListener('focus', () => {
+                if (!document.hidden && typeof manualCheckForUpdates === 'function') {
+                    manualCheckForUpdates(false);
+                }
             });
-            setInterval(checkSWUpdates, 60000);
-            */
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible' && typeof manualCheckForUpdates === 'function') {
+                    manualCheckForUpdates(false);
+                }
+            });
+            setInterval(() => {
+                if (!document.hidden && typeof manualCheckForUpdates === 'function') {
+                    manualCheckForUpdates(false);
+                }
+            }, 180000);
 
 
 
@@ -21097,6 +21141,18 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+        { version: "v24.245.97", date: "20. November 2026", type: "bugfix", items: {
+                de: [
+                    "🎛️ Kontrollzentrum: Volle Umrandung & Farbakzente aller Buttons ohne Kanten-Clipping",
+                    "🎨 Blickdichter, solider Hintergrund für den Lyrics Style Picker (#lyrics-style-custom-panel)",
+                    "🔄 Verlässliche automatische Update-Erkennung & Versionsprüfung direkt beim App-Start"
+                ],
+                en: [
+                    "🎛️ Control center: Full border rings & colored accents without edge clipping on hover or activation",
+                    "🎨 High-contrast opaque background for custom lyrics style dropdown picker",
+                    "🔄 Reliable automatic update checking directly on startup and tab focus"
+                ]
+        }},
         { version: "v24.245.95", date: "20. November 2026", type: "feature", items: {
                 de: [
                     "🖥️ Dynamisches Desktop & TV Widescreen-Layout: Volle Ausnutzung des gesamten Bildschirms in 2 harmonischen Dashboard-Spalten",
@@ -27945,8 +28001,9 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
             if (typeof haptic === 'function') haptic(20);
         };
         window.simulateMockUpdate = function() {
+            const mockVersion = '24.248.0';
             const mockUpdate = {
-                version: '24.222.7',
+                version: mockVersion,
                 shortNotes: [
                     'Simuliertes Entwickler-Update für Stabilitäts- und UI-Tests',
                     'Authentischer System-Update-Ablauf verifiziert'
@@ -27956,11 +28013,14 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
             if (typeof updateSettingsSystemUpdateUI === 'function') {
                 updateSettingsSystemUpdateUI(mockUpdate);
             }
+            if (typeof showUpdatePrompt === 'function') {
+                showUpdatePrompt('Version v' + mockVersion + ' verfügbar!', mockVersion, mockUpdate.shortNotes);
+            }
             const tileBadge = document.getElementById('tile-update-badge');
             if (tileBadge) tileBadge.classList.remove('hidden');
             if (typeof setSettingsUpdateBadge === 'function') setSettingsUpdateBadge(true);
             if (typeof showToast === 'function') {
-                showToast('Mock-Update v24.222.7 simuliert! Siehe "System & Updates".', 'success');
+                showToast('Mock-Update v' + mockVersion + ' simuliert! Siehe "System & Updates".', 'success');
             }
             if (typeof haptic === 'function') haptic(30);
         };
