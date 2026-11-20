@@ -1,11 +1,11 @@
 {
-  "version": "24.245.97",
-  "buildTime": "2026-11-20T16:14:25.270Z",
+  "version": "24.245.98",
+  "buildTime": "2026-11-20T21:41:16.798Z",
   "shortNotes": [
+    "Desktop-Layout: Eigene dedizierte Scrollbar für 'Über Gamingpig' mit Cyan-Akzent & Viewport-Containment",
     "Kontrollzentrum: Keine abgeschnittenen Umrandungen mehr bei Hover und aktiven Buttons",
     "Blickdichtes, kontrastreiches Lyrics-Style Einstellungsmenü (#0b1120 / #ffffff)",
-    "Automatische Update-Prüfung beim Start & Tab-Fokus verlässlich reaktiviert",
-    "Desktop & TV Widescreen 2-Spalten-Layout mit optimiertem Sidebar-Scroll & nativer Proportionierung",
-    "StandBy-Modus & Ambient Blur Optimierungen für Chrome auf Widescreen-Monitoren"
+    "Automatische Update-Prüfung beim Start & Tab-Fokus zuverlässig aktiv",
+    "Harmonisierte Glass-Tokens und optimiertes 2-Spalten Desktop-Layout"
   ]
 }
