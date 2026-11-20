@@ -7890,10 +7890,13 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         }
 #standby-bg {
             position: absolute; inset: -30px; background-size: cover; background-position: center;
-            filter: blur(32px) brightness(0.65) !important;
-            -webkit-filter: blur(32px) brightness(0.65) !important;
-            transform: scale(1.12); opacity: 0.35 !important;
-            transition: opacity 0.5s ease; will-change: auto !important; contain: layout style !important;
+            filter: blur(var(--standby-bg-blur, 32px)) brightness(var(--standby-bg-brightness, 0.65)) !important;
+            -webkit-filter: blur(var(--standby-bg-blur, 32px)) brightness(var(--standby-bg-brightness, 0.65)) !important;
+            transform: scale(1.12);
+            opacity: var(--standby-bg-opacity, 0.35) !important;
+            transition: opacity 0.5s ease;
+            will-change: transform !important;
+            contain: layout style !important;
         }
         #standby-overlay.standby-deep-dim #standby-bg {
             filter: none !important; -webkit-filter: none !important; opacity: 0.20 !important;
@@ -8035,9 +8038,9 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
             position: absolute; inset: -24px; z-index: 0;
             border-radius: calc(var(--standby-radius, 32px) + 20px);
             background-size: cover; background-position: center;
-            filter: blur(22px) brightness(1.08) !important;
-            -webkit-filter: blur(22px) brightness(1.08) !important;
-            opacity: 0.35 !important;
+            filter: blur(var(--standby-card-blur, 22px)) brightness(1.08) !important;
+            -webkit-filter: blur(var(--standby-card-blur, 22px)) brightness(1.08) !important;
+            opacity: var(--standby-card-blur-opacity, 0.35) !important;
             transform: scale(1.04);
             pointer-events: none;
             will-change: transform !important;
@@ -9464,12 +9467,9 @@ html.gp-android-lowend .mesh-gradient { display: none !important; }
   content-visibility: visible !important;
 }
 /* --- 12. Standby-mode safety (v24.245.89 - Universal Desktop & Mobile Zero-GPU) --- */
-body.standby-mode :is(#standby-bg, #standby-overlay, #standby-nowplaying, #standby-card-blur-bg),
-#standby-card-blur-bg {
+body.standby-mode :is(#standby-overlay, #standby-nowplaying) {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
-  filter: none !important;
-  -webkit-filter: none !important;
 }
 /* --- 13. Tailwind backdrop-blur-* disabled on Android & mobile (replaced by shell blur) --- */
 :is(html.gp-android, html.gp-mobile) .backdrop-blur,
@@ -11800,6 +11800,9 @@ html.gp-android:not(.dark) #ui-controls {
                         <option value="cassette" id="opt-standby-design-cassette">📼 Retro-Kassette</option>
                         <option value="oled" id="opt-standby-design-oled">🖤 True OLED (Pitch Black)</option>
                         <option value="aurora" id="opt-standby-design-aurora">🌌 Nordlicht Aurora</option>
+                        <option value="ambient-orb" id="opt-standby-design-ambient-orb">🔮 Sphärischer Ambient-Orb</option>
+                        <option value="hologram" id="opt-standby-design-hologram">🛸 Hologramm Sci-Fi</option>
+                        <option value="studio" id="opt-standby-design-studio">🎛️ Studio Pro Audio</option>
                     </select>
                 </div>
                 <!-- Schärfe & Skalierung -->
@@ -16796,14 +16799,18 @@ html.gp-android:not(.dark) #ui-controls {
             { id: 'cover-focus', label: '🖼️ Album Art Hero' },
             { id: 'cassette', label: '📼 Retro-Kassette' },
             { id: 'oled', label: '🖤 True OLED (Pitch Black)' },
-            { id: 'aurora', label: '🌌 Nordlicht Aurora' }
+            { id: 'aurora', label: '🌌 Nordlicht Aurora' },
+            { id: 'ambient-orb', label: '🔮 Sphärischer Ambient-Orb' },
+            { id: 'hologram', label: '🛸 Hologramm Sci-Fi' },
+            { id: 'studio', label: '🎛️ Studio Pro Audio' }
         ];
+        window.STANDBY_DESIGNS = STANDBY_DESIGNS;
         function populateStandbyDesignDropdown() {
             const select = document.getElementById('standby-design-select');
             if (!select) return;
             const currentVal = typeof standbyDesign !== 'undefined' ? standbyDesign : 'classic';
             select.innerHTML = STANDBY_DESIGNS.map(d =>
-                `<option value="${d.id}" ${d.id === currentVal ? 'selected' : ''}>${d.label}</option>`
+                `<option value="${d.id}" id="opt-standby-design-${d.id}" ${d.id === currentVal ? 'selected' : ''}>${d.label}</option>`
             ).join('');
         }
         function applyStandbyDesign(design) {
@@ -19447,12 +19454,42 @@ let shareCardLoading;
         // im StandBy-/Lockscreen-Modus. Höherer Regler-Wert = WENIGER Blur = das Cover wird
         // klarer/schärfer sichtbar (0% = wie bisher stark verwischt, 100% = komplett scharf).
         window.updateStandbyOpacity = function(value) {
-            const pct = parseInt(value, 10);
+            const pct = Math.min(100, Math.max(0, parseInt(value, 10) || 0));
             const blurPx = Math.round(36 * (1 - pct / 100));
+            const bgOpacity = (0.35 + (pct / 100) * 0.25).toFixed(2);
+            const cardBlurPx = Math.round(22 * (1 - pct / 100 * 0.5));
+            const cardBlurOpacity = (0.35 + (pct / 100) * 0.15).toFixed(2);
+            const brightness = (0.65 + (pct / 100) * 0.20).toFixed(2);
+
             document.documentElement.style.setProperty('--standby-bg-blur', blurPx + 'px');
+            document.documentElement.style.setProperty('--standby-bg-opacity', bgOpacity);
+            document.documentElement.style.setProperty('--standby-card-blur', cardBlurPx + 'px');
+            document.documentElement.style.setProperty('--standby-card-blur-opacity', cardBlurOpacity);
+            document.documentElement.style.setProperty('--standby-bg-brightness', brightness);
+
             const label = document.getElementById('standby-opacity-value');
             if (label) label.textContent = pct + '%';
             AppStorage.setItem('standbyOpacity', pct);
+        };
+        window.syncStandbySettingsUI = function() {
+            const saved = AppStorage.getItem('standbyOpacity');
+            const pct = saved !== null ? parseInt(saved, 10) : 0;
+            const slider = document.getElementById('standby-opacity-slider');
+            if (slider) slider.value = pct;
+            const label = document.getElementById('standby-opacity-value');
+            if (label) label.textContent = pct + '%';
+
+            const select = document.getElementById('standby-design-select');
+            if (select && typeof standbyDesign !== 'undefined') select.value = standbyDesign;
+
+            if (typeof syncStandbyScaleSliderUI === 'function') syncStandbyScaleSliderUI();
+            if (typeof applyStandbyGlowState === 'function') applyStandbyGlowState();
+            if (typeof applyStandbyCustomization === 'function') applyStandbyCustomization();
+
+            const btnWake = document.getElementById('btn-toggle-wakelock');
+            if (btnWake && typeof standbyWakeLockEnabled !== 'undefined') {
+                btnWake.textContent = (typeof t === 'function' ? t('settings_wakelock') : 'Bildschirm an (StandBy)') + ': ' + (standbyWakeLockEnabled ? (typeof t === 'function' ? t('on_label') : 'AN') : (typeof t === 'function' ? t('off_label') : 'AUS'));
+            }
         };
         (function initStandbyOpacity() {
             const saved = AppStorage.getItem('standbyOpacity');
@@ -19961,7 +19998,13 @@ let shareCardLoading;
             const shownArtist = idle ? t('standby_idle_subtitle') : artist;
             if (titleEl && titleEl.textContent !== shownTitle) titleEl.textContent = shownTitle;
             if (artistEl && artistEl.textContent !== shownArtist) artistEl.textContent = shownArtist;
-            if (standByActive && (textChanged || isNewTrack)) { setupStandbyMarquee(); fitStandbyToScreen(true); }
+            if (standByActive && (textChanged || isNewTrack)) {
+                setupStandbyMarquee();
+                fitStandbyToScreen(true);
+                if (isNewTrack && !fromStandby && typeof triggerSongChangeVisualTransition === 'function') {
+                    triggerSongChangeVisualTransition();
+                }
+            }
             if (!standByActive) return;
             const clearArt = () => {
                 const ctx = canvas?.getContext('2d');
@@ -27515,6 +27558,9 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
             if (headerMain) headerMain.classList.add('hidden');
             if (headerSub) headerSub.classList.remove('hidden');
             if (titleSub) titleSub.textContent = titles[catId] || 'Kategorie';
+            if (catId === 'cat-standby' && typeof window.syncStandbySettingsUI === 'function') {
+                window.syncStandbySettingsUI();
+            }
             const globalMenu = document.getElementById('global-settings-menu');
             if (globalMenu) globalMenu.scrollTop = 0;
             if (typeof haptic === 'function') haptic(10);
@@ -32247,6 +32293,9 @@ window.setLyricsStyle = function(style) {
                 previousTrackTitle = currentTrackTitle;
                 previousRawArtist = currentRawArtist;
                 previousSpotifyTrackId = currentSpotifyTrackId;
+                if (typeof triggerSongChangeVisualTransition === 'function') {
+                    triggerSongChangeVisualTransition();
+                }
             }
             const newTrackId = trackTitle + "-" + cleanArtist;
             currentTrackId = newTrackId;
