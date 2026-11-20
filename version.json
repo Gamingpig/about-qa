@@ -1,10 +1,10 @@
 {
   "version": "24.245.95",
-  "buildTime": "2026-11-10T15:45:00.000Z",
+  "buildTime": "2026-11-20T11:30:00.000Z",
   "shortNotes": [
-    "Soften Blur der Main Music Card für Pure Canvas (Cinema Modal) übernommen (52px Desktop / 38px Mobil)",
-    "Reaktivierung des Custom Glass Lyrics Style Pickers mit Kategorien-Headern und aktiver Häkchen-Anzeige",
-    "Bestehendes lyrics-style-select Element als Kompatibilitätsanker im DOM erhalten",
-    "Strikte 0% zusätzliche GPU-/CPU-Last durch reine Compositor-Layer-Attribute (contain: strict; will-change: transform)"
+    "Desktop & TV Widescreen 2-Spalten-Layout mit optimiertem Sidebar-Scroll & nativer Proportionierung",
+    "PWA Update-System: Zuverlässiger Reload beim Aktualisieren und präziser Versionsabgleich",
+    "StandBy-Modus & Ambient Blur Optimierungen für Chrome auf Widescreen-Monitoren",
+    "Unterbrechungsfreier Songwechsel mit sanftem Track-Crossfade"
   ]
 }
