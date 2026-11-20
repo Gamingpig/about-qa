@@ -4738,14 +4738,13 @@ html.gp-desktop #desktop-grid-wrapper {
     display: flex !important;
     flex-direction: row !important;
     align-items: flex-start !important;
-    gap: 2.25rem !important;
+    gap: 2.5rem !important;
     width: 100% !important;
     box-sizing: border-box !important;
 }
 html.gp-desktop #desktop-sidebar-col {
     display: flex !important;
     flex-direction: column !important;
-    gap: 1.25rem !important;
     width: 440px !important;
     min-width: 380px !important;
     max-width: 460px !important;
@@ -4753,25 +4752,7 @@ html.gp-desktop #desktop-sidebar-col {
     position: sticky !important;
     top: 5rem !important;
     max-height: calc(100vh - 6rem) !important;
-    overflow-y: auto !important;
-    overscroll-behavior-y: auto !important;
-    scrollbar-width: thin !important;
-    scrollbar-color: rgba(148, 163, 184, 0.3) transparent !important;
     z-index: 20 !important;
-    padding-right: 4px !important;
-}
-html.gp-desktop #desktop-sidebar-col::-webkit-scrollbar {
-    width: 5px;
-}
-html.gp-desktop #desktop-sidebar-col::-webkit-scrollbar-track {
-    background: transparent;
-}
-html.gp-desktop #desktop-sidebar-col::-webkit-scrollbar-thumb {
-    background: rgba(148, 163, 184, 0.25);
-    border-radius: 9999px;
-}
-html.gp-desktop #desktop-sidebar-col::-webkit-scrollbar-thumb:hover {
-    background: rgba(148, 163, 184, 0.45);
 }
 html.gp-desktop #desktop-sidebar-col #header-section {
     margin-bottom: 0 !important;
@@ -4787,26 +4768,10 @@ html.gp-desktop #desktop-sidebar-col #header-intro-p2 {
     font-size: 0.9375rem !important;
     line-height: 1.55 !important;
 }
-html.gp-desktop #desktop-sidebar-col #music-section {
-    margin-bottom: 0 !important;
-    width: 100% !important;
-}
-html.gp-desktop #desktop-sidebar-col #music-section #music-section-title {
-    font-size: 1.25rem !important;
-    margin-bottom: 0.25rem !important;
-    padding-bottom: 0.25rem !important;
-}
-html.gp-desktop #desktop-sidebar-col #music-section #music-sync-note {
-    margin-bottom: 0.5rem !important;
-}
-html.gp-desktop #desktop-sidebar-col #mini-player-toggle {
-    margin-bottom: 0.75rem !important;
-    max-width: 100% !important;
-}
 html.gp-desktop #desktop-content-col {
     display: flex !important;
     flex-direction: column !important;
-    gap: 2rem !important;
+    gap: 2.25rem !important;
     flex: 1 !important;
     min-width: 0 !important;
     box-sizing: border-box !important;
@@ -4814,14 +4779,30 @@ html.gp-desktop #desktop-content-col {
 html.gp-desktop #desktop-content-col > * {
     margin-bottom: 0 !important;
 }
-html.gp-desktop #cards-section #cards-grid,
-html.gp-desktop #cards-grid {
+html.gp-desktop #desktop-content-col #music-section {
+    width: 100% !important;
+    margin-bottom: 0 !important;
+}
+html.gp-desktop #desktop-content-col #music-section #music-section-title {
+    font-size: 1.5rem !important;
+    margin-bottom: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+}
+html.gp-desktop #desktop-content-col #music-section #music-sync-note {
+    margin-bottom: 0.75rem !important;
+}
+html.gp-desktop #desktop-content-col #mini-player-toggle {
+    margin-bottom: 1rem !important;
+    max-width: 100% !important;
+}
+html.gp-desktop #desktop-content-col #cards-section #cards-grid,
+html.gp-desktop #desktop-content-col #cards-grid {
     display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
     gap: 1.25rem !important;
 }
 html.gp-desktop #main-music-card {
-    max-width: 100% !important;
+    max-width: 680px !important;
     width: 100% !important;
     margin: 0 auto !important;
 }
@@ -10147,6 +10128,69 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
         </header>
         <!-- ZIELGRUPPEN AUDIENCE HUB -->
+
+        <!-- NEW: KART DASHBOARD - vorbereitet für die zukünftige Live-Anbindung an den
+             eigenen Raspberry-Pi-API-Server. Bis dahin zeigt es einen klaren "in Arbeit"-
+             Zustand statt Platzhalter-/Fantasiewerte vorzugaukeln. -->
+        <!-- v24.19: Auf Wunsch für die normale Version ausgeblendet (nur display:none, kein
+             Code entfernt) - kann jederzeit durch Entfernen von style="display:none;
+             wieder aktiviert werden, sobald die Raspberry-Pi-Anbindung steht. -->
+        <section id="kart-section" style="display:none;" class="mb-12 xxs:mb-16 xs:mb-20 sm:mb-24 reveal relative rounded-3xl">
+            <h2 id="kart-section-title" class="text-lg xxs:text-xl xs:text-2xl sm:text-3xl font-bold mb-1.5 xxs:mb-2 text-red-600 dark:text-red-500 border-b-2 sm:border-b-4 border-red-600 dark:border-red-500 pb-1.5 xxs:pb-2 sm:pb-3 inline-block break-words">
+                Kart-Dashboard
+            </h2>
+            <p id="kart-section-note" class="text-[8px] xxs:text-[10px] xs:text-xs text-slate-600 dark:text-slate-400 mb-4 xxs:mb-6 sm:mb-10">Live-Daten kommen bald direkt von meinem eigenen Raspberry-Pi-API-Server.</p>
+            <!-- NEW: Mini-Toggle-Leiste, klappt den Inhalt darunter auf/zu (gleiches Prinzip
+                 wie beim Musik-Dashboard) -->
+            <div id="kart-mini-toggle" onclick="toggleKartDashboard()" role="button" tabindex="0" class="glass-card w-full max-w-[500px] mx-auto p-2 xxs:p-3 sm:p-4 rounded-[1.2rem] xxs:rounded-2xl sm:rounded-[2rem] flex items-center justify-between cursor-pointer group mb-3 xxs:mb-4 sm:mb-6 relative z-20 hover:scale-[1.01] transition-all">
+                <div class="flex items-center gap-2 xxs:gap-3 sm:gap-4 flex-1 min-w-0">
+                    <div class="w-8 h-8 xxs:w-10 xxs:h-10 sm:w-12 sm:h-12 shrink-0 rounded-lg xxs:rounded-xl bg-red-500/10 text-red-600 dark:text-red-500 flex items-center justify-center transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="xxs:w-5 xxs:h-5 sm:w-6 sm:h-6"><path d="M4 22V4a1 1 0 0 1 1-1h5a1 1 0 0 1 .78.375L12.7 5.5a1 1 0 0 0 .78.375H19a1 1 0 0 1 1 1V16a1 1 0 0 1-1 1h-6.5a1 1 0 0 1-.78-.375L10.8 14.9a1 1 0 0 0-.78-.375H5"/></svg>
+                    </div>
+                    <div class="text-left flex-1 min-w-0 py-0.5 xxs:py-1">
+                        <p id="kart-mini-title" class="text-[10px] xxs:text-xs sm:text-sm font-bold text-slate-900 dark:text-white break-words whitespace-normal leading-snug transition-colors">Kart-Dashboard minimiert</p>
+                        <p id="kart-mini-status" class="text-[8px] xxs:text-[10px] sm:text-xs text-slate-600 dark:text-slate-400 break-words whitespace-normal mt-0.5 leading-snug transition-colors">Klicken zum Öffnen</p>
+                    </div>
+                </div>
+                <div class="p-1 xxs:p-1.5 sm:p-2 shrink-0 bg-slate-200/50 dark:bg-white/5 text-slate-700 dark:text-slate-400 rounded-full group-hover:bg-red-500/10 group-hover:text-red-500 transition-colors ml-1 xxs:ml-2">
+                    <svg id="kart-chevron" class="transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] xxs:w-4 xxs:h-4 sm:w-5 sm:h-5" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
+            </div>
+            <div id="kart-card-layout-wrapper" class="hidden">
+                <div id="kart-card-wrapper" class="relative origin-top flex justify-center w-full">
+                    <div class="glass-card w-full max-w-[500px] mx-auto p-4 xxs:p-6 sm:p-10 rounded-[1.5rem] xxs:rounded-3xl sm:rounded-[3rem] text-center relative overflow-hidden">
+                        <div class="w-14 h-14 xxs:w-16 xxs:h-16 sm:w-20 sm:h-20 mx-auto mb-4 xxs:mb-5 sm:mb-6 rounded-2xl xxs:rounded-3xl bg-red-500/10 text-red-500 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="xxs:w-8 xxs:h-8 sm:w-10 sm:h-10"><path d="M4 22V4a1 1 0 0 1 1-1h5a1 1 0 0 1 .78.375L12.7 5.5a1 1 0 0 0 .78.375H19a1 1 0 0 1 1 1V16a1 1 0 0 1-1 1h-6.5a1 1 0 0 1-.78-.375L10.8 14.9a1 1 0 0 0-.78-.375H5"/></svg>
+                        </div>
+                        <div id="kart-status-badge" class="inline-flex items-center gap-1.5 xxs:gap-2 px-2.5 xxs:px-3 py-1 xxs:py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-[9px] xxs:text-[10px] sm:text-xs font-black uppercase tracking-widest mb-3 xxs:mb-4">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                            <span id="kart-status-label">Feature in Arbeit</span>
+                        </div>
+                        <h3 id="kart-placeholder-title" class="text-lg xxs:text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mb-2 xxs:mb-3">Kartland Sinn - Live-Anbindung folgt</h3>
+                        <p id="kart-placeholder-text" class="text-slate-600 dark:text-slate-300 text-xs xxs:text-sm sm:text-base leading-relaxed max-w-md mx-auto">An diesem Feature wird gerade gearbeitet. Bald verbindet sich diese Seite live mit meinem eigenen Raspberry Pi, der als eigener API-Server meine Rundenzeiten von Kartland Sinn direkt hier anzeigt - inklusive Bestzeit, Session-Historie und mehr. Schau bald wieder vorbei!</p>
+                        <div class="grid grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 mt-5 xxs:mt-6 sm:mt-8 max-w-sm mx-auto">
+                            <div class="p-2 xxs:p-3 rounded-xl xxs:rounded-2xl bg-slate-500/5 border border-slate-500/10">
+                                <p id="kart-stat-besttime-label" class="text-[8px] xxs:text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Bestzeit</p>
+                                <p class="text-sm xxs:text-base sm:text-lg font-black text-slate-400">--:--</p>
+                            </div>
+                            <div class="p-2 xxs:p-3 rounded-xl xxs:rounded-2xl bg-slate-500/5 border border-slate-500/10">
+                                <p id="kart-stat-sessions-label" class="text-[8px] xxs:text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Sessions</p>
+                                <p class="text-sm xxs:text-base sm:text-lg font-black text-slate-400">--</p>
+                            </div>
+                            <div class="p-2 xxs:p-3 rounded-xl xxs:rounded-2xl bg-slate-500/5 border border-slate-500/10">
+                                <p id="kart-stat-since-label" class="text-[8px] xxs:text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Seit</p>
+                                <p class="text-sm xxs:text-base sm:text-lg font-black text-slate-400">19.07.26</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- EINSPALTIGES GRID FÜR GAMES UND SOCIALS -->
+        </div>
+
+        <!-- RIGHT COLUMN: Audience, Cards/Roadmap, Support, Socials -->
+        <div id="desktop-content-col" class="desktop-col">
 <section id="music-section" class="mb-12 xxs:mb-16 xs:mb-20 sm:mb-24 reveal relative rounded-3xl">
             <h2 id="music-section-title" class="text-lg xxs:text-xl xs:text-2xl sm:text-3xl font-bold mb-1.5 xxs:mb-2 text-blue-600 dark:text-blue-500 border-b-2 sm:border-b-4 border-blue-600 dark:border-blue-500 pb-1.5 xxs:pb-2 sm:pb-3 inline-block break-words">
                 Was bei mir gerade läuft
@@ -10565,68 +10609,7 @@ html.gp-android:not(.dark) #ui-controls {
                 </div>
             </div>
         </section>
-        <!-- NEW: KART DASHBOARD - vorbereitet für die zukünftige Live-Anbindung an den
-             eigenen Raspberry-Pi-API-Server. Bis dahin zeigt es einen klaren "in Arbeit"-
-             Zustand statt Platzhalter-/Fantasiewerte vorzugaukeln. -->
-        <!-- v24.19: Auf Wunsch für die normale Version ausgeblendet (nur display:none, kein
-             Code entfernt) - kann jederzeit durch Entfernen von style="display:none;
-             wieder aktiviert werden, sobald die Raspberry-Pi-Anbindung steht. -->
-        <section id="kart-section" style="display:none;" class="mb-12 xxs:mb-16 xs:mb-20 sm:mb-24 reveal relative rounded-3xl">
-            <h2 id="kart-section-title" class="text-lg xxs:text-xl xs:text-2xl sm:text-3xl font-bold mb-1.5 xxs:mb-2 text-red-600 dark:text-red-500 border-b-2 sm:border-b-4 border-red-600 dark:border-red-500 pb-1.5 xxs:pb-2 sm:pb-3 inline-block break-words">
-                Kart-Dashboard
-            </h2>
-            <p id="kart-section-note" class="text-[8px] xxs:text-[10px] xs:text-xs text-slate-600 dark:text-slate-400 mb-4 xxs:mb-6 sm:mb-10">Live-Daten kommen bald direkt von meinem eigenen Raspberry-Pi-API-Server.</p>
-            <!-- NEW: Mini-Toggle-Leiste, klappt den Inhalt darunter auf/zu (gleiches Prinzip
-                 wie beim Musik-Dashboard) -->
-            <div id="kart-mini-toggle" onclick="toggleKartDashboard()" role="button" tabindex="0" class="glass-card w-full max-w-[500px] mx-auto p-2 xxs:p-3 sm:p-4 rounded-[1.2rem] xxs:rounded-2xl sm:rounded-[2rem] flex items-center justify-between cursor-pointer group mb-3 xxs:mb-4 sm:mb-6 relative z-20 hover:scale-[1.01] transition-all">
-                <div class="flex items-center gap-2 xxs:gap-3 sm:gap-4 flex-1 min-w-0">
-                    <div class="w-8 h-8 xxs:w-10 xxs:h-10 sm:w-12 sm:h-12 shrink-0 rounded-lg xxs:rounded-xl bg-red-500/10 text-red-600 dark:text-red-500 flex items-center justify-center transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="xxs:w-5 xxs:h-5 sm:w-6 sm:h-6"><path d="M4 22V4a1 1 0 0 1 1-1h5a1 1 0 0 1 .78.375L12.7 5.5a1 1 0 0 0 .78.375H19a1 1 0 0 1 1 1V16a1 1 0 0 1-1 1h-6.5a1 1 0 0 1-.78-.375L10.8 14.9a1 1 0 0 0-.78-.375H5"/></svg>
-                    </div>
-                    <div class="text-left flex-1 min-w-0 py-0.5 xxs:py-1">
-                        <p id="kart-mini-title" class="text-[10px] xxs:text-xs sm:text-sm font-bold text-slate-900 dark:text-white break-words whitespace-normal leading-snug transition-colors">Kart-Dashboard minimiert</p>
-                        <p id="kart-mini-status" class="text-[8px] xxs:text-[10px] sm:text-xs text-slate-600 dark:text-slate-400 break-words whitespace-normal mt-0.5 leading-snug transition-colors">Klicken zum Öffnen</p>
-                    </div>
-                </div>
-                <div class="p-1 xxs:p-1.5 sm:p-2 shrink-0 bg-slate-200/50 dark:bg-white/5 text-slate-700 dark:text-slate-400 rounded-full group-hover:bg-red-500/10 group-hover:text-red-500 transition-colors ml-1 xxs:ml-2">
-                    <svg id="kart-chevron" class="transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] xxs:w-4 xxs:h-4 sm:w-5 sm:h-5" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-            </div>
-            <div id="kart-card-layout-wrapper" class="hidden">
-                <div id="kart-card-wrapper" class="relative origin-top flex justify-center w-full">
-                    <div class="glass-card w-full max-w-[500px] mx-auto p-4 xxs:p-6 sm:p-10 rounded-[1.5rem] xxs:rounded-3xl sm:rounded-[3rem] text-center relative overflow-hidden">
-                        <div class="w-14 h-14 xxs:w-16 xxs:h-16 sm:w-20 sm:h-20 mx-auto mb-4 xxs:mb-5 sm:mb-6 rounded-2xl xxs:rounded-3xl bg-red-500/10 text-red-500 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="xxs:w-8 xxs:h-8 sm:w-10 sm:h-10"><path d="M4 22V4a1 1 0 0 1 1-1h5a1 1 0 0 1 .78.375L12.7 5.5a1 1 0 0 0 .78.375H19a1 1 0 0 1 1 1V16a1 1 0 0 1-1 1h-6.5a1 1 0 0 1-.78-.375L10.8 14.9a1 1 0 0 0-.78-.375H5"/></svg>
-                        </div>
-                        <div id="kart-status-badge" class="inline-flex items-center gap-1.5 xxs:gap-2 px-2.5 xxs:px-3 py-1 xxs:py-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full text-[9px] xxs:text-[10px] sm:text-xs font-black uppercase tracking-widest mb-3 xxs:mb-4">
-                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                            <span id="kart-status-label">Feature in Arbeit</span>
-                        </div>
-                        <h3 id="kart-placeholder-title" class="text-lg xxs:text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mb-2 xxs:mb-3">Kartland Sinn - Live-Anbindung folgt</h3>
-                        <p id="kart-placeholder-text" class="text-slate-600 dark:text-slate-300 text-xs xxs:text-sm sm:text-base leading-relaxed max-w-md mx-auto">An diesem Feature wird gerade gearbeitet. Bald verbindet sich diese Seite live mit meinem eigenen Raspberry Pi, der als eigener API-Server meine Rundenzeiten von Kartland Sinn direkt hier anzeigt - inklusive Bestzeit, Session-Historie und mehr. Schau bald wieder vorbei!</p>
-                        <div class="grid grid-cols-3 gap-2 xxs:gap-3 sm:gap-4 mt-5 xxs:mt-6 sm:mt-8 max-w-sm mx-auto">
-                            <div class="p-2 xxs:p-3 rounded-xl xxs:rounded-2xl bg-slate-500/5 border border-slate-500/10">
-                                <p id="kart-stat-besttime-label" class="text-[8px] xxs:text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Bestzeit</p>
-                                <p class="text-sm xxs:text-base sm:text-lg font-black text-slate-400">--:--</p>
-                            </div>
-                            <div class="p-2 xxs:p-3 rounded-xl xxs:rounded-2xl bg-slate-500/5 border border-slate-500/10">
-                                <p id="kart-stat-sessions-label" class="text-[8px] xxs:text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Sessions</p>
-                                <p class="text-sm xxs:text-base sm:text-lg font-black text-slate-400">--</p>
-                            </div>
-                            <div class="p-2 xxs:p-3 rounded-xl xxs:rounded-2xl bg-slate-500/5 border border-slate-500/10">
-                                <p id="kart-stat-since-label" class="text-[8px] xxs:text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Seit</p>
-                                <p class="text-sm xxs:text-base sm:text-lg font-black text-slate-400">19.07.26</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- EINSPALTIGES GRID FÜR GAMES UND SOCIALS -->
-        </div>
 
-        <!-- RIGHT COLUMN: Audience, Cards/Roadmap, Support, Socials -->
-        <div id="desktop-content-col" class="desktop-col">
 <div id="audience-hub" class="mb-6 sm:mb-10 reveal">
             <div class="glass-card p-3.5 xxs:p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 dark:border-white/10 shadow-lg">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3.5">
@@ -19751,6 +19734,11 @@ let shareCardLoading;
             if (effective === 'desktop') {
                 root.classList.add('gp-desktop');
                 root.classList.remove('gp-mobile');
+                try {
+                    if (typeof isDashboardOpen !== 'undefined' && !isDashboardOpen && AppStorage.getItem('gp_dashboard_user_toggled') !== 'true') {
+                        if (typeof toggleDashboard === 'function') toggleDashboard();
+                    }
+                } catch(e) {}
             } else {
                 root.classList.add('gp-mobile');
                 root.classList.remove('gp-desktop');
