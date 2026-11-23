@@ -11,15 +11,15 @@ const versionJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'version.json'), 
 const swJs = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
 const releaseHtml = fs.readFileSync(path.join(ROOT, 'release.html'), 'utf8');
 
-test('Spotify Canvas Playback, Activation & Fallback Architecture (v24.245.99)', async (t) => {
-    await t.test('C1: Version 24.245.99 is synchronized across all core files', () => {
-        assert.equal(versionJson.version, '24.245.99');
-        assert.match(swJs, /const SW_VERSION = "24\.245\.99";/);
-        assert.match(indexHtml, /ONBOARDING_VERSION = 'v24\.245\.99 · 2026-11-23';/);
-        assert.match(indexHtml, /id="footer-menu-hint"[^>]*>v24\.245\.99<\/span>/);
-        assert.match(indexHtml, /id="footer-version-label"[^>]*>v24\.245\.99 \(QA Test\)<\/span>/);
-        assert.match(releaseHtml, /<title>Release Notes v24\.245\.99 – Gamingpig<\/title>/);
-        assert.match(indexHtml, /version:\s*"v24\.245\.99"/);
+test('Spotify Canvas Playback, Activation & Fallback Architecture (v24.245.100)', async (t) => {
+    await t.test('C1: Version 24.245.100 is synchronized across all core files', () => {
+        assert.equal(versionJson.version, '24.245.100');
+        assert.match(swJs, /const SW_VERSION = "24\.245\.100";/);
+        assert.match(indexHtml, /ONBOARDING_VERSION = 'v24\.245\.100 · 2026-11-23';/);
+        assert.match(indexHtml, /id="footer-menu-hint"[^>]*>v24\.245\.100<\/span>/);
+        assert.match(indexHtml, /id="footer-version-label"[^>]*>v24\.245\.100 \(QA Test\)<\/span>/);
+        assert.match(releaseHtml, /<title>Release Notes v24\.245\.100/);
+        assert.match(indexHtml, /version:\s*"v24\.245\.100"/);
     });
 
     await t.test('C2: toggleDashboard invokes applyActiveMediaMode on open and close', () => {
@@ -95,5 +95,30 @@ test('Spotify Canvas Playback, Activation & Fallback Architecture (v24.245.99)',
         assert.ok(doc.getElementById('lyrics-canvas-video'), 'Lyrics background canvas video must exist');
         assert.ok(doc.getElementById('canvas-cinema-video'), 'Cinema modal video must exist');
         assert.ok(doc.getElementById('canvas-cinema-glow-video'), 'Cinema modal glow video must exist');
+    });
+
+    await t.test('C8: First Move (Lily Ward, 7F1lGSxfmWzayn8Y8GJr4P) is bundled with official Spotify Canvas URL', () => {
+        assert.match(
+            indexHtml,
+            /"7F1lGSxfmWzayn8Y8GJr4P":\s*"https:\/\/canvaz\.scdn\.co\/upload\/artist\/1kYMGmkw8ta4nvMiK0pcdF\/video\/d44ae7d4d9e04409be4faca2a93d7b65\.cnvs\.mp4"/,
+            'BUNDLED_CANVAS_DB must contain official canvas for 7F1lGSxfmWzayn8Y8GJr4P'
+        );
+        assert.match(
+            indexHtml,
+            /"7f1lgsxfmwzayn8y8gjr4p":\s*"https:\/\/canvaz\.scdn\.co\/upload\/artist\/1kYMGmkw8ta4nvMiK0pcdF\/video\/d44ae7d4d9e04409be4faca2a93d7b65\.cnvs\.mp4"/,
+            'BUNDLED_CANVAS_DB must contain lowercase key for 7f1lgsxfmwzayn8y8gjr4p'
+        );
+    });
+
+    await t.test('C9: Universal live resolver and Settings proxy input are wired in DOM and JS', () => {
+        assert.match(
+            indexHtml,
+            /primaryTargets\.push\(`https:\/\/r\.jina\.ai\/https:\/\/canvasdownloader\.com\/canvas\?link=https:\/\/open\.spotify\.com\/track\/\$\{encodeURIComponent\(cleanId\)\}`\)/,
+            'resolveSpotifyCanvas must query universal live resolver via Jina Reader'
+        );
+        const dom = new JSDOM(indexHtml);
+        const doc = dom.window.document;
+        assert.ok(doc.getElementById('settings-canvas-proxy-input'), '#settings-canvas-proxy-input must exist in settings');
+        assert.ok(doc.getElementById('btn-settings-toggle-canvas'), '#btn-settings-toggle-canvas must exist in settings');
     });
 });

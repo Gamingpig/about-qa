@@ -1,11 +1,11 @@
 {
-  "version": "24.245.99",
-  "buildTime": "2026-11-23T12:51:00.000Z",
+  "version": "24.245.100",
+  "buildTime": "2026-11-23T14:05:00.000Z",
   "shortNotes": [
-    "Spotify Canvas Wiedergabe: Videos starten beim Öffnen des Dashboards auf Desktop & Mobile sofort",
-    "Cinema Modal Ambilight-Glow reaktiviert und synchronisiert",
-    "Resilienter Graceful Fallback auf das Album-Cover (keine Fake-Visualizer)",
-    "Blickdichter, solider Lyrics-Style Picker im Einstellungsmenü (#0b1120 / #ffffff)",
-    "Automatische Update-Prüfung beim Start & Tab-Fokus zuverlässig aktiv"
+    "Universeller Spotify Canvas Live-Resolver: Streamt das Original-Canvas für jeden Song",
+    "First Move (Lily Ward) & Gamingpig Top-Tracks fest im Canvas-Bundle integriert",
+    "Eigener Canvas-Proxy (Vercel/Cloudflare) direkt in den Systemeinstellungen konfigurierbar",
+    "100% Graceful Fallback auf das Cover-Artwork ohne künstliche Visualizer",
+    "Vollständige Versions- und QA-Badge-Synchronisation auf v24.245.100"
   ]
 }
