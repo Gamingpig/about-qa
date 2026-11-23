@@ -1,11 +1,11 @@
 {
-  "version": "24.245.98",
-  "buildTime": "2026-11-20T21:41:16.798Z",
+  "version": "24.245.99",
+  "buildTime": "2026-11-23T12:51:00.000Z",
   "shortNotes": [
-    "Desktop-Layout: Eigene dedizierte Scrollbar für 'Über Gamingpig' mit Cyan-Akzent & Viewport-Containment",
-    "Kontrollzentrum: Keine abgeschnittenen Umrandungen mehr bei Hover und aktiven Buttons",
-    "Blickdichtes, kontrastreiches Lyrics-Style Einstellungsmenü (#0b1120 / #ffffff)",
-    "Automatische Update-Prüfung beim Start & Tab-Fokus zuverlässig aktiv",
-    "Harmonisierte Glass-Tokens und optimiertes 2-Spalten Desktop-Layout"
+    "Spotify Canvas Wiedergabe: Videos starten beim Öffnen des Dashboards auf Desktop & Mobile sofort",
+    "Cinema Modal Ambilight-Glow reaktiviert und synchronisiert",
+    "Resilienter Graceful Fallback auf das Album-Cover (keine Fake-Visualizer)",
+    "Blickdichter, solider Lyrics-Style Picker im Einstellungsmenü (#0b1120 / #ffffff)",
+    "Automatische Update-Prüfung beim Start & Tab-Fokus zuverlässig aktiv"
   ]
 }

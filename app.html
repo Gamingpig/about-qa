@@ -7,6 +7,12 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
+    [FIX/FEATURE] Release v24.245.99 · 2026-11-23: Spotify Canvas Wiedergabe, Aktivierung & Graceful Fallback
+      - Spotify Canvas Aktivierung & Lifecycle repariert: toggleDashboard() und automatische Layout-Erkennung (Desktop/Mobile) synchronisieren sofort applyActiveMediaMode() – Canvas-Videos (Cover, Hintergrund, Glow) starten beim Öffnen direkt und bleiben nicht auf opacity-0 hängen.
+      - Cinema Modal Glow reaktiviert: #canvas-cinema-glow-video spielt nun synchron mit #canvas-cinema-video in der Kino-Ansicht.
+      - Resiliente Canvas-Auflösung: Graceful Fallback auf normales Album-Cover bei nicht erreichbarem externen Server (strikt keine künstlichen Visualizer). Schnelles Übergehen von HTTP 402 / DEPLOYMENT_DISABLED.
+      - Unterstützung für eigene Canvas-Proxies via gp_custom_canvas_proxy / gp_canvas_proxy im AppStorage.
+      - Blickdichter, kontrastreicher Lyrics-Style Dropdown Picker (#lyrics-style-custom-panel).
     [BUGFIX/UI] Release v24.245.98 · 2026-11-20: Blickdichter, kontrastreicher Hintergrund für den Lyrics Style Picker
       - Dropdown-Liste (#lyrics-style-custom-panel) im Songtext-Einstellungsmenü mit 100% blickdichter, solider Hintergrundfarbe (#0b1120 in Dark Mode, #ffffff in Light Mode) und z-index 100 ausgestattet.
       - Darunterliegende Elemente (Live Sync Offset, Lese-Fokus, animierter Vorschautext) scheinen nicht mehr durch die Liste durch.
@@ -3424,7 +3430,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.245.98 · 2026-11-20';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.245.99 · 2026-11-23';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -10071,7 +10077,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.98</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.99</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -10108,7 +10114,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.98 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.98 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.99 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.99 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -20237,6 +20243,17 @@ let shareCardLoading;
             }
         });
 
+        // Initial layout detection & application on startup
+        try {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    detectAndApplyLayoutMode();
+                });
+            } else {
+                detectAndApplyLayoutMode();
+            }
+        } catch (_) {}
+
         // =========================================================
         // SONGWECHSEL ANIMATION (TRACK CROSSFADE)
         // =========================================================
@@ -21174,6 +21191,22 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+        { version: "v24.245.99", date: "23. November 2026", type: "fix", items: {
+                de: [
+                    "🎬 Spotify Canvas Wiedergabe repariert: Videos starten sofort beim Öffnen des Dashboards auf Desktop & Mobile",
+                    "✨ Cinema Modal Ambilight-Glow reaktiviert & synchronisiert",
+                    "🖼️ Zuverlässiger Graceful Fallback auf das Album-Cover bei externen Canvas-Serverausfällen (keine Fake-Visualizer)",
+                    "🎨 Blickdichter, kontrastreicher Lyrics-Style Picker im Songtext-Einstellungsmenü",
+                    "🔄 Automatische System-Update-Erkennung verifiziert und synchronisiert"
+                ],
+                en: [
+                    "🎬 Spotify Canvas playback restored: Canvas videos start immediately when opening the dashboard on desktop & mobile",
+                    "✨ Cinema modal ambient glow reactivated & synchronized",
+                    "🖼️ Graceful fallback to album cover art when external canvas server is unreachable (no fake visualizers)",
+                    "🎨 High-contrast opaque lyrics style picker in the songtext settings menu",
+                    "🔄 Automatic system update detection verified and synchronized"
+                ]
+        }},
         { version: "v24.245.98", date: "20. November 2026", type: "bugfix", items: {
                 de: [
                     "🎛️ Kontrollzentrum: Volle Umrandung & Farbakzente aller Buttons ohne Kanten-Clipping",
@@ -26456,6 +26489,8 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
             clearTimeout(dashboardOpenTimeout);
             clearTimeout(statusTextTimeout);
             if (isDashboardOpen) {
+                isMusicCardInViewport = true;
+                if (typeof applyActiveMediaMode === 'function') applyActiveMediaMode();
                 if (typeof scheduleNextMusicPoll === 'function') scheduleNextMusicPoll(0);
                 if (musicCardLayoutWrapper) musicCardLayoutWrapper.classList.remove('hidden');
                 setTimeout(() => {
@@ -26464,9 +26499,11 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
                         musicCardWrapper.classList.add('dashboard-opening');
                     }
                     if (musicCardLayoutWrapper) musicCardLayoutWrapper.classList.add('is-open');
+                    if (typeof applyActiveMediaMode === 'function') applyActiveMediaMode();
                 }, 20);
                 dashboardOpenTimeout = setTimeout(() => {
                     if (musicCardWrapper) musicCardWrapper.classList.remove('dashboard-opening');
+                    if (typeof applyActiveMediaMode === 'function') applyActiveMediaMode();
                 }, document.body.classList.contains('low-end') ? 50 : 1200);
                 if (musicChevron) musicChevron.style.transform = 'rotate(180deg)';
                 if (trackIsPlaying && currentTrackTitle) {
@@ -26487,6 +26524,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
                 // PERF v24.245.89: Stoppt Berechnungen & stoppt alle Videos sofort beim Schließen des Dashboards
                 if (typeof stopProgressTracking === 'function') stopProgressTracking();
                 if (typeof enforceSingleActiveVideo === 'function') enforceSingleActiveVideo('none');
+                if (typeof applyActiveMediaMode === 'function') applyActiveMediaMode();
                 // PERF FIX v24.245.89: Alle Videos bei minimiertem Dashboard sofort pausieren
                 const cmvMin = document.getElementById('canvas-media-video');
                 const cgvMin = document.getElementById('canvas-glow-video');
@@ -28685,9 +28723,15 @@ window.setLyricsStyle = function(style) {
                     gVideo.pause();
                 }
             } else if (mode === 'cinema') {
-                // STUFE 3: In Cinema-Ansicht spielt nur cinemaVideo, alle anderen 5 (auch Glow-Video) sind pausiert
-                [cVideo, mVideo, gVideo, lVideo, cinemaGlowVideo].forEach(v => { if (v && !v.paused) v.pause(); });
+                // In Cinema-Ansicht spielt cinemaVideo und das Cinema-Glow-Video
+                [cVideo, mVideo, gVideo, lVideo].forEach(v => { if (v && !v.paused) v.pause(); });
                 if (cinemaVideo && cinemaVideo.paused) cinemaVideo.play().catch(()=>{});
+                const isGlowActive = typeof coverGlowEnabled !== 'undefined' ? coverGlowEnabled : true;
+                if (cinemaGlowVideo && isGlowActive && canvasEnabled && isPlaying && currentCanvasUrl) {
+                    if (cinemaGlowVideo.paused) cinemaGlowVideo.play().catch(()=>{});
+                } else if (cinemaGlowVideo && !cinemaGlowVideo.paused) {
+                    cinemaGlowVideo.pause();
+                }
             } else {
                 // 'none': StandBy, minimiertes Dashboard, inaktiver Tab, Offline oder Pause -> ALLE stoppen
                 allVids.forEach(v => { if (v && !v.paused) v.pause(); });
@@ -29417,17 +29461,26 @@ window.setLyricsStyle = function(style) {
             // Nur dann ist "kein Canvas vorhanden" eine verlässliche Aussage.
             let gotApiResponse = false;
             try {
-                // v24.225.36: CORS-Proxy-Kaskade neu aufgebaut. Die direkte API sendet KEINE
-                // CORS-Header und wird vom Browser blockiert. r.jina.ai liefert die Antwort
-                // CORS-fähig als Text zurück (schnell & stabil), allorigins liefert sie als JSON.
+                // Custom Canvas Proxy Support (aus AppStorage oder localStorage)
+                let customProxy = '';
+                try {
+                    customProxy = (AppStorage.getItem('gp_custom_canvas_proxy') || localStorage.getItem('gp_canvas_proxy') || '').trim();
+                } catch (_) {}
+
                 const targetDirect = `https://spotify-canva.vercel.app/api/canvas?trackId=${encodeURIComponent(cleanId)}`;
                 const encodedTarget = encodeURIComponent(targetDirect);
-                // v24.225.36: Zweistufige Kaskade statt sechsfachem Parallel-Race.
-                // Stufe 1 sind die einzigen Wege, die im Browser zuverlässig antworten.
-                const primaryTargets = [
-                    `https://r.jina.ai/${targetDirect}`,
-                    `https://api.allorigins.win/get?url=${encodedTarget}`
-                ];
+
+                const primaryTargets = [];
+                if (customProxy) {
+                    const customTarget = customProxy.includes('?') 
+                        ? `${customProxy}&trackId=${encodeURIComponent(cleanId)}`
+                        : `${customProxy.replace(/\/$/, '')}${customProxy.includes('/api/canvas') ? '' : '/api/canvas'}?trackId=${encodeURIComponent(cleanId)}`;
+                    primaryTargets.push(customTarget);
+                    primaryTargets.push(`https://r.jina.ai/${customTarget}`);
+                }
+                primaryTargets.push(`https://r.jina.ai/${targetDirect}`);
+                primaryTargets.push(`https://api.allorigins.win/get?url=${encodedTarget}`);
+
                 // Stufe 2 (langsam/tot) wird nur noch bemüht, wenn Stufe 1 weder eine
                 // Canvas-URL noch eine echte API-Antwort geliefert hat. Das spart pro
                 // Track ohne Canvas bis zu 6 hängende Requests und Rate-Limit-Treffer.
@@ -29480,6 +29533,9 @@ window.setLyricsStyle = function(style) {
                     const res = await fetch(fetchUrl, { signal: signal || AbortSignal.timeout(8000) });
                     if (!res || !res.ok) throw new Error('Status: ' + (res ? res.status : 'err'));
                     const txt = await res.text();
+                    if (txt.includes('DEPLOYMENT_DISABLED') || txt.includes('Payment Required')) {
+                        throw new Error('Deployment disabled');
+                    }
                     let json = null;
                     try { json = JSON.parse(txt); } catch (_) { json = jsonFromText(txt); }
                     if (json && looksLikeCanvasPayload(json)) gotApiResponse = true;
@@ -33067,6 +33123,10 @@ window.setLyricsStyle = function(style) {
                     const searchBlocked = !lookupCanvasId && failedSearch && !failedSearch.id && (Date.now() - failedSearch.at < 10 * 60 * 1000);
                     if ((lookupCanvasId ? !hasNegativeCanvas(lookupCanvasId) : !searchBlocked)) {
                         resolveSpotifyCanvas(lookupCanvasId, trackTitle, rawArtist);
+                    }
+                } else if (canvasEnabled && currentCanvasUrl) {
+                    if (typeof applyActiveMediaMode === 'function') {
+                        applyActiveMediaMode();
                     }
                 }
                 updateCanvasButtonUI();
