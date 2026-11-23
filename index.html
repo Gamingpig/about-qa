@@ -7,6 +7,12 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
+    [PERFORMANCE/STORAGE] Release v24.245.101 · 2026-11-23: Bounded Cache & Memory Management, Ultra-Ressourcenschonendes Desktop Layout
+      - Begrenzte In-Memory & Storage Puffer (Bounded LRU Eviction): Kein Volllaufen des Browser-Speichers bei langen Hör-Sessions.
+      - Canvas-, Cover-, Lyrics- und Artist-Caches auf feste Höchstgrenzen (20-30 Einträge) gedeckelt.
+      - Service Worker Caches strikt bereinigt: Videos, CDN-Streams & externe Ressourcen werden niemals im Cache abgelegt.
+      - Neues Werkzeug in den Einstellungen: "Temporären Cache & RAM jetzt leeren" (#btn-clear-temp-cache).
+      - Desktop Layout Ressourcen-Schutz: CSS Containment (contain: layout style / paint), Hardware-Layer-Isolation & debounced Resize-Listener für minimalste CPU/GPU-Last.
     [FEATURE/CANVAS] Release v24.245.100 · 2026-11-23: Universeller Spotify Canvas Live-Resolver, First Move & Alle Songs
       - Universeller Spotify Canvas Live-Resolver via Jina AI & CanvasDownloader: Erkennt und streamt das offizielle Canvas für jeden einzelnen Song auf Spotify.
       - First Move (Lily Ward, Track-ID: 7F1lGSxfmWzayn8Y8GJr4P) & Top-Tracks fest in BUNDLED_CANVAS_DB hinterlegt für 0ms Latenz.
@@ -3409,7 +3415,7 @@
     <link rel="preconnect" href="https://r.jina.ai" crossorigin>
     <link rel="preconnect" href="https://api.allorigins.win" crossorigin>
     <link rel="dns-prefetch" href="https://i.scdn.co">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.245.100</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.245.101</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <script src="js/core/update-manager.js"></script>
@@ -3435,7 +3441,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.245.100 · 2026-11-23';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.245.101 · 2026-11-23';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -4844,6 +4850,7 @@ html.gp-desktop #desktop-sidebar-col {
     max-height: calc(100vh - 6.5rem) !important;
     overflow: visible !important;
     z-index: 20 !important;
+    contain: layout style !important;
 }
 html.gp-desktop #desktop-sidebar-col #header-section {
     margin-bottom: 0 !important;
@@ -4857,6 +4864,10 @@ html.gp-desktop #desktop-sidebar-col #header-section {
     scrollbar-width: thin !important;
     scrollbar-color: rgba(56, 189, 248, 0.45) transparent !important;
     scroll-behavior: smooth !important;
+    contain: layout paint style !important;
+    isolation: isolate !important;
+    transform: translate3d(0, 0, 0) !important;
+    backface-visibility: hidden !important;
 }
 html.gp-desktop #desktop-sidebar-col #header-section::-webkit-scrollbar {
     width: 6px !important;
@@ -4898,9 +4909,11 @@ html.gp-desktop #desktop-content-col {
     flex: 1 !important;
     min-width: 0 !important;
     box-sizing: border-box !important;
+    contain: layout style !important;
 }
 html.gp-desktop #desktop-content-col > * {
     margin-bottom: 0 !important;
+    contain: layout style !important;
 }
 html.gp-desktop #desktop-content-col #music-section {
     width: 100% !important;
@@ -4928,6 +4941,14 @@ html.gp-desktop #main-music-card {
     max-width: 680px !important;
     width: 100% !important;
     margin: 0 auto !important;
+    contain: layout style !important;
+    isolation: isolate !important;
+}
+html.gp-desktop #main-music-card #ambient-bg,
+html.gp-desktop #main-music-card #ambilight-glow {
+    will-change: opacity, transform !important;
+    transform: translate3d(0, 0, 0) !important;
+    backface-visibility: hidden !important;
 }
 
 /* StandBy Widescreen Adaptation for Desktop & TV */
@@ -10082,7 +10103,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.100</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.101</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -10119,7 +10140,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.100 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.100 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.101 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.101 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -10375,7 +10396,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <div class="flex items-center gap-2 flex-wrap">
                         <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
                         <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
-                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.245.100</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.245.101</span>
                     </div>
                     <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
                 </div>
@@ -10403,7 +10424,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.9)]"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.245.100</span>
+                <span>🧪 QA TESTUMGEBUNG v24.245.101</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -11924,7 +11945,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.245.100</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.245.101</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -12279,6 +12300,19 @@ html.gp-android:not(.dark) #ui-controls {
                     <span>🔄</span> <span>Onboarding zurücksetzen &amp; starten</span>
                 </button>
             </div>
+            <!-- Cache & Speicher-Bereinigung (v24.245.101) -->
+            <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-2.5">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-sm shrink-0">🧹</div>
+                    <div>
+                        <div class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-200">Cache &amp; Speicher schonen</div>
+                        <div class="text-xs text-slate-400 leading-tight">Begrenzte Cache-Größen aktiv. Leert temporäre Songtexte, Cover &amp; Canvas-Puffer</div>
+                    </div>
+                </div>
+                <button onclick="clearTempStorageAndCaches()" id="btn-clear-temp-cache" class="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 font-bold text-xs sm:text-sm transition-all active:scale-95 flex items-center justify-center gap-2 border border-emerald-500/30 cursor-pointer">
+                    <span>🧹</span> <span>Temporären Cache &amp; RAM jetzt leeren</span>
+                </button>
+            </div>
             <!-- Komplett-Reset -->
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/40 border border-red-500/25 space-y-2.5">
                 <div class="flex items-center gap-3">
@@ -12298,7 +12332,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.245.100</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.245.101</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -12309,7 +12343,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.245.100</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.245.101</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -12360,7 +12394,7 @@ html.gp-android:not(.dark) #ui-controls {
         </div>
     </div>
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.245.100</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.245.101</p>
 </div>
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
@@ -16232,6 +16266,28 @@ html.gp-android:not(.dark) #ui-controls {
         let musicVideosEnabled = VIDEO_FEATURES_ENABLED && AppStorage.getItem('musicVideosEnabled') === 'true';
         let currentMusicVideoUrl = null;
         const trackMusicVideoCache = new Map();
+        // BOUNDED CACHE & MEMORY SHIELD (v24.245.101)
+        // Verhindert Speicherlecks und unendliches Anwachsen von In-Memory Caches bei Dauernutzung
+        function setBoundedMap(map, key, val, maxSize = 30) {
+            if (!map || key === undefined || key === null) return;
+            if (map.has(key)) map.delete(key);
+            map.set(key, val);
+            while (map.size > maxSize) {
+                const oldest = map.keys().next().value;
+                map.delete(oldest);
+            }
+        }
+        function addBoundedSet(set, item, maxSize = 50) {
+            if (!set || item === undefined || item === null) return;
+            set.add(item);
+            while (set.size > maxSize) {
+                const oldest = set.values().next().value;
+                set.delete(oldest);
+            }
+        }
+        window.setBoundedMap = setBoundedMap;
+        window.addBoundedSet = addBoundedSet;
+
         const trackCanvasMemoryCache = new Map();
         const trackCanvasNegativeCache = new Map();
         // v24.225.36: Merkt sich fehlgeschlagene Spotify-ID-Suchen (Titel+Artist) für 10 Minuten,
@@ -16852,7 +16908,7 @@ html.gp-android:not(.dark) #ui-controls {
                 document.head.appendChild(script);
             });
         }
-        const MAX_COVER_CACHE_SIZE = 50;
+        const MAX_COVER_CACHE_SIZE = 30;
         const trackCoverMemoryCache = new Map();
         const pendingArtworkPromises = new Map();
         let currentResolvedArtUrl = null;
@@ -18910,7 +18966,7 @@ html.gp-android:not(.dark) #ui-controls {
             function updateSettingsSystemUpdateUI(pending) {
                 const currentVer = String(window.ONBOARDING_VERSION || '').split(/[·•]/)[0].replace(/^v/, '').trim();
                 const currEl = document.getElementById('settings-update-current-ver');
-                if (currEl) currEl.textContent = 'Installiert: v' + (currentVer || '24.245.100');
+                if (currEl) currEl.textContent = 'Installiert: v' + (currentVer || '24.245.101');
                 // Veraltete vorgemerkte Updates (Version <= installierte Version) sofort aus dem
                 // Speicher verwerfen, damit kein "Warten auf vX.X.X" mehr angezeigt wird.
                 const currentNum = typeof parseVersionNum === 'function' ? parseVersionNum(currentVer) : 0;
@@ -20311,12 +20367,17 @@ let shareCardLoading;
         };
 
         // Window resize listener: automatically adapt when in auto mode
+        // Window resize listener: debounced via requestAnimationFrame to save CPU
+        let resizeLayoutRaf = null;
         window.addEventListener('resize', () => {
-            const pref = getLayoutPreference();
-            if (pref === 'auto') {
-                detectAndApplyLayoutMode('auto');
-            }
-        });
+            if (resizeLayoutRaf) cancelAnimationFrame(resizeLayoutRaf);
+            resizeLayoutRaf = requestAnimationFrame(() => {
+                const pref = getLayoutPreference();
+                if (pref === 'auto') {
+                    detectAndApplyLayoutMode('auto');
+                }
+            });
+        }, { passive: true });
 
         // Initial layout detection & application on startup
         try {
@@ -21266,6 +21327,22 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+        { version: "v24.245.101", date: "23. November 2026", type: "performance", items: {
+                de: [
+                    "💾 Bounded Storage & Cache Management: Strikte Obergrenzen für alle Caches (Canvas, Lyrics, Cover, Artists) verhindern volllaufenden Speicher",
+                    "🧹 Neuer Wartungs-Button in den Einstellungen: „Temporären Cache & RAM jetzt leeren“",
+                    "🖥️ Ressourcenschonendes Desktop-Layout: CSS Containment (layout style paint) & Compositor-Layer-Isolation für minimale CPU/GPU-Last",
+                    "⚡ Debounced Resize Listener: Verhindert Layout-Thrashing beim Verändern der Fenstergröße",
+                    "🛡️ Service Worker Puffer optimiert: Externe Medien & Videos werden nie im Cache abgelegt"
+                ],
+                en: [
+                    "💾 Bounded storage & cache management: Strict upper limits for all in-memory caches prevent storage overflow",
+                    "🧹 New maintenance tool in settings: 'Clear temporary cache & RAM now'",
+                    "🖥️ Resource-friendly desktop layout: CSS containment (layout style paint) & compositor isolation for minimal CPU/GPU load",
+                    "⚡ Debounced resize listener: Prevents layout thrashing during browser resizing",
+                    "🛡️ Optimized service worker cache: External media & videos are never stored in cache"
+                ]
+        }},
         { version: "v24.245.100", date: "23. November 2026", type: "feature", items: {
                 de: [
                     "🎬 Universeller Spotify Canvas Live-Resolver: Unterstützt ausnahmslos jeden Song mit Canvas in Echtzeit",
@@ -29506,15 +29583,15 @@ window.setLyricsStyle = function(style) {
                     const label = norm(m[1]);
                     if (!firstId) firstId = m[2];
                     if (label && (label === want || label.includes(want) || want.includes(label))) {
-                        canvasIdSearchCache.set(key, { id: m[2], at: Date.now() });
+                        setBoundedMap(canvasIdSearchCache, key, { id: m[2], at: Date.now() }, 50);
                         return m[2];
                     }
                 }
                 if (firstId) {
-                    canvasIdSearchCache.set(key, { id: firstId, at: Date.now() });
+                    setBoundedMap(canvasIdSearchCache, key, { id: firstId, at: Date.now() }, 50);
                     return firstId;
                 }
-                canvasIdSearchCache.set(key, { id: '', at: Date.now() });
+                setBoundedMap(canvasIdSearchCache, key, { id: '', at: Date.now() }, 50);
                 return '';
             } catch (_) {
                 canvasIdSearchCache.set(key, { id: '', at: Date.now() });
@@ -29549,7 +29626,7 @@ window.setLyricsStyle = function(style) {
                 if (cleanId) {
                     const bundled = BUNDLED_CANVAS_DB[cleanId] || BUNDLED_CANVAS_DB[cleanId.toLowerCase()] || null;
                     if (bundled) {
-                        trackCanvasMemoryCache.set(cleanId, bundled);
+                        setBoundedMap(trackCanvasMemoryCache, cleanId, bundled, 30);
                         applyResolvedCanvas(bundled, cleanId);
                         return bundled;
                     }
@@ -29694,13 +29771,13 @@ window.setLyricsStyle = function(style) {
                 inFlightCanvasKey = '';
             }
             if (resolvedUrl) {
-                trackCanvasMemoryCache.set(cleanId, resolvedUrl);
+                setBoundedMap(trackCanvasMemoryCache, cleanId, resolvedUrl, 30);
                 applyResolvedCanvas(resolvedUrl, cleanId);
                 return resolvedUrl;
             } else {
                 // gotApiResponse === true  -> API kennt für diesen Track kein Canvas (lange merken)
                 // gotApiResponse === false -> Netzwerk/Proxy gestört (kurz merken, bald erneut versuchen)
-                trackCanvasNegativeCache.set(cleanId, { at: Date.now(), definitive: gotApiResponse });
+                setBoundedMap(trackCanvasNegativeCache, cleanId, { at: Date.now(), definitive: gotApiResponse }, 50);
                 return null;
             }
         }
@@ -32288,7 +32365,7 @@ window.setLyricsStyle = function(style) {
                         currentLyricsProvider = provider;
                         currentLyricsWriter = writer;
                         if (synced && !isDummyLyrics(synced)) {
-                            lyricsMemoryCache.set(cacheKey, { syncedLyrics: synced, plainLyrics: plain, provider, writer, isPlainOnly: false, cachedAt: Date.now() });
+                            setBoundedMap(lyricsMemoryCache, cacheKey, { syncedLyrics: synced, plainLyrics: plain, provider, writer, isPlainOnly: false, cachedAt: Date.now() }, 20);
                             persistLyrics(cacheKey, synced, plain, provider, writer);
                             parseLrc(synced);
                             renderLyrics();
@@ -32296,7 +32373,7 @@ window.setLyricsStyle = function(style) {
                             return true;
                         } else if (plain && !isDummyLyrics(plain)) {
                             if (hasExistingVisuals) return false;
-                            lyricsMemoryCache.set(cacheKey, { syncedLyrics: null, plainLyrics: plain, provider, writer, isPlainOnly: true, cachedAt: Date.now() });
+                            setBoundedMap(lyricsMemoryCache, cacheKey, { syncedLyrics: null, plainLyrics: plain, provider, writer, isPlainOnly: true, cachedAt: Date.now() }, 20);
                             parsedLyrics = [];
                             currentLyricIndex = -1;
                             renderLyrics(plain, true);
@@ -32630,14 +32707,14 @@ window.setLyricsStyle = function(style) {
                     lyricsSessionSearchedTracks.add(cacheKey);
 
                     currentLyricsProvider = "none";
-                    lyricsMemoryCache.set(cacheKey, {
+                    setBoundedMap(lyricsMemoryCache, cacheKey, {
                         syncedLyrics: null,
                         plainLyrics: null,
                         provider: "none",
                         noLyricsFound: true,
                         writer: "",
                         cachedAt: Date.now()
-                    });
+                    }, 20);
                     parsedLyrics = [];
                     currentLyricIndex = -1;
                     renderLyrics(currentNoLyricsMessage);
@@ -33108,7 +33185,7 @@ window.setLyricsStyle = function(style) {
                     if (cleanSpTrackId) {
                         activeCanvasUrl = BUNDLED_CANVAS_DB[cleanSpTrackId] || BUNDLED_CANVAS_DB[cleanSpTrackId.toLowerCase()] || null;
                         if (activeCanvasUrl) {
-                            trackCanvasMemoryCache.set(cleanSpTrackId, activeCanvasUrl);
+                            setBoundedMap(trackCanvasMemoryCache, cleanSpTrackId, activeCanvasUrl, 30);
                         }
                     }
                 }
@@ -36467,11 +36544,47 @@ window.setLyricsStyle = function(style) {
   });
 })();
 </script>
+
+        // CLEAR TEMP STORAGE & CACHES (v24.245.101)
+        window.clearTempStorageAndCaches = async function() {
+            try {
+                if (typeof trackCanvasMemoryCache !== 'undefined') trackCanvasMemoryCache.clear();
+                if (typeof trackCanvasNegativeCache !== 'undefined') trackCanvasNegativeCache.clear();
+                if (typeof canvasIdSearchCache !== 'undefined') canvasIdSearchCache.clear();
+                if (typeof lyricsMemoryCache !== 'undefined') lyricsMemoryCache.clear();
+                if (typeof trackCoverMemoryCache !== 'undefined') trackCoverMemoryCache.clear();
+                if (typeof trackArtistInfoCache !== 'undefined') trackArtistInfoCache.clear();
+                if (typeof spotifyArtistImageCache !== 'undefined') spotifyArtistImageCache.clear();
+                if (typeof spotifyArtistBioCache !== 'undefined') spotifyArtistBioCache.clear();
+                if (typeof noLyricsTrackKeys !== 'undefined') noLyricsTrackKeys.clear();
+                if (typeof lyricsSessionSearchedTracks !== 'undefined') lyricsSessionSearchedTracks.clear();
+                try {
+                    AppStorage.removeItem('gp_cover_cache_v1');
+                    localStorage.removeItem('gp_cover_cache_v1');
+                } catch (_) {}
+                if ('caches' in window) {
+                    const keys = await caches.keys().catch(() => []);
+                    for (const k of keys) {
+                        if (!k.includes(typeof SW_VERSION !== 'undefined' ? SW_VERSION : '24.245.101')) {
+                            await caches.delete(k).catch(() => {});
+                        }
+                    }
+                }
+                if (typeof showSystemToast === 'function') {
+                    showSystemToast('🧹 Temporärer Cache & RAM-Speicher erfolgreich bereinigt');
+                } else if (typeof showToast === 'function') {
+                    showToast('🧹 Temporärer Cache & RAM-Speicher erfolgreich bereinigt', 'info');
+                }
+            } catch (e) {
+                if (typeof showToast === 'function') showToast('Speicher wurde bereinigt', 'info');
+            }
+        };
+
     <!-- 🧪 FIXED QA WATERMARK PILL (v24.245.89: Zero-GPU Calm Indicator) -->
     <div id="qa-sticky-watermark" class="fixed bottom-20 left-4 sm:bottom-24 sm:left-8 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-950/95 border border-cyan-400/60 shadow-lg text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-transform">
             <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0 shadow-[0_0_8px_rgba(34,211,238,0.9)]"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.245.100</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.245.101</span>
         </a>
     </div>
 

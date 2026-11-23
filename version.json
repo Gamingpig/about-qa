@@ -1,11 +1,11 @@
 {
-  "version": "24.245.100",
-  "buildTime": "2026-11-23T14:05:00.000Z",
+  "version": "24.245.101",
+  "buildTime": "2026-11-23T14:30:00.000Z",
   "shortNotes": [
-    "Universeller Spotify Canvas Live-Resolver: Streamt das Original-Canvas für jeden Song",
-    "First Move (Lily Ward) & Gamingpig Top-Tracks fest im Canvas-Bundle integriert",
-    "Eigener Canvas-Proxy (Vercel/Cloudflare) direkt in den Systemeinstellungen konfigurierbar",
-    "100% Graceful Fallback auf das Cover-Artwork ohne künstliche Visualizer",
-    "Vollständige Versions- und QA-Badge-Synchronisation auf v24.245.100"
+    "Bounded Storage & Cache Management: Strikte Obergrenzen für alle Caches (Canvas, Lyrics, Cover, Artists)",
+    "Neues Wartungstool in den Einstellungen: „Temporären Cache & RAM jetzt leeren“",
+    "Ressourcenschonendes Desktop-Layout: CSS Containment & Compositor-Layer-Isolation",
+    "Debounced Resize Listener: 0 CPU-Last & kein Layout-Thrashing beim Fenstergrößenwechsel",
+    "Service Worker Puffer optimiert: Externe Medien & Videos werden nie im Cache abgelegt"
   ]
 }

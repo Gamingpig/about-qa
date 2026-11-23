@@ -11,15 +11,15 @@ const versionJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'version.json'), 
 const swJs = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
 const releaseHtml = fs.readFileSync(path.join(ROOT, 'release.html'), 'utf8');
 
-test('Spotify Canvas Playback, Activation & Fallback Architecture (v24.245.100)', async (t) => {
-    await t.test('C1: Version 24.245.100 is synchronized across all core files', () => {
-        assert.equal(versionJson.version, '24.245.100');
-        assert.match(swJs, /const SW_VERSION = "24\.245\.100";/);
-        assert.match(indexHtml, /ONBOARDING_VERSION = 'v24\.245\.100 · 2026-11-23';/);
-        assert.match(indexHtml, /id="footer-menu-hint"[^>]*>v24\.245\.100<\/span>/);
-        assert.match(indexHtml, /id="footer-version-label"[^>]*>v24\.245\.100 \(QA Test\)<\/span>/);
-        assert.match(releaseHtml, /<title>Release Notes v24\.245\.100/);
-        assert.match(indexHtml, /version:\s*"v24\.245\.100"/);
+test('Spotify Canvas Playback, Bounded Storage & Desktop Architecture (v24.245.101)', async (t) => {
+    await t.test('C1: Version 24.245.101 is synchronized across all core files', () => {
+        assert.equal(versionJson.version, '24.245.101');
+        assert.match(swJs, /const SW_VERSION = "24\.245\.101";/);
+        assert.match(indexHtml, /ONBOARDING_VERSION = 'v24\.245\.101 · 2026-11-23';/);
+        assert.match(indexHtml, /id="footer-menu-hint"[^>]*>v24\.245\.101<\/span>/);
+        assert.match(indexHtml, /id="footer-version-label"[^>]*>v24\.245\.101 \(QA Test\)<\/span>/);
+        assert.match(releaseHtml, /<title>Release Notes v24\.245\.101/);
+        assert.match(indexHtml, /version:\s*"v24\.245\.101"/);
     });
 
     await t.test('C2: toggleDashboard invokes applyActiveMediaMode on open and close', () => {
@@ -62,13 +62,11 @@ test('Spotify Canvas Playback, Activation & Fallback Architecture (v24.245.100)'
     });
 
     await t.test('C5: Graceful fallback strictly preserves album cover artwork without artificial visualizers', () => {
-        // applyActiveMediaMode enforces singleActiveVideo 'none' and sets opacity-0 when currentCanvasUrl is absent
         assert.match(
             indexHtml,
             /!currentCanvasUrl[\s\S]*?enforceSingleActiveVideo\('none'\);[\s\S]*?canvasVideo\.classList\.add\('opacity-0'\)[\s\S]*?canvasMediaVideo\.classList\.add\('opacity-0'\)/,
             'applyActiveMediaMode must hide canvas videos when currentCanvasUrl is absent'
         );
-        // Ensure no artificial canvas animation or fake visualizer is generated for canvas
         assert.doesNotMatch(indexHtml, /function createArtificialCanvas/, 'No fake canvas generation function allowed');
         assert.doesNotMatch(indexHtml, /function generateProceduralCanvas/, 'No procedural fake visualizer allowed');
     });
@@ -120,5 +118,32 @@ test('Spotify Canvas Playback, Activation & Fallback Architecture (v24.245.100)'
         const doc = dom.window.document;
         assert.ok(doc.getElementById('settings-canvas-proxy-input'), '#settings-canvas-proxy-input must exist in settings');
         assert.ok(doc.getElementById('btn-settings-toggle-canvas'), '#btn-settings-toggle-canvas must exist in settings');
+    });
+
+    await t.test('C10: Bounded cache management limits memory usage across in-memory caches', () => {
+        assert.match(indexHtml, /function setBoundedMap\(/, 'setBoundedMap helper must exist');
+        assert.match(indexHtml, /setBoundedMap\(trackCanvasMemoryCache,\s*[^,]+,\s*[^,]+,\s*30\)/, 'trackCanvasMemoryCache must be bounded to 30 items');
+        assert.match(indexHtml, /setBoundedMap\(trackCanvasNegativeCache,\s*cleanId,\s*\{[\s\S]*?\},\s*50\)/, 'trackCanvasNegativeCache must be bounded to 50 items');
+        assert.match(indexHtml, /setBoundedMap\(canvasIdSearchCache,\s*key,\s*\{[\s\S]*?\},\s*50\)/, 'canvasIdSearchCache must be bounded to 50 items');
+        assert.match(indexHtml, /setBoundedMap\(lyricsMemoryCache,\s*cacheKey,\s*\{[\s\S]*?\},\s*20\)/, 'lyricsMemoryCache must be bounded to 20 items');
+    });
+
+    await t.test('C11: Desktop layout enforces containment and compositor layer isolation', () => {
+        assert.match(indexHtml, /html\.gp-desktop #desktop-sidebar-col\s*\{[\s\S]*?contain:\s*layout style !important;/);
+        assert.match(indexHtml, /html\.gp-desktop #desktop-sidebar-col #header-section\s*\{[\s\S]*?contain:\s*layout paint style !important;[\s\S]*?isolation:\s*isolate !important;[\s\S]*?transform:\s*translate3d\(0,\s*0,\s*0\) !important;/);
+        assert.match(indexHtml, /html\.gp-desktop #desktop-content-col\s*\{[\s\S]*?contain:\s*layout style !important;/);
+        assert.match(indexHtml, /resizeLayoutRaf\s*=\s*requestAnimationFrame/, 'Window resize must be debounced via RAF');
+    });
+
+    await t.test('C12: Service worker fetch ignores media/video streams and bounds runtime caches', () => {
+        assert.match(swJs, /\.endsWith\("\.mp4"\)\s*\|\|\s*url\.pathname\.endsWith\("\.cnvs\.mp4"\)/, 'SW fetch must bypass videos');
+        assert.match(swJs, /runtime\.length - 25/, 'SW runtime cache must be bounded to 25 items');
+    });
+
+    await t.test('C13: Settings UI contains cache cleanup tool (#btn-clear-temp-cache)', () => {
+        const dom = new JSDOM(indexHtml);
+        const doc = dom.window.document;
+        assert.ok(doc.getElementById('btn-clear-temp-cache'), '#btn-clear-temp-cache button must exist in settings');
+        assert.match(indexHtml, /window\.clearTempStorageAndCaches\s*=\s*async function/, 'clearTempStorageAndCaches function must exist');
     });
 });
