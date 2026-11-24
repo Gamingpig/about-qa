@@ -32,42 +32,67 @@ object TrackDataFetcher {
         var artUrl: String? = null
         var progressPct = 0
 
+        // 1. Primary: stats.fm Live Current Stream
         try {
             val statsJson = fetchJson("$STATSFM_URL?t=${System.currentTimeMillis()}")
             val item = statsJson?.optJSONObject("item")
-            val stream = statsJson?.optJSONObject("stream")
             if (item != null) {
-                isPlaying = true
-                title = item.optString("name", title)
-                val artists = item.optJSONArray("artists")
-                if (artists != null && artists.length() > 0) {
-                    artist = artists.getJSONObject(0).optString("name", artist)
-                }
-                val albums = item.optJSONArray("albums")
-                if (albums != null && albums.length() > 0) {
-                    artUrl = albums.getJSONObject(0).optString("image", null)
-                }
-                val dur = item.optLong("durationMs", 0L)
-                val prog = stream?.optLong("progressMs", 0L) ?: 0L
-                if (dur > 0) {
-                    progressPct = ((prog.toDouble() / dur.toDouble()) * 100.0).toInt().coerceIn(0, 100)
+                val trk = item.optJSONObject("track") ?: item
+                val playingFlag = item.optBoolean("isPlaying", true)
+                if (playingFlag) {
+                    isPlaying = true
+                    title = trk.optString("name", "").ifBlank { title }
+
+                    val artistsArr = trk.optJSONArray("artists")
+                    if (artistsArr != null && artistsArr.length() > 0) {
+                        val names = mutableListOf<String>()
+                        for (i in 0 until artistsArr.length()) {
+                            val n = artistsArr.optJSONObject(i)?.optString("name", "")
+                            if (!n.isNullOrBlank()) names.add(n)
+                        }
+                        if (names.isNotEmpty()) artist = names.joinToString(", ")
+                    }
+
+                    val albumsArr = trk.optJSONArray("albums")
+                    if (albumsArr != null && albumsArr.length() > 0) {
+                        artUrl = albumsArr.optJSONObject(0)?.optString("image", null)
+                    }
+
+                    val dur = trk.optLong("durationMs", 0L)
+                    val stream = item.optJSONObject("stream")
+                    val prog = if (item.has("progressMs")) {
+                        item.optLong("progressMs", 0L)
+                    } else {
+                        stream?.optLong("progressMs", 0L) ?: 0L
+                    }
+                    if (dur > 0) {
+                        progressPct = ((prog.toDouble() / dur.toDouble()) * 100.0).toInt().coerceIn(0, 100)
+                    }
                 }
             }
         } catch (_: Exception) {
         }
 
+        // 2. Fallback: NPC API
         if (!isPlaying) {
             try {
                 val npcJson = fetchJson("$NPC_URL?t=${System.currentTimeMillis()}")
+                val statusStr = npcJson?.optString("status", "") ?: ""
                 val track = npcJson?.optJSONObject("track")
-                if (track != null) {
-                    isPlaying = npcJson.optBoolean("isPlaying", false)
-                    title = track.optString("title", title)
-                    artist = track.optString("artist", artist)
+                if (track != null && (statusStr == "playing" || npcJson?.optBoolean("isPlaying", false) == true)) {
+                    isPlaying = true
+                    title = track.optString("title", "").ifBlank { title }
+                    artist = track.optString("artist", "").ifBlank { artist }
                     if (artUrl.isNullOrBlank()) {
-                        artUrl = track.optString("art", null)
+                        artUrl = track.optString("artwork_url", "").ifBlank { track.optString("art", null) }
                     }
-                    if (isPlaying && progressPct == 0) progressPct = 35
+                    val dur = track.optLong("duration_ms", 0L)
+                    val prog = npcJson?.optLong("progress_ms", 0L) ?: 0L
+                    if (dur > 0) {
+                        progressPct = ((prog.toDouble() / dur.toDouble()) * 100.0).toInt().coerceIn(0, 100)
+                    } else if (progressPct == 0) {
+                        progressPct = 35
+                    }
                 }
             } catch (_: Exception) {
             }
@@ -81,10 +106,11 @@ object TrackDataFetcher {
         var conn: HttpURLConnection? = null
         return try {
             conn = (URL(urlStr).openConnection() as HttpURLConnection).apply {
-                connectTimeout = 4000
-                readTimeout = 4000
+                connectTimeout = 5000
+                readTimeout = 5000
                 requestMethod = "GET"
                 setRequestProperty("Accept", "application/json")
+                setRequestProperty("User-Agent", "GamingpigWidget/1.1 (Android)")
             }
             if (conn.responseCode == 200) {
                 val text = conn.inputStream.bufferedReader().use { it.readText() }
@@ -101,8 +127,9 @@ object TrackDataFetcher {
         var conn: HttpURLConnection? = null
         return try {
             conn = (URL(urlStr).openConnection() as HttpURLConnection).apply {
-                connectTimeout = 4000
-                readTimeout = 4000
+                connectTimeout = 5000
+                readTimeout = 5000
+                setRequestProperty("User-Agent", "GamingpigWidget/1.1 (Android)")
             }
             if (conn.responseCode == 200) {
                 val raw = conn.inputStream.use { BitmapFactory.decodeStream(it) } ?: return null

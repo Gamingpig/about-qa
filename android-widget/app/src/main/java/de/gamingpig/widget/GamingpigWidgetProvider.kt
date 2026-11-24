@@ -1,5 +1,6 @@
 package de.gamingpig.widget
 
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -8,13 +9,25 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.os.SystemClock
 import android.view.View
 import android.widget.RemoteViews
 import java.util.concurrent.Executors
 
 class GamingpigWidgetProvider : AppWidgetProvider() {
 
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        scheduleNextRefresh(context)
+    }
+
+    override fun onDisabled(context: Context) {
+        super.onDisabled(context)
+        cancelScheduledRefresh(context)
+    }
+
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        scheduleNextRefresh(context)
         val pendingResult = goAsync()
         executor.execute {
             try {
@@ -30,15 +43,20 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        if (intent.action == ACTION_REFRESH) {
+        if (intent.action == ACTION_REFRESH || intent.action == ACTION_AUTO_POLL) {
+            scheduleNextRefresh(context)
             val pendingResult = goAsync()
             executor.execute {
                 try {
                     val manager = AppWidgetManager.getInstance(context)
                     val ids = manager.getAppWidgetIds(ComponentName(context, GamingpigWidgetProvider::class.java))
-                    val snapshot = TrackDataFetcher.fetchCurrentTrack()
-                    for (id in ids) {
-                        updateAppWidget(context, manager, id, snapshot)
+                    if (ids.isNotEmpty()) {
+                        val snapshot = TrackDataFetcher.fetchCurrentTrack()
+                        for (id in ids) {
+                            updateAppWidget(context, manager, id, snapshot)
+                        }
+                    } else {
+                        cancelScheduledRefresh(context)
                     }
                 } finally {
                     pendingResult.finish()
@@ -49,15 +67,53 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
 
     companion object {
         const val ACTION_REFRESH = "de.gamingpig.widget.ACTION_REFRESH"
+        const val ACTION_AUTO_POLL = "de.gamingpig.widget.ACTION_AUTO_POLL"
         const val PREFS_NAME = "gp_widget_prefs"
         const val KEY_THEME = "widget_theme"
         const val KEY_SHOW_PROGRESS = "show_progress"
+        private const val POLL_INTERVAL_MS = 60_000L
         private val executor = Executors.newSingleThreadExecutor()
+
+        private fun getAutoPollPendingIntent(context: Context): PendingIntent {
+            val intent = Intent(context, GamingpigWidgetProvider::class.java).apply {
+                action = ACTION_AUTO_POLL
+            }
+            return PendingIntent.getBroadcast(
+                context, 201, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        }
+
+        fun scheduleNextRefresh(context: Context) {
+            try {
+                val manager = AppWidgetManager.getInstance(context)
+                val ids = manager.getAppWidgetIds(ComponentName(context, GamingpigWidgetProvider::class.java))
+                if (ids.isEmpty()) return
+
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
+                // ELAPSED_REALTIME (non-waking): saves battery when screen is off, refreshes every ~60s when active
+                alarmManager.set(
+                    AlarmManager.ELAPSED_REALTIME,
+                    SystemClock.elapsedRealtime() + POLL_INTERVAL_MS,
+                    getAutoPollPendingIntent(context)
+                )
+            } catch (_: Exception) {
+            }
+        }
+
+        fun cancelScheduledRefresh(context: Context) {
+            try {
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
+                alarmManager.cancel(getAutoPollPendingIntent(context))
+            } catch (_: Exception) {
+            }
+        }
 
         fun refreshAllWidgets(context: Context) {
             val manager = AppWidgetManager.getInstance(context)
             val ids = manager.getAppWidgetIds(ComponentName(context, GamingpigWidgetProvider::class.java))
             if (ids.isEmpty()) return
+            scheduleNextRefresh(context)
             executor.execute {
                 val snapshot = TrackDataFetcher.fetchCurrentTrack()
                 for (id in ids) {

@@ -363,17 +363,18 @@
                 const stats = statsRes.status === 'fulfilled' ? statsRes.value : null;
 
                 const item = stats?.item;
+                const trk = item?.track || item;
                 const stream = stats?.stream;
 
-                if (item) {
+                if (item && trk && item.isPlaying !== false) {
                     isPlaying = true;
-                    durationMs = item.durationMs || 180000;
-                    progressMs = stream?.progressMs || 0;
+                    durationMs = trk.durationMs || 180000;
+                    progressMs = item.progressMs ?? stream?.progressMs ?? 0;
                     lastSyncTime = Date.now();
 
-                    const title = item.name || npc?.track?.title || "Unbekannter Titel";
-                    const artist = (item.artists && item.artists[0]?.name) || npc?.track?.artist || "Gamingpig";
-                    const art = (item.albums && item.albums[0]?.image) || npc?.track?.art || "og-v2.jpg";
+                    const title = trk.name || npc?.track?.title || "Unbekannter Titel";
+                    const artist = (trk.artists && trk.artists.map(a => a?.name).filter(Boolean).join(', ')) || npc?.track?.artist || "Gamingpig";
+                    const art = (trk.albums && trk.albums[0]?.image) || npc?.track?.artwork_url || npc?.track?.art || "og-v2.jpg";
 
                     document.getElementById('title').textContent = title;
                     document.getElementById('artist').textContent = artist;
