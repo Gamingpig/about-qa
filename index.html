@@ -7,6 +7,12 @@
     diesem Repo Release Notes erzeugen. Bei jeder inhaltlichen
     Änderung bitte hier oben einen neuen Eintrag ergänzen:
     [BUGFIX] oder [PERFORMANCE] oder [FEATURE] als Tag, dann kurz
+    [BUGFIX/CANVAS] Release v24.245.102 · 2026-11-24: Spotify Canvas Quadrat & Hintergrund-Synchronisation, Self-Healing Watchdog & ReadyState-Schutz
+      - Synchronisation im Cover-Quadrat (#canvas-media-video) repariert: Verhindert, dass Canvas nur im Hintergrund läuft, während das Album-Quadrat auf dem Standbild stehen bleibt.
+      - ReadyState-Schutz in lockVideoPair() & resyncAllCanvasVideos(): Verhindert kontinuierliche Seek-Abbrüche und Endlos-Puffer-Schleifen, indem erst ab readyState >= 2 synchronisiert wird.
+      - Watchdog-Selbstheilung: Im zentralen 5s-Heartbeat und bei Gesten/Fokus wird #canvas-media-video automatisch verifiziert, neu geladen und bei fehlender Opacity eingeblendet.
+      - Spatial Tilt 3D Parallax Bug behoben: #canvas-media-video erhält dieselbe 3D-Z-Transformation (translateZ(10px)) wie #artwork und verschwindet nicht mehr hinter dem Bild.
+      - Hardware-Isolierung (contain: strict; will-change: transform, opacity) für das Cover-Canvas: 0% Layout-Overhead und minimale GPU-Compositor-Last.
     [PERFORMANCE/STORAGE] Release v24.245.101 · 2026-11-23: Bounded Cache & Memory Management, Ultra-Ressourcenschonendes Desktop Layout
       - Begrenzte In-Memory & Storage Puffer (Bounded LRU Eviction): Kein Volllaufen des Browser-Speichers bei langen Hör-Sessions.
       - Canvas-, Cover-, Lyrics- und Artist-Caches auf feste Höchstgrenzen (20-30 Einträge) gedeckelt.
@@ -3415,7 +3421,7 @@
     <link rel="preconnect" href="https://r.jina.ai" crossorigin>
     <link rel="preconnect" href="https://api.allorigins.win" crossorigin>
     <link rel="dns-prefetch" href="https://i.scdn.co">
-    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.245.101</title>
+    <title>🧪 [TESTUMGEBUNG] Gamingpig Portfolio v24.245.102</title>
     <script src="js/read-aloud-service.1fc24873f319082e.js"></script>
     <script src="js/i18n-manager.56dbdc7cc518ed8b.js"></script>
     <script src="js/core/update-manager.js"></script>
@@ -3441,7 +3447,7 @@
             _visitCount++;
             AppStorage.setItem('app_visit_count', String(_visitCount));
             // 🛡️ INSTANT ONBOARDING SHIELD
-            const _currVer = window.ONBOARDING_VERSION = 'v24.245.101 · 2026-11-23';
+            const _currVer = window.ONBOARDING_VERSION = 'v24.245.102 · 2026-11-24';
             const _installedVer = AppStorage.getItem('site_version_installed');
             if (_installedVer !== _currVer) {
                 AppStorage.setItem('site_version_installed', _currVer);
@@ -9066,6 +9072,7 @@ body.low-end.liquid-glass-active #footer-expandable-menu {
         /* ========================================================= */
         #media-container { perspective: 800px; }
         body.tilt-active #media-container img#artwork,
+        body.tilt-active #media-container #canvas-media-video,
         body.tilt-active #media-container #offline-icon {
             transform: rotateX(calc(var(--tilt-y, 0) * 1deg)) rotateY(calc(var(--tilt-x, 0) * -1deg)) translateZ(10px);
             transition: transform 0.15s ease-out;
@@ -10103,7 +10110,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-expandable-menu" class="hidden fixed z-[95] p-3.5 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl backdrop-blur-xl w-[315px] xxs:w-[340px] sm:w-[370px] max-w-[calc(100vw-1.5rem)] text-xs space-y-2.5" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between px-1 pb-1.5 border-b border-white/10 gap-2">
             <span id="footer-menu-title" data-i18n="footer_menu_title" class="font-bold text-slate-400 text-[10px] uppercase tracking-wider truncate">Navigation &amp; Rechtliches</span>
-            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.101</span>
+            <span id="footer-menu-hint" class="text-[9px] text-pink-400 font-mono font-bold shrink-0 whitespace-nowrap">v24.245.102</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-left">
             <button onclick="openEpicWhatsNewTour(false); toggleFooterMenu(false)" id="footer-whats-new-btn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 hover:text-white font-medium flex items-center gap-2 transition-all active:scale-[0.98]">
@@ -10140,7 +10147,7 @@ html.gp-android:not(.dark) #ui-controls {
     <div id="footer-bubble" class="fixed z-[91] inline-flex items-center justify-center gap-1.5 sm:gap-3 px-3 sm:px-6 rounded-full bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-xl text-[10px] xs:text-xs sm:text-sm text-slate-300 select-none opacity-0 pointer-events-none">
         <span id="footer-established" onclick="handleFooterEstablishedTap()" title="© 2026 Gamingpig" class="font-bold tracking-tight text-slate-300 whitespace-nowrap cursor-pointer hover:text-white transition-colors">© 2026 GAMINGPIG</span>
         <span class="text-white/20 select-none">•</span>
-        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.101 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.101 (QA Test)</span>
+        <span id="footer-version-label" onclick="handleVersionEasterTap()" title="Version v24.245.102 (QA Testversion)" class="font-mono font-bold text-cyan-400 whitespace-nowrap cursor-pointer hover:underline">v24.245.102 (QA Test)</span>
         <span class="text-white/20 select-none">•</span>
         <button id="footer-menu-toggle-btn" onclick="toggleFooterMenu()" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 sm:gap-1.5 transition-all px-1.5 sm:px-2 py-1 rounded-full hover:bg-white/10 active:scale-95 whitespace-nowrap cursor-pointer" aria-expanded="false" aria-label="Mehr Menü öffnen">
             <span id="footer-more-label">Mehr</span>
@@ -10396,7 +10403,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <div class="flex items-center gap-2 flex-wrap">
                         <strong class="text-cyan-300 font-black text-sm sm:text-base tracking-wide uppercase">Gamingpig Testumgebung (QA-Build)</strong>
                         <span class="px-2 py-0.5 rounded-full bg-cyan-500/30 text-cyan-200 text-[10px] font-mono font-bold border border-cyan-400/40 uppercase">Keine Live-Version</span>
-                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.245.101</span>
+                        <span class="px-2 py-0.5 rounded-full bg-pink-500/30 text-pink-300 text-[10px] font-mono font-bold border border-pink-400/40">v24.245.102</span>
                     </div>
                     <p class="text-xs text-slate-300 mt-1 leading-snug">⚠️ <strong>Achtung:</strong> Dies ist die separate Test- und Preview-Umgebung. Hier können alle neuen Funktionen, das Einstellungs-Zentrum und Easter Eggs vorab getestet werden.</p>
                 </div>
@@ -10424,7 +10431,7 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <div id="qa-env-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 mb-2 sm:mb-3 text-[9px] xxs:text-[11px] font-mono font-bold rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-sm ml-1 select-none">
                 <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.9)]"></span>
-                <span>🧪 QA TESTUMGEBUNG v24.245.101</span>
+                <span>🧪 QA TESTUMGEBUNG v24.245.102</span>
             </div>
             <p id="time-greeting" class="text-xs xxs:text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400 mb-2 xxs:mb-3"></p>
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap mb-3 sm:mb-4">
@@ -10822,7 +10829,7 @@ html.gp-android:not(.dark) #ui-controls {
                             <!-- FIX v24.85: decoding="async" ergänzt + fetchpriority="high" -->
                             <img id="artwork" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" alt="" aria-label="Album Artwork" class="w-full h-full object-cover relative z-0 transition-opacity duration-500" decoding="async" fetchpriority="high">
                             <!-- Echte Spotify Canvas Video-Fläche direkt auf dem Cover (wie in Spotify Mobile/Desktop) -->
-                            <video id="canvas-media-video" class="absolute inset-0 w-full h-full object-cover z-10 opacity-0 transition-opacity duration-700 pointer-events-none" loop muted playsinline disablepictureinpicture></video>
+                            <video id="canvas-media-video" class="absolute inset-0 w-full h-full object-cover z-10 opacity-0 transition-opacity duration-700 pointer-events-none" style="contain: strict; will-change: opacity, transform; transform: translate3d(0,0,0);" loop muted playsinline disablepictureinpicture></video>
                             <!-- FIX v24.225.28: Musikvideo Cover-Ebene direkt auf dem Cover-Fenster -->
                             <iframe id="media-video-iframe" class="absolute inset-0 w-full h-full border-0 z-10 opacity-0 pointer-events-none transition-opacity duration-700 scale-150" allow="autoplay; encrypted-media"></iframe>
                             <div id="offline-icon" class="absolute text-2xl xxs:text-4xl sm:text-6xl z-20" aria-hidden="true">🌙</div>
@@ -11945,7 +11952,7 @@ html.gp-android:not(.dark) #ui-controls {
                         <div class="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-lg shrink-0">📱</div>
                         <div class="min-w-0">
                             <div class="text-xs sm:text-sm font-bold text-slate-100">System-Update</div>
-                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.245.101</div>
+                            <div id="settings-update-current-ver" class="text-xs text-slate-400 font-mono truncate">Installiert: v24.245.102</div>
                         </div>
                     </div>
                     <span id="settings-update-status-pill" class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold whitespace-nowrap shrink-0">Aktuell ✓</span>
@@ -12300,7 +12307,7 @@ html.gp-android:not(.dark) #ui-controls {
                     <span>🔄</span> <span>Onboarding zurücksetzen &amp; starten</span>
                 </button>
             </div>
-            <!-- Cache & Speicher-Bereinigung (v24.245.101) -->
+            <!-- Cache & Speicher-Bereinigung (v24.245.102) -->
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-2.5">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-sm shrink-0">🧹</div>
@@ -12332,7 +12339,7 @@ html.gp-android:not(.dark) #ui-controls {
             <div class="settings-item p-3.5 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
                 <div class="flex items-center justify-between py-1 border-b border-white/5">
                     <span class="text-xs text-slate-400">Website-Version</span>
-                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.245.101</span>
+                    <span id="settings-info-version-val" class="text-xs font-mono font-bold text-slate-200">v24.245.102</span>
                 </div>
                 <!-- 7-Tap Target Build-Nummer! -->
                 <div id="settings-build-number-row" onclick="handleBuildNumberTap()" class="flex items-center justify-between py-2 px-2.5 -mx-1 rounded-xl hover:bg-slate-700/50 cursor-pointer transition-colors active:scale-98 select-none border border-transparent hover:border-white/5" title="7x schnell tippen für Entwickleroptionen">
@@ -12343,7 +12350,7 @@ html.gp-android:not(.dark) #ui-controls {
                         </div>
                         <div class="text-[11px] text-slate-400 font-mono">GP-2026.10.12-215 (Produktion)</div>
                     </div>
-                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.245.101</span>
+                    <span id="settings-build-dev-badge" class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-mono font-bold">v24.245.102</span>
                 </div>
                 <div class="flex items-center justify-between py-1 border-t border-white/5">
                     <span class="text-xs text-slate-400">PWA &amp; Offline-Cache</span>
@@ -12394,7 +12401,7 @@ html.gp-android:not(.dark) #ui-controls {
         </div>
     </div>
     <!-- Version Label -->
-    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.245.101</p>
+    <p id="settings-version-label" class="text-center text-xs text-slate-500 px-2 py-1 font-mono select-all shrink-0">v24.245.102</p>
 </div>
 <!-- ========================================================= -->
 <!-- 🕹️ CYBER ARCADE & EASTER EGG VAULT (16 GAMES & SECRETS)     -->
@@ -18966,7 +18973,7 @@ html.gp-android:not(.dark) #ui-controls {
             function updateSettingsSystemUpdateUI(pending) {
                 const currentVer = String(window.ONBOARDING_VERSION || '').split(/[·•]/)[0].replace(/^v/, '').trim();
                 const currEl = document.getElementById('settings-update-current-ver');
-                if (currEl) currEl.textContent = 'Installiert: v' + (currentVer || '24.245.101');
+                if (currEl) currEl.textContent = 'Installiert: v' + (currentVer || '24.245.102');
                 // Veraltete vorgemerkte Updates (Version <= installierte Version) sofort aus dem
                 // Speicher verwerfen, damit kein "Warten auf vX.X.X" mehr angezeigt wird.
                 const currentNum = typeof parseVersionNum === 'function' ? parseVersionNum(currentVer) : 0;
@@ -21327,6 +21334,22 @@ let shareCardLoading;
         // NEU v24.22: um "type" pro Eintrag erweitert (feature/performance/fix), damit die
         // Anzeige kategorisiert werden kann statt nur als flache Liste.
         const PUBLIC_CHANGELOG = [
+        { version: "v24.245.102", date: "24. November 2026", type: "bugfix", items: {
+                de: [
+                    "🎬 Spotify Canvas Quadrat-Synchronisation: Zuverlässiges und sofortiges Abspielen im Cover-Quadrat (#canvas-media-video) synchron zum Hintergrund",
+                    "🛡️ ReadyState-Schutz: Verhindert kontinuierliche Seek-Abbrüche und Endlos-Puffer-Schleifen, indem erst ab readyState >= 2 synchronisiert wird",
+                    "🔄 Watchdog-Selbstheilung: Stellt pausierte oder ausgeblendete Canvas-Videos im 5s-Heartbeat sowie bei Fokus und Touches vollautomatisch wieder her",
+                    "📐 Spatial Tilt 3D Parallax Fix: #canvas-media-video behält die identische 3D-Z-Ebene (translateZ(10px)) und verschwindet nicht hinter dem Artwork",
+                    "⚡ Hardware-Isolierung: contain: strict und will-change für 0% Layout-Overhead und flüssige GPU-Compositing-Performance"
+                ],
+                en: [
+                    "🎬 Spotify Canvas Square Synchronization: Reliable and instant playback in album square (#canvas-media-video) synced with background",
+                    "🛡️ ReadyState Guard: Prevents repeated seek aborts and buffering loops by requiring readyState >= 2 before seeking",
+                    "🔄 Watchdog Self-Healing: Automatically restores paused or hidden canvas videos in 5s heartbeat, focus, and touch events",
+                    "📐 Spatial Tilt 3D Parallax Fix: #canvas-media-video maintains identical 3D Z-plane (translateZ(10px)) preventing artwork clipping",
+                    "⚡ Hardware Isolation: contain: strict and will-change for 0% layout overhead and fluid GPU compositing performance"
+                ]
+        }},
         { version: "v24.245.101", date: "23. November 2026", type: "performance", items: {
                 de: [
                     "💾 Bounded Storage & Cache Management: Strikte Obergrenzen für alle Caches (Canvas, Lyrics, Cover, Artists) verhindern volllaufenden Speicher",
@@ -28888,15 +28911,36 @@ window.setLyricsStyle = function(style) {
             } else if (mode === 'dashboard') {
                 // ULTRA-LOGISCH: In der aktiven Dashboard-Ansicht laufen Cover-Canvas & Hintergrund synchron
                 [lVideo, cinemaVideo, cinemaGlowVideo].forEach(v => { if (v && !v.paused) v.pause(); });
-                if (cVideo && cVideo.paused && canvasEnabled && isPlaying && currentCanvasUrl) {
-                    cVideo.play().catch(()=>{});
+                if (cVideo && canvasEnabled && isPlaying && currentCanvasUrl) {
+                    if (cVideo.src !== currentCanvasUrl || cVideo.error) {
+                        cVideo.src = currentCanvasUrl;
+                        cVideo.load();
+                    }
+                    cVideo.muted = true;
+                    if (cVideo.paused) cVideo.play().catch(()=>{});
+                    cVideo.classList.remove('opacity-0');
+                    cVideo.classList.add('opacity-100');
                 }
-                if (mVideo && mVideo.paused && canvasEnabled && isPlaying && currentCanvasUrl) {
-                    mVideo.play().catch(()=>{});
+                if (mVideo && canvasEnabled && isPlaying && currentCanvasUrl) {
+                    if (mVideo.src !== currentCanvasUrl || mVideo.error) {
+                        mVideo.src = currentCanvasUrl;
+                        mVideo.load();
+                    }
+                    mVideo.muted = true;
+                    if (mVideo.paused) mVideo.play().catch(()=>{});
+                    mVideo.classList.remove('opacity-0');
+                    mVideo.classList.add('opacity-100');
                 }
                 const isGlowActive = typeof coverGlowEnabled !== 'undefined' ? coverGlowEnabled : true;
                 if (gVideo && isGlowActive && canvasEnabled && isPlaying && currentCanvasUrl) {
+                    if (gVideo.src !== currentCanvasUrl || gVideo.error) {
+                        gVideo.src = currentCanvasUrl;
+                        gVideo.load();
+                    }
+                    gVideo.muted = true;
                     if (gVideo.paused) gVideo.play().catch(()=>{});
+                    gVideo.classList.remove('opacity-0');
+                    gVideo.classList.add('opacity-100');
                 } else if (gVideo && !gVideo.paused) {
                     gVideo.pause();
                 }
@@ -29230,18 +29274,25 @@ window.setLyricsStyle = function(style) {
 
             // 1. Initialer Zustand
             try {
-                if (master.currentTime > 0 && Math.abs(slave.currentTime - master.currentTime) > 0.3 && !slave.seeking) {
+                if (master.currentTime > 0 && Math.abs(slave.currentTime - master.currentTime) > 0.3 && !slave.seeking && slave.readyState >= 2) {
                     slave.currentTime = master.currentTime;
                 }
                 slave.playbackRate = 1.0;
-                if (!master.paused && slave.paused) slave.play().catch(()=>{});
-                else if (master.paused && !slave.paused) slave.pause();
+                if (!master.paused && slave.paused) {
+                    slave.muted = true;
+                    slave.play().catch(()=>{});
+                } else if (master.paused && !slave.paused) slave.pause();
             } catch (_) {}
 
-            // 2. Play / Pause Kopplung
+            // 2. Play / Pause Kopplung & Opacity-Absicherung
             master.addEventListener('play', () => {
                 try {
-                    if (slave.paused) slave.play().catch(()=>{});
+                    if (slave.paused) {
+                        slave.muted = true;
+                        slave.play().catch(()=>{});
+                    }
+                    slave.classList.remove('opacity-0');
+                    slave.classList.add('opacity-100');
                 } catch (_) {}
             }, { passive: true });
 
@@ -29251,33 +29302,59 @@ window.setLyricsStyle = function(style) {
                 } catch (_) {}
             }, { passive: true });
 
-            // 3. Loop-Restart & Seek-Kopplung (NUR auf dem Slave, niemals auf dem Master!)
+            // 3. Loop-Restart & Seek-Kopplung (NUR wenn slave.readyState >= 2!)
             let lastMTime = master.currentTime || 0;
             master.addEventListener('timeupdate', () => {
                 if (!master || !slave || master.paused || slave.seeking) return;
+                // KRITISCH: Niemals seeken, wenn Slave noch am Laden ist (readyState < 2)!
+                // Verhindert kontinuierliche Decoder-Abbrüche und Endlos-Seek-Schleifen beim Starten!
+                if (slave.readyState < 2) return;
                 const mTime = master.currentTime;
 
                 // Loop-Neustart: Master springt von Ende wieder auf Anfang
                 if (mTime < lastMTime - 0.4) {
                     if (!slave.seeking && Math.abs(slave.currentTime - mTime) > 0.25) {
-                        slave.currentTime = mTime;
+                        try { slave.currentTime = mTime; } catch(_) {}
                     }
                 } else if (Math.abs(slave.currentTime - mTime) > 0.6) {
                     // Sanfter Drift-Fang nur bei spürbarem Versatz (>600ms)
-                    if (!slave.seeking) slave.currentTime = mTime;
+                    if (!slave.seeking) {
+                        try { slave.currentTime = mTime; } catch(_) {}
+                    }
                 }
                 lastMTime = mTime;
+            }, { passive: true });
+
+            // 4. Auto-Play & Un-Stall auf dem Slave sobald Puffer bereit ist
+            slave.addEventListener('canplay', () => {
+                if (!master.paused && slave.paused) {
+                    slave.muted = true;
+                    slave.play().catch(()=>{});
+                }
+                slave.classList.remove('opacity-0');
+                slave.classList.add('opacity-100');
+                if (!slave.seeking && master.currentTime > 0 && slave.readyState >= 2 && Math.abs(slave.currentTime - master.currentTime) > 0.35) {
+                    try { slave.currentTime = master.currentTime; } catch(_) {}
+                }
+            }, { passive: true });
+
+            slave.addEventListener('playing', () => {
+                slave.classList.remove('opacity-0');
+                slave.classList.add('opacity-100');
             }, { passive: true });
         }
 
         function syncCanvasPlayback(slave, master) {
             if (!slave || !master || slave === master) return;
             try {
-                if (!slave.seeking && Math.abs(slave.currentTime - master.currentTime) > 0.35) {
+                if (slave.readyState >= 2 && !slave.seeking && Math.abs(slave.currentTime - master.currentTime) > 0.35) {
                     slave.currentTime = master.currentTime;
                 }
                 if (master.paused && !slave.paused) slave.pause();
-                else if (!master.paused && slave.paused) slave.play().catch(()=>{});
+                else if (!master.paused && slave.paused) {
+                    slave.muted = true;
+                    slave.play().catch(()=>{});
+                }
             } catch (_) {}
         }
 
@@ -29351,11 +29428,22 @@ window.setLyricsStyle = function(style) {
             ].filter(Boolean);
 
             slaves.forEach(slave => {
-                if (!slave || slave.seeking) return;
-                if (Math.abs(slave.currentTime - targetTime) > 0.35) {
-                    slave.currentTime = targetTime;
+                if (!slave) return;
+                // Auto-Heal src falls fehlend oder im Fehlerzustand
+                if (currentCanvasUrl && (slave.src !== currentCanvasUrl || slave.error)) {
+                    slave.src = currentCanvasUrl;
+                    slave.load();
                 }
-                if (slave.paused && !cMaster.paused) slave.play().catch(()=>{});
+                if (!cMaster.paused) {
+                    slave.muted = true;
+                    if (slave.paused) slave.play().catch(()=>{});
+                    slave.classList.remove('opacity-0');
+                    slave.classList.add('opacity-100');
+                }
+                if (slave.seeking || slave.readyState < 2) return;
+                if (Math.abs(slave.currentTime - targetTime) > 0.35) {
+                    try { slave.currentTime = targetTime; } catch(_) {}
+                }
             });
         }
 
@@ -29431,6 +29519,15 @@ window.setLyricsStyle = function(style) {
                     canvasMediaVideo.classList.remove('opacity-0');
                     canvasMediaVideo.classList.add('opacity-100');
                     canvasMediaVideo.play().catch(()=>{});
+                    const retryMediaVideo = () => {
+                        if (canvasEnabled && isCurrentlyPlaying && canvasMediaVideo.paused) {
+                            canvasMediaVideo.play().catch(()=>{});
+                        }
+                        canvasMediaVideo.classList.remove('opacity-0');
+                        canvasMediaVideo.classList.add('opacity-100');
+                    };
+                    canvasMediaVideo.addEventListener('canplay', retryMediaVideo, { once: true });
+                    canvasMediaVideo.addEventListener('loadeddata', retryMediaVideo, { once: true });
                 } else {
                     canvasMediaVideo.classList.add('opacity-0');
                     canvasMediaVideo.classList.remove('opacity-100');
@@ -29785,8 +29882,16 @@ window.setLyricsStyle = function(style) {
         function unlockCanvasAutoplay() {
             if (canvasEnabled && (trackIsPlaying || (typeof isMusicPlaying !== 'undefined' && isMusicPlaying)) && currentCanvasUrl) {
                 const cmv = document.getElementById('canvas-media-video');
-                if (cmv && cmv.paused) cmv.play().catch(() => {});
-                if (canvasVideo && canvasVideo.paused) canvasVideo.play().catch(() => {});
+                if (cmv) {
+                    if (cmv.paused) cmv.play().catch(() => {});
+                    cmv.classList.remove('opacity-0');
+                    cmv.classList.add('opacity-100');
+                }
+                if (canvasVideo && canvasVideo.paused) {
+                    canvasVideo.play().catch(() => {});
+                    canvasVideo.classList.remove('opacity-0');
+                    canvasVideo.classList.add('opacity-100');
+                }
                 const cgv = document.getElementById('canvas-glow-video');
                 if (cgv && cgv.paused) cgv.play().catch(() => {});
                 const lcv = document.getElementById('lyrics-canvas-video');
@@ -31649,7 +31754,13 @@ window.setLyricsStyle = function(style) {
                     } else {
                         if (canvasVideo && canvasVideo.paused) canvasVideo.play().catch(() => {});
                         const cmv = document.getElementById('canvas-media-video');
-                        if (cmv && cmv.paused) cmv.play().catch(() => {});
+                        if (cmv) {
+                            if (cmv.paused) cmv.play().catch(() => {});
+                            if (cmv.classList.contains('opacity-0')) {
+                                cmv.classList.remove('opacity-0');
+                                cmv.classList.add('opacity-100');
+                            }
+                        }
                         const cgv = document.getElementById('canvas-glow-video');
                         if (cgv && cgv.paused) cgv.play().catch(() => {});
                         const lcv = document.getElementById('lyrics-canvas-video');
@@ -33190,14 +33301,17 @@ window.setLyricsStyle = function(style) {
                     }
                 }
 
+                // FIX v24.245.102: Wenn für denselben Song bereits ein Canvas aktiv ist, dieses beibehalten!
+                if (!activeCanvasUrl && !isNewTrack && currentCanvasUrl) {
+                    activeCanvasUrl = currentCanvasUrl;
+                }
+
                 if (activeCanvasUrl) {
                     if (activeCanvasUrl !== currentCanvasUrl) {
                         applyResolvedCanvas(activeCanvasUrl, cleanSpTrackId);
                     }
-                } else {
-                    if (currentCanvasUrl) {
-                        clearAllCanvasVideos();
-                    }
+                } else if (currentCanvasUrl && (isNewTrack || !isPlaying)) {
+                    clearAllCanvasVideos();
                 }
                 updateMediaButtonState();
 
@@ -33261,6 +33375,11 @@ window.setLyricsStyle = function(style) {
                         }
                         if (canvasMediaVideo) {
                             if (canvasEnabled && isPlaying && isDashboardOpen) {
+                                if (currentCanvasUrl && (canvasMediaVideo.src !== currentCanvasUrl || canvasMediaVideo.error)) {
+                                    canvasMediaVideo.src = currentCanvasUrl;
+                                    canvasMediaVideo.load();
+                                }
+                                canvasMediaVideo.muted = true;
                                 canvasMediaVideo.classList.remove('opacity-0');
                                 canvasMediaVideo.classList.add('opacity-100');
                                 if (canvasMediaVideo.paused) canvasMediaVideo.play().catch(()=>{});
@@ -33864,9 +33983,23 @@ window.setLyricsStyle = function(style) {
             // 2. Canvas-Resync & Virtualisierungs-Wächter (alle 5s bei aktiver Wiedergabe)
             if (canvasEnabled && trackIsPlaying && isDashboardOpen && !isLyricsOpen) {
                 const cv = document.getElementById('canvas-video');
+                const cmv = document.getElementById('canvas-media-video');
                 if (cv && !cv.paused) {
                     if (typeof resyncAllCanvasVideos === 'function') {
                         resyncAllCanvasVideos(false);
+                    }
+                }
+                // Watchdog: Falls Cover-Canvas im Quadrat fehlt oder pausiert ist obwohl Canvas aktiv ist
+                if (currentCanvasUrl && cmv) {
+                    if (cmv.paused || cmv.classList.contains('opacity-0') || cmv.src !== currentCanvasUrl) {
+                        if (cmv.src !== currentCanvasUrl || cmv.error) {
+                            cmv.src = currentCanvasUrl;
+                            cmv.load();
+                        }
+                        cmv.muted = true;
+                        cmv.play().catch(() => {});
+                        cmv.classList.remove('opacity-0');
+                        cmv.classList.add('opacity-100');
                     }
                 }
             }
@@ -36565,7 +36698,7 @@ window.setLyricsStyle = function(style) {
                 if ('caches' in window) {
                     const keys = await caches.keys().catch(() => []);
                     for (const k of keys) {
-                        if (!k.includes(typeof SW_VERSION !== 'undefined' ? SW_VERSION : '24.245.101')) {
+                        if (!k.includes(typeof SW_VERSION !== 'undefined' ? SW_VERSION : '24.245.102')) {
                             await caches.delete(k).catch(() => {});
                         }
                     }
@@ -36584,7 +36717,7 @@ window.setLyricsStyle = function(style) {
     <div id="qa-sticky-watermark" class="fixed bottom-20 left-4 sm:bottom-24 sm:left-8 z-[90] pointer-events-auto select-none">
         <a href="checklist.html" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-950/95 border border-cyan-400/60 shadow-lg text-[10px] sm:text-[11px] font-mono font-bold text-cyan-300 hover:scale-105 active:scale-95 transition-transform">
             <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0 shadow-[0_0_8px_rgba(34,211,238,0.9)]"></span>
-            <span>🧪 QA-TESTUMGEBUNG v24.245.101</span>
+            <span>🧪 QA-TESTUMGEBUNG v24.245.102</span>
         </a>
     </div>
 

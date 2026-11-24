@@ -1,11 +1,11 @@
 {
-  "version": "24.245.101",
-  "buildTime": "2026-11-23T14:30:00.000Z",
+  "version": "24.245.102",
+  "buildTime": "2026-11-24T10:50:00.000Z",
   "shortNotes": [
-    "Bounded Storage & Cache Management: Strikte Obergrenzen für alle Caches (Canvas, Lyrics, Cover, Artists)",
-    "Neues Wartungstool in den Einstellungen: „Temporären Cache & RAM jetzt leeren“",
-    "Ressourcenschonendes Desktop-Layout: CSS Containment & Compositor-Layer-Isolation",
-    "Debounced Resize Listener: 0 CPU-Last & kein Layout-Thrashing beim Fenstergrößenwechsel",
-    "Service Worker Puffer optimiert: Externe Medien & Videos werden nie im Cache abgelegt"
+    "Spotify Canvas Quadrat & Hintergrund-Synchronisation: Zuverlässiges und sofortiges Abspielen im Cover-Quadrat (#canvas-media-video)",
+    "ReadyState-Schutz: Verhindert kontinuierliche Seek-Abbrüche und Decoder-Schleifen beim initialen Video-Puffer (readyState >= 2)",
+    "Watchdog-Selbstheilung: Stellt pausierte oder ausgeblendete Canvas-Videos im 5s-Heartbeat vollautomatisch wieder her",
+    "Spatial Tilt 3D Parallax Fix: #canvas-media-video bleibt auch bei aktivem 3D-Tilt exakt über dem Artwork ausgerichtet",
+    "Ultra-Ressourcenschonend: Hardware-Isolierung (contain: strict, will-change: transform, opacity) für 0% Layout-Overhead"
   ]
 }

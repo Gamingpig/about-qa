@@ -11,15 +11,15 @@ const versionJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'version.json'), 
 const swJs = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
 const releaseHtml = fs.readFileSync(path.join(ROOT, 'release.html'), 'utf8');
 
-test('Spotify Canvas Playback, Bounded Storage & Desktop Architecture (v24.245.101)', async (t) => {
-    await t.test('C1: Version 24.245.101 is synchronized across all core files', () => {
-        assert.equal(versionJson.version, '24.245.101');
-        assert.match(swJs, /const SW_VERSION = "24\.245\.101";/);
-        assert.match(indexHtml, /ONBOARDING_VERSION = 'v24\.245\.101 · 2026-11-23';/);
-        assert.match(indexHtml, /id="footer-menu-hint"[^>]*>v24\.245\.101<\/span>/);
-        assert.match(indexHtml, /id="footer-version-label"[^>]*>v24\.245\.101 \(QA Test\)<\/span>/);
-        assert.match(releaseHtml, /<title>Release Notes v24\.245\.101/);
-        assert.match(indexHtml, /version:\s*"v24\.245\.101"/);
+test('Spotify Canvas Playback, Bounded Storage & Desktop Architecture (v24.245.102)', async (t) => {
+    await t.test('C1: Version 24.245.102 is synchronized across all core files', () => {
+        assert.equal(versionJson.version, '24.245.102');
+        assert.match(swJs, /const SW_VERSION = "24\.245\.102";/);
+        assert.match(indexHtml, /ONBOARDING_VERSION = 'v24\.245\.102 · 2026-11-24';/);
+        assert.match(indexHtml, /id="footer-menu-hint"[^>]*>v24\.245\.102<\/span>/);
+        assert.match(indexHtml, /id="footer-version-label"[^>]*>v24\.245\.102 \(QA Test\)<\/span>/);
+        assert.match(releaseHtml, /<title>Release Notes v24\.245\.102/);
+        assert.match(indexHtml, /version:\s*"v24\.245\.102"/);
     });
 
     await t.test('C2: toggleDashboard invokes applyActiveMediaMode on open and close', () => {
@@ -145,5 +145,28 @@ test('Spotify Canvas Playback, Bounded Storage & Desktop Architecture (v24.245.1
         const doc = dom.window.document;
         assert.ok(doc.getElementById('btn-clear-temp-cache'), '#btn-clear-temp-cache button must exist in settings');
         assert.match(indexHtml, /window\.clearTempStorageAndCaches\s*=\s*async function/, 'clearTempStorageAndCaches function must exist');
+    });
+
+    await t.test('C14: Album art square (#canvas-media-video) has sync, readyState protection and 3D parity', () => {
+        assert.match(
+            indexHtml,
+            /if\s*\(mVideo\s*&&\s*canvasEnabled\s*&&\s*isPlaying\s*&&\s*currentCanvasUrl\)\s*\{[\s\S]*?mVideo\.src\s*!==\s*currentCanvasUrl[\s\S]*?mVideo\.play\(\)/,
+            'enforceSingleActiveVideo dashboard must self-heal mVideo.src and play'
+        );
+        assert.match(
+            indexHtml,
+            /function\s*lockVideoPair[\s\S]*?if\s*\(slave\.readyState\s*<\s*2\)\s*return;/,
+            'lockVideoPair must guard timeupdate seek against slave.readyState < 2'
+        );
+        assert.match(
+            indexHtml,
+            /body\.tilt-active\s*#media-container\s*#canvas-media-video/,
+            'body.tilt-active selector must include #canvas-media-video for 3D Z parity'
+        );
+        assert.match(
+            indexHtml,
+            /id="canvas-media-video"[^>]*style="[^"]*contain:\s*strict;[^"]*will-change:\s*opacity,\s*transform;[^"]*"/,
+            'canvas-media-video must have strict containment and will-change attributes'
+        );
     });
 });
