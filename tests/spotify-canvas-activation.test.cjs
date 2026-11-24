@@ -11,13 +11,13 @@ const versionJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'version.json'), 
 const swJs = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
 const releaseHtml = fs.readFileSync(path.join(ROOT, 'release.html'), 'utf8');
 
-test('Spotify Canvas Playback, Bounded Storage & Desktop Architecture (v24.245.102)', async (t) => {
-    await t.test('C1: Version 24.245.102 is synchronized across all core files', () => {
-        assert.equal(versionJson.version, '24.245.102');
-        assert.match(swJs, /const SW_VERSION = "24\.245\.102";/);
-        assert.match(indexHtml, /ONBOARDING_VERSION = 'v24\.245\.102 · 2026-11-24';/);
-        assert.match(indexHtml, /id="footer-menu-hint"[^>]*>v24\.245\.102<\/span>/);
-        assert.match(indexHtml, /id="footer-version-label"[^>]*>v24\.245\.102 \(QA Test\)<\/span>/);
+test(`Spotify Canvas Playback, Bounded Storage & Desktop Architecture (v${versionJson.version})`, async (t) => {
+    await t.test(`C1: Version ${versionJson.version} is synchronized across all core files`, () => {
+        const versionPattern = versionJson.version.replace(/\./g, '\\.');
+        assert.match(swJs, new RegExp(`const SW_VERSION = "${versionPattern}";`));
+        assert.match(indexHtml, new RegExp(`ONBOARDING_VERSION = 'v${versionPattern} · 2026-11-24';`));
+        assert.match(indexHtml, new RegExp(`id="footer-menu-hint"[^>]*>v${versionPattern}<\\/span>`));
+        assert.match(indexHtml, new RegExp(`id="footer-version-label"[^>]*>v${versionPattern} \\(QA Test\\)<\\/span>`));
         assert.match(releaseHtml, /<title>Release Notes v24\.245\.102/);
         assert.match(indexHtml, /version:\s*"v24\.245\.102"/);
     });

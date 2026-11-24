@@ -1,10 +1,10 @@
 {
-  "version": "24.245.95",
-  "buildTime": "2026-11-10T15:45:00.000Z",
+  "version": "24.245.103",
+  "buildTime": "2026-11-24T13:00:00.000Z",
   "shortNotes": [
-    "Soften Blur der Main Music Card für Pure Canvas (Cinema Modal) übernommen (52px Desktop / 38px Mobil)",
-    "Reaktivierung des Custom Glass Lyrics Style Pickers mit Kategorien-Headern und aktiver Häkchen-Anzeige",
-    "Bestehendes lyrics-style-select Element als Kompatibilitätsanker im DOM erhalten",
-    "Strikte 0% zusätzliche GPU-/CPU-Last durch reine Compositor-Layer-Attribute (contain: strict; will-change: transform)"
+    "Interaktive Widgets & StandBy (Roadmap Live): Neues Einstellungs-Zentrum für Android & iOS",
+    "Native Android Widget APK: 1-Klick Download & direkte Homescreen-Einrichtung mit Theme-Anpassung",
+    "PWA App-Shortcuts: Schnellstart für StandBy-Modus, Now-Playing Widget & Retro Arcade",
+    "Roadmap Live-Sync auf 5-Minuten-Takt optimiert"
   ]
 }
