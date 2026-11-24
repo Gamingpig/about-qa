@@ -158,5 +158,17 @@ describe('Interaktive Widgets für Homescreen & StandBy (Roadmap Card 4)', () =>
             assert.match(widgetContent, /applyTheme/);
             assert.match(widgetContent, /fetchLiveTrack/);
         });
+
+        it('W6.4: Native Android Widget APK project & GitHub Actions build pipeline exist', () => {
+            const dom = new JSDOM(indexHtml);
+            const apkBtn = dom.window.document.getElementById('btn-download-android-apk');
+            assert.ok(apkBtn, '#btn-download-android-apk must exist');
+            assert.equal(apkBtn.getAttribute('href'), 'downloads/GamingpigWidget.apk');
+
+            assert.ok(fs.existsSync(path.join(ROOT, 'android-widget/app/build.gradle.kts')), 'Android build.gradle.kts must exist');
+            assert.ok(fs.existsSync(path.join(ROOT, 'android-widget/app/src/main/java/de/gamingpig/widget/GamingpigWidgetProvider.kt')), 'GamingpigWidgetProvider.kt must exist');
+            assert.ok(fs.existsSync(path.join(ROOT, 'android-widget/app/src/main/java/de/gamingpig/widget/MainActivity.kt')), 'MainActivity.kt must exist');
+            assert.ok(fs.existsSync(path.join(ROOT, '.github/workflows/build-android-widget.yml')), 'build-android-widget.yml must exist');
+        });
     });
 });

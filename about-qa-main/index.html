@@ -12326,79 +12326,60 @@ body.widget-mode #main-music-card {
 
             <!-- PANEL: ANDROID WIDGETS -->
             <div id="widget-panel-android" class="space-y-3">
-                <!-- Schnellstart & Downloads -->
-                <div class="settings-item p-4 rounded-2xl bg-slate-800/60 border border-emerald-500/20 flex flex-col gap-3">
+                <!-- Primär: Native Android Widget APK (1-Klick Installation & Homescreen Pinning) -->
+                <div class="settings-item p-4 rounded-2xl bg-gradient-to-br from-emerald-950/60 via-slate-900/80 to-slate-900/90 border border-emerald-500/30 flex flex-col gap-3 shadow-lg">
                     <div class="flex items-center justify-between gap-2">
                         <div class="text-xs sm:text-sm font-bold text-emerald-300 flex items-center gap-2">
-                            <span>⚡ Sofortstart &amp; Datei-Download</span>
+                            <span>🤖 Echtes Android Homescreen Widget (APK)</span>
                         </div>
-                        <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">100% Android</span>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">1-Klick Widget</span>
                     </div>
                     <p class="text-xs text-slate-300 leading-relaxed">
-                        Lade die Widget-Datei direkt auf dein Smartphone oder teste den Modus sofort im Browser.
+                        Lade die winzige, native <strong>Gamingpig Widget App (.apk)</strong> direkt auf dein Handy herunter. Danach kannst du das Live-Widget mit <strong>einem Klick</strong> auf deinen Homescreen setzen und Design &amp; Farben anpassen!
                     </p>
+
+                    <a href="downloads/GamingpigWidget.apk" download="GamingpigWidget.apk" id="btn-download-android-apk" class="w-full min-h-[48px] px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xl transition-all active:scale-98 cursor-pointer">
+                        <span>📲 Android Widget App (.apk) herunterladen</span>
+                    </a>
+
+                    <div class="p-3.5 rounded-xl bg-slate-900/80 border border-white/10 space-y-1.5 text-xs text-slate-300">
+                        <div class="font-bold text-emerald-300 text-[11px] uppercase tracking-wider mb-1">So einfach geht's (3 Schritte):</div>
+                        <div>1. Auf <strong>„Android Widget App (.apk) herunterladen“</strong> tippen und die Datei öffnen <em>(einmalig „Aus dieser Quelle zulassen“ bestätigen)</em>.</div>
+                        <div>2. Die installierte <strong>Gamingpig Widget</strong>-App öffnen und dein Wunsch-Design wählen (Liquid, OLED oder Cyber).</div>
+                        <div>3. Auf <strong>„Widget zum Homescreen hinzufügen“</strong> tippen – fertig! Das Live-Widget klebt sofort auf deinem Startbildschirm.</div>
+                    </div>
+                </div>
+
+                <!-- Browser / PWA Alternativen & Entwickler-Downloads -->
+                <div class="settings-item p-4 rounded-2xl bg-slate-800/60 border border-white/10 flex flex-col gap-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="text-xs sm:text-sm font-bold text-slate-100 flex items-center gap-2">
+                            <span>⚡ Browser-Modus &amp; Web-Alternativen</span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-bold">Ohne APK</span>
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                        <button type="button" onclick="activateWidgetMode(true)" id="btn-launch-widget-mode" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-98 cursor-pointer">
-                            <span>🚀 Widget-Modus testen</span>
-                        </button>
-                        <a href="widget.html" download="Gamingpig_Live_Widget.html" id="btn-download-widget-html" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-emerald-500/30 text-emerald-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
-                            <span>📥 Widget-Datei (.html) laden</span>
-                        </a>
-                        <button type="button" onclick="downloadWidgetUrlFile()" id="btn-download-widget-url" class="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
-                            <span>📥 Shortcut-Datei (.url) laden</span>
+                        <button type="button" onclick="activateWidgetMode(true)" id="btn-launch-widget-mode" class="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/40 border border-cyan-500/40 text-cyan-200 font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
+                            <span>🚀 Widget-Modus im Browser testen</span>
                         </button>
                         <button type="button" onclick="copyWidgetShortcutLink()" id="btn-copy-widget-link-android" class="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
                             <span>📋 Widget-Link kopieren</span>
                         </button>
                     </div>
-                </div>
-
-                <!-- Einfache Schritt-für-Schritt Anleitung Android -->
-                <div class="settings-item p-4 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
-                    <div class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
-                        <span>📱 Wie erstelle ich das Widget auf Android?</span>
-                    </div>
-
-                    <!-- Methode 1: Ohne App (Android Schnellstart) -->
-                    <div class="p-3.5 rounded-xl bg-slate-900/80 border border-white/10 space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-emerald-400">Methode 1: Der direkte 1-Tap Homescreen Shortcut (Ohne Zusatz-App)</span>
-                            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">Dauert 5 Sek.</span>
-                        </div>
-                        <ol class="list-decimal list-inside space-y-1.5 text-xs text-slate-300 leading-relaxed">
-                            <li>Öffne diese Website in Google Chrome oder Samsung Internet.</li>
-                            <li>Tippe oben rechts auf das <strong>3-Punkte-Menü (⋮)</strong> ➔ wähle <strong>„Zum Startbildschirm hinzufügen“</strong> (oder „App installieren“).</li>
-                            <li>Gehe auf deinen Startbildschirm und <strong>drücke lange auf das neue Gamingpig-Icon</strong>.</li>
-                            <li>Im aufpoppenden Menü siehst du <strong>„Now-Playing Widget“</strong>: Halte diesen Eintrag gedrückt und ziehe ihn direkt auf deinen Homescreen!</li>
-                        </ol>
-                        <div class="text-[11px] text-emerald-300/90 pt-1 font-medium">
-                            ✨ Ein Fingertipp öffnet direkt den randlosen Now-Playing Player ohne Adressleiste!
-                        </div>
-                    </div>
-
-                    <!-- Methode 2: Echtes Live-Desktop Widget (Web Widget) -->
-                    <div class="p-3.5 rounded-xl bg-slate-900/80 border border-white/10 space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-sky-400">Methode 2: Echtes Live-Homescreen Widget (mit kostenloser Widget-App)</span>
-                            <span class="text-[10px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-mono">Live-Update</span>
-                        </div>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Möchtest du das Widget permanent direkt auf deinem Android-Desktop sehen (ohne Tippen)?
-                        </p>
-                        <ol class="list-decimal list-inside space-y-1.5 text-xs text-slate-300 leading-relaxed">
-                            <li>Installiere die kostenlose App <strong>„Web Widget“</strong> oder <strong>„KWGT“</strong> aus dem Google Play Store.</li>
-                            <li>Füge ein neues Widget auf deinem Homescreen hinzu.</li>
-                            <li>Füge als Web-Adresse (URL) einfach ein: <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 text-[11px] font-mono select-all">https://gamingpig.github.io/about-qa/widget.html</code></li>
-                        </ol>
-                        <div class="pt-1 flex flex-wrap gap-2">
-                            <button type="button" onclick="copyWidgetShortcutLink()" class="px-3 py-1.5 rounded-lg bg-sky-600/30 hover:bg-sky-600/50 border border-sky-500/40 text-sky-200 text-xs font-bold transition-all cursor-pointer">
-                                📋 URL für Web-Widget kopieren
+                    <details class="text-xs text-slate-400 pt-1">
+                        <summary class="cursor-pointer font-bold text-slate-300 hover:text-white select-none">Erweiterte Dateien (HTML / URL / KWGT)</summary>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2.5">
+                            <a href="widget.html" download="Gamingpig_Live_Widget.html" id="btn-download-widget-html" class="w-full min-h-[40px] px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-700 border border-white/10 text-slate-300 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                                <span>📥 .html laden</span>
+                            </a>
+                            <button type="button" onclick="downloadWidgetUrlFile()" id="btn-download-widget-url" class="w-full min-h-[40px] px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-700 border border-white/10 text-slate-300 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                                <span>📥 .url laden</span>
                             </button>
-                            <button type="button" onclick="downloadKwgtConfig()" id="btn-download-kwgt-config" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-300 text-xs font-bold transition-all cursor-pointer">
-                                📥 KWGT-Setup (.json) laden
+                            <button type="button" onclick="downloadKwgtConfig()" id="btn-download-kwgt-config" class="w-full min-h-[40px] px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-700 border border-white/10 text-slate-300 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                                <span>📥 KWGT (.json)</span>
                             </button>
                         </div>
-                    </div>
+                    </details>
                 </div>
             </div>
 
