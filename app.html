@@ -36381,6 +36381,41 @@ window.setLyricsStyle = function(style) {
                     }
                 });
             }, { passive: true });
+
+        // CLEAR TEMP STORAGE & CACHES (v24.245.102)
+        window.clearTempStorageAndCaches = async function() {
+            try {
+                if (typeof trackCanvasMemoryCache !== 'undefined') trackCanvasMemoryCache.clear();
+                if (typeof trackCanvasNegativeCache !== 'undefined') trackCanvasNegativeCache.clear();
+                if (typeof canvasIdSearchCache !== 'undefined') canvasIdSearchCache.clear();
+                if (typeof lyricsMemoryCache !== 'undefined') lyricsMemoryCache.clear();
+                if (typeof trackCoverMemoryCache !== 'undefined') trackCoverMemoryCache.clear();
+                if (typeof trackArtistInfoCache !== 'undefined') trackArtistInfoCache.clear();
+                if (typeof spotifyArtistImageCache !== 'undefined') spotifyArtistImageCache.clear();
+                if (typeof spotifyArtistBioCache !== 'undefined') spotifyArtistBioCache.clear();
+                if (typeof noLyricsTrackKeys !== 'undefined') noLyricsTrackKeys.clear();
+                if (typeof lyricsSessionSearchedTracks !== 'undefined') lyricsSessionSearchedTracks.clear();
+                try {
+                    AppStorage.removeItem('gp_cover_cache_v1');
+                    localStorage.removeItem('gp_cover_cache_v1');
+                } catch (_) {}
+                if ('caches' in window) {
+                    const keys = await caches.keys().catch(() => []);
+                    for (const k of keys) {
+                        if (!k.includes(typeof SW_VERSION !== 'undefined' ? SW_VERSION : '24.245.102')) {
+                            await caches.delete(k).catch(() => {});
+                        }
+                    }
+                }
+                if (typeof showSystemToast === 'function') {
+                    showSystemToast('🧹 Temporärer Cache & RAM-Speicher erfolgreich bereinigt');
+                } else if (typeof showToast === 'function') {
+                    showToast('🧹 Temporärer Cache & RAM-Speicher erfolgreich bereinigt', 'info');
+                }
+            } catch (e) {
+                if (typeof showToast === 'function') showToast('Speicher wurde bereinigt', 'info');
+            }
+        };
         })();
 </script>
 <script data-pplx-inline-edit>
@@ -36678,40 +36713,7 @@ window.setLyricsStyle = function(style) {
 })();
 </script>
 
-        // CLEAR TEMP STORAGE & CACHES (v24.245.101)
-        window.clearTempStorageAndCaches = async function() {
-            try {
-                if (typeof trackCanvasMemoryCache !== 'undefined') trackCanvasMemoryCache.clear();
-                if (typeof trackCanvasNegativeCache !== 'undefined') trackCanvasNegativeCache.clear();
-                if (typeof canvasIdSearchCache !== 'undefined') canvasIdSearchCache.clear();
-                if (typeof lyricsMemoryCache !== 'undefined') lyricsMemoryCache.clear();
-                if (typeof trackCoverMemoryCache !== 'undefined') trackCoverMemoryCache.clear();
-                if (typeof trackArtistInfoCache !== 'undefined') trackArtistInfoCache.clear();
-                if (typeof spotifyArtistImageCache !== 'undefined') spotifyArtistImageCache.clear();
-                if (typeof spotifyArtistBioCache !== 'undefined') spotifyArtistBioCache.clear();
-                if (typeof noLyricsTrackKeys !== 'undefined') noLyricsTrackKeys.clear();
-                if (typeof lyricsSessionSearchedTracks !== 'undefined') lyricsSessionSearchedTracks.clear();
-                try {
-                    AppStorage.removeItem('gp_cover_cache_v1');
-                    localStorage.removeItem('gp_cover_cache_v1');
-                } catch (_) {}
-                if ('caches' in window) {
-                    const keys = await caches.keys().catch(() => []);
-                    for (const k of keys) {
-                        if (!k.includes(typeof SW_VERSION !== 'undefined' ? SW_VERSION : '24.245.102')) {
-                            await caches.delete(k).catch(() => {});
-                        }
-                    }
-                }
-                if (typeof showSystemToast === 'function') {
-                    showSystemToast('🧹 Temporärer Cache & RAM-Speicher erfolgreich bereinigt');
-                } else if (typeof showToast === 'function') {
-                    showToast('🧹 Temporärer Cache & RAM-Speicher erfolgreich bereinigt', 'info');
-                }
-            } catch (e) {
-                if (typeof showToast === 'function') showToast('Speicher wurde bereinigt', 'info');
-            }
-        };
+
 
     <!-- 🧪 FIXED QA WATERMARK PILL (v24.245.89: Zero-GPU Calm Indicator) -->
     <div id="qa-sticky-watermark" class="fixed bottom-20 left-4 sm:bottom-24 sm:left-8 z-[90] pointer-events-auto select-none">
