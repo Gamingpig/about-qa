@@ -12275,10 +12275,10 @@ body.widget-mode #main-music-card {
                     <div class="text-xs sm:text-sm font-bold text-slate-100 flex items-center gap-2">
                         <span>✨ Interaktive Widget Live-Vorschau</span>
                     </div>
-                    <span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-mono font-bold">iOS &amp; Android</span>
+                    <span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-mono font-bold">Live Synchronisation</span>
                 </div>
                 <p class="text-xs text-slate-400 leading-relaxed">
-                    Echte Live-Synchronisation mit deiner aktuellen Spotify-Wiedergabe oder Standby-Status. Funktioniert auf iOS (Scriptable), Android &amp; Desktop.
+                    Echtzeit-Synchronisation mit deiner aktuellen Spotify-Wiedergabe oder StandBy-Status. Funktioniert auf Android, iOS &amp; Desktop.
                 </p>
 
                 <!-- Live Widget Replica Box -->
@@ -12314,33 +12314,122 @@ body.widget-mode #main-music-card {
                 </div>
             </div>
 
-            <!-- iOS Scriptable Widget Setup -->
-            <div class="settings-item p-4 rounded-2xl bg-slate-800/60 border border-white/10 flex flex-col gap-3">
-                <div class="flex items-center justify-between gap-2">
-                    <div class="text-xs sm:text-sm font-bold text-slate-100 flex items-center gap-2">
-                        <span>🍏 iOS Homescreen &amp; Lockscreen Widget</span>
+            <!-- OS System Tabs (Android vs iOS) -->
+            <div class="flex items-center gap-2 p-1 rounded-2xl bg-slate-900/80 border border-white/10">
+                <button type="button" onclick="switchWidgetOsTab('android')" id="tab-wos-android" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-98">
+                    <span>🤖 Android Widgets (Empfohlen)</span>
+                </button>
+                <button type="button" onclick="switchWidgetOsTab('ios')" id="tab-wos-ios" class="flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-400 hover:text-white border border-transparent flex items-center justify-center gap-2 cursor-pointer active:scale-98">
+                    <span>🍎 iOS &amp; iPhone</span>
+                </button>
+            </div>
+
+            <!-- PANEL: ANDROID WIDGETS -->
+            <div id="widget-panel-android" class="space-y-3">
+                <!-- Schnellstart & Downloads -->
+                <div class="settings-item p-4 rounded-2xl bg-slate-800/60 border border-emerald-500/20 flex flex-col gap-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="text-xs sm:text-sm font-bold text-emerald-300 flex items-center gap-2">
+                            <span>⚡ Sofortstart &amp; Datei-Download</span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">100% Android</span>
                     </div>
-                    <span class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-bold">Kein App Store nötig</span>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Lade die Widget-Datei direkt auf dein Smartphone oder teste den Modus sofort im Browser.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                        <button type="button" onclick="activateWidgetMode(true)" id="btn-launch-widget-mode" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-98 cursor-pointer">
+                            <span>🚀 Widget-Modus testen</span>
+                        </button>
+                        <a href="widget.html" download="Gamingpig_Live_Widget.html" id="btn-download-widget-html" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-emerald-500/30 text-emerald-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
+                            <span>📥 Widget-Datei (.html) laden</span>
+                        </a>
+                        <button type="button" onclick="downloadWidgetUrlFile()" id="btn-download-widget-url" class="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
+                            <span>📥 Shortcut-Datei (.url) laden</span>
+                        </button>
+                        <button type="button" onclick="copyWidgetShortcutLink()" id="btn-copy-widget-link-android" class="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
+                            <span>📋 Widget-Link kopieren</span>
+                        </button>
+                    </div>
                 </div>
-                <p class="text-xs text-slate-300 leading-relaxed">
-                    Mit der kostenlosen App <strong class="text-white">Scriptable</strong> läuft das Now-Playing Widget direkt auf deinem iPhone-Homescreen und Sperrbildschirm (iOS 16+).
-                </p>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                    <button type="button" onclick="copyScriptableWidgetCode()" id="btn-copy-scriptable-code" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-98 cursor-pointer">
-                        <span>📋 Scriptable-Code kopieren</span>
-                    </button>
-                    <a href="ios_scriptable_widget.js" download="Gamingpig_Widget.js" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-200 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
-                        <span>⬇️ Skript (.js) laden</span>
-                    </a>
+                <!-- Einfache Schritt-für-Schritt Anleitung Android -->
+                <div class="settings-item p-4 rounded-2xl bg-slate-800/60 border border-white/10 space-y-3">
+                    <div class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                        <span>📱 Wie erstelle ich das Widget auf Android?</span>
+                    </div>
+
+                    <!-- Methode 1: Ohne App (Android Schnellstart) -->
+                    <div class="p-3.5 rounded-xl bg-slate-900/80 border border-white/10 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-emerald-400">Methode 1: Der direkte 1-Tap Homescreen Shortcut (Ohne Zusatz-App)</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">Dauert 5 Sek.</span>
+                        </div>
+                        <ol class="list-decimal list-inside space-y-1.5 text-xs text-slate-300 leading-relaxed">
+                            <li>Öffne diese Website in Google Chrome oder Samsung Internet.</li>
+                            <li>Tippe oben rechts auf das <strong>3-Punkte-Menü (⋮)</strong> ➔ wähle <strong>„Zum Startbildschirm hinzufügen“</strong> (oder „App installieren“).</li>
+                            <li>Gehe auf deinen Startbildschirm und <strong>drücke lange auf das neue Gamingpig-Icon</strong>.</li>
+                            <li>Im aufpoppenden Menü siehst du <strong>„Now-Playing Widget“</strong>: Halte diesen Eintrag gedrückt und ziehe ihn direkt auf deinen Homescreen!</li>
+                        </ol>
+                        <div class="text-[11px] text-emerald-300/90 pt-1 font-medium">
+                            ✨ Ein Fingertipp öffnet direkt den randlosen Now-Playing Player ohne Adressleiste!
+                        </div>
+                    </div>
+
+                    <!-- Methode 2: Echtes Live-Desktop Widget (Web Widget) -->
+                    <div class="p-3.5 rounded-xl bg-slate-900/80 border border-white/10 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-sky-400">Methode 2: Echtes Live-Homescreen Widget (mit kostenloser Widget-App)</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-mono">Live-Update</span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Möchtest du das Widget permanent direkt auf deinem Android-Desktop sehen (ohne Tippen)?
+                        </p>
+                        <ol class="list-decimal list-inside space-y-1.5 text-xs text-slate-300 leading-relaxed">
+                            <li>Installiere die kostenlose App <strong>„Web Widget“</strong> oder <strong>„KWGT“</strong> aus dem Google Play Store.</li>
+                            <li>Füge ein neues Widget auf deinem Homescreen hinzu.</li>
+                            <li>Füge als Web-Adresse (URL) einfach ein: <code class="px-1.5 py-0.5 rounded bg-slate-800 text-sky-300 text-[11px] font-mono select-all">https://gamingpig.github.io/about-qa/widget.html</code></li>
+                        </ol>
+                        <div class="pt-1 flex flex-wrap gap-2">
+                            <button type="button" onclick="copyWidgetShortcutLink()" class="px-3 py-1.5 rounded-lg bg-sky-600/30 hover:bg-sky-600/50 border border-sky-500/40 text-sky-200 text-xs font-bold transition-all cursor-pointer">
+                                📋 URL für Web-Widget kopieren
+                            </button>
+                            <button type="button" onclick="downloadKwgtConfig()" id="btn-download-kwgt-config" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-300 text-xs font-bold transition-all cursor-pointer">
+                                📥 KWGT-Setup (.json) laden
+                            </button>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <!-- 3-Schritte-Anleitung -->
-                <div class="p-3 rounded-xl bg-slate-900/60 border border-white/5 space-y-1.5 text-xs text-slate-300">
-                    <div class="font-bold text-slate-200 text-[11px] uppercase tracking-wider mb-1">Kurzanleitung (3 Schritte):</div>
-                    <div>1. „Scriptable“ im iOS App Store laden (kostenlos).</div>
-                    <div>2. Neues Skript anlegen, den kopierten Code einfügen und speichern.</div>
-                    <div>3. Auf dem Homescreen langes Drücken → <strong>+</strong> → Scriptable Widget auswählen.</div>
+            <!-- PANEL: IOS SCRIPTABLE WIDGETS -->
+            <div id="widget-panel-ios" class="hidden space-y-3">
+                <div class="settings-item p-4 rounded-2xl bg-slate-800/60 border border-white/10 flex flex-col gap-3">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="text-xs sm:text-sm font-bold text-slate-100 flex items-center gap-2">
+                            <span>🍏 iOS Homescreen &amp; Lockscreen Widget</span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-bold">Scriptable App</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Mit der kostenlosen App <strong class="text-white">Scriptable</strong> läuft das Now-Playing Widget direkt auf deinem iPhone-Homescreen und Sperrbildschirm (iOS 16+).
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                        <button type="button" onclick="copyScriptableWidgetCode()" id="btn-copy-scriptable-code" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-98 cursor-pointer">
+                            <span>📋 Scriptable-Code kopieren</span>
+                        </button>
+                        <a href="ios_scriptable_widget.js" download="Gamingpig_Widget.js" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-200 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
+                            <span>⬇️ Skript (.js) laden</span>
+                        </a>
+                    </div>
+
+                    <div class="p-3 rounded-xl bg-slate-900/60 border border-white/5 space-y-1.5 text-xs text-slate-300">
+                        <div class="font-bold text-slate-200 text-[11px] uppercase tracking-wider mb-1">Kurzanleitung (3 Schritte):</div>
+                        <div>1. „Scriptable“ im iOS App Store laden (kostenlos).</div>
+                        <div>2. Neues Skript anlegen, den kopierten Code einfügen und speichern.</div>
+                        <div>3. Auf dem Homescreen langes Drücken → <strong>+</strong> → Scriptable Widget auswählen.</div>
+                    </div>
                 </div>
             </div>
 
@@ -12359,9 +12448,9 @@ body.widget-mode #main-music-card {
                     <button type="button" onclick="copyStandbyShortcutLink()" id="btn-copy-standby-link" class="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-amber-500/30 text-amber-300 font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
                         <span>📱 StandBy-Link kopieren</span>
                     </button>
-                    <button type="button" onclick="activateWidgetMode(true)" id="btn-launch-widget-mode" class="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/40 border border-cyan-500/40 text-cyan-200 font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
-                        <span>📲 Now-Playing Widget Modus</span>
-                    </button>
+                    <a href="widget.html" target="_blank" class="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/40 border border-cyan-500/40 text-cyan-200 font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
+                        <span>🌐 Standalone-Widget im Browser</span>
+                    </a>
                 </div>
             </div>
 
@@ -28368,7 +28457,94 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
         };
 
         // --- 📲 INTERACTIVE WIDGETS & HOMESCREEN FUNCTIONS ---
+        window.switchWidgetOsTab = function(os) {
+            const isAndroid = (os === 'android');
+            const tabAndroid = document.getElementById('tab-wos-android');
+            const tabIos = document.getElementById('tab-wos-ios');
+            const panelAndroid = document.getElementById('widget-panel-android');
+            const panelIos = document.getElementById('widget-panel-ios');
+
+            if (tabAndroid && tabIos) {
+                if (isAndroid) {
+                    tabAndroid.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-98';
+                    tabIos.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-400 hover:text-white border border-transparent flex items-center justify-center gap-2 cursor-pointer active:scale-98';
+                } else {
+                    tabIos.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all bg-blue-500/20 text-blue-300 border border-blue-500/40 flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-98';
+                    tabAndroid.className = 'flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-400 hover:text-white border border-transparent flex items-center justify-center gap-2 cursor-pointer active:scale-98';
+                }
+            }
+            if (panelAndroid) panelAndroid.classList.toggle('hidden', !isAndroid);
+            if (panelIos) panelIos.classList.toggle('hidden', isAndroid);
+            try { AppStorage.setItem('gp_widget_os_tab', os); } catch(_) {}
+        };
+
+        window.downloadWidgetHtmlFile = function() {
+            try {
+                const a = document.createElement('a');
+                a.href = 'widget.html';
+                a.download = 'Gamingpig_Live_Widget.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                if (typeof showSystemToast === 'function') showSystemToast('📥 Widget-Datei wird heruntergeladen!', 'success');
+                else if (typeof showToast === 'function') showToast('📥 Widget-Datei heruntergeladen', 'info');
+            } catch(e) {
+                window.open('widget.html', '_blank');
+            }
+        };
+
+        window.downloadWidgetUrlFile = function() {
+            try {
+                const targetUrl = window.location.origin + window.location.pathname.replace(/\/$/, '') + '/?mode=widget';
+                const content = `[InternetShortcut]\nURL=${targetUrl}\nIconIndex=0\n`;
+                const blob = new Blob([content], { type: 'application/internet-shortcut;charset=utf-8' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'Gamingpig_Widget.url';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(a.href);
+                if (typeof showSystemToast === 'function') showSystemToast('📥 Shortcut-Datei (.url) heruntergeladen!', 'success');
+                else if (typeof showToast === 'function') showToast('Shortcut heruntergeladen', 'info');
+            } catch(e) {
+                if (typeof showToast === 'function') showToast('Download fehlgeschlagen', 'warning');
+            }
+        };
+
+        window.downloadKwgtConfig = function() {
+            try {
+                const baseUrl = window.location.origin + window.location.pathname.replace(/\/$/, '');
+                const config = {
+                    name: 'Gamingpig Now-Playing Widget (Android)',
+                    version: '24.245.102',
+                    author: 'Gamingpig',
+                    widgetUrl: baseUrl + '/widget.html',
+                    shortcutUrl: baseUrl + '/?mode=widget',
+                    standbyUrl: baseUrl + '/?mode=standby',
+                    api: {
+                        statsFm: 'https://api.stats.fm/api/v1/users/gamingpig/streams/current',
+                        npcNow: 'https://npc-api.aikins.xyz/v1/users/gamingpig/now'
+                    },
+                    instructions: 'In KWGT oder Web Widget: Erstelle ein Webview-Widget mit widgetUrl als Quelle.'
+                };
+                const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'gamingpig_android_widget_config.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(a.href);
+                if (typeof showSystemToast === 'function') showSystemToast('📥 KWGT Setup (.json) heruntergeladen!', 'success');
+                else if (typeof showToast === 'function') showToast('Setup heruntergeladen', 'info');
+            } catch(e) {}
+        };
+
         window.syncWidgetsSettingsUI = function() {
+            const savedOs = AppStorage.getItem('gp_widget_os_tab') || (/iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'ios' : 'android');
+            if (typeof switchWidgetOsTab === 'function') switchWidgetOsTab(savedOs);
+
             const isLiveActivity = AppStorage.getItem('gp_lockscreen_live_activity') !== 'false';
             const btn = document.getElementById('btn-toggle-live-activity');
             if (btn) {

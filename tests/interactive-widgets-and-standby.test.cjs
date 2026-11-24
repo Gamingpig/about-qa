@@ -120,4 +120,43 @@ describe('Interaktive Widgets für Homescreen & StandBy (Roadmap Card 4)', () =>
             assert.match(roadmapHtml, /data-card-id="4"[\s\S]*?🚀 Live \/ Verfügbar/);
         });
     });
+
+    describe('6. Android Compatibility & File Download Integration', () => {
+        for (const [name, html] of [['index.html', indexHtml], ['app.html', appHtml]]) {
+            it(`W6.1: ${name} DOM contains Android OS tabs, panels and file download actions`, () => {
+                const dom = new JSDOM(html);
+                const doc = dom.window.document;
+
+                assert.ok(doc.getElementById('tab-wos-android'), '#tab-wos-android must exist');
+                assert.ok(doc.getElementById('tab-wos-ios'), '#tab-wos-ios must exist');
+                assert.ok(doc.getElementById('widget-panel-android'), '#widget-panel-android must exist');
+                assert.ok(doc.getElementById('widget-panel-ios'), '#widget-panel-ios must exist');
+                assert.ok(doc.getElementById('btn-download-widget-html'), '#btn-download-widget-html must exist');
+                assert.ok(doc.getElementById('btn-download-widget-url'), '#btn-download-widget-url must exist');
+                assert.ok(doc.getElementById('btn-download-kwgt-config'), '#btn-download-kwgt-config must exist');
+            });
+        }
+
+        it('W6.2: JavaScript exposes switchWidgetOsTab, downloadWidgetHtmlFile, downloadWidgetUrlFile, downloadKwgtConfig', () => {
+            assert.match(indexHtml, /window\.switchWidgetOsTab\s*=/);
+            assert.match(indexHtml, /window\.downloadWidgetHtmlFile\s*=/);
+            assert.match(indexHtml, /window\.downloadWidgetUrlFile\s*=/);
+            assert.match(indexHtml, /window\.downloadKwgtConfig\s*=/);
+        });
+
+        it('W6.3: Standalone widget.html exists, is valid HTML5 and contains live polling', () => {
+            const widgetHtmlPath = path.join(ROOT, 'widget.html');
+            assert.ok(fs.existsSync(widgetHtmlPath), 'widget.html must exist');
+            const widgetContent = fs.readFileSync(widgetHtmlPath, 'utf8');
+
+            assert.match(widgetContent, /<!DOCTYPE html>/i);
+            assert.match(widgetContent, /id="widget-box"/);
+            assert.match(widgetContent, /id="cover"/);
+            assert.match(widgetContent, /id="title"/);
+            assert.match(widgetContent, /id="artist"/);
+            assert.match(widgetContent, /id="bar"/);
+            assert.match(widgetContent, /applyTheme/);
+            assert.match(widgetContent, /fetchLiveTrack/);
+        });
+    });
 });
