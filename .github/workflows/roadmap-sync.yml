@@ -2,7 +2,7 @@ name: Sync votes and wishes
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/5 * * * *'
   repository_dispatch:
     types: [new-vote-or-wish]
   workflow_dispatch:
