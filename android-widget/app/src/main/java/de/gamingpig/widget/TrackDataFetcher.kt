@@ -18,19 +18,52 @@ data class TrackSnapshot(
     val artist: String,
     val artUrl: String?,
     val artBitmap: Bitmap?,
-    val progressPct: Int
-)
+    val progressMs: Long,
+    val durationMs: Long,
+    val fetchedAtMs: Long = System.currentTimeMillis()
+) {
+    fun currentProgressMs(nowMs: Long = System.currentTimeMillis()): Long {
+        if (!isPlaying || durationMs <= 0L) return progressMs.coerceAtLeast(0L)
+        val elapsed = (nowMs - fetchedAtMs).coerceAtLeast(0L)
+        return (progressMs + elapsed).coerceIn(0L, durationMs)
+    }
+
+    fun currentProgressPct(nowMs: Long = System.currentTimeMillis()): Int {
+        if (!isPlaying || durationMs <= 0L) return 0
+        return ((currentProgressMs(nowMs).toDouble() / durationMs.toDouble()) * 100.0).toInt().coerceIn(0, 100)
+    }
+
+    fun remainingMs(nowMs: Long = System.currentTimeMillis()): Long {
+        if (!isPlaying || durationMs <= 0L) return Long.MAX_VALUE
+        return (durationMs - currentProgressMs(nowMs)).coerceAtLeast(0L)
+    }
+}
 
 object TrackDataFetcher {
     private const val NPC_URL = "https://npc-api.aikins.xyz/v1/users/gamingpig/now"
     private const val STATSFM_URL = "https://api.stats.fm/api/v1/users/gamingpig/streams/current"
+
+    @Volatile
+    private var cachedArtUrl: String? = null
+
+    @Volatile
+    private var cachedArtBitmap: Bitmap? = null
+
+    fun formatTime(ms: Long): String {
+        if (ms <= 0L) return "0:00"
+        val totalSec = ms / 1000L
+        val min = totalSec / 60L
+        val sec = totalSec % 60L
+        return "$min:${if (sec < 10) "0$sec" else "$sec"}"
+    }
 
     fun fetchCurrentTrack(): TrackSnapshot {
         var isPlaying = false
         var title = "Aktuell ist es ruhig..."
         var artist = "Gamingpig StandBy"
         var artUrl: String? = null
-        var progressPct = 0
+        var progressMs = 0L
+        var durationMs = 0L
 
         // 1. Primary: stats.fm Live Current Stream
         try {
@@ -58,15 +91,12 @@ object TrackDataFetcher {
                         artUrl = albumsArr.optJSONObject(0)?.optString("image", null)
                     }
 
-                    val dur = trk.optLong("durationMs", 0L)
+                    durationMs = trk.optLong("durationMs", 0L)
                     val stream = item.optJSONObject("stream")
-                    val prog = if (item.has("progressMs")) {
+                    progressMs = if (item.has("progressMs")) {
                         item.optLong("progressMs", 0L)
                     } else {
                         stream?.optLong("progressMs", 0L) ?: 0L
-                    }
-                    if (dur > 0) {
-                        progressPct = ((prog.toDouble() / dur.toDouble()) * 100.0).toInt().coerceIn(0, 100)
                     }
                 }
             }
@@ -86,20 +116,38 @@ object TrackDataFetcher {
                     if (artUrl.isNullOrBlank()) {
                         artUrl = track.optString("artwork_url", "").ifBlank { track.optString("art", null) }
                     }
-                    val dur = track.optLong("duration_ms", 0L)
-                    val prog = npcJson?.optLong("progress_ms", 0L) ?: 0L
-                    if (dur > 0) {
-                        progressPct = ((prog.toDouble() / dur.toDouble()) * 100.0).toInt().coerceIn(0, 100)
-                    } else if (progressPct == 0) {
-                        progressPct = 35
-                    }
+                    durationMs = track.optLong("duration_ms", 0L)
+                    progressMs = npcJson?.optLong("progress_ms", 0L) ?: 0L
                 }
             } catch (_: Exception) {
             }
         }
 
-        val bitmap = if (!artUrl.isNullOrBlank()) fetchRoundedBitmap(artUrl) else null
-        return TrackSnapshot(isPlaying, title, artist, artUrl, bitmap, progressPct)
+        val bitmap = if (!artUrl.isNullOrBlank()) {
+            if (artUrl == cachedArtUrl && cachedArtBitmap != null) {
+                cachedArtBitmap
+            } else {
+                val downloaded = fetchRoundedBitmap(artUrl)
+                if (downloaded != null) {
+                    cachedArtUrl = artUrl
+                    cachedArtBitmap = downloaded
+                }
+                downloaded
+            }
+        } else {
+            null
+        }
+
+        return TrackSnapshot(
+            isPlaying = isPlaying,
+            title = title,
+            artist = artist,
+            artUrl = artUrl,
+            artBitmap = bitmap,
+            progressMs = progressMs,
+            durationMs = durationMs,
+            fetchedAtMs = System.currentTimeMillis()
+        )
     }
 
     private fun fetchJson(urlStr: String): JSONObject? {
@@ -110,7 +158,7 @@ object TrackDataFetcher {
                 readTimeout = 5000
                 requestMethod = "GET"
                 setRequestProperty("Accept", "application/json")
-                setRequestProperty("User-Agent", "GamingpigWidget/1.1 (Android)")
+                setRequestProperty("User-Agent", "GamingpigWidget/1.3 (Android)")
             }
             if (conn.responseCode == 200) {
                 val text = conn.inputStream.bufferedReader().use { it.readText() }
@@ -129,7 +177,7 @@ object TrackDataFetcher {
             conn = (URL(urlStr).openConnection() as HttpURLConnection).apply {
                 connectTimeout = 5000
                 readTimeout = 5000
-                setRequestProperty("User-Agent", "GamingpigWidget/1.1 (Android)")
+                setRequestProperty("User-Agent", "GamingpigWidget/1.3 (Android)")
             }
             if (conn.responseCode == 200) {
                 val raw = conn.inputStream.use { BitmapFactory.decodeStream(it) } ?: return null

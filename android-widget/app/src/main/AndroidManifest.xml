@@ -34,6 +34,7 @@
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="de.gamingpig.widget.ACTION_REFRESH" />
                 <action android:name="de.gamingpig.widget.ACTION_AUTO_POLL" />
+                <action android:name="de.gamingpig.widget.ACTION_TICK_TIMELINE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

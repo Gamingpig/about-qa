@@ -11,6 +11,7 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.PowerManager
 import android.os.SystemClock
 import android.view.View
 import android.widget.RemoteViews
@@ -23,12 +24,12 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
 
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        scheduleNextRefresh(context)
+        scheduleNextNetworkPoll(context, MAX_POLL_INTERVAL_MS)
     }
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        cancelScheduledRefresh(context)
+        cancelAllAlarms(context)
     }
 
     override fun onAppWidgetOptionsChanged(
@@ -38,7 +39,6 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
         newOptions: Bundle
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        // Immediately re-layout with cached snapshot so resizing feels instant
         updateAppWidget(context, appWidgetManager, appWidgetId, lastSnapshot, isSyncing = false)
         if (lastSnapshot == null) {
             refreshAllWidgets(context)
@@ -46,7 +46,6 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
     }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        scheduleNextRefresh(context)
         val pendingResult = goAsync()
         executor.execute {
             try {
@@ -55,6 +54,7 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                 for (appWidgetId in appWidgetIds) {
                     updateAppWidget(context, appWidgetManager, appWidgetId, snapshot, isSyncing = false)
                 }
+                scheduleAdaptiveAlarms(context, snapshot)
             } finally {
                 pendingResult.finish()
             }
@@ -63,34 +63,79 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        val action = intent.action
-        if (action == ACTION_REFRESH || action == ACTION_AUTO_POLL) {
-            scheduleNextRefresh(context)
-            val manager = AppWidgetManager.getInstance(context)
-            val ids = manager.getAppWidgetIds(ComponentName(context, GamingpigWidgetProvider::class.java))
+        val action = intent.action ?: return
 
-            // Instant visual feedback when user taps Refresh!
-            if (action == ACTION_REFRESH && ids.isNotEmpty()) {
-                for (id in ids) {
-                    updateAppWidget(context, manager, id, lastSnapshot, isSyncing = true)
-                }
+        val manager = AppWidgetManager.getInstance(context)
+        val ids = manager.getAppWidgetIds(ComponentName(context, GamingpigWidgetProvider::class.java))
+        if (ids.isEmpty()) {
+            cancelAllAlarms(context)
+            return
+        }
+
+        // Local 5s timeline tick (0 network calls!)
+        if (action == ACTION_TICK_TIMELINE) {
+            if (!isScreenOn(context)) {
+                // Re-schedule a slow non-waking check when screen turns back on
+                scheduleNextNetworkPoll(context, MAX_POLL_INTERVAL_MS)
+                return
             }
 
-            val pendingResult = goAsync()
-            executor.execute {
-                try {
-                    if (ids.isNotEmpty()) {
-                        val snapshot = TrackDataFetcher.fetchCurrentTrack()
-                        lastSnapshot = snapshot
-                        for (id in ids) {
-                            updateAppWidget(context, manager, id, snapshot, isSyncing = false)
-                        }
-                    } else {
-                        cancelScheduledRefresh(context)
-                    }
-                } finally {
-                    pendingResult.finish()
+            val snap = lastSnapshot
+            if (snap != null && snap.isPlaying) {
+                for (id in ids) {
+                    updateAppWidget(context, manager, id, snap, isSyncing = false)
                 }
+                val rem = snap.remainingMs()
+                val sinceLastFetch = System.currentTimeMillis() - snap.fetchedAtMs
+                // Trigger immediate fetch when song ends or is within final 12s (throttled to min 5s)
+                if (rem <= 12_000L && sinceLastFetch >= END_OF_SONG_POLL_MS) {
+                    performNetworkRefresh(context, manager, ids, showSyncFeedback = false)
+                } else {
+                    scheduleNextTimelineTick(context, TIMELINE_TICK_MS)
+                }
+            }
+            return
+        }
+
+        if (action == ACTION_REFRESH || action == ACTION_AUTO_POLL) {
+            // If triggered by background poll while screen is off, postpone until screen is awake
+            if (action == ACTION_AUTO_POLL && !isScreenOn(context)) {
+                scheduleNextNetworkPoll(context, MAX_POLL_INTERVAL_MS)
+                return
+            }
+
+            performNetworkRefresh(
+                context,
+                manager,
+                ids,
+                showSyncFeedback = (action == ACTION_REFRESH)
+            )
+        }
+    }
+
+    private fun performNetworkRefresh(
+        context: Context,
+        manager: AppWidgetManager,
+        ids: IntArray,
+        showSyncFeedback: Boolean
+    ) {
+        if (showSyncFeedback) {
+            for (id in ids) {
+                updateAppWidget(context, manager, id, lastSnapshot, isSyncing = true)
+            }
+        }
+
+        val pendingResult = goAsync()
+        executor.execute {
+            try {
+                val snapshot = TrackDataFetcher.fetchCurrentTrack()
+                lastSnapshot = snapshot
+                for (id in ids) {
+                    updateAppWidget(context, manager, id, snapshot, isSyncing = false)
+                }
+                scheduleAdaptiveAlarms(context, snapshot)
+            } finally {
+                pendingResult.finish()
             }
         }
     }
@@ -98,26 +143,61 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
     companion object {
         const val ACTION_REFRESH = "de.gamingpig.widget.ACTION_REFRESH"
         const val ACTION_AUTO_POLL = "de.gamingpig.widget.ACTION_AUTO_POLL"
+        const val ACTION_TICK_TIMELINE = "de.gamingpig.widget.ACTION_TICK_TIMELINE"
         const val PREFS_NAME = "gp_widget_prefs"
         const val KEY_THEME = "widget_theme"
         const val KEY_SHOW_PROGRESS = "show_progress"
-        private const val POLL_INTERVAL_MS = 60_000L
+
+        private const val MAX_POLL_INTERVAL_MS = 30_000L // Max 30s as requested
+        private const val END_OF_SONG_POLL_MS = 5_000L   // Fast 5s polling near song end
+        private const val TIMELINE_TICK_MS = 5_000L      // 5s local timeline progress update
+
         private val executor = Executors.newSingleThreadExecutor()
 
         @Volatile
         var lastSnapshot: TrackSnapshot? = null
 
-        private fun getAutoPollPendingIntent(context: Context): PendingIntent {
+        private fun isScreenOn(context: Context): Boolean {
+            return try {
+                val pm = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
+                pm?.isInteractive ?: true
+            } catch (_: Exception) {
+                true
+            }
+        }
+
+        private fun getPendingIntent(context: Context, action: String, reqCode: Int): PendingIntent {
             val intent = Intent(context, GamingpigWidgetProvider::class.java).apply {
-                action = ACTION_AUTO_POLL
+                this.action = action
             }
             return PendingIntent.getBroadcast(
-                context, 201, intent,
+                context, reqCode, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         }
 
-        fun scheduleNextRefresh(context: Context) {
+        fun scheduleAdaptiveAlarms(context: Context, snapshot: TrackSnapshot?) {
+            val delayMs = if (snapshot != null && snapshot.isPlaying) {
+                val rem = snapshot.remainingMs()
+                when {
+                    rem <= 15_000L -> END_OF_SONG_POLL_MS
+                    rem < MAX_POLL_INTERVAL_MS -> (rem + 1000L).coerceIn(END_OF_SONG_POLL_MS, MAX_POLL_INTERVAL_MS)
+                    else -> MAX_POLL_INTERVAL_MS
+                }
+            } else {
+                MAX_POLL_INTERVAL_MS
+            }
+
+            scheduleNextNetworkPoll(context, delayMs)
+
+            if (snapshot != null && snapshot.isPlaying && isScreenOn(context)) {
+                scheduleNextTimelineTick(context, TIMELINE_TICK_MS)
+            } else {
+                cancelTimelineTick(context)
+            }
+        }
+
+        fun scheduleNextNetworkPoll(context: Context, delayMs: Long) {
             try {
                 val manager = AppWidgetManager.getInstance(context)
                 val ids = manager.getAppWidgetIds(ComponentName(context, GamingpigWidgetProvider::class.java))
@@ -126,17 +206,38 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
                 alarmManager.set(
                     AlarmManager.ELAPSED_REALTIME,
-                    SystemClock.elapsedRealtime() + POLL_INTERVAL_MS,
-                    getAutoPollPendingIntent(context)
+                    SystemClock.elapsedRealtime() + delayMs.coerceIn(3_000L, MAX_POLL_INTERVAL_MS),
+                    getPendingIntent(context, ACTION_AUTO_POLL, 201)
                 )
             } catch (_: Exception) {
             }
         }
 
-        fun cancelScheduledRefresh(context: Context) {
+        fun scheduleNextTimelineTick(context: Context, delayMs: Long) {
             try {
                 val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
-                alarmManager.cancel(getAutoPollPendingIntent(context))
+                alarmManager.set(
+                    AlarmManager.ELAPSED_REALTIME,
+                    SystemClock.elapsedRealtime() + delayMs,
+                    getPendingIntent(context, ACTION_TICK_TIMELINE, 202)
+                )
+            } catch (_: Exception) {
+            }
+        }
+
+        fun cancelTimelineTick(context: Context) {
+            try {
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
+                alarmManager.cancel(getPendingIntent(context, ACTION_TICK_TIMELINE, 202))
+            } catch (_: Exception) {
+            }
+        }
+
+        fun cancelAllAlarms(context: Context) {
+            try {
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
+                alarmManager.cancel(getPendingIntent(context, ACTION_AUTO_POLL, 201))
+                alarmManager.cancel(getPendingIntent(context, ACTION_TICK_TIMELINE, 202))
             } catch (_: Exception) {
             }
         }
@@ -145,7 +246,6 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             val manager = AppWidgetManager.getInstance(context)
             val ids = manager.getAppWidgetIds(ComponentName(context, GamingpigWidgetProvider::class.java))
             if (ids.isEmpty()) return
-            scheduleNextRefresh(context)
 
             if (showSyncFeedback) {
                 for (id in ids) {
@@ -159,6 +259,7 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                 for (id in ids) {
                     updateAppWidget(context, manager, id, snapshot, isSyncing = false)
                 }
+                scheduleAdaptiveAlarms(context, snapshot)
             }
         }
 
@@ -197,7 +298,6 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
 
             val views = RemoteViews(context.packageName, layoutId)
 
-            // Apply Background & Colors based on Theme
             val bgRes = when (effectiveTheme) {
                 "light" -> R.drawable.widget_bg_light
                 "oled" -> R.drawable.widget_bg_oled
@@ -221,7 +321,8 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             views.setTextColor(R.id.widget_artist, artistColor)
             views.setTextColor(R.id.widget_meta, metaColor)
 
-            val timeLabel = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+            val nowMs = System.currentTimeMillis()
+            val timeLabel = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(nowMs))
 
             if (isSyncing) {
                 views.setTextViewText(R.id.widget_btn_refresh, "⏳")
@@ -232,15 +333,26 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             }
 
             if (snapshot != null) {
+                val curMs = snapshot.currentProgressMs(nowMs)
+                val curPct = snapshot.currentProgressPct(nowMs)
+                val timelineText = if (snapshot.durationMs > 0L) {
+                    "${TrackDataFetcher.formatTime(curMs)} / ${TrackDataFetcher.formatTime(snapshot.durationMs)}"
+                } else {
+                    "$curPct%"
+                }
+
                 views.setTextViewText(R.id.widget_title, snapshot.title)
                 views.setTextViewText(R.id.widget_artist, snapshot.artist)
 
                 if (!isSyncing) {
                     if (snapshot.isPlaying) {
                         views.setImageViewResource(R.id.widget_status_dot, R.drawable.status_dot_live)
-                        views.setTextViewText(R.id.widget_status_text, if (isCompact) "LIVE" else "NOW PLAYING")
+                        views.setTextViewText(
+                            R.id.widget_status_text,
+                            if (isCompact) "LIVE · ${TrackDataFetcher.formatTime(curMs)}" else "NOW PLAYING"
+                        )
                         views.setTextColor(R.id.widget_status_text, Color.parseColor(if (isLight) "#059669" else "#34D399"))
-                        views.setTextViewText(R.id.widget_meta, "🎵 Live auf Spotify · ${snapshot.progressPct}% · $timeLabel")
+                        views.setTextViewText(R.id.widget_meta, "🎵 $timelineText · Spotify")
                     } else {
                         views.setImageViewResource(R.id.widget_status_dot, R.drawable.status_dot_idle)
                         views.setTextViewText(R.id.widget_status_text, "STANDBY")
@@ -255,7 +367,7 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                     views.setImageViewResource(R.id.widget_cover, R.drawable.ic_launcher_pig)
                 }
 
-                views.setProgressBar(R.id.widget_progress, 100, snapshot.progressPct, false)
+                views.setProgressBar(R.id.widget_progress, 100, curPct, false)
             }
 
             val minH = options?.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 110) ?: 110

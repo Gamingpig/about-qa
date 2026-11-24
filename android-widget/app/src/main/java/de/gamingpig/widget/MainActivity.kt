@@ -10,6 +10,8 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -24,6 +26,7 @@ class MainActivity : Activity() {
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private val executor = Executors.newSingleThreadExecutor()
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     private lateinit var previewBox: LinearLayout
     private lateinit var previewCover: ImageView
@@ -39,6 +42,24 @@ class MainActivity : Activity() {
     private lateinit var btnOled: Button
     private lateinit var btnCyber: Button
     private lateinit var switchProgress: Switch
+
+    private val previewTicker = object : Runnable {
+        override fun run() {
+            val snap = GamingpigWidgetProvider.lastSnapshot
+            if (snap != null && snap.isPlaying) {
+                val now = System.currentTimeMillis()
+                val curMs = snap.currentProgressMs(now)
+                previewProgress.progress = snap.currentProgressPct(now)
+                if (snap.durationMs > 0L) {
+                    previewBrand.text = "${TrackDataFetcher.formatTime(curMs)} / ${TrackDataFetcher.formatTime(snap.durationMs)}"
+                }
+                if (snap.remainingMs(now) <= 1000L && (now - snap.fetchedAtMs) >= 4000L) {
+                    loadLivePreview()
+                }
+            }
+            mainHandler.postDelayed(this, 1000L)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,6 +137,17 @@ class MainActivity : Activity() {
         loadLivePreview()
     }
 
+    override fun onResume() {
+        super.onResume()
+        mainHandler.removeCallbacks(previewTicker)
+        mainHandler.postDelayed(previewTicker, 1000L)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mainHandler.removeCallbacks(previewTicker)
+    }
+
     private fun saveAndApplyTheme(theme: String) {
         val prefs = getSharedPreferences(GamingpigWidgetProvider.PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putString(GamingpigWidgetProvider.KEY_THEME, theme).apply()
@@ -138,7 +170,7 @@ class MainActivity : Activity() {
 
         previewTitle.setTextColor(Color.parseColor(if (isLight) "#0F172A" else "#FFFFFF"))
         previewArtist.setTextColor(Color.parseColor(if (isLight) "#475569" else "#94A3B8"))
-        previewBrand.setTextColor(Color.parseColor(if (isLight) "#64748B" else "#64748B"))
+        previewBrand.setTextColor(Color.parseColor(if (isLight) "#475569" else "#94A3B8"))
 
         val activeTint = ColorStateList.valueOf(Color.parseColor("#0284C7"))
         val idleTint = ColorStateList.valueOf(Color.parseColor("#1E293B"))
@@ -171,11 +203,17 @@ class MainActivity : Activity() {
             val snap = TrackDataFetcher.fetchCurrentTrack()
             GamingpigWidgetProvider.lastSnapshot = snap
             runOnUiThread {
+                val now = System.currentTimeMillis()
                 previewTitle.text = snap.title
                 previewArtist.text = snap.artist
                 previewStatus.text = if (snap.isPlaying) "NOW PLAYING" else "STANDBY"
                 previewStatus.setTextColor(Color.parseColor(if (snap.isPlaying) "#34D399" else "#94A3B8"))
-                previewProgress.progress = snap.progressPct
+                previewProgress.progress = snap.currentProgressPct(now)
+                if (snap.isPlaying && snap.durationMs > 0L) {
+                    previewBrand.text = "${TrackDataFetcher.formatTime(snap.currentProgressMs(now))} / ${TrackDataFetcher.formatTime(snap.durationMs)}"
+                } else {
+                    previewBrand.text = "GAMINGPIG"
+                }
                 if (snap.artBitmap != null) {
                     previewCover.setImageBitmap(snap.artBitmap)
                 }
