@@ -30,9 +30,12 @@ class MainActivity : Activity() {
     private lateinit var previewTitle: TextView
     private lateinit var previewArtist: TextView
     private lateinit var previewStatus: TextView
+    private lateinit var previewBrand: TextView
     private lateinit var previewProgress: ProgressBar
 
+    private lateinit var btnAuto: Button
     private lateinit var btnLiquid: Button
+    private lateinit var btnLight: Button
     private lateinit var btnOled: Button
     private lateinit var btnCyber: Button
     private lateinit var switchProgress: Switch
@@ -51,9 +54,12 @@ class MainActivity : Activity() {
         previewTitle = findViewById(R.id.preview_title)
         previewArtist = findViewById(R.id.preview_artist)
         previewStatus = findViewById(R.id.preview_status)
+        previewBrand = findViewById(R.id.preview_brand)
         previewProgress = findViewById(R.id.preview_progress)
 
+        btnAuto = findViewById(R.id.btn_theme_auto)
         btnLiquid = findViewById(R.id.btn_theme_liquid)
+        btnLight = findViewById(R.id.btn_theme_light)
         btnOled = findViewById(R.id.btn_theme_oled)
         btnCyber = findViewById(R.id.btn_theme_cyber)
         switchProgress = findViewById(R.id.switch_progress)
@@ -67,13 +73,15 @@ class MainActivity : Activity() {
         }
 
         val prefs = getSharedPreferences(GamingpigWidgetProvider.PREFS_NAME, Context.MODE_PRIVATE)
-        val savedTheme = prefs.getString(GamingpigWidgetProvider.KEY_THEME, "liquid") ?: "liquid"
+        val savedTheme = prefs.getString(GamingpigWidgetProvider.KEY_THEME, "auto") ?: "auto"
         val savedProgress = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_PROGRESS, true)
 
         switchProgress.isChecked = savedProgress
         applyPreviewTheme(savedTheme, savedProgress)
 
+        btnAuto.setOnClickListener { saveAndApplyTheme("auto") }
         btnLiquid.setOnClickListener { saveAndApplyTheme("liquid") }
+        btnLight.setOnClickListener { saveAndApplyTheme("light") }
         btnOled.setOnClickListener { saveAndApplyTheme("oled") }
         btnCyber.setOnClickListener { saveAndApplyTheme("cyber") }
 
@@ -97,8 +105,8 @@ class MainActivity : Activity() {
 
         findViewById<Button>(R.id.btn_refresh_now).setOnClickListener {
             loadLivePreview()
-            GamingpigWidgetProvider.refreshAllWidgets(this)
-            Toast.makeText(this, "Live-Daten aktualisiert!", Toast.LENGTH_SHORT).show()
+            GamingpigWidgetProvider.refreshAllWidgets(this, showSyncFeedback = true)
+            Toast.makeText(this, "Live-Daten werden synchronisiert...", Toast.LENGTH_SHORT).show()
         }
 
         findViewById<Button>(R.id.btn_open_web).setOnClickListener {
@@ -115,8 +123,12 @@ class MainActivity : Activity() {
         GamingpigWidgetProvider.refreshAllWidgets(this)
     }
 
-    private fun applyPreviewTheme(theme: String, showProgress: Boolean) {
-        val bgRes = when (theme) {
+    private fun applyPreviewTheme(savedTheme: String, showProgress: Boolean) {
+        val effectiveTheme = GamingpigWidgetProvider.resolveEffectiveTheme(this, savedTheme)
+        val isLight = (effectiveTheme == "light")
+
+        val bgRes = when (effectiveTheme) {
+            "light" -> R.drawable.widget_bg_light
             "oled" -> R.drawable.widget_bg_oled
             "cyber" -> R.drawable.widget_bg_cyber
             else -> R.drawable.widget_bg_liquid
@@ -124,12 +136,18 @@ class MainActivity : Activity() {
         previewBox.setBackgroundResource(bgRes)
         previewProgress.visibility = if (showProgress) View.VISIBLE else View.GONE
 
+        previewTitle.setTextColor(Color.parseColor(if (isLight) "#0F172A" else "#FFFFFF"))
+        previewArtist.setTextColor(Color.parseColor(if (isLight) "#475569" else "#94A3B8"))
+        previewBrand.setTextColor(Color.parseColor(if (isLight) "#64748B" else "#64748B"))
+
         val activeTint = ColorStateList.valueOf(Color.parseColor("#0284C7"))
         val idleTint = ColorStateList.valueOf(Color.parseColor("#1E293B"))
 
-        btnLiquid.backgroundTintList = if (theme == "liquid") activeTint else idleTint
-        btnOled.backgroundTintList = if (theme == "oled") activeTint else idleTint
-        btnCyber.backgroundTintList = if (theme == "cyber") activeTint else idleTint
+        btnAuto.backgroundTintList = if (savedTheme == "auto") activeTint else idleTint
+        btnLiquid.backgroundTintList = if (savedTheme == "liquid") activeTint else idleTint
+        btnLight.backgroundTintList = if (savedTheme == "light") activeTint else idleTint
+        btnOled.backgroundTintList = if (savedTheme == "oled") activeTint else idleTint
+        btnCyber.backgroundTintList = if (savedTheme == "cyber") activeTint else idleTint
     }
 
     private fun pinWidgetToHomescreen() {
@@ -151,6 +169,7 @@ class MainActivity : Activity() {
     private fun loadLivePreview() {
         executor.execute {
             val snap = TrackDataFetcher.fetchCurrentTrack()
+            GamingpigWidgetProvider.lastSnapshot = snap
             runOnUiThread {
                 previewTitle.text = snap.title
                 previewArtist.text = snap.artist

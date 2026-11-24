@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="14dp">
 
-    <!-- Header Row -->
+    <!-- Header Row with easy-to-tap 38dp x 34dp pill buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,7 +26,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:layout_weight="1"
-            android:letterSpacing="0.06"
+            android:ellipsize="end"
+            android:letterSpacing="0.05"
+            android:maxLines="1"
             android:text="NOW PLAYING"
             android:textColor="#34D399"
             android:textSize="10sp"
@@ -34,25 +36,25 @@
 
         <TextView
             android:id="@+id/widget_btn_refresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="6dp"
-            android:paddingVertical="2dp"
+            android:layout_width="38dp"
+            android:layout_height="34dp"
+            android:background="@drawable/widget_btn_bg_dark"
+            android:gravity="center"
             android:text="↻"
-            android:textColor="#94A3B8"
-            android:textSize="14sp"
+            android:textColor="#E2E8F0"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/widget_btn_config"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:paddingHorizontal="6dp"
-            android:paddingVertical="2dp"
+            android:layout_width="38dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/widget_btn_bg_dark"
+            android:gravity="center"
             android:text="⚙"
-            android:textColor="#94A3B8"
-            android:textSize="13sp" />
+            android:textColor="#E2E8F0"
+            android:textSize="15sp" />
     </LinearLayout>
 
     <!-- Main Track Row -->
@@ -60,7 +62,7 @@
         android:id="@+id/widget_content_area"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="6dp"
         android:layout_weight="1"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -106,7 +108,7 @@
                 android:id="@+id/widget_meta"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="3dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="🎵 Live auf Spotify"
@@ -122,7 +124,7 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="6dp"
         android:max="100"
         android:progress="0"
         android:progressDrawable="@drawable/progress_bar_custom" />

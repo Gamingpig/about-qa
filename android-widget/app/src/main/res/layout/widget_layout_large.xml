@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg_liquid"
+    android:orientation="vertical"
+    android:padding="18dp">
+
+    <!-- Header Row with 42dp x 38dp touch targets -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/widget_status_dot"
+            android:layout_width="9dp"
+            android:layout_height="9dp"
+            android:src="@drawable/status_dot_live" />
+
+        <TextView
+            android:id="@+id/widget_status_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:letterSpacing="0.06"
+            android:maxLines="1"
+            android:text="NOW PLAYING"
+            android:textColor="#34D399"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/widget_btn_refresh"
+            android:layout_width="42dp"
+            android:layout_height="38dp"
+            android:background="@drawable/widget_btn_bg_dark"
+            android:gravity="center"
+            android:text="↻"
+            android:textColor="#E2E8F0"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/widget_btn_config"
+            android:layout_width="42dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/widget_btn_bg_dark"
+            android:gravity="center"
+            android:text="⚙"
+            android:textColor="#E2E8F0"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+    <!-- Main Track Area (Bigger 84dp cover + 2-line title) -->
+    <LinearLayout
+        android:id="@+id/widget_content_area"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/widget_cover"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:background="@drawable/cover_placeholder"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_pig" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/widget_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Lade Musik..."
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Gamingpig Spotify Live"
+                android:textColor="#94A3B8"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/widget_meta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="🎵 Live auf Spotify"
+                android:textColor="#38BDF8"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/widget_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginTop="10dp"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/progress_bar_custom" />
+
+</LinearLayout>
