@@ -10642,7 +10642,7 @@ body.widget-mode #main-music-card {
                          jetzt eine komplett solide Fläche, nichts scheint mehr durch. -->
                     <div id="lyrics-overlay" class="absolute inset-0 bg-slate-950 rounded-[inherit] flex-col p-2 xxs:p-3 xs:p-6 md:p-8 z-40 transition-all duration-500 opacity-0 pointer-events-none flex border-0 invisible overflow-hidden">
                         <!-- Canvas Video direkt im Lyrics-Hintergrund -->
-                        <video id="lyrics-canvas-video" class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 transition-opacity duration-700 pointer-events-none" loop muted playsinline></video>
+                        <video id="lyrics-canvas-video" class="absolute inset-0 w-full h-full object-cover z-0 opacity-0 transition-opacity duration-700 pointer-events-none" style="contain: strict; will-change: opacity, transform; transform: translate3d(0,0,0);" loop muted playsinline></video>
                         <div id="lyrics-canvas-tint" class="absolute inset-0 z-[1] bg-slate-950/65 pointer-events-none opacity-0 transition-opacity duration-700"></div>
                         <div id="lyrics-ambient-bg" class="z-0"></div>
                         <div id="lyrics-ambient-tint" class="z-[1]"></div>
@@ -32767,17 +32767,23 @@ window.setLyricsStyle = function(style) {
         const lyricsMemoryCache = new Map();
         // --- NO-LYRICS IDLE FADE-OUT LOGIK (5s Timer & Wakeup) ---
         let noLyricsIdleTimer = null;
+        let lastNoLyricsWakeAt = 0;
         function resetNoLyricsIdleTimer() {
+            const now = performance.now();
+            if (now - lastNoLyricsWakeAt < 250) return;
+            lastNoLyricsWakeAt = now;
             const el = document.getElementById('no-lyrics-container');
             if (!el) return;
-            el.classList.remove('idle-faded');
+            if (el.classList.contains('idle-faded')) {
+                el.classList.remove('idle-faded');
+            }
             if (noLyricsIdleTimer) {
                 clearTimeout(noLyricsIdleTimer);
                 noLyricsIdleTimer = null;
             }
             noLyricsIdleTimer = setTimeout(() => {
                 const container = document.getElementById('no-lyrics-container');
-                if (container) {
+                if (container && !container.classList.contains('idle-faded')) {
                     container.classList.add('idle-faded');
                 }
             }, 5000);
@@ -32785,6 +32791,7 @@ window.setLyricsStyle = function(style) {
         if (typeof window !== 'undefined') {
             ['mousemove', 'pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(evt => {
                 window.addEventListener(evt, () => {
+                    if (mainMusicCard && !mainMusicCard.classList.contains('lyrics-open')) return;
                     const el = document.getElementById('no-lyrics-container');
                     if (el) resetNoLyricsIdleTimer();
                 }, { passive: true });
@@ -36833,11 +36840,17 @@ window.setLyricsStyle = function(style) {
                 return;
             }
             let idleTimer = null;
+            let lastBlobWakeAt = 0;
             function wakeBlobs() {
-                document.body.classList.remove('battery-chill');
+                const now = performance.now();
+                if (now - lastBlobWakeAt < 300) return;
+                lastBlobWakeAt = now;
+                if (document.body.classList.contains('battery-chill')) {
+                    document.body.classList.remove('battery-chill');
+                }
                 clearTimeout(idleTimer);
                 idleTimer = setTimeout(() => {
-                    if (!document.hidden) {
+                    if (!document.hidden && !document.body.classList.contains('battery-chill')) {
                         document.body.classList.add('battery-chill');
                     }
                 }, 4000);
