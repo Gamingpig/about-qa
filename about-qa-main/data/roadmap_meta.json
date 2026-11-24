@@ -27,10 +27,10 @@
     },
     "4": {
       "title": "Interaktive Widgets für Homescreen & StandBy",
-      "desc": "Now-Playing Lockscreen-Widgets, StandBy-Shortcuts und konfigurierbare Live-Activities für das Smartphone ohne Installation aus dem App Store.",
-      "target": "Ziel: Geplant",
+      "desc": "Now-Playing Lockscreen-Widgets, StandBy-Shortcuts, iOS Scriptable Generator und konfigurierbare Live-Activities direkt im Einstellungs-Zentrum verfügbar.",
+      "target": "Ziel: Live / Verfügbar",
       "category": "Mobile PWA",
-      "status": "planned",
+      "status": "live",
       "icon": "📲"
     },
     "5": {

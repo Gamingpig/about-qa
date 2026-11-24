@@ -9845,10 +9845,45 @@ html.gp-android:not(.dark) #ui-controls {
   background: transparent !important;
   border-top: 1px solid rgba(255,255,255,0.22) !important;
 }
+/* ========================================================= */
+/* 📲 INTERACTIVE NOW-PLAYING WIDGET MODE (?mode=widget)     */
+/* ========================================================= */
+body.widget-mode {
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 100vh !important;
+    padding: 1rem !important;
+}
+body.widget-mode #header-section,
+body.widget-mode #ui-controls,
+body.widget-mode #footer-section,
+body.widget-mode #interactive-quest-hud,
+body.widget-mode #cp-trigger,
+body.widget-mode #community-glass-banner,
+body.widget-mode #discord-widget,
+body.widget-mode #fps-hud-widget {
+    display: none !important;
+}
+body.widget-mode #main-content {
+    margin: 0 auto !important;
+    max-width: 540px !important;
+    width: 100% !important;
+}
+body.widget-mode #main-music-card {
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 45px rgba(56, 189, 248, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+}
 </style>
     <script src="./js/services/kartingService.js"></script>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen selection:bg-blue-500/30 overflow-x-hidden">
+    <!-- 📲 WIDGET MODE EXIT BAR -->
+    <div id="widget-mode-exit-bar" onclick="activateWidgetMode(false)" class="hidden fixed top-3 left-1/2 -translate-x-1/2 z-[10020] px-4 py-2 rounded-full bg-slate-900/90 backdrop-blur-xl border border-white/20 text-xs font-bold text-slate-200 hover:text-white shadow-2xl items-center gap-2 cursor-pointer transition-all hover:scale-105 active:scale-95">
+        <span>✕</span>
+        <span>Vollständige Website</span>
+    </div>
     <!-- ========================================================= -->
     <!-- 🔒 QA TESTER PIN GATE (v24.222.7)                         -->
     <!-- ========================================================= -->
@@ -11897,6 +11932,20 @@ html.gp-android:not(.dark) #ui-controls {
             </div>
             <span class="text-slate-400 group-hover:text-white group-hover:translate-x-0.5 transition-all text-base shrink-0 font-bold">›</span>
         </button>
+        <!-- Tile 4b: Widgets & Homescreen -->
+        <button type="button" onclick="openSettingsCategory('cat-widgets')" class="settings-category-tile w-full text-left p-3.5 rounded-2xl bg-slate-800/60 hover:bg-slate-800/90 border border-white/10 flex items-center justify-between gap-3 transition-all active:scale-98 cursor-pointer group">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-lg shrink-0">📲</div>
+                <div class="min-w-0">
+                    <div class="text-xs sm:text-sm font-bold text-slate-100 flex items-center gap-2">
+                        <span>Widgets &amp; Homescreen</span>
+                        <span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-bold">NEU</span>
+                    </div>
+                    <div class="text-xs text-slate-400 truncate">Now-Playing Lockscreen, StandBy-Shortcuts &amp; iOS Widget</div>
+                </div>
+            </div>
+            <span class="text-slate-400 group-hover:text-white group-hover:translate-x-0.5 transition-all text-base shrink-0 font-bold">›</span>
+        </button>
         <!-- Tile 5: Audio & Medien -->
         <button type="button" onclick="openSettingsCategory('cat-audio')" class="settings-category-tile w-full text-left p-3.5 rounded-2xl bg-slate-800/60 hover:bg-slate-800/90 border border-white/10 flex items-center justify-between gap-3 transition-all active:scale-98 cursor-pointer group">
             <div class="flex items-center gap-3 min-w-0">
@@ -12216,6 +12265,119 @@ html.gp-android:not(.dark) #ui-controls {
                     </div>
                     <p id="settings-design-code-hint" class="text-xs text-slate-400 leading-snug">Kopiere deinen StandBy-Look als Code und schick ihn Freunden.</p>
                 </div>
+            </div>
+        </div>
+        <!-- SUBPAGE: WIDGETS & HOMESCREEN -->
+        <div id="subpage-cat-widgets" class="settings-category settings-subpage hidden space-y-3">
+            <!-- Widget Live-Preview Card -->
+            <div class="settings-item p-4 rounded-2xl bg-slate-800/60 border border-white/10 flex flex-col gap-3">
+                <div class="flex items-center justify-between gap-2">
+                    <div class="text-xs sm:text-sm font-bold text-slate-100 flex items-center gap-2">
+                        <span>✨ Interaktive Widget Live-Vorschau</span>
+                    </div>
+                    <span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-mono font-bold">iOS &amp; Android</span>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Echte Live-Synchronisation mit deiner aktuellen Spotify-Wiedergabe oder Standby-Status. Funktioniert auf iOS (Scriptable), Android &amp; Desktop.
+                </p>
+
+                <!-- Live Widget Replica Box -->
+                <div id="widget-live-replica" class="p-4 rounded-2xl bg-gradient-to-br from-slate-900/90 via-slate-950/90 to-slate-900/90 border border-white/15 shadow-2xl space-y-3 transition-all">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-1.5">
+                            <span id="widget-replica-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span id="widget-replica-status" class="text-[10px] font-mono font-black uppercase tracking-wider text-emerald-400">NOW PLAYING</span>
+                        </div>
+                        <span class="text-[10px] font-mono font-bold text-slate-500">GAMINGPIG</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-14 h-14 rounded-xl overflow-hidden border border-white/15 bg-slate-800 shrink-0 shadow-md">
+                            <img id="widget-replica-art" src="og-v2.jpg" alt="Widget Cover" class="w-full h-full object-cover">
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div id="widget-replica-title" class="text-xs sm:text-sm font-bold text-white truncate">First Move</div>
+                            <div id="widget-replica-artist" class="text-[11px] text-slate-400 truncate mt-0.5">Lily Ward</div>
+                            <div class="flex items-center gap-2 mt-1.5">
+                                <span class="text-[9px] font-bold text-sky-400">🎵 Live auf Spotify</span>
+                                <span id="widget-replica-pct" class="text-[9px] font-mono text-slate-500">· 50%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theme-Picker for Widget -->
+                <div class="flex flex-wrap items-center gap-2 pt-1">
+                    <span class="text-[11px] font-medium text-slate-400">Widget-Stil:</span>
+                    <button type="button" onclick="setWidgetTheme('liquid')" id="btn-wtheme-liquid" class="px-2.5 py-1 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-bold transition-all active:scale-95">Liquid Glass</button>
+                    <button type="button" onclick="setWidgetTheme('oled')" id="btn-wtheme-oled" class="px-2.5 py-1 rounded-xl bg-slate-800 text-slate-400 border border-white/10 hover:text-white text-xs font-bold transition-all active:scale-95">OLED Pitch Black</button>
+                    <button type="button" onclick="setWidgetTheme('cyber')" id="btn-wtheme-cyber" class="px-2.5 py-1 rounded-xl bg-slate-800 text-slate-400 border border-white/10 hover:text-white text-xs font-bold transition-all active:scale-95">Cyber Neon</button>
+                </div>
+            </div>
+
+            <!-- iOS Scriptable Widget Setup -->
+            <div class="settings-item p-4 rounded-2xl bg-slate-800/60 border border-white/10 flex flex-col gap-3">
+                <div class="flex items-center justify-between gap-2">
+                    <div class="text-xs sm:text-sm font-bold text-slate-100 flex items-center gap-2">
+                        <span>🍏 iOS Homescreen &amp; Lockscreen Widget</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 text-[10px] font-bold">Kein App Store nötig</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Mit der kostenlosen App <strong class="text-white">Scriptable</strong> läuft das Now-Playing Widget direkt auf deinem iPhone-Homescreen und Sperrbildschirm (iOS 16+).
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <button type="button" onclick="copyScriptableWidgetCode()" id="btn-copy-scriptable-code" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-98 cursor-pointer">
+                        <span>📋 Scriptable-Code kopieren</span>
+                    </button>
+                    <a href="ios_scriptable_widget.js" download="Gamingpig_Widget.js" class="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-white/10 text-slate-200 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
+                        <span>⬇️ Skript (.js) laden</span>
+                    </a>
+                </div>
+
+                <!-- 3-Schritte-Anleitung -->
+                <div class="p-3 rounded-xl bg-slate-900/60 border border-white/5 space-y-1.5 text-xs text-slate-300">
+                    <div class="font-bold text-slate-200 text-[11px] uppercase tracking-wider mb-1">Kurzanleitung (3 Schritte):</div>
+                    <div>1. „Scriptable“ im iOS App Store laden (kostenlos).</div>
+                    <div>2. Neues Skript anlegen, den kopierten Code einfügen und speichern.</div>
+                    <div>3. Auf dem Homescreen langes Drücken → <strong>+</strong> → Scriptable Widget auswählen.</div>
+                </div>
+            </div>
+
+            <!-- StandBy & Now-Playing Shortcuts -->
+            <div class="settings-item p-4 rounded-2xl bg-slate-800/60 border border-white/10 flex flex-col gap-3">
+                <div class="flex items-center justify-between gap-2">
+                    <div class="text-xs sm:text-sm font-bold text-slate-100 flex items-center gap-2">
+                        <span>⚡ StandBy &amp; Widget Direktstart-Shortcuts</span>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Lege dir Schnellstart-Verknüpfungen auf deinen Homescreen, um die App ohne Umwege direkt im Ambient StandBy- oder Widget-Modus zu öffnen.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <button type="button" onclick="copyStandbyShortcutLink()" id="btn-copy-standby-link" class="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-amber-500/30 text-amber-300 font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
+                        <span>📱 StandBy-Link kopieren</span>
+                    </button>
+                    <button type="button" onclick="activateWidgetMode(true)" id="btn-launch-widget-mode" class="w-full min-h-[44px] px-3.5 py-2 rounded-xl bg-cyan-600/30 hover:bg-cyan-600/40 border border-cyan-500/40 text-cyan-200 font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer">
+                        <span>📲 Now-Playing Widget Modus</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live-Activity / Lockscreen Media Session -->
+            <div class="settings-item p-4 rounded-2xl bg-slate-800/60 border border-white/10 flex flex-col gap-3">
+                <div class="flex items-center justify-between gap-2">
+                    <div class="text-xs sm:text-sm font-bold text-slate-100 flex items-center gap-2">
+                        <span>🔔 Lockscreen Live-Activity &amp; Medien-Steuerung</span>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Aktiviert die native Mediensteuerung auf deinem Sperrbildschirm (iOS Lockscreen / Android Notification Player) inklusive hochauflösendem Album-Cover und Songtitel.
+                </p>
+                <button type="button" onclick="toggleLockscreenLiveActivity()" id="btn-toggle-live-activity" class="w-full min-h-[44px] text-left text-xs sm:text-sm text-emerald-400 px-3.5 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-emerald-500/20 transition-all font-bold cursor-pointer active:scale-98">
+                    Sperrbildschirm Live-Activity: AN ✓
+                </button>
             </div>
         </div>
         <!-- SUBPAGE 5: AUDIO & MEDIEN -->
@@ -28155,6 +28317,7 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
                 'cat-display': 'Darstellung & Display',
                 'cat-animations': 'Animationen & Feedback',
                 'cat-standby': 'StandBy-Display',
+                'cat-widgets': 'Widgets & Homescreen',
                 'cat-audio': 'Audio & Medien',
                 'cat-recovery': 'Wiederherstellung & Onboarding',
                 'cat-info': 'System-Info',
@@ -28173,6 +28336,9 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
             if (titleSub) titleSub.textContent = titles[catId] || 'Kategorie';
             if (catId === 'cat-standby' && typeof window.syncStandbySettingsUI === 'function') {
                 window.syncStandbySettingsUI();
+            }
+            if (catId === 'cat-widgets' && typeof window.syncWidgetsSettingsUI === 'function') {
+                window.syncWidgetsSettingsUI();
             }
             const globalMenu = document.getElementById('global-settings-menu');
             if (globalMenu) globalMenu.scrollTop = 0;
@@ -28199,6 +28365,183 @@ Highscores: Breakout: ${breakoutHighScore} | Snake: ${snakeHighScoreVal}`;
             const globalMenu = document.getElementById('global-settings-menu');
             if (globalMenu) globalMenu.scrollTop = 0;
             if (typeof haptic === 'function') haptic(10);
+        };
+
+        // --- 📲 INTERACTIVE WIDGETS & HOMESCREEN FUNCTIONS ---
+        window.syncWidgetsSettingsUI = function() {
+            const isLiveActivity = AppStorage.getItem('gp_lockscreen_live_activity') !== 'false';
+            const btn = document.getElementById('btn-toggle-live-activity');
+            if (btn) {
+                btn.textContent = isLiveActivity ? 'Sperrbildschirm Live-Activity: AN ✓' : 'Sperrbildschirm Live-Activity: AUS ✕';
+                btn.className = isLiveActivity
+                    ? 'w-full min-h-[44px] text-left text-xs sm:text-sm text-emerald-400 px-3.5 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-emerald-500/20 transition-all font-bold cursor-pointer active:scale-98'
+                    : 'w-full min-h-[44px] text-left text-xs sm:text-sm text-slate-400 px-3.5 py-2.5 rounded-xl bg-slate-800/40 hover:bg-slate-700 border border-white/5 transition-all font-bold cursor-pointer active:scale-98';
+            }
+            if (typeof updateWidgetLiveReplica === 'function') {
+                updateWidgetLiveReplica(typeof currentMusicData !== 'undefined' ? currentMusicData : null);
+            }
+        };
+
+        window.updateWidgetLiveReplica = function(data) {
+            const track = (data && data.track) || (typeof currentMusicData !== 'undefined' && currentMusicData && currentMusicData.track) || null;
+            const isPlaying = (data && data.status === 'playing') || (typeof trackIsPlaying !== 'undefined' && trackIsPlaying);
+            const titleEl = document.getElementById('widget-replica-title');
+            const artistEl = document.getElementById('widget-replica-artist');
+            const artEl = document.getElementById('widget-replica-art');
+            const statusEl = document.getElementById('widget-replica-status');
+            const dotEl = document.getElementById('widget-replica-dot');
+            const pctEl = document.getElementById('widget-replica-pct');
+
+            if (titleEl) titleEl.textContent = track?.title || (document.getElementById('music-header-title')?.textContent?.trim()) || 'Aktuell ist es ruhig...';
+            if (artistEl) artistEl.textContent = track?.artist || (document.getElementById('music-artist')?.textContent?.trim()) || 'Gamingpig StandBy';
+            if (artEl && track?.artwork_url) artEl.src = track.artwork_url;
+            if (statusEl) {
+                statusEl.textContent = isPlaying ? 'NOW PLAYING' : 'STANDBY';
+                statusEl.className = 'text-[10px] font-mono font-black uppercase tracking-wider ' + (isPlaying ? 'text-emerald-400' : 'text-slate-400');
+            }
+            if (dotEl) {
+                dotEl.className = 'w-2 h-2 rounded-full ' + (isPlaying ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500');
+            }
+            if (pctEl) {
+                const dur = Number(track?.duration_ms || (typeof totalMs !== 'undefined' ? totalMs : 0));
+                const prog = Number(typeof currentMs !== 'undefined' ? currentMs : 0);
+                if (dur > 0 && prog > 0) {
+                    const pct = Math.round(Math.min(100, Math.max(0, (prog / dur) * 100)));
+                    pctEl.textContent = `· ${pct}%`;
+                    pctEl.classList.remove('hidden');
+                } else {
+                    pctEl.classList.add('hidden');
+                }
+            }
+        };
+
+        window.syncMediaSessionMetadata = function(data) {
+            if (!('mediaSession' in navigator)) return;
+            if (AppStorage.getItem('gp_lockscreen_live_activity') === 'false') {
+                try { navigator.mediaSession.metadata = null; } catch(_) {}
+                return;
+            }
+            const track = (data && data.track) || (typeof currentMusicData !== 'undefined' && currentMusicData && currentMusicData.track) || null;
+            const isPlaying = (data && data.status === 'playing') || (typeof trackIsPlaying !== 'undefined' && trackIsPlaying);
+            const title = track?.title || 'Gamingpig Live';
+            const artist = track?.artist || 'Spotify Live';
+            const artwork = track?.artwork_url || 'og-v2.jpg';
+
+            try {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: title,
+                    artist: artist,
+                    album: 'Gamingpig Portfolio',
+                    artwork: [
+                        { src: artwork, sizes: '96x96', type: 'image/jpeg' },
+                        { src: artwork, sizes: '128x128', type: 'image/jpeg' },
+                        { src: artwork, sizes: '192x192', type: 'image/jpeg' },
+                        { src: artwork, sizes: '256x256', type: 'image/jpeg' },
+                        { src: artwork, sizes: '384x384', type: 'image/jpeg' },
+                        { src: artwork, sizes: '512x512', type: 'image/jpeg' }
+                    ]
+                });
+                navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+            } catch(e) {}
+        };
+
+        window.activateWidgetMode = function(enable) {
+            const active = (typeof enable === 'boolean') ? enable : !document.body.classList.contains('widget-mode');
+            document.body.classList.toggle('widget-mode', active);
+            const exitBar = document.getElementById('widget-mode-exit-bar');
+            if (exitBar) {
+                if (active) {
+                    exitBar.classList.remove('hidden');
+                    exitBar.classList.add('flex');
+                } else {
+                    exitBar.classList.add('hidden');
+                    exitBar.classList.remove('flex');
+                }
+            }
+            if (active && typeof closeStandaloneSettings === 'function') {
+                closeStandaloneSettings();
+            }
+            if (typeof haptic === 'function') haptic(15);
+        };
+
+        window.copyScriptableWidgetCode = async function() {
+            try {
+                let code = '';
+                try {
+                    const res = await fetch('ios_scriptable_widget.js?t=' + Date.now());
+                    if (res.ok) code = await res.text();
+                } catch(_) {}
+                if (!code) {
+                    code = `// Gamingpig iOS Widget\nconst PORTFOLIO_URL = "${window.location.origin + window.location.pathname}?mode=standby";\n`;
+                }
+                await navigator.clipboard.writeText(code);
+                if (typeof showSystemToast === 'function') showSystemToast('📋 Scriptable Widget-Code in Zwischenablage kopiert!', 'success');
+                else if (typeof showToast === 'function') showToast('📋 Scriptable-Code kopiert', 'info');
+            } catch(e) {
+                if (typeof showToast === 'function') showToast('Kopieren fehlgeschlagen', 'warning');
+            }
+        };
+
+        window.copyStandbyShortcutLink = async function() {
+            try {
+                const url = window.location.origin + window.location.pathname.replace(/\/$/, '') + '/?mode=standby';
+                await navigator.clipboard.writeText(url);
+                if (typeof showSystemToast === 'function') showSystemToast('📱 StandBy-Link kopiert! Im Browser-Menü "Zum Home-Bildschirm" wählen.', 'success');
+                else if (typeof showToast === 'function') showToast('StandBy-Link kopiert', 'info');
+            } catch(e) {}
+        };
+
+        window.copyWidgetShortcutLink = async function() {
+            try {
+                const url = window.location.origin + window.location.pathname.replace(/\/$/, '') + '/?mode=widget';
+                await navigator.clipboard.writeText(url);
+                if (typeof showSystemToast === 'function') showSystemToast('📲 Widget-Link kopiert!', 'success');
+                else if (typeof showToast === 'function') showToast('Widget-Link kopiert', 'info');
+            } catch(e) {}
+        };
+
+        window.setWidgetTheme = function(theme) {
+            const replica = document.getElementById('widget-live-replica');
+            if (!replica) return;
+            ['btn-wtheme-liquid', 'btn-wtheme-oled', 'btn-wtheme-cyber'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.className = 'px-2.5 py-1 rounded-xl bg-slate-800 text-slate-400 border border-white/10 hover:text-white text-xs font-bold transition-all active:scale-95';
+                }
+            });
+            const activeBtn = document.getElementById('btn-wtheme-' + theme);
+            if (activeBtn) {
+                activeBtn.className = 'px-2.5 py-1 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-bold transition-all active:scale-95';
+            }
+            if (theme === 'oled') {
+                replica.style.background = '#000000';
+                replica.style.borderColor = 'rgba(255,255,255,0.2)';
+            } else if (theme === 'cyber') {
+                replica.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #311042 100%)';
+                replica.style.borderColor = 'rgba(236,72,153,0.4)';
+            } else {
+                replica.style.background = 'linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(2,6,23,0.9) 100%)';
+                replica.style.borderColor = 'rgba(56,189,248,0.3)';
+            }
+        };
+
+        window.toggleLockscreenLiveActivity = function() {
+            const isEnabled = AppStorage.getItem('gp_lockscreen_live_activity') !== 'false';
+            const nextState = !isEnabled;
+            AppStorage.setItem('gp_lockscreen_live_activity', nextState ? 'true' : 'false');
+            const btn = document.getElementById('btn-toggle-live-activity');
+            if (btn) {
+                btn.textContent = nextState ? 'Sperrbildschirm Live-Activity: AN ✓' : 'Sperrbildschirm Live-Activity: AUS ✕';
+                btn.className = nextState
+                    ? 'w-full min-h-[44px] text-left text-xs sm:text-sm text-emerald-400 px-3.5 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-emerald-500/20 transition-all font-bold cursor-pointer active:scale-98'
+                    : 'w-full min-h-[44px] text-left text-xs sm:text-sm text-slate-400 px-3.5 py-2.5 rounded-xl bg-slate-800/40 hover:bg-slate-700 border border-white/5 transition-all font-bold cursor-pointer active:scale-98';
+            }
+            if (typeof syncMediaSessionMetadata === 'function') {
+                syncMediaSessionMetadata(typeof currentMusicData !== 'undefined' ? currentMusicData : null);
+            }
+            if (typeof showToast === 'function') {
+                showToast(nextState ? 'Live-Activity auf Sperrbildschirm aktiviert' : 'Live-Activity deaktiviert', 'info');
+            }
         };
         // --- 7-TAP BUILD NUMBER EASTER EGG & DEVELOPER OPTIONS ---
         let buildTapCount = 0;
@@ -33022,6 +33365,8 @@ window.setLyricsStyle = function(style) {
                     syncStandByTrackInfo('', '', null, false, false, true, true);
                     releaseStandbyWakeLock();
                 }
+                if (typeof updateWidgetLiveReplica === 'function') updateWidgetLiveReplica(data);
+                if (typeof syncMediaSessionMetadata === 'function') syncMediaSessionMetadata(data);
                 updateProgressUI();
                 return;
             }
@@ -33108,6 +33453,8 @@ window.setLyricsStyle = function(style) {
             currentTrackTitle = trackTitle;
             currentRawArtist = cleanArtist;
             lastKnownMusicData = data;
+            if (typeof updateWidgetLiveReplica === 'function') updateWidgetLiveReplica(data);
+            if (typeof syncMediaSessionMetadata === 'function') syncMediaSessionMetadata(data);
             // Mini-Player Toggle Bar sofort aktualisieren
             if (miniTitle) miniTitle.innerText = trackTitle;
             if (miniStatus) {
@@ -36233,6 +36580,16 @@ window.setLyricsStyle = function(style) {
         }
  // Nachlauf, falls Fonts/Layout sich noch verschieben
         const _urlParams = new URLSearchParams(window.location.search);
+        const _urlMode = _urlParams.get('mode') || '';
+        if (_urlMode === 'standby' || _urlParams.has('standby')) {
+            setTimeout(() => {
+                if (typeof toggleStandBy === 'function') toggleStandBy(true);
+            }, 350);
+        } else if (_urlMode === 'widget' || _urlParams.has('widget')) {
+            setTimeout(() => {
+                if (typeof activateWidgetMode === 'function') activateWidgetMode(true);
+            }, 350);
+        }
         const _forceOnboarding = _urlParams.has('first_visit') || _urlParams.has('onboarding') || _urlParams.has('tutorial');
         if (window.OnboardingTracker) {
             window.OnboardingTracker.updateUI();
