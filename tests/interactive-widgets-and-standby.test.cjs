@@ -24,19 +24,15 @@ describe('Interaktive Widgets für Homescreen & StandBy (Roadmap Card 4)', () =>
             assert.ok(standbySc, 'StandBy shortcut must exist');
             assert.equal(standbySc.url, './?mode=standby');
 
-            const widgetSc = manifestJson.shortcuts.find(s => s.name === 'Now-Playing Widget');
-            assert.ok(widgetSc, 'Widget shortcut must exist');
-            assert.equal(widgetSc.url, './?mode=widget');
-
             const arcadeSc = manifestJson.shortcuts.find(s => s.name === 'Retro Arcade');
             assert.ok(arcadeSc, 'Arcade shortcut must exist');
             assert.equal(arcadeSc.url, './arcade.html');
         });
     });
 
-    describe('2. Settings Center Integration (index.html & app.html)', () => {
+    describe('2. Streamlined Settings Center Integration (index.html & app.html)', () => {
         for (const [name, html] of [['index.html', indexHtml], ['app.html', appHtml]]) {
-            it(`W2.1: ${name} DOM contains Widgets category tile and subpage`, () => {
+            it(`W2.1: ${name} DOM contains clean Widgets category tile, OS tabs, APK download, Scriptable & StandBy`, () => {
                 const dom = new JSDOM(html);
                 const doc = dom.window.document;
 
@@ -46,53 +42,36 @@ describe('Interaktive Widgets für Homescreen & StandBy (Roadmap Card 4)', () =>
                 const subpage = doc.getElementById('subpage-cat-widgets');
                 assert.ok(subpage, `${name} must contain subpage #subpage-cat-widgets`);
 
-                // Live preview replica
-                assert.ok(doc.getElementById('widget-live-replica'), '#widget-live-replica must exist');
-                assert.ok(doc.getElementById('widget-replica-dot'), '#widget-replica-dot must exist');
-                assert.ok(doc.getElementById('widget-replica-status'), '#widget-replica-status must exist');
-                assert.ok(doc.getElementById('widget-replica-title'), '#widget-replica-title must exist');
-                assert.ok(doc.getElementById('widget-replica-artist'), '#widget-replica-artist must exist');
-                assert.ok(doc.getElementById('widget-replica-art'), '#widget-replica-art must exist');
+                // OS tabs & panels
+                assert.ok(doc.getElementById('tab-wos-android'), '#tab-wos-android must exist');
+                assert.ok(doc.getElementById('tab-wos-ios'), '#tab-wos-ios must exist');
+                assert.ok(doc.getElementById('widget-panel-android'), '#widget-panel-android must exist');
+                assert.ok(doc.getElementById('widget-panel-ios'), '#widget-panel-ios must exist');
 
-                // Scriptable & shortcut action buttons
+                // Primary real actions (Android APK, iOS Scriptable, StandBy Link)
+                const apkBtn = doc.getElementById('btn-download-android-apk');
+                assert.ok(apkBtn, '#btn-download-android-apk must exist');
+                assert.equal(apkBtn.getAttribute('href'), 'downloads/GamingpigWidget.apk');
+
                 assert.ok(doc.getElementById('btn-copy-scriptable-code'), '#btn-copy-scriptable-code must exist');
                 assert.ok(doc.getElementById('btn-copy-standby-link'), '#btn-copy-standby-link must exist');
-                assert.ok(doc.getElementById('btn-launch-widget-mode'), '#btn-launch-widget-mode must exist');
-                assert.ok(doc.getElementById('btn-toggle-live-activity'), '#btn-toggle-live-activity must exist');
 
-                // Exit bar
-                assert.ok(doc.getElementById('widget-mode-exit-bar'), '#widget-mode-exit-bar must exist');
+                // Unnecessary web-widget clutter must be removed
+                assert.equal(doc.getElementById('widget-mode-exit-bar'), null, '#widget-mode-exit-bar must be removed');
+                assert.equal(doc.getElementById('btn-launch-widget-mode'), null, '#btn-launch-widget-mode must be removed');
             });
         }
 
         it('W2.2: JavaScript functions for widgets are defined and exposed on window', () => {
-            assert.match(indexHtml, /window\.activateWidgetMode\s*=/);
+            assert.match(indexHtml, /window\.switchWidgetOsTab\s*=/);
             assert.match(indexHtml, /window\.copyScriptableWidgetCode\s*=/);
             assert.match(indexHtml, /window\.copyStandbyShortcutLink\s*=/);
-            assert.match(indexHtml, /window\.copyWidgetShortcutLink\s*=/);
-            assert.match(indexHtml, /window\.setWidgetTheme\s*=/);
-            assert.match(indexHtml, /window\.toggleLockscreenLiveActivity\s*=/);
-            assert.match(indexHtml, /window\.syncMediaSessionMetadata\s*=/);
-            assert.match(indexHtml, /window\.updateWidgetLiveReplica\s*=/);
             assert.match(indexHtml, /window\.syncWidgetsSettingsUI\s*=/);
         });
     });
 
-    describe('3. Widget Mode CSS & Layout', () => {
-        it('W3.1: CSS defines .widget-mode with layout isolation and element suppression', () => {
-            assert.match(indexHtml, /body\.widget-mode\s*\{/);
-            assert.match(indexHtml, /body\.widget-mode\s+#header-section/);
-            assert.match(indexHtml, /body\.widget-mode\s+#main-music-card/);
-        });
-
-        it('W3.2: Startup script checks URL parameters for ?mode=standby and ?mode=widget', () => {
-            assert.match(indexHtml, /_urlMode\s*===\s*'standby'/);
-            assert.match(indexHtml, /_urlMode\s*===\s*'widget'/);
-        });
-    });
-
-    describe('4. iOS Scriptable Widget Script', () => {
-        it('W4.1: ios_scriptable_widget.js compiles cleanly and contains Lockscreen + Homescreen families', () => {
+    describe('3. iOS Scriptable Widget Script', () => {
+        it('W3.1: ios_scriptable_widget.js compiles cleanly and contains Lockscreen + Homescreen families', () => {
             const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
             assert.doesNotThrow(() => {
                 new AsyncFunction(scriptableJs);
@@ -103,6 +82,17 @@ describe('Interaktive Widgets für Homescreen & StandBy (Roadmap Card 4)', () =>
             assert.match(scriptableJs, /family\s*===\s*"medium"/, 'Must handle medium widget');
             assert.match(scriptableJs, /WIDGET_PARAM\.includes\("oled"\)/, 'Must support OLED theme');
             assert.match(scriptableJs, /WIDGET_PARAM\.includes\("cyber"\)/, 'Must support Cyber theme');
+        });
+    });
+
+    describe('4. Native Android Widget APK Project & Update Pipeline', () => {
+        it('W4.1: Native Android Widget APK project, UpdateChecker & GitHub Actions build pipeline exist', () => {
+            assert.ok(fs.existsSync(path.join(ROOT, 'android-widget/app/build.gradle.kts')), 'Android build.gradle.kts must exist');
+            assert.ok(fs.existsSync(path.join(ROOT, 'android-widget/app/src/main/java/de/gamingpig/widget/GamingpigWidgetProvider.kt')), 'GamingpigWidgetProvider.kt must exist');
+            assert.ok(fs.existsSync(path.join(ROOT, 'android-widget/app/src/main/java/de/gamingpig/widget/MainActivity.kt')), 'MainActivity.kt must exist');
+            assert.ok(fs.existsSync(path.join(ROOT, 'android-widget/app/src/main/java/de/gamingpig/widget/UpdateChecker.kt')), 'UpdateChecker.kt must exist');
+            assert.ok(fs.existsSync(path.join(ROOT, 'downloads/widget_version.json')), 'downloads/widget_version.json must exist');
+            assert.ok(fs.existsSync(path.join(ROOT, '.github/workflows/build-android-widget.yml')), 'build-android-widget.yml must exist');
         });
     });
 
@@ -118,57 +108,6 @@ describe('Interaktive Widgets für Homescreen & StandBy (Roadmap Card 4)', () =>
             assert.match(roadmapHtml, /data-card-id="4"[^>]*data-category="live"|data-category="live"[^>]*data-card-id="4"/);
             assert.match(roadmapHtml, /data-card-id="4"[\s\S]*?border-l-emerald-500/);
             assert.match(roadmapHtml, /data-card-id="4"[\s\S]*?🚀 Live \/ Verfügbar/);
-        });
-    });
-
-    describe('6. Android Compatibility & File Download Integration', () => {
-        for (const [name, html] of [['index.html', indexHtml], ['app.html', appHtml]]) {
-            it(`W6.1: ${name} DOM contains Android OS tabs, panels and file download actions`, () => {
-                const dom = new JSDOM(html);
-                const doc = dom.window.document;
-
-                assert.ok(doc.getElementById('tab-wos-android'), '#tab-wos-android must exist');
-                assert.ok(doc.getElementById('tab-wos-ios'), '#tab-wos-ios must exist');
-                assert.ok(doc.getElementById('widget-panel-android'), '#widget-panel-android must exist');
-                assert.ok(doc.getElementById('widget-panel-ios'), '#widget-panel-ios must exist');
-                assert.ok(doc.getElementById('btn-download-widget-html'), '#btn-download-widget-html must exist');
-                assert.ok(doc.getElementById('btn-download-widget-url'), '#btn-download-widget-url must exist');
-                assert.ok(doc.getElementById('btn-download-kwgt-config'), '#btn-download-kwgt-config must exist');
-            });
-        }
-
-        it('W6.2: JavaScript exposes switchWidgetOsTab, downloadWidgetHtmlFile, downloadWidgetUrlFile, downloadKwgtConfig', () => {
-            assert.match(indexHtml, /window\.switchWidgetOsTab\s*=/);
-            assert.match(indexHtml, /window\.downloadWidgetHtmlFile\s*=/);
-            assert.match(indexHtml, /window\.downloadWidgetUrlFile\s*=/);
-            assert.match(indexHtml, /window\.downloadKwgtConfig\s*=/);
-        });
-
-        it('W6.3: Standalone widget.html exists, is valid HTML5 and contains live polling', () => {
-            const widgetHtmlPath = path.join(ROOT, 'widget.html');
-            assert.ok(fs.existsSync(widgetHtmlPath), 'widget.html must exist');
-            const widgetContent = fs.readFileSync(widgetHtmlPath, 'utf8');
-
-            assert.match(widgetContent, /<!DOCTYPE html>/i);
-            assert.match(widgetContent, /id="widget-box"/);
-            assert.match(widgetContent, /id="cover"/);
-            assert.match(widgetContent, /id="title"/);
-            assert.match(widgetContent, /id="artist"/);
-            assert.match(widgetContent, /id="bar"/);
-            assert.match(widgetContent, /applyTheme/);
-            assert.match(widgetContent, /fetchLiveTrack/);
-        });
-
-        it('W6.4: Native Android Widget APK project & GitHub Actions build pipeline exist', () => {
-            const dom = new JSDOM(indexHtml);
-            const apkBtn = dom.window.document.getElementById('btn-download-android-apk');
-            assert.ok(apkBtn, '#btn-download-android-apk must exist');
-            assert.equal(apkBtn.getAttribute('href'), 'downloads/GamingpigWidget.apk');
-
-            assert.ok(fs.existsSync(path.join(ROOT, 'android-widget/app/build.gradle.kts')), 'Android build.gradle.kts must exist');
-            assert.ok(fs.existsSync(path.join(ROOT, 'android-widget/app/src/main/java/de/gamingpig/widget/GamingpigWidgetProvider.kt')), 'GamingpigWidgetProvider.kt must exist');
-            assert.ok(fs.existsSync(path.join(ROOT, 'android-widget/app/src/main/java/de/gamingpig/widget/MainActivity.kt')), 'MainActivity.kt must exist');
-            assert.ok(fs.existsSync(path.join(ROOT, '.github/workflows/build-android-widget.yml')), 'build-android-widget.yml must exist');
         });
     });
 });
