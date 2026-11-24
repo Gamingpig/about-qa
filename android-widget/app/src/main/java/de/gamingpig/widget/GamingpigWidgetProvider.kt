@@ -8,11 +8,16 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.net.Uri
 import android.os.Bundle
 import android.os.PowerManager
 import android.os.SystemClock
+import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import java.text.SimpleDateFormat
@@ -55,6 +60,7 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                     updateAppWidget(context, appWidgetManager, appWidgetId, snapshot, isSyncing = false)
                 }
                 scheduleAdaptiveAlarms(context, snapshot)
+                UpdateChecker.recordSyncAndMaybeCheckUpdate(context)
             } finally {
                 pendingResult.finish()
             }
@@ -67,6 +73,15 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
 
         val manager = AppWidgetManager.getInstance(context)
         val ids = manager.getAppWidgetIds(ComponentName(context, GamingpigWidgetProvider::class.java))
+
+        // Seamless in-place upgrade of existing homescreen widgets after APK update
+        if (action == Intent.ACTION_MY_PACKAGE_REPLACED) {
+            if (ids.isNotEmpty()) {
+                performNetworkRefresh(context, manager, ids, showSyncFeedback = false)
+            }
+            return
+        }
+
         if (ids.isEmpty()) {
             cancelAllAlarms(context)
             return
@@ -75,7 +90,6 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
         // Local 5s timeline tick (0 network calls!)
         if (action == ACTION_TICK_TIMELINE) {
             if (!isScreenOn(context)) {
-                // Re-schedule a slow non-waking check when screen turns back on
                 scheduleNextNetworkPoll(context, MAX_POLL_INTERVAL_MS)
                 return
             }
@@ -87,7 +101,6 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                 }
                 val rem = snap.remainingMs()
                 val sinceLastFetch = System.currentTimeMillis() - snap.fetchedAtMs
-                // Trigger immediate fetch when song ends or is within final 12s (throttled to min 5s)
                 if (rem <= 12_000L && sinceLastFetch >= END_OF_SONG_POLL_MS) {
                     performNetworkRefresh(context, manager, ids, showSyncFeedback = false)
                 } else {
@@ -98,7 +111,6 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
         }
 
         if (action == ACTION_REFRESH || action == ACTION_AUTO_POLL) {
-            // If triggered by background poll while screen is off, postpone until screen is awake
             if (action == ACTION_AUTO_POLL && !isScreenOn(context)) {
                 scheduleNextNetworkPoll(context, MAX_POLL_INTERVAL_MS)
                 return
@@ -134,6 +146,7 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                     updateAppWidget(context, manager, id, snapshot, isSyncing = false)
                 }
                 scheduleAdaptiveAlarms(context, snapshot)
+                UpdateChecker.recordSyncAndMaybeCheckUpdate(context)
             } finally {
                 pendingResult.finish()
             }
@@ -144,13 +157,17 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
         const val ACTION_REFRESH = "de.gamingpig.widget.ACTION_REFRESH"
         const val ACTION_AUTO_POLL = "de.gamingpig.widget.ACTION_AUTO_POLL"
         const val ACTION_TICK_TIMELINE = "de.gamingpig.widget.ACTION_TICK_TIMELINE"
+
         const val PREFS_NAME = "gp_widget_prefs"
         const val KEY_THEME = "widget_theme"
         const val KEY_SHOW_PROGRESS = "show_progress"
+        const val KEY_SHOW_TIMELINE = "show_timeline"
+        const val KEY_SHOW_RECENT = "show_recent"
+        const val KEY_TEXT_SIZE = "text_size" // "small", "normal", "large"
 
-        private const val MAX_POLL_INTERVAL_MS = 30_000L // Max 30s as requested
-        private const val END_OF_SONG_POLL_MS = 5_000L   // Fast 5s polling near song end
-        private const val TIMELINE_TICK_MS = 5_000L      // 5s local timeline progress update
+        private const val MAX_POLL_INTERVAL_MS = 30_000L
+        private const val END_OF_SONG_POLL_MS = 5_000L
+        private const val TIMELINE_TICK_MS = 5_000L
 
         private val executor = Executors.newSingleThreadExecutor()
 
@@ -279,6 +296,22 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             }
         }
 
+        private fun createSolidRoundedBitmap(color: Int): Bitmap {
+            val w = 240
+            val h = 160
+            val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bmp)
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+            paint.color = color
+            canvas.drawRoundRect(RectF(0f, 0f, w.toFloat(), h.toFloat()), 26f, 26f, paint)
+
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = 2f
+            paint.color = Color.argb(65, 255, 255, 255)
+            canvas.drawRoundRect(RectF(1f, 1f, w - 1f, h - 1f), 26f, 26f, paint)
+            return bmp
+        }
+
         fun updateAppWidget(
             context: Context,
             appWidgetManager: AppWidgetManager,
@@ -290,22 +323,66 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             val savedTheme = prefs.getString(KEY_THEME, "auto") ?: "auto"
             val effectiveTheme = resolveEffectiveTheme(context, savedTheme)
             val showProgress = prefs.getBoolean(KEY_SHOW_PROGRESS, true)
+            val showTimeline = prefs.getBoolean(KEY_SHOW_TIMELINE, true)
+            val showRecent = prefs.getBoolean(KEY_SHOW_RECENT, false)
+            val textSizePref = prefs.getString(KEY_TEXT_SIZE, "normal") ?: "normal"
 
             val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
             val layoutId = selectLayoutForSize(options)
             val isCompact = (layoutId == R.layout.widget_layout_compact)
+            val isLarge = (layoutId == R.layout.widget_layout_large)
             val isLight = (effectiveTheme == "light")
 
             val views = RemoteViews(context.packageName, layoutId)
 
-            val bgRes = when (effectiveTheme) {
-                "light" -> R.drawable.widget_bg_light
-                "oled" -> R.drawable.widget_bg_oled
-                "cyber" -> R.drawable.widget_bg_cyber
-                else -> R.drawable.widget_bg_liquid
+            // Apply Background (Static Ambient Blur, Ambient Color, or Vector Drawable)
+            when {
+                effectiveTheme == "ambient_blur" && snapshot?.blurredBgBitmap != null -> {
+                    views.setInt(R.id.widget_root, "setBackgroundResource", 0)
+                    views.setViewVisibility(R.id.widget_bg_image, View.VISIBLE)
+                    views.setImageViewBitmap(R.id.widget_bg_image, snapshot.blurredBgBitmap)
+                }
+                effectiveTheme == "ambient_color" && snapshot != null -> {
+                    views.setInt(R.id.widget_root, "setBackgroundResource", 0)
+                    views.setViewVisibility(R.id.widget_bg_image, View.VISIBLE)
+                    views.setImageViewBitmap(R.id.widget_bg_image, createSolidRoundedBitmap(snapshot.dominantColor))
+                }
+                else -> {
+                    views.setViewVisibility(R.id.widget_bg_image, View.GONE)
+                    val bgRes = when (effectiveTheme) {
+                        "light" -> R.drawable.widget_bg_light
+                        "oled" -> R.drawable.widget_bg_oled
+                        "cyber" -> R.drawable.widget_bg_cyber
+                        else -> R.drawable.widget_bg_liquid
+                    }
+                    views.setInt(R.id.widget_root, "setBackgroundResource", bgRes)
+                }
             }
-            views.setInt(R.id.widget_root, "setBackgroundResource", bgRes)
 
+            // Text Sizes (Small / Normal / Large)
+            val sizeDelta = when (textSizePref) {
+                "small" -> -2f
+                "large" -> 2.5f
+                else -> 0f
+            }
+            val baseTitleSp = when {
+                isCompact -> 13f
+                isLarge -> 17f
+                else -> 15f
+            }
+            val baseArtistSp = when {
+                isCompact -> 11f
+                isLarge -> 13f
+                else -> 12f
+            }
+            val baseMetaSp = if (isLarge) 11f else 10f
+
+            views.setTextViewTextSize(R.id.widget_title, TypedValue.COMPLEX_UNIT_SP, baseTitleSp + sizeDelta)
+            views.setTextViewTextSize(R.id.widget_artist, TypedValue.COMPLEX_UNIT_SP, baseArtistSp + sizeDelta)
+            views.setTextViewTextSize(R.id.widget_meta, TypedValue.COMPLEX_UNIT_SP, baseMetaSp + (sizeDelta * 0.5f))
+            views.setTextViewTextSize(R.id.widget_recent_text, TypedValue.COMPLEX_UNIT_SP, baseMetaSp + (sizeDelta * 0.5f))
+
+            // Colors
             val btnBgRes = if (isLight) R.drawable.widget_btn_bg_light else R.drawable.widget_btn_bg_dark
             views.setInt(R.id.widget_btn_refresh, "setBackgroundResource", btnBgRes)
             views.setInt(R.id.widget_btn_config, "setBackgroundResource", btnBgRes)
@@ -315,11 +392,13 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             views.setTextColor(R.id.widget_btn_config, iconTextColor)
 
             val titleColor = Color.parseColor(if (isLight) "#0F172A" else "#FFFFFF")
-            val artistColor = Color.parseColor(if (isLight) "#475569" else "#94A3B8")
+            val artistColor = Color.parseColor(if (isLight) "#475569" else "#CBD5E1")
             val metaColor = Color.parseColor(if (isLight) "#0284C7" else "#38BDF8")
+            val recentColor = Color.parseColor(if (isLight) "#64748B" else "#94A3B8")
             views.setTextColor(R.id.widget_title, titleColor)
             views.setTextColor(R.id.widget_artist, artistColor)
             views.setTextColor(R.id.widget_meta, metaColor)
+            views.setTextColor(R.id.widget_recent_text, recentColor)
 
             val nowMs = System.currentTimeMillis()
             val timeLabel = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(nowMs))
@@ -335,11 +414,9 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             if (snapshot != null) {
                 val curMs = snapshot.currentProgressMs(nowMs)
                 val curPct = snapshot.currentProgressPct(nowMs)
-                val timelineText = if (snapshot.durationMs > 0L) {
-                    "${TrackDataFetcher.formatTime(curMs)} / ${TrackDataFetcher.formatTime(snapshot.durationMs)}"
-                } else {
-                    "$curPct%"
-                }
+                val timelineText = if (showTimeline && snapshot.durationMs > 0L) {
+                    "${TrackDataFetcher.formatTime(curMs)} / ${TrackDataFetcher.formatTime(snapshot.durationMs)} · "
+                } else ""
 
                 views.setTextViewText(R.id.widget_title, snapshot.title)
                 views.setTextViewText(R.id.widget_artist, snapshot.artist)
@@ -349,10 +426,12 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                         views.setImageViewResource(R.id.widget_status_dot, R.drawable.status_dot_live)
                         views.setTextViewText(
                             R.id.widget_status_text,
-                            if (isCompact) "LIVE · ${TrackDataFetcher.formatTime(curMs)}" else "NOW PLAYING"
+                            if (isCompact && showTimeline) "LIVE · ${TrackDataFetcher.formatTime(curMs)}"
+                            else if (isCompact) "LIVE"
+                            else "NOW PLAYING"
                         )
                         views.setTextColor(R.id.widget_status_text, Color.parseColor(if (isLight) "#059669" else "#34D399"))
-                        views.setTextViewText(R.id.widget_meta, "🎵 $timelineText · Spotify")
+                        views.setTextViewText(R.id.widget_meta, "🎵 ${timelineText}Spotify")
                     } else {
                         views.setImageViewResource(R.id.widget_status_dot, R.drawable.status_dot_idle)
                         views.setTextViewText(R.id.widget_status_text, "STANDBY")
@@ -368,6 +447,20 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                 }
 
                 views.setProgressBar(R.id.widget_progress, 100, curPct, false)
+
+                // Recently Played line (in Standard & Large widgets when enabled)
+                if (showRecent && !isCompact && snapshot.recentTracks.isNotEmpty()) {
+                    val recLine = if (isLarge && snapshot.recentTracks.size >= 2) {
+                        "🕒 Zuletzt: ${snapshot.recentTracks[0].title} · ${snapshot.recentTracks[0].artist}\n" +
+                        "🕒 Davor: ${snapshot.recentTracks[1].title} · ${snapshot.recentTracks[1].artist}"
+                    } else {
+                        "🕒 Zuletzt: ${snapshot.recentTracks[0].title} · ${snapshot.recentTracks[0].artist}"
+                    }
+                    views.setTextViewText(R.id.widget_recent_text, recLine)
+                    views.setViewVisibility(R.id.widget_recent_text, View.VISIBLE)
+                } else {
+                    views.setViewVisibility(R.id.widget_recent_text, View.GONE)
+                }
             }
 
             val minH = options?.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 110) ?: 110

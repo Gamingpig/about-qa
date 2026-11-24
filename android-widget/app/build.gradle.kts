@@ -11,8 +11,8 @@ android {
         applicationId = "de.gamingpig.widget"
         minSdk = 26
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.3.0"
+        versionCode = 5
+        versionName = "2.0.0"
     }
 
     buildTypes {

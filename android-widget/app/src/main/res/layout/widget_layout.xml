@@ -1,132 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/widget_bg_liquid"
-    android:orientation="vertical"
-    android:padding="14dp">
+    android:background="@drawable/widget_bg_liquid">
 
-    <!-- Header Row with easy-to-tap 38dp x 34dp pill buttons -->
+    <!-- Zero-GPU static Ambient Cover Blur / Ambient Color Layer -->
+    <ImageView
+        android:id="@+id/widget_bg_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="14dp">
 
-        <ImageView
-            android:id="@+id/widget_status_dot"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:src="@drawable/status_dot_live" />
-
-        <TextView
-            android:id="@+id/widget_status_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:letterSpacing="0.05"
-            android:maxLines="1"
-            android:text="NOW PLAYING"
-            android:textColor="#34D399"
-            android:textSize="10sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/widget_btn_refresh"
-            android:layout_width="38dp"
-            android:layout_height="34dp"
-            android:background="@drawable/widget_btn_bg_dark"
-            android:gravity="center"
-            android:text="↻"
-            android:textColor="#E2E8F0"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/widget_btn_config"
-            android:layout_width="38dp"
-            android:layout_height="34dp"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/widget_btn_bg_dark"
-            android:gravity="center"
-            android:text="⚙"
-            android:textColor="#E2E8F0"
-            android:textSize="15sp" />
-    </LinearLayout>
-
-    <!-- Main Track Row -->
-    <LinearLayout
-        android:id="@+id/widget_content_area"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="6dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/widget_cover"
-            android:layout_width="58dp"
-            android:layout_height="58dp"
-            android:background="@drawable/cover_placeholder"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_pig" />
-
+        <!-- Header Row -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/widget_status_dot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:src="@drawable/status_dot_live" />
 
             <TextView
-                android:id="@+id/widget_title"
-                android:layout_width="match_parent"
+                android:id="@+id/widget_status_text"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
                 android:ellipsize="end"
+                android:letterSpacing="0.05"
                 android:maxLines="1"
-                android:text="Lade Musik..."
-                android:textColor="#FFFFFF"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/widget_artist"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Gamingpig Spotify Live"
-                android:textColor="#94A3B8"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/widget_meta"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="🎵 Live auf Spotify"
-                android:textColor="#38BDF8"
+                android:text="NOW PLAYING"
+                android:textColor="#34D399"
                 android:textSize="10sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_btn_refresh"
+                android:layout_width="38dp"
+                android:layout_height="34dp"
+                android:background="@drawable/widget_btn_bg_dark"
+                android:gravity="center"
+                android:text="↻"
+                android:textColor="#E2E8F0"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_btn_config"
+                android:layout_width="38dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/widget_btn_bg_dark"
+                android:gravity="center"
+                android:text="⚙"
+                android:textColor="#E2E8F0"
+                android:textSize="15sp" />
         </LinearLayout>
+
+        <!-- Main Track Row -->
+        <LinearLayout
+            android:id="@+id/widget_content_area"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/widget_cover"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/cover_placeholder"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher_pig" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/widget_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Lade Musik..."
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/widget_artist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Gamingpig Spotify Live"
+                    android:textColor="#94A3B8"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/widget_meta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="🎵 Spotify Live"
+                    android:textColor="#38BDF8"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Optional Recently Played Line -->
+        <TextView
+            android:id="@+id/widget_recent_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#94A3B8"
+            android:textSize="10sp"
+            android:visibility="gone" />
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/widget_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="5dp"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/progress_bar_custom" />
+
     </LinearLayout>
-
-    <!-- Progress Bar -->
-    <ProgressBar
-        android:id="@+id/widget_progress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_marginTop="6dp"
-        android:max="100"
-        android:progress="0"
-        android:progressDrawable="@drawable/progress_bar_custom" />
-
-</LinearLayout>
+</FrameLayout>
