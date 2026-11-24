@@ -2,7 +2,12 @@
 (function () {
     'use strict';
     const P = window.RoadmapProtocol;
-    const DATA_URL = 'https://raw.githubusercontent.com/Gamingpig/About-Gamingpig/main/data/roadmap.json';
+    const DATA_URLS = [
+        './data/roadmap.json',
+        'https://raw.githubusercontent.com/Gamingpig/about-qa/main/data/roadmap.json',
+        'https://raw.githubusercontent.com/Gamingpig/About-Gamingpig/main/data/roadmap.json'
+    ];
+    const DATA_URL = DATA_URLS[0];
     const ID_KEY = 'gp_roadmap_identity_v2';
     const PENDING_KEY = 'gp_roadmap_pending_v2';
     const CACHE_KEY = 'gp_roadmap_cache_v2';
@@ -149,6 +154,44 @@
             optCards.appendChild(opt);
         }
     }
+    function mergeRemoteStates(target, source) {
+        if (!source || source.schema !== 1 || !source.voters || !Array.isArray(source.wishes)) return target;
+        if (!target || target.schema !== 1 || !target.voters || !Array.isArray(target.wishes)) return source;
+        const res = {
+            schema: 1,
+            updatedAt: target.updatedAt,
+            votes: Object.fromEntries([1, 2, 3, 4, 5, 6].map(id => [id, 0])),
+            voters: { ...target.voters },
+            wishes: [...target.wishes],
+            deletedWishIds: [...(target.deletedWishIds || [])]
+        };
+        for (const [vId, vData] of Object.entries(source.voters)) {
+            if (!vData || typeof vData.revision !== 'number' || !Array.isArray(vData.features)) continue;
+            if (!res.voters[vId] || (res.voters[vId].revision || 0) < vData.revision) {
+                res.voters[vId] = { ...vData };
+            }
+        }
+        const wishMap = new Map(res.wishes.map(w => [w.id, w]));
+        const deleted = new Set([...res.deletedWishIds, ...(source.deletedWishIds || [])]);
+        res.deletedWishIds = [...deleted];
+        for (const wish of source.wishes) {
+            if (!wish || !wish.id || deleted.has(wish.id)) continue;
+            if (!wishMap.has(wish.id)) {
+                res.wishes.push(wish);
+                wishMap.set(wish.id, wish);
+            }
+        }
+        for (const v of Object.values(res.voters)) {
+            for (const f of (v.features || [])) {
+                if (res.votes[f] !== undefined) res.votes[f]++;
+            }
+        }
+        res.wishes.sort((a, b) => b.date.localeCompare(a.date) || a.id.localeCompare(b.id));
+        if (source.updatedAt && (!res.updatedAt || new Date(source.updatedAt) > new Date(res.updatedAt))) {
+            res.updatedAt = source.updatedAt;
+        }
+        return res;
+    }
     function schedule(delay = 300000) {
         clearTimeout(timer);
         if (!document.hidden) timer = setTimeout(sync, delay);
@@ -162,9 +205,22 @@
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(),12000);
             try {
-                const response = await fetch(DATA_URL + '?t=' + Math.floor(Date.now()/60000), { cache:'no-store',signal:controller.signal });
-                if (!response.ok) throw new Error('Read failed');
-                const next = await response.json();
+                const ts = Math.floor(Date.now() / 60000);
+                const results = await Promise.allSettled(
+                    DATA_URLS.map(url =>
+                        fetch(url + '?t=' + ts, { cache: 'no-store', signal: controller.signal })
+                            .then(res => res.ok ? res.json() : null)
+                            .catch(() => null)
+                    )
+                );
+                let merged = null;
+                for (const r of results) {
+                    if (r.status === 'fulfilled' && r.value && r.value.schema === 1 && r.value.voters) {
+                        merged = merged ? mergeRemoteStates(merged, r.value) : r.value;
+                    }
+                }
+                if (!merged) throw new Error('Read failed');
+                const next = merged;
                 if (next.schema !== 1 || !next.votes || !next.voters || !Array.isArray(next.wishes)) throw new Error('Invalid state');
                 data = next; status = 'ready';
                 try {
