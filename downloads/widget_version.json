@@ -1,6 +1,6 @@
 {
-  "versionCode": 5,
-  "versionName": "2.0.0",
+  "versionCode": 6,
+  "versionName": "2.0.1",
   "apkUrl": "https://gamingpig.github.io/about-qa/downloads/GamingpigWidget.apk",
-  "notes": "Ambient Cover-Blur & Cover-Farbe (0% GPU-Last), Zuletzt gehört im Widget, Textgrößen, In-App Update-Banner & 100-Sync Update-Benachrichtigung."
+  "notes": "Fix: Exakte Spotify-Cover über Spotify oEmbed statt falscher stats.fm Alben + Cache-Bereinigung bei Songwechsel."
 }

@@ -12,6 +12,7 @@ import android.graphics.RectF
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLEncoder
 
 data class RecentTrack(
     val title: String,
@@ -53,6 +54,7 @@ object TrackDataFetcher {
     private const val STATSFM_URL = "https://api.stats.fm/api/v1/users/gamingpig/streams/current"
     private const val STATSFM_RECENT_URL = "https://api.stats.fm/api/v1/users/gamingpig/streams/recent?limit=3"
 
+    @Volatile private var cachedTrackKey: String? = null
     @Volatile private var cachedArtUrl: String? = null
     @Volatile private var cachedArtBitmap: Bitmap? = null
     @Volatile private var cachedBlurBitmap: Bitmap? = null
@@ -73,7 +75,8 @@ object TrackDataFetcher {
         var isPlaying = false
         var title = "Aktuell ist es ruhig..."
         var artist = "Gamingpig StandBy"
-        var artUrl: String? = null
+        var statsFmArtUrl: String? = null
+        var spotifyId: String? = null
         var progressMs = 0L
         var durationMs = 0L
 
@@ -98,9 +101,15 @@ object TrackDataFetcher {
                         if (names.isNotEmpty()) artist = names.joinToString(", ")
                     }
 
+                    val extIds = trk.optJSONObject("externalIds")
+                    val spArr = extIds?.optJSONArray("spotify")
+                    if (spArr != null && spArr.length() > 0) {
+                        spotifyId = spArr.optString(0, "").replace("spotify:track:", "").trim().ifBlank { null }
+                    }
+
                     val albumsArr = trk.optJSONArray("albums")
                     if (albumsArr != null && albumsArr.length() > 0) {
-                        artUrl = albumsArr.optJSONObject(0)?.optString("image", null)
+                        statsFmArtUrl = albumsArr.optJSONObject(0)?.optString("image", null)
                     }
 
                     durationMs = trk.optLong("durationMs", 0L)
@@ -116,6 +125,7 @@ object TrackDataFetcher {
         }
 
         // 2. Fallback: NPC API
+        var npcArtUrl: String? = null
         if (!isPlaying) {
             try {
                 val npcJson = fetchJson("$NPC_URL?t=${System.currentTimeMillis()}")
@@ -125,8 +135,10 @@ object TrackDataFetcher {
                     isPlaying = true
                     title = track.optString("title", "").ifBlank { title }
                     artist = track.optString("artist", "").ifBlank { artist }
-                    if (artUrl.isNullOrBlank()) {
-                        artUrl = track.optString("artwork_url", "").ifBlank { track.optString("art", null) }
+                    npcArtUrl = track.optString("artwork_url", "").ifBlank { track.optString("art", null) }
+                    if (spotifyId.isNullOrBlank()) {
+                        val spUri = track.optString("spotify_id", "").ifBlank { track.optString("track_id", "") }
+                        if (spUri.isNotBlank()) spotifyId = spUri.replace("spotify:track:", "").trim()
                     }
                     durationMs = track.optLong("duration_ms", 0L)
                     progressMs = npcJson?.optLong("progress_ms", 0L) ?: 0L
@@ -145,28 +157,50 @@ object TrackDataFetcher {
             }
         }
 
-        // 4. Artwork + Zero-GPU Ambient Blur & Color (computed once per cover URL)
+        // 4. Authentic Cover Resolution (Keyed by exact track ID so wrong/stale covers never stick)
         var bitmap: Bitmap? = null
         var blurBitmap: Bitmap? = null
-        var domColor = cachedDominantColor
+        var domColor = Color.parseColor("#0F172A")
+        var resolvedArtUrl: String? = null
 
-        if (!artUrl.isNullOrBlank()) {
-            if (artUrl == cachedArtUrl && cachedArtBitmap != null) {
+        if (isPlaying) {
+            val trackKey = spotifyId ?: "$title|$artist"
+            if (trackKey == cachedTrackKey && cachedArtBitmap != null) {
+                resolvedArtUrl = cachedArtUrl
                 bitmap = cachedArtBitmap
                 blurBitmap = cachedBlurBitmap
                 domColor = cachedDominantColor
             } else {
-                val raw = downloadRawBitmap(artUrl)
+                // Priority 1: Exact Spotify oEmbed (always matches the exact Spotify track!)
+                if (!spotifyId.isNullOrBlank()) {
+                    resolvedArtUrl = fetchSpotifyOembedCover(spotifyId)
+                }
+                // Priority 2: NPC API artwork_url or stats.fm album image
+                if (resolvedArtUrl.isNullOrBlank()) {
+                    resolvedArtUrl = npcArtUrl?.takeIf { it.isNotBlank() } ?: statsFmArtUrl
+                }
+                // Priority 3: iTunes Search fallback
+                if (resolvedArtUrl.isNullOrBlank()) {
+                    resolvedArtUrl = fetchItunesFallbackCover(title, artist)
+                }
+
+                val raw = if (!resolvedArtUrl.isNullOrBlank()) downloadRawBitmap(resolvedArtUrl) else null
                 if (raw != null) {
                     val scaled = Bitmap.createScaledBitmap(raw, 160, 160, true)
                     bitmap = getRoundedCornerBitmap(scaled, 26f)
                     domColor = extractAmbientColor(raw)
                     blurBitmap = createAmbientBlurBitmap(raw)
 
-                    cachedArtUrl = artUrl
+                    cachedTrackKey = trackKey
+                    cachedArtUrl = resolvedArtUrl
                     cachedArtBitmap = bitmap
                     cachedBlurBitmap = blurBitmap
                     cachedDominantColor = domColor
+                } else {
+                    cachedTrackKey = null
+                    cachedArtUrl = null
+                    cachedArtBitmap = null
+                    cachedBlurBitmap = null
                 }
             }
         }
@@ -175,7 +209,7 @@ object TrackDataFetcher {
             isPlaying = isPlaying,
             title = title,
             artist = artist,
-            artUrl = artUrl,
+            artUrl = resolvedArtUrl,
             artBitmap = bitmap,
             blurredBgBitmap = blurBitmap,
             dominantColor = domColor,
@@ -184,6 +218,31 @@ object TrackDataFetcher {
             recentTracks = cachedRecentTracks,
             fetchedAtMs = System.currentTimeMillis()
         )
+    }
+
+    private fun fetchSpotifyOembedCover(spotifyTrackId: String): String? {
+        return try {
+            val trackUrl = URLEncoder.encode("https://open.spotify.com/track/$spotifyTrackId", "UTF-8")
+            val json = fetchJson("https://open.spotify.com/oembed?url=$trackUrl")
+            json?.optString("thumbnail_url", "")?.takeIf { it.isNotBlank() }
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    private fun fetchItunesFallbackCover(title: String, artist: String): String? {
+        return try {
+            val cleanArtist = artist.split(",")[0].trim()
+            val q = URLEncoder.encode("$cleanArtist $title", "UTF-8")
+            val json = fetchJson("https://itunes.apple.com/search?term=$q&media=music&entity=song&limit=3")
+            val results = json?.optJSONArray("results")
+            if (results != null && results.length() > 0) {
+                val url100 = results.optJSONObject(0)?.optString("artworkUrl100", "")
+                if (!url100.isNullOrBlank()) url100.replace("100x100bb", "600x600bb") else null
+            } else null
+        } catch (_: Exception) {
+            null
+        }
     }
 
     private fun fetchRecentTracks(): List<RecentTrack> {
@@ -214,7 +273,7 @@ object TrackDataFetcher {
                 readTimeout = 5000
                 requestMethod = "GET"
                 setRequestProperty("Accept", "application/json")
-                setRequestProperty("User-Agent", "GamingpigWidget/2.0 (Android)")
+                setRequestProperty("User-Agent", "GamingpigWidget/2.0.1 (Android)")
             }
             if (conn.responseCode == 200) {
                 val text = conn.inputStream.bufferedReader().use { it.readText() }
@@ -233,7 +292,7 @@ object TrackDataFetcher {
             conn = (URL(urlStr).openConnection() as HttpURLConnection).apply {
                 connectTimeout = 5000
                 readTimeout = 5000
-                setRequestProperty("User-Agent", "GamingpigWidget/2.0 (Android)")
+                setRequestProperty("User-Agent", "GamingpigWidget/2.0.1 (Android)")
             }
             if (conn.responseCode == 200) {
                 conn.inputStream.use { BitmapFactory.decodeStream(it) }
@@ -257,7 +316,6 @@ object TrackDataFetcher {
                 val r = Color.red(px)
                 val g = Color.green(px)
                 val b = Color.blue(px)
-                // Prefer colorful pixels over pure white/black
                 val maxC = maxOf(r, g, b)
                 val minC = minOf(r, g, b)
                 val weight = if (maxC - minC > 25) 3L else 1L
@@ -271,23 +329,18 @@ object TrackDataFetcher {
         val gAvg = (gSum / maxOf(1L, count)).toInt().coerceIn(0, 255)
         val bAvg = (bSum / maxOf(1L, count)).toInt().coerceIn(0, 255)
 
-        // Darken cleanly (~42% brightness) so white text stays crisp and readable
         val rDark = (rAvg * 0.42f).toInt().coerceIn(10, 140)
         val gDark = (gAvg * 0.42f).toInt().coerceIn(10, 140)
         val bDark = (bAvg * 0.42f).toInt().coerceIn(15, 160)
         return Color.argb(235, rDark, gDark, bDark)
     }
 
-    /**
-     * Generates a 0% GPU runtime overhead static blurred cover background once per song change.
-     */
     private fun createAmbientBlurBitmap(source: Bitmap): Bitmap {
         val w = 72
         val h = 72
         val small = Bitmap.createScaledBitmap(source, w, h, true)
         val blurred = fastBoxBlur(small, radius = 5)
 
-        // Draw dark protective glass scrim + rounded corners onto 240x160 output
         val outW = 240
         val outH = 160
         val scaledUp = Bitmap.createScaledBitmap(blurred, outW, outH, true)
@@ -301,12 +354,10 @@ object TrackDataFetcher {
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
         canvas.drawBitmap(scaledUp, rect, rect, paint)
 
-        // Subtle dark tint overlay for high text legibility
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP)
         paint.color = Color.argb(138, 6, 10, 22)
         canvas.drawRoundRect(rectF, 26f, 26f, paint)
 
-        // Crisp subtle border
         paint.xfermode = null
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 2f
@@ -324,7 +375,6 @@ object TrackDataFetcher {
         val tmp = IntArray(w * h)
 
         repeat(2) {
-            // Horizontal pass
             for (y in 0 until h) {
                 val rowOff = y * w
                 for (x in 0 until w) {
@@ -338,7 +388,6 @@ object TrackDataFetcher {
                     tmp[rowOff + x] = Color.rgb(r / cnt, g / cnt, b / cnt)
                 }
             }
-            // Vertical pass
             for (x in 0 until w) {
                 for (y in 0 until h) {
                     var r = 0; var g = 0; var b = 0; var cnt = 0
