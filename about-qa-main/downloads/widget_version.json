@@ -1,6 +1,6 @@
 {
-  "versionCode": 8,
-  "versionName": "2.1.1",
+  "versionCode": 9,
+  "versionName": "2.1.2",
   "apkUrl": "https://gamingpig.github.io/about-qa/downloads/GamingpigWidget.apk",
-  "notes": "v2.1.1: Manueller 'Nach Updates suchen'-Button in der Widget-App."
+  "notes": "v2.1.2: Feste Release-Signatur für nahtlose Updates (kein 'App not installed' mehr!)."
 }

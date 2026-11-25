@@ -11,13 +11,26 @@ android {
         applicationId = "de.gamingpig.widget"
         minSdk = 26
         targetSdk = 34
-        versionCode = 8
-        versionName = "2.1.1"
+        versionCode = 9
+        versionName = "2.1.2"
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("gamingpig-widget.keystore")
+            storePassword = System.getenv("GP_KEYSTORE_PASS") ?: "gamingpig2026"
+            keyAlias = "gamingpig"
+            keyPassword = System.getenv("GP_KEY_PASS") ?: "gamingpig2026"
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 

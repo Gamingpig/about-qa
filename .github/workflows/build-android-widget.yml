@@ -42,13 +42,13 @@ jobs:
           gradle-version: '8.7'
 
       - name: Build Gamingpig Widget APK
-        run: gradle -p android-widget assembleDebug --no-daemon
+        run: gradle -p android-widget assembleRelease --no-daemon
 
       - name: Publish APK to downloads folder
         run: |
           mkdir -p downloads about-qa-main/downloads
-          cp android-widget/app/build/outputs/apk/debug/app-debug.apk downloads/GamingpigWidget.apk
-          cp android-widget/app/build/outputs/apk/debug/app-debug.apk about-qa-main/downloads/GamingpigWidget.apk
+          cp android-widget/app/build/outputs/apk/release/app-release.apk downloads/GamingpigWidget.apk
+          cp android-widget/app/build/outputs/apk/release/app-release.apk about-qa-main/downloads/GamingpigWidget.apk
 
       - name: Commit & Push APK to main
         run: |
