@@ -65,6 +65,7 @@ class MainActivity : Activity() {
     private lateinit var switchProgress: Switch
     private lateinit var switchTimeline: Switch
     private lateinit var switchRecent: Switch
+    private lateinit var switchTapSpotify: Switch
 
     private val previewTicker = object : Runnable {
         override fun run() {
@@ -130,6 +131,7 @@ class MainActivity : Activity() {
         switchProgress = findViewById(R.id.switch_progress)
         switchTimeline = findViewById(R.id.switch_timeline)
         switchRecent = findViewById(R.id.switch_recent)
+        switchTapSpotify = findViewById(R.id.switch_tap_spotify)
 
         val btnPin = findViewById<Button>(R.id.btn_pin_widget)
         val txtHint = findViewById<TextView>(R.id.txt_pin_hint)
@@ -145,10 +147,12 @@ class MainActivity : Activity() {
         val savedProgress = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_PROGRESS, true)
         val savedTimeline = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_TIMELINE, true)
         val savedRecent = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_RECENT, false)
+        val savedTapSpotify = prefs.getBoolean(GamingpigWidgetProvider.KEY_TAP_OPENS_SPOTIFY, false)
 
         switchProgress.isChecked = savedProgress
         switchTimeline.isChecked = savedTimeline
         switchRecent.isChecked = savedRecent
+        switchTapSpotify.isChecked = savedTapSpotify
 
         applyPreviewTheme(savedTheme, savedSize, savedProgress, savedRecent)
 
@@ -181,6 +185,11 @@ class MainActivity : Activity() {
             GamingpigWidgetProvider.refreshAllWidgets(this)
         }
 
+        switchTapSpotify.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean(GamingpigWidgetProvider.KEY_TAP_OPENS_SPOTIFY, isChecked).apply()
+            GamingpigWidgetProvider.refreshAllWidgets(this)
+        }
+
         btnPin.setOnClickListener {
             requestNotificationPermissionIfNeeded()
             if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
@@ -201,7 +210,7 @@ class MainActivity : Activity() {
         }
 
         findViewById<Button>(R.id.btn_open_web).setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://gamingpig.github.io/about-qa/?mode=widget")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://gamingpig.github.io/about-qa/")))
         }
 
         requestNotificationPermissionIfNeeded()
@@ -337,8 +346,8 @@ class MainActivity : Activity() {
 
         previewTitle.text = snap.title
         previewArtist.text = snap.artist
-        previewStatus.text = if (snap.isPlaying) "NOW PLAYING" else "STANDBY"
-        previewStatus.setTextColor(Color.parseColor(if (snap.isPlaying) "#34D399" else "#94A3B8"))
+        previewStatus.text = if (snap.isPlaying) "GAMINGPIG IS LISTENING TO" else "GAMINGPIG IS OFFLINE"
+        previewStatus.setTextColor(Color.parseColor(if (snap.isPlaying) "#38BDF8" else "#94A3B8"))
         previewProgress.progress = snap.currentProgressPct(now)
 
         if (snap.isPlaying && showTimeline && snap.durationMs > 0L) {

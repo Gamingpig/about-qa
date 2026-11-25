@@ -152,19 +152,25 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_launcher_pig" />
+
+                    <ImageView
+                        android:layout_width="7dp"
+                        android:layout_height="7dp"
+                        android:layout_marginStart="6dp"
                         android:src="@drawable/status_dot_live" />
 
                     <TextView
                         android:id="@+id/preview_status"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="5dp"
                         android:layout_weight="1"
-                        android:text="NOW PLAYING"
-                        android:textColor="#34D399"
-                        android:textSize="10sp"
+                        android:text="GAMINGPIG IS LISTENING TO"
+                        android:textColor="#38BDF8"
+                        android:textSize="9.5sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -446,6 +452,15 @@
             android:layout_height="46dp"
             android:checked="false"
             android:text="„Zuletzt gehört“ im Widget anzeigen"
+            android:textColor="#E2E8F0"
+            android:textSize="13sp" />
+
+        <Switch
+            android:id="@+id/switch_tap_spotify"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:checked="false"
+            android:text="Tippen auf Song öffnet direkt Spotify"
             android:textColor="#E2E8F0"
             android:textSize="13sp" />
 

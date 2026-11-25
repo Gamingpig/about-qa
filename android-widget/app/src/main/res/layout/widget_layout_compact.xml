@@ -26,7 +26,6 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <!-- Tap Area: Cover + Track Info -->
             <LinearLayout
                 android:id="@+id/widget_content_area"
                 android:layout_width="0dp"
@@ -57,9 +56,16 @@
                         android:orientation="horizontal">
 
                         <ImageView
+                            android:id="@+id/widget_app_logo"
+                            android:layout_width="13dp"
+                            android:layout_height="13dp"
+                            android:src="@drawable/ic_launcher_pig" />
+
+                        <ImageView
                             android:id="@+id/widget_status_dot"
                             android:layout_width="6dp"
                             android:layout_height="6dp"
+                            android:layout_marginStart="4dp"
                             android:src="@drawable/status_dot_live" />
 
                         <TextView
@@ -69,9 +75,9 @@
                             android:layout_marginStart="4dp"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="LIVE"
-                            android:textColor="#34D399"
-                            android:textSize="9sp"
+                            android:text="GAMINGPIG · LIVE"
+                            android:textColor="#38BDF8"
+                            android:textSize="8.5sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -110,7 +116,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Compact 36dp Buttons -->
             <TextView
                 android:id="@+id/widget_btn_refresh"
                 android:layout_width="36dp"

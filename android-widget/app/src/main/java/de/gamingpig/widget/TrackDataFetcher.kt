@@ -24,6 +24,7 @@ data class TrackSnapshot(
     val title: String,
     val artist: String,
     val artUrl: String?,
+    val spotifyUrl: String?,
     val artBitmap: Bitmap?,
     val blurredBgBitmap: Bitmap?,
     val dominantColor: Int,
@@ -205,11 +206,13 @@ object TrackDataFetcher {
             }
         }
 
+        val spUrl = if (!spotifyId.isNullOrBlank()) "https://open.spotify.com/track/$spotifyId" else null
         return TrackSnapshot(
             isPlaying = isPlaying,
             title = title,
             artist = artist,
             artUrl = resolvedArtUrl,
+            spotifyUrl = spUrl,
             artBitmap = bitmap,
             blurredBgBitmap = blurBitmap,
             dominantColor = domColor,

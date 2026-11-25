@@ -163,6 +163,7 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
         const val KEY_SHOW_PROGRESS = "show_progress"
         const val KEY_SHOW_TIMELINE = "show_timeline"
         const val KEY_SHOW_RECENT = "show_recent"
+        const val KEY_TAP_OPENS_SPOTIFY = "tap_opens_spotify"
         const val KEY_TEXT_SIZE = "text_size" // "small", "normal", "large"
 
         private const val MAX_POLL_INTERVAL_MS = 30_000L
@@ -325,6 +326,7 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             val showProgress = prefs.getBoolean(KEY_SHOW_PROGRESS, true)
             val showTimeline = prefs.getBoolean(KEY_SHOW_TIMELINE, true)
             val showRecent = prefs.getBoolean(KEY_SHOW_RECENT, false)
+            val tapOpensSpotify = prefs.getBoolean(KEY_TAP_OPENS_SPOTIFY, false)
             val textSizePref = prefs.getString(KEY_TEXT_SIZE, "normal") ?: "normal"
 
             val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
@@ -426,15 +428,18 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                         views.setImageViewResource(R.id.widget_status_dot, R.drawable.status_dot_live)
                         views.setTextViewText(
                             R.id.widget_status_text,
-                            if (isCompact && showTimeline) "LIVE · ${TrackDataFetcher.formatTime(curMs)}"
-                            else if (isCompact) "LIVE"
-                            else "NOW PLAYING"
+                            if (isCompact && showTimeline) "GAMINGPIG · ${TrackDataFetcher.formatTime(curMs)}"
+                            else if (isCompact) "GAMINGPIG · LIVE"
+                            else "GAMINGPIG IS LISTENING TO"
                         )
-                        views.setTextColor(R.id.widget_status_text, Color.parseColor(if (isLight) "#059669" else "#34D399"))
+                        views.setTextColor(R.id.widget_status_text, Color.parseColor(if (isLight) "#0284C7" else "#38BDF8"))
                         views.setTextViewText(R.id.widget_meta, "🎵 ${timelineText}Spotify")
                     } else {
                         views.setImageViewResource(R.id.widget_status_dot, R.drawable.status_dot_idle)
-                        views.setTextViewText(R.id.widget_status_text, "STANDBY")
+                        views.setTextViewText(
+                            R.id.widget_status_text,
+                            if (isCompact) "OFFLINE" else "GAMINGPIG IS OFFLINE"
+                        )
                         views.setTextColor(R.id.widget_status_text, Color.parseColor(if (isLight) "#64748B" else "#94A3B8"))
                         views.setTextViewText(R.id.widget_meta, "🌙 Offline · $timeLabel")
                     }
@@ -470,8 +475,21 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                 if (showProgress && !hideProgressForTiny) View.VISIBLE else View.GONE
             )
 
-            // Click on content -> open website in widget mode
-            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://gamingpig.github.io/about-qa/?mode=widget"))
+            // Click on App Logo -> always open Gamingpig Portfolio Website
+            val logoIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://gamingpig.github.io/about-qa/"))
+            val logoPending = PendingIntent.getActivity(
+                context, 100, logoIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            views.setOnClickPendingIntent(R.id.widget_app_logo, logoPending)
+
+            // Click on content -> open Spotify song (if enabled) or Portfolio Website
+            val targetUrl = if (tapOpensSpotify && !snapshot?.spotifyUrl.isNullOrBlank()) {
+                snapshot!!.spotifyUrl!!
+            } else {
+                "https://gamingpig.github.io/about-qa/"
+            }
+            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl))
             val webPending = PendingIntent.getActivity(
                 context, 101, webIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE

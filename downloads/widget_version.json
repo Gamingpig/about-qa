@@ -1,6 +1,6 @@
 {
-  "versionCode": 6,
-  "versionName": "2.0.1",
+  "versionCode": 7,
+  "versionName": "2.1.0",
   "apkUrl": "https://gamingpig.github.io/about-qa/downloads/GamingpigWidget.apk",
-  "notes": "Fix: Exakte Spotify-Cover über Spotify oEmbed statt falscher stats.fm Alben + Cache-Bereinigung bei Songwechsel."
+  "notes": "v2.1.0: Gamingpig App-Design & Logo in der Ecke, 'GAMINGPIG IS LISTENING TO / OFFLINE' Status, Verlauf-Progressbar & Spotify Direkt-Tap."
 }
