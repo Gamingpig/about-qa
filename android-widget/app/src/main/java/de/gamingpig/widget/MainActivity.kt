@@ -213,9 +213,13 @@ class MainActivity : Activity() {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://gamingpig.github.io/about-qa/")))
         }
 
+        findViewById<Button>(R.id.btn_check_updates).setOnClickListener {
+            checkForAppUpdate(userInitiated = true)
+        }
+
         requestNotificationPermissionIfNeeded()
         loadLivePreview()
-        checkForAppUpdate()
+        checkForAppUpdate(userInitiated = false)
     }
 
     override fun onResume() {
@@ -237,10 +241,17 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun checkForAppUpdate() {
+    private fun checkForAppUpdate(userInitiated: Boolean = false) {
+        val btnCheck = findViewById<Button>(R.id.btn_check_updates)
+        if (userInitiated) {
+            btnCheck.isEnabled = false
+            btnCheck.text = "⏳ Suche nach Updates..."
+        }
         executor.execute {
             val info = UpdateChecker.fetchUpdateInfo(this)
             runOnUiThread {
+                btnCheck.isEnabled = true
+                btnCheck.text = "🔄 Nach Updates suchen"
                 if (info != null && info.isUpdateAvailable) {
                     updateBanner.visibility = View.VISIBLE
                     txtUpdateTitle.text = "🚀 Update v${info.versionName} verfügbar!"
@@ -248,8 +259,19 @@ class MainActivity : Activity() {
                     btnInstallUpdate.setOnClickListener {
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(info.apkUrl)))
                     }
+                    if (userInitiated) {
+                        Toast.makeText(this, "🚀 Update v${info.versionName} verfügbar!", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     updateBanner.visibility = View.GONE
+                    if (userInitiated) {
+                        if (info != null) {
+                            val curVer = UpdateChecker.getCurrentVersionName(this)
+                            Toast.makeText(this, "✅ Du nutzt bereits die neueste Version (v$curVer)!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "⚠️ Update-Prüfung fehlgeschlagen. Internet prüfen.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
         }

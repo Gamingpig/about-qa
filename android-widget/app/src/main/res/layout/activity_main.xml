@@ -497,6 +497,18 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <Button
+            android:id="@+id/btn_check_updates"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="#1E293B"
+            android:text="🔄 Nach Updates suchen"
+            android:textAllCaps="false"
+            android:textColor="#CBD5E1"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

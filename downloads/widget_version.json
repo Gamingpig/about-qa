@@ -1,6 +1,6 @@
 {
-  "versionCode": 7,
-  "versionName": "2.1.0",
+  "versionCode": 8,
+  "versionName": "2.1.1",
   "apkUrl": "https://gamingpig.github.io/about-qa/downloads/GamingpigWidget.apk",
-  "notes": "v2.1.0: Gamingpig App-Design & Logo in der Ecke, 'GAMINGPIG IS LISTENING TO / OFFLINE' Status, Verlauf-Progressbar & Spotify Direkt-Tap."
+  "notes": "v2.1.1: Manueller 'Nach Updates suchen'-Button in der Widget-App."
 }
