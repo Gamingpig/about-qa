@@ -1,10 +1,10 @@
 {
-  "version": "24.245.103",
-  "buildTime": "2026-11-24T13:00:00.000Z",
+  "version": "24.245.104",
+  "buildTime": "2026-11-25T16:00:00.000Z",
   "shortNotes": [
-    "Interaktive Widgets & StandBy (Roadmap Live): Neues Einstellungs-Zentrum für Android & iOS",
-    "Native Android Widget APK: 1-Klick Download & direkte Homescreen-Einrichtung mit Theme-Anpassung",
-    "PWA App-Shortcuts: Schnellstart für StandBy-Modus, Now-Playing Widget & Retro Arcade",
+    "Android Widget App v2.1.2: Feste Release-Signatur, exakte Spotify-Cover via oEmbed, Gamingpig-Branding & 'Nach Updates suchen'-Button",
+    "Widgets & Homescreen Menü entschlackt und dynamisch mit der aktuellsten APK-Version verknüpft",
+    "Lyrics-Canvas Fix: Kein Resetten mehr beim Bewegen der Maus über geöffnete Lyrics ohne Songtext",
     "Roadmap Live-Sync auf 5-Minuten-Takt optimiert"
   ]
 }
