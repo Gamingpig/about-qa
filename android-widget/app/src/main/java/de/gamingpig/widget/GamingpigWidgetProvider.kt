@@ -165,6 +165,11 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
         const val KEY_SHOW_RECENT = "show_recent"
         const val KEY_TAP_OPENS_SPOTIFY = "tap_opens_spotify"
         const val KEY_TEXT_SIZE = "text_size" // "small", "normal", "large"
+        const val KEY_COVER_SHAPE = "cover_shape" // "rounded", "circle", "square"
+        const val KEY_ACCENT_COLOR = "accent_color" // "cyan", "emerald", "pink", "amber", "purple"
+        const val KEY_BG_ALPHA = "bg_alpha" // 100, 85, 65
+        const val KEY_SHOW_LOGO = "show_logo"
+        const val KEY_SHOW_ACTIONS = "show_actions"
 
         private const val MAX_POLL_INTERVAL_MS = 30_000L
         private const val END_OF_SONG_POLL_MS = 5_000L
@@ -297,13 +302,24 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             }
         }
 
-        private fun createSolidRoundedBitmap(color: Int): Bitmap {
+        fun resolveAccentColorHex(accentKey: String, isLight: Boolean): String {
+            return when (accentKey) {
+                "emerald" -> if (isLight) "#059669" else "#34D399"
+                "pink" -> if (isLight) "#DB2777" else "#F472B6"
+                "amber" -> if (isLight) "#D97706" else "#FBBF24"
+                "purple" -> if (isLight) "#7C3AED" else "#A78BFA"
+                else -> if (isLight) "#0284C7" else "#38BDF8"
+            }
+        }
+
+        private fun createSolidRoundedBitmap(color: Int, alphaPct: Int = 100): Bitmap {
             val w = 240
             val h = 160
             val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bmp)
             val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-            paint.color = color
+            val alpha = ((alphaPct.coerceIn(20, 100) / 100f) * Color.alpha(color)).toInt()
+            paint.color = Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color))
             canvas.drawRoundRect(RectF(0f, 0f, w.toFloat(), h.toFloat()), 26f, 26f, paint)
 
             paint.style = Paint.Style.STROKE
@@ -327,7 +343,12 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             val showTimeline = prefs.getBoolean(KEY_SHOW_TIMELINE, true)
             val showRecent = prefs.getBoolean(KEY_SHOW_RECENT, false)
             val tapOpensSpotify = prefs.getBoolean(KEY_TAP_OPENS_SPOTIFY, false)
+            val showLogo = prefs.getBoolean(KEY_SHOW_LOGO, true)
+            val showActions = prefs.getBoolean(KEY_SHOW_ACTIONS, true)
             val textSizePref = prefs.getString(KEY_TEXT_SIZE, "normal") ?: "normal"
+            val coverShape = prefs.getString(KEY_COVER_SHAPE, "rounded") ?: "rounded"
+            val accentKey = prefs.getString(KEY_ACCENT_COLOR, "cyan") ?: "cyan"
+            val bgAlphaPct = prefs.getInt(KEY_BG_ALPHA, 100)
 
             val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
             val layoutId = selectLayoutForSize(options)
@@ -337,17 +358,31 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
 
             val views = RemoteViews(context.packageName, layoutId)
 
-            // Apply Background (Static Ambient Blur, Ambient Color, or Vector Drawable)
+            // Apply Background (Static Ambient Blur, Ambient Color, or Vector Drawable + Alpha)
             when {
                 effectiveTheme == "ambient_blur" && snapshot?.blurredBgBitmap != null -> {
                     views.setInt(R.id.widget_root, "setBackgroundResource", 0)
                     views.setViewVisibility(R.id.widget_bg_image, View.VISIBLE)
                     views.setImageViewBitmap(R.id.widget_bg_image, snapshot.blurredBgBitmap)
+                    views.setInt(R.id.widget_bg_image, "setImageAlpha", ((bgAlphaPct / 100f) * 255).toInt())
                 }
                 effectiveTheme == "ambient_color" && snapshot != null -> {
                     views.setInt(R.id.widget_root, "setBackgroundResource", 0)
                     views.setViewVisibility(R.id.widget_bg_image, View.VISIBLE)
-                    views.setImageViewBitmap(R.id.widget_bg_image, createSolidRoundedBitmap(snapshot.dominantColor))
+                    views.setImageViewBitmap(R.id.widget_bg_image, createSolidRoundedBitmap(snapshot.dominantColor, bgAlphaPct))
+                    views.setInt(R.id.widget_bg_image, "setImageAlpha", 255)
+                }
+                bgAlphaPct < 100 -> {
+                    val baseColor = when (effectiveTheme) {
+                        "light" -> Color.parseColor("#EEF2F6")
+                        "oled" -> Color.parseColor("#000000")
+                        "cyber" -> Color.parseColor("#1E1B4B")
+                        else -> Color.parseColor("#0F172A")
+                    }
+                    views.setInt(R.id.widget_root, "setBackgroundResource", 0)
+                    views.setViewVisibility(R.id.widget_bg_image, View.VISIBLE)
+                    views.setImageViewBitmap(R.id.widget_bg_image, createSolidRoundedBitmap(baseColor, bgAlphaPct))
+                    views.setInt(R.id.widget_bg_image, "setImageAlpha", 255)
                 }
                 else -> {
                     views.setViewVisibility(R.id.widget_bg_image, View.GONE)
@@ -360,6 +395,12 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                     views.setInt(R.id.widget_root, "setBackgroundResource", bgRes)
                 }
             }
+
+            // Show/Hide App Logo & Action Buttons
+            views.setViewVisibility(R.id.widget_app_logo, if (showLogo) View.VISIBLE else View.GONE)
+            val actionVis = if (showActions) View.VISIBLE else View.GONE
+            views.setViewVisibility(R.id.widget_btn_refresh, actionVis)
+            views.setViewVisibility(R.id.widget_btn_config, actionVis)
 
             // Text Sizes (Small / Normal / Large)
             val sizeDelta = when (textSizePref) {
@@ -395,11 +436,11 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
 
             val titleColor = Color.parseColor(if (isLight) "#0F172A" else "#FFFFFF")
             val artistColor = Color.parseColor(if (isLight) "#475569" else "#CBD5E1")
-            val metaColor = Color.parseColor(if (isLight) "#0284C7" else "#38BDF8")
+            val accentColor = Color.parseColor(resolveAccentColorHex(accentKey, isLight))
             val recentColor = Color.parseColor(if (isLight) "#64748B" else "#94A3B8")
             views.setTextColor(R.id.widget_title, titleColor)
             views.setTextColor(R.id.widget_artist, artistColor)
-            views.setTextColor(R.id.widget_meta, metaColor)
+            views.setTextColor(R.id.widget_meta, accentColor)
             views.setTextColor(R.id.widget_recent_text, recentColor)
 
             val nowMs = System.currentTimeMillis()
@@ -432,7 +473,7 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                             else if (isCompact) "GAMINGPIG · LIVE"
                             else "GAMINGPIG IS LISTENING TO"
                         )
-                        views.setTextColor(R.id.widget_status_text, Color.parseColor(if (isLight) "#0284C7" else "#38BDF8"))
+                        views.setTextColor(R.id.widget_status_text, accentColor)
                         views.setTextViewText(R.id.widget_meta, "🎵 ${timelineText}Spotify")
                     } else {
                         views.setImageViewResource(R.id.widget_status_dot, R.drawable.status_dot_idle)
@@ -445,10 +486,13 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                     }
                 }
 
-                if (snapshot.artBitmap != null) {
+                if (snapshot.rawArtBitmap != null) {
+                    val shaped = TrackDataFetcher.shapeCoverBitmap(snapshot.rawArtBitmap, coverShape)
+                    views.setImageViewBitmap(R.id.widget_cover, shaped)
+                } else if (snapshot.artBitmap != null) {
                     views.setImageViewBitmap(R.id.widget_cover, snapshot.artBitmap)
                 } else {
-                    views.setImageViewResource(R.id.widget_cover, R.drawable.ic_launcher_pig)
+                    views.setImageViewResource(R.id.widget_cover, R.drawable.ic_gamingpig_app)
                 }
 
                 views.setProgressBar(R.id.widget_progress, 100, curPct, false)

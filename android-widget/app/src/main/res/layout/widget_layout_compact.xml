@@ -57,9 +57,9 @@
 
                         <ImageView
                             android:id="@+id/widget_app_logo"
-                            android:layout_width="13dp"
-                            android:layout_height="13dp"
-                            android:src="@drawable/ic_launcher_pig" />
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:src="@drawable/ic_gamingpig_app" />
 
                         <ImageView
                             android:id="@+id/widget_status_dot"

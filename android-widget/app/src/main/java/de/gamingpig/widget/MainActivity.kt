@@ -42,6 +42,7 @@ class MainActivity : Activity() {
 
     private lateinit var previewBox: FrameLayout
     private lateinit var previewBgImage: ImageView
+    private lateinit var previewAppLogo: ImageView
     private lateinit var previewCover: ImageView
     private lateinit var previewTitle: TextView
     private lateinit var previewArtist: TextView
@@ -62,10 +63,26 @@ class MainActivity : Activity() {
     private lateinit var btnSizeNormal: Button
     private lateinit var btnSizeLarge: Button
 
+    private lateinit var btnShapeRounded: Button
+    private lateinit var btnShapeCircle: Button
+    private lateinit var btnShapeSquare: Button
+
+    private lateinit var btnAccCyan: Button
+    private lateinit var btnAccEmerald: Button
+    private lateinit var btnAccPink: Button
+    private lateinit var btnAccAmber: Button
+    private lateinit var btnAccPurple: Button
+
+    private lateinit var btnAlpha100: Button
+    private lateinit var btnAlpha85: Button
+    private lateinit var btnAlpha65: Button
+
     private lateinit var switchProgress: Switch
     private lateinit var switchTimeline: Switch
     private lateinit var switchRecent: Switch
     private lateinit var switchTapSpotify: Switch
+    private lateinit var switchLogo: Switch
+    private lateinit var switchActions: Switch
 
     private val previewTicker = object : Runnable {
         override fun run() {
@@ -108,6 +125,7 @@ class MainActivity : Activity() {
 
         previewBox = findViewById(R.id.preview_box)
         previewBgImage = findViewById(R.id.preview_bg_image)
+        previewAppLogo = findViewById(R.id.preview_app_logo)
         previewCover = findViewById(R.id.preview_cover)
         previewTitle = findViewById(R.id.preview_title)
         previewArtist = findViewById(R.id.preview_artist)
@@ -128,10 +146,26 @@ class MainActivity : Activity() {
         btnSizeNormal = findViewById(R.id.btn_size_normal)
         btnSizeLarge = findViewById(R.id.btn_size_large)
 
+        btnShapeRounded = findViewById(R.id.btn_shape_rounded)
+        btnShapeCircle = findViewById(R.id.btn_shape_circle)
+        btnShapeSquare = findViewById(R.id.btn_shape_square)
+
+        btnAccCyan = findViewById(R.id.btn_acc_cyan)
+        btnAccEmerald = findViewById(R.id.btn_acc_emerald)
+        btnAccPink = findViewById(R.id.btn_acc_pink)
+        btnAccAmber = findViewById(R.id.btn_acc_amber)
+        btnAccPurple = findViewById(R.id.btn_acc_purple)
+
+        btnAlpha100 = findViewById(R.id.btn_alpha_100)
+        btnAlpha85 = findViewById(R.id.btn_alpha_85)
+        btnAlpha65 = findViewById(R.id.btn_alpha_65)
+
         switchProgress = findViewById(R.id.switch_progress)
         switchTimeline = findViewById(R.id.switch_timeline)
         switchRecent = findViewById(R.id.switch_recent)
         switchTapSpotify = findViewById(R.id.switch_tap_spotify)
+        switchLogo = findViewById(R.id.switch_logo)
+        switchActions = findViewById(R.id.switch_actions)
 
         val btnPin = findViewById<Button>(R.id.btn_pin_widget)
         val txtHint = findViewById<TextView>(R.id.txt_pin_hint)
@@ -142,51 +176,72 @@ class MainActivity : Activity() {
         }
 
         val prefs = getSharedPreferences(GamingpigWidgetProvider.PREFS_NAME, Context.MODE_PRIVATE)
-        val savedTheme = prefs.getString(GamingpigWidgetProvider.KEY_THEME, "auto") ?: "auto"
-        val savedSize = prefs.getString(GamingpigWidgetProvider.KEY_TEXT_SIZE, "normal") ?: "normal"
-        val savedProgress = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_PROGRESS, true)
-        val savedTimeline = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_TIMELINE, true)
-        val savedRecent = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_RECENT, false)
-        val savedTapSpotify = prefs.getBoolean(GamingpigWidgetProvider.KEY_TAP_OPENS_SPOTIFY, false)
+        switchProgress.isChecked = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_PROGRESS, true)
+        switchTimeline.isChecked = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_TIMELINE, true)
+        switchRecent.isChecked = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_RECENT, false)
+        switchTapSpotify.isChecked = prefs.getBoolean(GamingpigWidgetProvider.KEY_TAP_OPENS_SPOTIFY, false)
+        switchLogo.isChecked = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_LOGO, true)
+        switchActions.isChecked = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_ACTIONS, true)
 
-        switchProgress.isChecked = savedProgress
-        switchTimeline.isChecked = savedTimeline
-        switchRecent.isChecked = savedRecent
-        switchTapSpotify.isChecked = savedTapSpotify
+        applyAllPreviewSettings()
 
-        applyPreviewTheme(savedTheme, savedSize, savedProgress, savedRecent)
+        btnAuto.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_THEME, "auto") }
+        btnAmbientBlur.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_THEME, "ambient_blur") }
+        btnAmbientColor.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_THEME, "ambient_color") }
+        btnLiquid.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_THEME, "liquid") }
+        btnLight.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_THEME, "light") }
+        btnOled.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_THEME, "oled") }
+        btnCyber.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_THEME, "cyber") }
 
-        btnAuto.setOnClickListener { saveAndApplyTheme("auto") }
-        btnAmbientBlur.setOnClickListener { saveAndApplyTheme("ambient_blur") }
-        btnAmbientColor.setOnClickListener { saveAndApplyTheme("ambient_color") }
-        btnLiquid.setOnClickListener { saveAndApplyTheme("liquid") }
-        btnLight.setOnClickListener { saveAndApplyTheme("light") }
-        btnOled.setOnClickListener { saveAndApplyTheme("oled") }
-        btnCyber.setOnClickListener { saveAndApplyTheme("cyber") }
+        btnSizeSmall.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_TEXT_SIZE, "small") }
+        btnSizeNormal.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_TEXT_SIZE, "normal") }
+        btnSizeLarge.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_TEXT_SIZE, "large") }
 
-        btnSizeSmall.setOnClickListener { saveAndApplySize("small") }
-        btnSizeNormal.setOnClickListener { saveAndApplySize("normal") }
-        btnSizeLarge.setOnClickListener { saveAndApplySize("large") }
+        btnShapeRounded.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_COVER_SHAPE, "rounded") }
+        btnShapeCircle.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_COVER_SHAPE, "circle") }
+        btnShapeSquare.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_COVER_SHAPE, "square") }
+
+        btnAccCyan.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_ACCENT_COLOR, "cyan") }
+        btnAccEmerald.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_ACCENT_COLOR, "emerald") }
+        btnAccPink.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_ACCENT_COLOR, "pink") }
+        btnAccAmber.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_ACCENT_COLOR, "amber") }
+        btnAccPurple.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_ACCENT_COLOR, "purple") }
+
+        btnAlpha100.setOnClickListener { savePrefInt(GamingpigWidgetProvider.KEY_BG_ALPHA, 100) }
+        btnAlpha85.setOnClickListener { savePrefInt(GamingpigWidgetProvider.KEY_BG_ALPHA, 85) }
+        btnAlpha65.setOnClickListener { savePrefInt(GamingpigWidgetProvider.KEY_BG_ALPHA, 65) }
 
         switchProgress.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(GamingpigWidgetProvider.KEY_SHOW_PROGRESS, isChecked).apply()
-            previewProgress.visibility = if (isChecked) View.VISIBLE else View.GONE
+            applyAllPreviewSettings()
             GamingpigWidgetProvider.refreshAllWidgets(this)
         }
 
         switchTimeline.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(GamingpigWidgetProvider.KEY_SHOW_TIMELINE, isChecked).apply()
+            applyAllPreviewSettings()
             GamingpigWidgetProvider.refreshAllWidgets(this)
         }
 
         switchRecent.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(GamingpigWidgetProvider.KEY_SHOW_RECENT, isChecked).apply()
-            refreshPreviewFromSnapshot()
+            applyAllPreviewSettings()
             GamingpigWidgetProvider.refreshAllWidgets(this)
         }
 
         switchTapSpotify.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(GamingpigWidgetProvider.KEY_TAP_OPENS_SPOTIFY, isChecked).apply()
+            GamingpigWidgetProvider.refreshAllWidgets(this)
+        }
+
+        switchLogo.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean(GamingpigWidgetProvider.KEY_SHOW_LOGO, isChecked).apply()
+            applyAllPreviewSettings()
+            GamingpigWidgetProvider.refreshAllWidgets(this)
+        }
+
+        switchActions.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean(GamingpigWidgetProvider.KEY_SHOW_ACTIONS, isChecked).apply()
             GamingpigWidgetProvider.refreshAllWidgets(this)
         }
 
@@ -204,7 +259,7 @@ class MainActivity : Activity() {
 
         findViewById<Button>(R.id.btn_refresh_now).setOnClickListener {
             loadLivePreview()
-            checkForAppUpdate()
+            checkForAppUpdate(userInitiated = false)
             GamingpigWidgetProvider.refreshAllWidgets(this, showSyncFeedback = true)
             Toast.makeText(this, "Live-Daten & Updates werden geprüft...", Toast.LENGTH_SHORT).show()
         }
@@ -277,23 +332,31 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun saveAndApplyTheme(theme: String) {
-        val prefs = getSharedPreferences(GamingpigWidgetProvider.PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putString(GamingpigWidgetProvider.KEY_THEME, theme).apply()
-        val size = prefs.getString(GamingpigWidgetProvider.KEY_TEXT_SIZE, "normal") ?: "normal"
-        applyPreviewTheme(theme, size, switchProgress.isChecked, switchRecent.isChecked)
+    private fun savePrefString(key: String, value: String) {
+        getSharedPreferences(GamingpigWidgetProvider.PREFS_NAME, Context.MODE_PRIVATE)
+            .edit().putString(key, value).apply()
+        applyAllPreviewSettings()
         GamingpigWidgetProvider.refreshAllWidgets(this)
     }
 
-    private fun saveAndApplySize(size: String) {
-        val prefs = getSharedPreferences(GamingpigWidgetProvider.PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putString(GamingpigWidgetProvider.KEY_TEXT_SIZE, size).apply()
-        val theme = prefs.getString(GamingpigWidgetProvider.KEY_THEME, "auto") ?: "auto"
-        applyPreviewTheme(theme, size, switchProgress.isChecked, switchRecent.isChecked)
+    private fun savePrefInt(key: String, value: Int) {
+        getSharedPreferences(GamingpigWidgetProvider.PREFS_NAME, Context.MODE_PRIVATE)
+            .edit().putInt(key, value).apply()
+        applyAllPreviewSettings()
         GamingpigWidgetProvider.refreshAllWidgets(this)
     }
 
-    private fun applyPreviewTheme(savedTheme: String, savedSize: String, showProgress: Boolean, showRecent: Boolean) {
+    private fun applyAllPreviewSettings() {
+        val prefs = getSharedPreferences(GamingpigWidgetProvider.PREFS_NAME, Context.MODE_PRIVATE)
+        val savedTheme = prefs.getString(GamingpigWidgetProvider.KEY_THEME, "auto") ?: "auto"
+        val savedSize = prefs.getString(GamingpigWidgetProvider.KEY_TEXT_SIZE, "normal") ?: "normal"
+        val coverShape = prefs.getString(GamingpigWidgetProvider.KEY_COVER_SHAPE, "rounded") ?: "rounded"
+        val accentKey = prefs.getString(GamingpigWidgetProvider.KEY_ACCENT_COLOR, "cyan") ?: "cyan"
+        val bgAlphaPct = prefs.getInt(GamingpigWidgetProvider.KEY_BG_ALPHA, 100)
+        val showProgress = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_PROGRESS, true)
+        val showRecent = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_RECENT, false)
+        val showLogo = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_LOGO, true)
+
         val effectiveTheme = GamingpigWidgetProvider.resolveEffectiveTheme(this, savedTheme)
         val isLight = (effectiveTheme == "light")
         val snap = GamingpigWidgetProvider.lastSnapshot
@@ -303,15 +366,20 @@ class MainActivity : Activity() {
                 previewBox.setBackgroundResource(0)
                 previewBgImage.visibility = View.VISIBLE
                 previewBgImage.setImageBitmap(snap.blurredBgBitmap)
+                previewBgImage.imageAlpha = ((bgAlphaPct / 100f) * 255).toInt()
             }
             effectiveTheme == "ambient_color" && snap != null -> {
                 previewBox.setBackgroundResource(0)
                 previewBgImage.visibility = View.VISIBLE
                 val bmp = Bitmap.createBitmap(240, 160, Bitmap.Config.ARGB_8888)
                 val canvas = Canvas(bmp)
-                val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = snap.dominantColor }
+                val alpha = ((bgAlphaPct / 100f) * Color.alpha(snap.dominantColor)).toInt()
+                val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    color = Color.argb(alpha, Color.red(snap.dominantColor), Color.green(snap.dominantColor), Color.blue(snap.dominantColor))
+                }
                 canvas.drawRoundRect(RectF(0f, 0f, 240f, 160f), 26f, 26f, paint)
                 previewBgImage.setImageBitmap(bmp)
+                previewBgImage.imageAlpha = 255
             }
             else -> {
                 previewBgImage.visibility = View.GONE
@@ -325,6 +393,8 @@ class MainActivity : Activity() {
             }
         }
 
+        previewAppLogo.visibility = if (showLogo) View.VISIBLE else View.GONE
+
         val delta = when (savedSize) {
             "small" -> -2f
             "large" -> 2.5f
@@ -333,9 +403,9 @@ class MainActivity : Activity() {
         previewTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f + delta)
         previewArtist.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f + delta)
         previewRecent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f + (delta * 0.5f))
-
         previewProgress.visibility = if (showProgress) View.VISIBLE else View.GONE
 
+        val accentColorHex = GamingpigWidgetProvider.resolveAccentColorHex(accentKey, isLight)
         previewTitle.setTextColor(Color.parseColor(if (isLight) "#0F172A" else "#FFFFFF"))
         previewArtist.setTextColor(Color.parseColor(if (isLight) "#475569" else "#CBD5E1"))
         previewBrand.setTextColor(Color.parseColor(if (isLight) "#475569" else "#94A3B8"))
@@ -356,20 +426,33 @@ class MainActivity : Activity() {
         btnSizeNormal.backgroundTintList = if (savedSize == "normal") activeTint else idleTint
         btnSizeLarge.backgroundTintList = if (savedSize == "large") activeTint else idleTint
 
-        refreshPreviewFromSnapshot()
+        btnShapeRounded.backgroundTintList = if (coverShape == "rounded") activeTint else idleTint
+        btnShapeCircle.backgroundTintList = if (coverShape == "circle") activeTint else idleTint
+        btnShapeSquare.backgroundTintList = if (coverShape == "square") activeTint else idleTint
+
+        btnAccCyan.backgroundTintList = if (accentKey == "cyan") activeTint else idleTint
+        btnAccEmerald.backgroundTintList = if (accentKey == "emerald") activeTint else idleTint
+        btnAccPink.backgroundTintList = if (accentKey == "pink") activeTint else idleTint
+        btnAccAmber.backgroundTintList = if (accentKey == "amber") activeTint else idleTint
+        btnAccPurple.backgroundTintList = if (accentKey == "purple") activeTint else idleTint
+
+        btnAlpha100.backgroundTintList = if (bgAlphaPct == 100) activeTint else idleTint
+        btnAlpha85.backgroundTintList = if (bgAlphaPct == 85) activeTint else idleTint
+        btnAlpha65.backgroundTintList = if (bgAlphaPct == 65) activeTint else idleTint
+
+        refreshPreviewFromSnapshot(accentColorHex, coverShape, showRecent)
     }
 
-    private fun refreshPreviewFromSnapshot() {
+    private fun refreshPreviewFromSnapshot(accentColorHex: String, coverShape: String, showRecent: Boolean) {
         val snap = GamingpigWidgetProvider.lastSnapshot ?: return
         val prefs = getSharedPreferences(GamingpigWidgetProvider.PREFS_NAME, Context.MODE_PRIVATE)
-        val showRecent = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_RECENT, false)
         val showTimeline = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_TIMELINE, true)
         val now = System.currentTimeMillis()
 
         previewTitle.text = snap.title
         previewArtist.text = snap.artist
         previewStatus.text = if (snap.isPlaying) "GAMINGPIG IS LISTENING TO" else "GAMINGPIG IS OFFLINE"
-        previewStatus.setTextColor(Color.parseColor(if (snap.isPlaying) "#38BDF8" else "#94A3B8"))
+        previewStatus.setTextColor(Color.parseColor(if (snap.isPlaying) accentColorHex else "#94A3B8"))
         previewProgress.progress = snap.currentProgressPct(now)
 
         if (snap.isPlaying && showTimeline && snap.durationMs > 0L) {
@@ -385,7 +468,9 @@ class MainActivity : Activity() {
             previewRecent.visibility = View.GONE
         }
 
-        if (snap.artBitmap != null) {
+        if (snap.rawArtBitmap != null) {
+            previewCover.setImageBitmap(TrackDataFetcher.shapeCoverBitmap(snap.rawArtBitmap, coverShape))
+        } else if (snap.artBitmap != null) {
             previewCover.setImageBitmap(snap.artBitmap)
         }
     }
@@ -411,10 +496,7 @@ class MainActivity : Activity() {
             val snap = TrackDataFetcher.fetchCurrentTrack()
             GamingpigWidgetProvider.lastSnapshot = snap
             runOnUiThread {
-                val prefs = getSharedPreferences(GamingpigWidgetProvider.PREFS_NAME, Context.MODE_PRIVATE)
-                val theme = prefs.getString(GamingpigWidgetProvider.KEY_THEME, "auto") ?: "auto"
-                val size = prefs.getString(GamingpigWidgetProvider.KEY_TEXT_SIZE, "normal") ?: "normal"
-                applyPreviewTheme(theme, size, switchProgress.isChecked, switchRecent.isChecked)
+                applyAllPreviewSettings()
             }
         }
     }

@@ -26,6 +26,7 @@ data class TrackSnapshot(
     val artUrl: String?,
     val spotifyUrl: String?,
     val artBitmap: Bitmap?,
+    val rawArtBitmap: Bitmap?,
     val blurredBgBitmap: Bitmap?,
     val dominantColor: Int,
     val progressMs: Long,
@@ -58,6 +59,7 @@ object TrackDataFetcher {
     @Volatile private var cachedTrackKey: String? = null
     @Volatile private var cachedArtUrl: String? = null
     @Volatile private var cachedArtBitmap: Bitmap? = null
+    @Volatile private var cachedRawArtBitmap: Bitmap? = null
     @Volatile private var cachedBlurBitmap: Bitmap? = null
     @Volatile private var cachedDominantColor: Int = Color.parseColor("#0F172A")
 
@@ -160,6 +162,7 @@ object TrackDataFetcher {
 
         // 4. Authentic Cover Resolution (Keyed by exact track ID so wrong/stale covers never stick)
         var bitmap: Bitmap? = null
+        var rawBitmap: Bitmap? = null
         var blurBitmap: Bitmap? = null
         var domColor = Color.parseColor("#0F172A")
         var resolvedArtUrl: String? = null
@@ -169,6 +172,7 @@ object TrackDataFetcher {
             if (trackKey == cachedTrackKey && cachedArtBitmap != null) {
                 resolvedArtUrl = cachedArtUrl
                 bitmap = cachedArtBitmap
+                rawBitmap = cachedRawArtBitmap
                 blurBitmap = cachedBlurBitmap
                 domColor = cachedDominantColor
             } else {
@@ -188,6 +192,7 @@ object TrackDataFetcher {
                 val raw = if (!resolvedArtUrl.isNullOrBlank()) downloadRawBitmap(resolvedArtUrl) else null
                 if (raw != null) {
                     val scaled = Bitmap.createScaledBitmap(raw, 160, 160, true)
+                    rawBitmap = scaled
                     bitmap = getRoundedCornerBitmap(scaled, 26f)
                     domColor = extractAmbientColor(raw)
                     blurBitmap = createAmbientBlurBitmap(raw)
@@ -195,12 +200,14 @@ object TrackDataFetcher {
                     cachedTrackKey = trackKey
                     cachedArtUrl = resolvedArtUrl
                     cachedArtBitmap = bitmap
+                    cachedRawArtBitmap = rawBitmap
                     cachedBlurBitmap = blurBitmap
                     cachedDominantColor = domColor
                 } else {
                     cachedTrackKey = null
                     cachedArtUrl = null
                     cachedArtBitmap = null
+                    cachedRawArtBitmap = null
                     cachedBlurBitmap = null
                 }
             }
@@ -214,6 +221,7 @@ object TrackDataFetcher {
             artUrl = resolvedArtUrl,
             spotifyUrl = spUrl,
             artBitmap = bitmap,
+            rawArtBitmap = rawBitmap,
             blurredBgBitmap = blurBitmap,
             dominantColor = domColor,
             progressMs = progressMs,
@@ -405,6 +413,15 @@ object TrackDataFetcher {
             }
         }
         return Bitmap.createBitmap(pix, w, h, Bitmap.Config.ARGB_8888)
+    }
+
+    fun shapeCoverBitmap(bitmap: Bitmap, shape: String): Bitmap {
+        val radius = when (shape) {
+            "circle" -> bitmap.width / 2f
+            "square" -> 6f
+            else -> 26f
+        }
+        return getRoundedCornerBitmap(bitmap, radius)
     }
 
     private fun getRoundedCornerBitmap(bitmap: Bitmap, pixels: Float): Bitmap {

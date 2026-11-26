@@ -1,6 +1,6 @@
 {
-  "versionCode": 9,
-  "versionName": "2.1.2",
+  "versionCode": 10,
+  "versionName": "2.2.0",
   "apkUrl": "https://gamingpig.github.io/about-qa/downloads/GamingpigWidget.apk",
-  "notes": "v2.1.2: Feste Release-Signatur für nahtlose Updates (kein 'App not installed' mehr!)."
+  "notes": "v2.2.0: Echtes Gamingpig App-Logo, Cover-Formen (Abgerundet / Vinyl-Kreis / Eckig), Akzentfarben, Hintergrund-Transparenz & Minimal-Modus."
 }
