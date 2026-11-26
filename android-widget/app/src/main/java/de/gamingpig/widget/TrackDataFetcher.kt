@@ -424,7 +424,7 @@ object TrackDataFetcher {
         return getRoundedCornerBitmap(bitmap, radius)
     }
 
-    private fun getRoundedCornerBitmap(bitmap: Bitmap, pixels: Float): Bitmap {
+    fun getRoundedCornerBitmap(bitmap: Bitmap, pixels: Float): Bitmap {
         val output = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(output)
         val paint = Paint().apply {

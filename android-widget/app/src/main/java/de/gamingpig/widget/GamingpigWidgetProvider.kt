@@ -2,6 +2,8 @@ package de.gamingpig.widget
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
@@ -13,6 +15,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.PowerManager
@@ -168,9 +171,11 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
         const val KEY_COVER_SHAPE = "cover_shape" // "rounded", "circle", "square"
         const val KEY_ACCENT_COLOR = "accent_color" // "cyan", "emerald", "pink", "amber", "purple"
         const val KEY_BG_ALPHA = "bg_alpha" // 100, 85, 65
+        const val KEY_CORNER_RADIUS = "widget_corner_radius" // "sharp", "normal", "round"
         const val KEY_SHOW_LOGO = "show_logo"
         const val KEY_SHOW_ACTIONS = "show_actions"
 
+        private const val JOB_SYNC_ID = 401
         private const val MAX_POLL_INTERVAL_MS = 30_000L
         private const val END_OF_SONG_POLL_MS = 5_000L
         private const val TIMELINE_TICK_MS = 5_000L
@@ -179,6 +184,15 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
 
         @Volatile
         var lastSnapshot: TrackSnapshot? = null
+
+        fun isBackgroundDataBlocked(context: Context): Boolean {
+            return try {
+                val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager ?: return false
+                cm.isActiveNetworkMetered && cm.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED
+            } catch (_: Exception) {
+                false
+            }
+        }
 
         private fun isScreenOn(context: Context): Boolean {
             return try {
@@ -226,12 +240,26 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                 val ids = manager.getAppWidgetIds(ComponentName(context, GamingpigWidgetProvider::class.java))
                 if (ids.isEmpty()) return
 
-                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
-                alarmManager.set(
+                val clampedDelay = delayMs.coerceIn(3_000L, MAX_POLL_INTERVAL_MS)
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+                alarmManager?.set(
                     AlarmManager.ELAPSED_REALTIME,
-                    SystemClock.elapsedRealtime() + delayMs.coerceIn(3_000L, MAX_POLL_INTERVAL_MS),
+                    SystemClock.elapsedRealtime() + clampedDelay,
                     getPendingIntent(context, ACTION_AUTO_POLL, 201)
                 )
+
+                val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as? JobScheduler
+                if (jobScheduler != null) {
+                    val jobInfo = JobInfo.Builder(
+                        JOB_SYNC_ID,
+                        ComponentName(context, WidgetSyncJobService::class.java)
+                    )
+                        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                        .setMinimumLatency(clampedDelay)
+                        .setOverrideDeadline(clampedDelay + 20_000L)
+                        .build()
+                    jobScheduler.schedule(jobInfo)
+                }
             } catch (_: Exception) {
             }
         }
@@ -258,9 +286,11 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
 
         fun cancelAllAlarms(context: Context) {
             try {
-                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
-                alarmManager.cancel(getPendingIntent(context, ACTION_AUTO_POLL, 201))
-                alarmManager.cancel(getPendingIntent(context, ACTION_TICK_TIMELINE, 202))
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+                alarmManager?.cancel(getPendingIntent(context, ACTION_AUTO_POLL, 201))
+                alarmManager?.cancel(getPendingIntent(context, ACTION_TICK_TIMELINE, 202))
+                val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as? JobScheduler
+                jobScheduler?.cancel(JOB_SYNC_ID)
             } catch (_: Exception) {
             }
         }
@@ -312,7 +342,20 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             }
         }
 
-        private fun createSolidRoundedBitmap(color: Int, alphaPct: Int = 100): Bitmap {
+        fun resolveCornerRadiusPx(radiusPref: String): Float {
+            return when (radiusPref) {
+                "sharp" -> 10f
+                "round" -> 46f
+                else -> 26f
+            }
+        }
+
+        private fun createSolidRoundedBitmap(
+            color: Int,
+            alphaPct: Int = 100,
+            radiusPx: Float = 26f,
+            strokeColor: Int = Color.argb(65, 255, 255, 255)
+        ): Bitmap {
             val w = 240
             val h = 160
             val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
@@ -320,12 +363,12 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             val paint = Paint(Paint.ANTI_ALIAS_FLAG)
             val alpha = ((alphaPct.coerceIn(20, 100) / 100f) * Color.alpha(color)).toInt()
             paint.color = Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color))
-            canvas.drawRoundRect(RectF(0f, 0f, w.toFloat(), h.toFloat()), 26f, 26f, paint)
+            canvas.drawRoundRect(RectF(0f, 0f, w.toFloat(), h.toFloat()), radiusPx, radiusPx, paint)
 
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = 2f
-            paint.color = Color.argb(65, 255, 255, 255)
-            canvas.drawRoundRect(RectF(1f, 1f, w - 1f, h - 1f), 26f, 26f, paint)
+            paint.color = strokeColor
+            canvas.drawRoundRect(RectF(1f, 1f, w - 1f, h - 1f), radiusPx, radiusPx, paint)
             return bmp
         }
 
@@ -349,39 +392,50 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             val coverShape = prefs.getString(KEY_COVER_SHAPE, "rounded") ?: "rounded"
             val accentKey = prefs.getString(KEY_ACCENT_COLOR, "cyan") ?: "cyan"
             val bgAlphaPct = prefs.getInt(KEY_BG_ALPHA, 100)
+            val cornerRadiusPref = prefs.getString(KEY_CORNER_RADIUS, "normal") ?: "normal"
+            val radiusPx = resolveCornerRadiusPx(cornerRadiusPref)
 
             val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
             val layoutId = selectLayoutForSize(options)
             val isCompact = (layoutId == R.layout.widget_layout_compact)
             val isLarge = (layoutId == R.layout.widget_layout_large)
             val isLight = (effectiveTheme == "light")
+            val bgDataBlocked = isBackgroundDataBlocked(context)
 
             val views = RemoteViews(context.packageName, layoutId)
 
-            // Apply Background (Static Ambient Blur, Ambient Color, or Vector Drawable + Alpha)
+            // Apply Background (Static Ambient Blur, Ambient Color, Custom Corner Radius, or Vector Drawable)
             when {
                 effectiveTheme == "ambient_blur" && snapshot?.blurredBgBitmap != null -> {
+                    val blurBmp = if (cornerRadiusPref != "normal") {
+                        TrackDataFetcher.getRoundedCornerBitmap(snapshot.blurredBgBitmap, radiusPx)
+                    } else snapshot.blurredBgBitmap
                     views.setInt(R.id.widget_root, "setBackgroundResource", 0)
                     views.setViewVisibility(R.id.widget_bg_image, View.VISIBLE)
-                    views.setImageViewBitmap(R.id.widget_bg_image, snapshot.blurredBgBitmap)
+                    views.setImageViewBitmap(R.id.widget_bg_image, blurBmp)
                     views.setInt(R.id.widget_bg_image, "setImageAlpha", ((bgAlphaPct / 100f) * 255).toInt())
                 }
                 effectiveTheme == "ambient_color" && snapshot != null -> {
                     views.setInt(R.id.widget_root, "setBackgroundResource", 0)
                     views.setViewVisibility(R.id.widget_bg_image, View.VISIBLE)
-                    views.setImageViewBitmap(R.id.widget_bg_image, createSolidRoundedBitmap(snapshot.dominantColor, bgAlphaPct))
+                    views.setImageViewBitmap(R.id.widget_bg_image, createSolidRoundedBitmap(snapshot.dominantColor, bgAlphaPct, radiusPx))
                     views.setInt(R.id.widget_bg_image, "setImageAlpha", 255)
                 }
-                bgAlphaPct < 100 -> {
+                bgAlphaPct < 100 || cornerRadiusPref != "normal" -> {
                     val baseColor = when (effectiveTheme) {
                         "light" -> Color.parseColor("#EEF2F6")
                         "oled" -> Color.parseColor("#000000")
                         "cyber" -> Color.parseColor("#1E1B4B")
                         else -> Color.parseColor("#0F172A")
                     }
+                    val strokeColor = when (effectiveTheme) {
+                        "light" -> Color.argb(45, 15, 23, 42)
+                        "cyber" -> Color.argb(120, 56, 189, 248)
+                        else -> Color.argb(65, 255, 255, 255)
+                    }
                     views.setInt(R.id.widget_root, "setBackgroundResource", 0)
                     views.setViewVisibility(R.id.widget_bg_image, View.VISIBLE)
-                    views.setImageViewBitmap(R.id.widget_bg_image, createSolidRoundedBitmap(baseColor, bgAlphaPct))
+                    views.setImageViewBitmap(R.id.widget_bg_image, createSolidRoundedBitmap(baseColor, bgAlphaPct, radiusPx, strokeColor))
                     views.setInt(R.id.widget_bg_image, "setImageAlpha", 255)
                 }
                 else -> {
@@ -465,7 +519,15 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                 views.setTextViewText(R.id.widget_artist, snapshot.artist)
 
                 if (!isSyncing) {
-                    if (snapshot.isPlaying) {
+                    if (bgDataBlocked) {
+                        views.setImageViewResource(R.id.widget_status_dot, R.drawable.status_dot_idle)
+                        views.setTextViewText(
+                            R.id.widget_status_text,
+                            if (isCompact) "DATEN BLOCKIERT" else "HINTERGRUNDDATEN BLOCKIERT"
+                        )
+                        views.setTextColor(R.id.widget_status_text, Color.parseColor(if (isLight) "#D97706" else "#FBBF24"))
+                        views.setTextViewText(R.id.widget_meta, "⚠️ Tippen → Hintergrunddaten erlauben")
+                    } else if (snapshot.isPlaying) {
                         views.setImageViewResource(R.id.widget_status_dot, R.drawable.status_dot_live)
                         views.setTextViewText(
                             R.id.widget_status_text,
@@ -527,18 +589,28 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
             )
             views.setOnClickPendingIntent(R.id.widget_app_logo, logoPending)
 
-            // Click on content -> open Spotify song (if enabled) or Portfolio Website
-            val targetUrl = if (tapOpensSpotify && !snapshot?.spotifyUrl.isNullOrBlank()) {
-                snapshot!!.spotifyUrl!!
+            // Click on content -> open MainActivity if background data blocked, else Spotify or Portfolio
+            val contentPending = if (bgDataBlocked) {
+                val fixIntent = Intent(context, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+                PendingIntent.getActivity(
+                    context, 101, fixIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
             } else {
-                "https://gamingpig.github.io/about-qa/"
+                val targetUrl = if (tapOpensSpotify && !snapshot?.spotifyUrl.isNullOrBlank()) {
+                    snapshot!!.spotifyUrl!!
+                } else {
+                    "https://gamingpig.github.io/about-qa/"
+                }
+                val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl))
+                PendingIntent.getActivity(
+                    context, 101, webIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
             }
-            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl))
-            val webPending = PendingIntent.getActivity(
-                context, 101, webIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            views.setOnClickPendingIntent(R.id.widget_content_area, webPending)
+            views.setOnClickPendingIntent(R.id.widget_content_area, contentPending)
 
             // Click on Refresh -> immediately show syncing feedback and fetch latest track
             val refreshIntent = Intent(context, GamingpigWidgetProvider::class.java).apply {

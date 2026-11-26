@@ -56,16 +56,9 @@
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:id="@+id/widget_app_logo"
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:src="@drawable/ic_gamingpig_app" />
-
-                        <ImageView
                             android:id="@+id/widget_status_dot"
                             android:layout_width="6dp"
                             android:layout_height="6dp"
-                            android:layout_marginStart="4dp"
                             android:src="@drawable/status_dot_live" />
 
                         <TextView
@@ -138,6 +131,14 @@
                 android:text="⚙"
                 android:textColor="#E2E8F0"
                 android:textSize="15sp" />
+
+            <ImageView
+                android:id="@+id/widget_app_logo"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="top"
+                android:layout_marginStart="6dp"
+                android:src="@drawable/ic_gamingpig_app" />
         </LinearLayout>
 
         <ProgressBar

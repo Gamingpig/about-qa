@@ -12,11 +12,14 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.PowerManager
+import android.provider.Settings
 import android.util.TypedValue
 import android.view.View
 import android.widget.Button
@@ -39,6 +42,10 @@ class MainActivity : Activity() {
     private lateinit var txtUpdateTitle: TextView
     private lateinit var txtUpdateNotes: TextView
     private lateinit var btnInstallUpdate: Button
+
+    private lateinit var bgDataBanner: LinearLayout
+    private lateinit var btnAllowBgData: Button
+    private lateinit var btnAllowBattery: Button
 
     private lateinit var previewBox: FrameLayout
     private lateinit var previewBgImage: ImageView
@@ -76,6 +83,10 @@ class MainActivity : Activity() {
     private lateinit var btnAlpha100: Button
     private lateinit var btnAlpha85: Button
     private lateinit var btnAlpha65: Button
+
+    private lateinit var btnRadiusSharp: Button
+    private lateinit var btnRadiusNormal: Button
+    private lateinit var btnRadiusRound: Button
 
     private lateinit var switchProgress: Switch
     private lateinit var switchTimeline: Switch
@@ -120,6 +131,10 @@ class MainActivity : Activity() {
         txtUpdateNotes = findViewById(R.id.txt_update_notes)
         btnInstallUpdate = findViewById(R.id.btn_install_update)
 
+        bgDataBanner = findViewById(R.id.bg_data_banner)
+        btnAllowBgData = findViewById(R.id.btn_allow_bg_data)
+        btnAllowBattery = findViewById(R.id.btn_allow_battery)
+
         findViewById<TextView>(R.id.txt_app_version).text =
             "v${UpdateChecker.getCurrentVersionName(this)} · Homescreen Live-Anzeige"
 
@@ -159,6 +174,10 @@ class MainActivity : Activity() {
         btnAlpha100 = findViewById(R.id.btn_alpha_100)
         btnAlpha85 = findViewById(R.id.btn_alpha_85)
         btnAlpha65 = findViewById(R.id.btn_alpha_65)
+
+        btnRadiusSharp = findViewById(R.id.btn_radius_sharp)
+        btnRadiusNormal = findViewById(R.id.btn_radius_normal)
+        btnRadiusRound = findViewById(R.id.btn_radius_round)
 
         switchProgress = findViewById(R.id.switch_progress)
         switchTimeline = findViewById(R.id.switch_timeline)
@@ -210,6 +229,13 @@ class MainActivity : Activity() {
         btnAlpha100.setOnClickListener { savePrefInt(GamingpigWidgetProvider.KEY_BG_ALPHA, 100) }
         btnAlpha85.setOnClickListener { savePrefInt(GamingpigWidgetProvider.KEY_BG_ALPHA, 85) }
         btnAlpha65.setOnClickListener { savePrefInt(GamingpigWidgetProvider.KEY_BG_ALPHA, 65) }
+
+        btnRadiusSharp.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_CORNER_RADIUS, "sharp") }
+        btnRadiusNormal.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_CORNER_RADIUS, "normal") }
+        btnRadiusRound.setOnClickListener { savePrefString(GamingpigWidgetProvider.KEY_CORNER_RADIUS, "round") }
+
+        btnAllowBgData.setOnClickListener { openBackgroundDataSettings() }
+        btnAllowBattery.setOnClickListener { openBatteryOptimizationSettings() }
 
         switchProgress.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(GamingpigWidgetProvider.KEY_SHOW_PROGRESS, isChecked).apply()
@@ -279,8 +305,47 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        updateSystemRestrictionBanner()
         mainHandler.removeCallbacks(previewTicker)
         mainHandler.postDelayed(previewTicker, 1000L)
+    }
+
+    private fun updateSystemRestrictionBanner() {
+        val bgBlocked = GamingpigWidgetProvider.isBackgroundDataBlocked(this)
+        val batteryIgnored = try {
+            val pm = getSystemService(Context.POWER_SERVICE) as? PowerManager
+            pm?.isIgnoringBatteryOptimizations(packageName) ?: true
+        } catch (_: Exception) {
+            true
+        }
+
+        btnAllowBgData.visibility = if (bgBlocked) View.VISIBLE else View.GONE
+        btnAllowBattery.visibility = if (!batteryIgnored) View.VISIBLE else View.GONE
+        bgDataBanner.visibility = if (bgBlocked || !batteryIgnored) View.VISIBLE else View.GONE
+    }
+
+    private fun openBackgroundDataSettings() {
+        try {
+            startActivity(Intent(Settings.ACTION_IGNORE_BACKGROUND_DATA_RESTRICTIONS_SETTINGS, Uri.parse("package:$packageName")))
+        } catch (_: Exception) {
+            try {
+                startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
+            } catch (_: Exception) {
+                Toast.makeText(this, "Bitte öffne App-Infos -> Mobile Daten -> Uneingeschränkte Datennutzung.", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun openBatteryOptimizationSettings() {
+        try {
+            startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:$packageName")))
+        } catch (_: Exception) {
+            try {
+                startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+            } catch (_: Exception) {
+                Toast.makeText(this, "Bitte deaktiviere die Akku-Optimierung in den App-Infos.", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     override fun onPause() {
@@ -353,6 +418,8 @@ class MainActivity : Activity() {
         val coverShape = prefs.getString(GamingpigWidgetProvider.KEY_COVER_SHAPE, "rounded") ?: "rounded"
         val accentKey = prefs.getString(GamingpigWidgetProvider.KEY_ACCENT_COLOR, "cyan") ?: "cyan"
         val bgAlphaPct = prefs.getInt(GamingpigWidgetProvider.KEY_BG_ALPHA, 100)
+        val cornerRadiusPref = prefs.getString(GamingpigWidgetProvider.KEY_CORNER_RADIUS, "normal") ?: "normal"
+        val radiusPx = GamingpigWidgetProvider.resolveCornerRadiusPx(cornerRadiusPref)
         val showProgress = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_PROGRESS, true)
         val showRecent = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_RECENT, false)
         val showLogo = prefs.getBoolean(GamingpigWidgetProvider.KEY_SHOW_LOGO, true)
@@ -363,9 +430,12 @@ class MainActivity : Activity() {
 
         when {
             effectiveTheme == "ambient_blur" && snap?.blurredBgBitmap != null -> {
+                val blurBmp = if (cornerRadiusPref != "normal") {
+                    TrackDataFetcher.getRoundedCornerBitmap(snap.blurredBgBitmap, radiusPx)
+                } else snap.blurredBgBitmap
                 previewBox.setBackgroundResource(0)
                 previewBgImage.visibility = View.VISIBLE
-                previewBgImage.setImageBitmap(snap.blurredBgBitmap)
+                previewBgImage.setImageBitmap(blurBmp)
                 previewBgImage.imageAlpha = ((bgAlphaPct / 100f) * 255).toInt()
             }
             effectiveTheme == "ambient_color" && snap != null -> {
@@ -377,19 +447,31 @@ class MainActivity : Activity() {
                 val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                     color = Color.argb(alpha, Color.red(snap.dominantColor), Color.green(snap.dominantColor), Color.blue(snap.dominantColor))
                 }
-                canvas.drawRoundRect(RectF(0f, 0f, 240f, 160f), 26f, 26f, paint)
+                canvas.drawRoundRect(RectF(0f, 0f, 240f, 160f), radiusPx, radiusPx, paint)
                 previewBgImage.setImageBitmap(bmp)
                 previewBgImage.imageAlpha = 255
             }
             else -> {
                 previewBgImage.visibility = View.GONE
-                val bgRes = when (effectiveTheme) {
-                    "light" -> R.drawable.widget_bg_light
-                    "oled" -> R.drawable.widget_bg_oled
-                    "cyber" -> R.drawable.widget_bg_cyber
-                    else -> R.drawable.widget_bg_liquid
+                val baseColor = when (effectiveTheme) {
+                    "light" -> Color.parseColor("#EEF2F6")
+                    "oled" -> Color.parseColor("#000000")
+                    "cyber" -> Color.parseColor("#1E1B4B")
+                    else -> Color.parseColor("#0F172A")
                 }
-                previewBox.setBackgroundResource(bgRes)
+                val strokeColor = when (effectiveTheme) {
+                    "light" -> Color.argb(45, 15, 23, 42)
+                    "cyber" -> Color.argb(120, 56, 189, 248)
+                    else -> Color.argb(65, 255, 255, 255)
+                }
+                val alpha = ((bgAlphaPct.coerceIn(20, 100) / 100f) * 255).toInt()
+                val density = resources.displayMetrics.density
+                val gd = GradientDrawable().apply {
+                    setColor(Color.argb(alpha, Color.red(baseColor), Color.green(baseColor), Color.blue(baseColor)))
+                    cornerRadius = radiusPx * density * 0.75f
+                    setStroke((1.5f * density).toInt(), strokeColor)
+                }
+                previewBox.background = gd
             }
         }
 
@@ -439,6 +521,10 @@ class MainActivity : Activity() {
         btnAlpha100.backgroundTintList = if (bgAlphaPct == 100) activeTint else idleTint
         btnAlpha85.backgroundTintList = if (bgAlphaPct == 85) activeTint else idleTint
         btnAlpha65.backgroundTintList = if (bgAlphaPct == 65) activeTint else idleTint
+
+        btnRadiusSharp.backgroundTintList = if (cornerRadiusPref == "sharp") activeTint else idleTint
+        btnRadiusNormal.backgroundTintList = if (cornerRadiusPref == "normal") activeTint else idleTint
+        btnRadiusRound.backgroundTintList = if (cornerRadiusPref == "round") activeTint else idleTint
 
         refreshPreviewFromSnapshot(accentColorHex, coverShape, showRecent)
     }
