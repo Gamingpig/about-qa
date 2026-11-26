@@ -32511,6 +32511,7 @@ window.setLyricsStyle = function(style) {
 
         function scoreLyricsCandidate(c, target, searchDurationMs = 0) {
             if (!c || !target) return -1;
+            if (c.instrumental === true) return -1;
             if (c.id && BANNED_LYRICS_CANDIDATE_IDS.has(c.id)) return -1;
             const synced = (c.syncedLyrics && !isDummyLyrics(c.syncedLyrics)) ? c.syncedLyrics : null;
             const plain = (c.plainLyrics && !isDummyLyrics(c.plainLyrics)) ? c.plainLyrics : null;
@@ -32538,12 +32539,13 @@ window.setLyricsStyle = function(style) {
             } else {
                 const tWords = tTrack.split(' ').filter(Boolean);
                 const cWords = cTrack.split(' ').filter(Boolean);
-                const matchesWords = tWords.length > 0 && tWords.every(w => cWords.includes(w));
+                const matchesWords = tWords.length >= 2 && tWords.every(w => cWords.includes(w));
                 const lengthRatio = Math.min(cTrack.length, tTrack.length) / Math.max(cTrack.length, tTrack.length);
+                const wordBoundaryPrefix = (cTrack.startsWith(tTrack + ' ') || tTrack.startsWith(cTrack + ' ')) && lengthRatio >= 0.72;
 
-                if (matchesWords && lengthRatio >= 0.70) {
+                if (matchesWords && lengthRatio >= 0.75) {
                     trackScore = 200;
-                } else if ((cTrack.startsWith(tTrack) || tTrack.startsWith(cTrack)) && lengthRatio >= 0.75) {
+                } else if (wordBoundaryPrefix) {
                     trackScore = 180;
                 } else {
                     return -1; // Titel weicht zu stark ab oder ist nur ein Teilwort eines komplett anderen Songs -> REJECT!
@@ -32573,30 +32575,25 @@ window.setLyricsStyle = function(style) {
                 const effTargetTokens = cleanTargetTokens.length > 0 ? cleanTargetTokens : targetTokens;
                 const effCandidateTokens = cleanCandidateTokens.length > 0 ? cleanCandidateTokens : candidateTokens;
 
-                const primaryMatch = effTargetTokens.length && effCandidateTokens.length && effTargetTokens[0] === effCandidateTokens[0];
-                const anyExactTokenMatch = effTargetTokens.some(t => t.length >= 3 && effCandidateTokens.includes(t));
-                const subNameMatch = effTargetTokens.some(t => t.length >= 4 && effCandidateTokens.some(ct => ct.length >= 4 && (ct.includes(t) || t.includes(ct))));
+                const primaryTarget = effTargetTokens[0] || '';
+                const primaryMatch = primaryTarget && effCandidateTokens.length && effCandidateTokens[0] === primaryTarget;
+                const primaryInCandidateTokens = primaryTarget && effCandidateTokens.includes(primaryTarget);
 
                 // Künstlername im Track-Titel ("Artist - Title" oder "(feat. Artist)")
                 let artistInTrackTitle = false;
-                if (cTrack && effTargetTokens.length) {
+                if (cTrack && primaryTarget.length >= 3) {
                     const rawCTrack = (c.trackName || '').toLowerCase();
-                    artistInTrackTitle = effTargetTokens.some(t => {
-                        if (t.length < 4) return false;
-                        return rawCTrack.includes(' - ' + t) || rawCTrack.includes(t + ' - ') || rawCTrack.includes('feat. ' + t) || rawCTrack.includes('ft. ' + t);
-                    });
+                    artistInTrackTitle = rawCTrack.includes(' - ' + primaryTarget) || rawCTrack.includes(primaryTarget + ' - ') || rawCTrack.includes('feat. ' + primaryTarget) || rawCTrack.includes('ft. ' + primaryTarget);
                 }
 
                 if (primaryMatch) {
                     artistScore = 220;
-                } else if (anyExactTokenMatch) {
-                    artistScore = 170;
-                } else if (subNameMatch) {
-                    artistScore = 140;
+                } else if (primaryInCandidateTokens) {
+                    artistScore = 180;
                 } else if (artistInTrackTitle) {
                     artistScore = 120;
                 } else {
-                    return -1; // Künstler stimmt nicht überein -> REJECT!
+                    return -1; // Hauptkünstler stimmt nicht überein -> REJECT!
                 }
             }
 
@@ -32604,10 +32601,10 @@ window.setLyricsStyle = function(style) {
             let durationScore = 0;
             if (searchDurationMs > 0 && c.duration > 0) {
                 const diffSec = Math.abs((c.duration * 1000) - searchDurationMs) / 1000;
-                const maxAllowedDiff = (isExactTrack && isExactArtist) ? 35 : 28;
+                const maxAllowedDiff = (isExactTrack && isExactArtist) ? 18 : 10;
 
                 if (diffSec > maxAllowedDiff) {
-                    return -1; // Dauer weicht zu stark ab (> 35s bei exakt, > 28s bei fuzzy) -> REJECT!
+                    return -1; // Dauer weicht zu stark ab -> REJECT!
                 }
                 durationScore = Math.max(0, 100 - Math.round(diffSec * 4));
             }
@@ -32875,13 +32872,15 @@ window.setLyricsStyle = function(style) {
                     const cleanA = cleanStringForAPI(artist);
                     const primaryArtist = (cleanA || artist || '').split(/\s*,\s*|\s*\/\s*|\s+feat\.?\s+|\s+ft\.?\s+|\s+with\s+/i)[0].trim();
 
-                    const saveAndRender = (synced, plain, provider = "LRCLIB", writer = "") => {
+                    let currentRenderedScore = 0;
+                    const saveAndRender = (synced, plain, provider = "LRCLIB", writer = "", score = 0) => {
                         if (fetchId !== currentFetchId) return false;
                         if (normLyricsStr(fetchTrackTitle) !== normLyricsStr(currentTrackTitle)) return false;
                         if (!synced && parsedLyrics && parsedLyrics.length > 0) return false;
                         const newTier = synced ? detectLrcTier(synced) : 0;
                         const currentTier = parsedLyrics && parsedLyrics.length ? (parsedLyrics.some(l => l && l.hasWordTimings) ? 2 : 1) : 0;
-                        if (hasExistingVisuals && newTier <= currentTier && currentTier >= 1) return false;
+                        if (hasExistingVisuals && newTier <= currentTier && currentTier >= 1 && score <= currentRenderedScore) return false;
+                        currentRenderedScore = Math.max(currentRenderedScore, score);
                         currentLyricsProvider = provider;
                         currentLyricsWriter = writer;
                         if (synced && !isDummyLyrics(synced)) {
@@ -33039,11 +33038,12 @@ window.setLyricsStyle = function(style) {
                                 if (!synced && lrcRaw) {
                                     synced = lrcRaw;
                                 }
-                                if (synced) {
+                                if (synced && s.name) {
+                                    const neteaseArtists = (s.ar || s.artists || []).map(a => a && a.name).filter(Boolean).join(', ');
                                     out.push({
                                         id: 'netease-' + id,
-                                        trackName: s.name || query,
-                                        artistName: (s.ar && s.ar[0] && s.ar[0].name) || (s.artists && s.artists[0] && s.artists[0].name) || '',
+                                        trackName: s.name,
+                                        artistName: neteaseArtists,
                                         syncedLyrics: synced,
                                         plainLyrics: (lyricJson.lrc && lyricJson.lrc.lyric) || '',
                                         duration: (s.dt ? s.dt / 1000 : 0) || 0,
@@ -33090,14 +33090,17 @@ window.setLyricsStyle = function(style) {
                                 if (typeof convertTtmlToEnhancedLrc === 'function') {
                                     synced = convertTtmlToEnhancedLrc(lyricData.ttml);
                                 }
-                                if (synced) {
+                                if (synced && item.name) {
+                                    const rawDur = Number(item.duration) || 0;
+                                    const normDurSec = rawDur > 10000 ? rawDur / 1000 : rawDur;
+                                    const amllArtist = Array.isArray(item.artist) ? item.artist.filter(Boolean).join(', ') : (item.artist || '');
                                     out.push({
                                         id: 'amll-' + item.id,
-                                        trackName: item.name || query,
-                                        artistName: item.artist || '',
+                                        trackName: item.name,
+                                        artistName: amllArtist,
                                         syncedLyrics: synced,
                                         plainLyrics: '',
-                                        duration: item.duration || 0,
+                                        duration: normDurSec,
                                         provider: 'AMLL',
                                         hasWordSync: true
                                     });
@@ -33130,8 +33133,9 @@ window.setLyricsStyle = function(style) {
                     if (searchResults.length > 0) {
                         const lrclibEarly = searchResults.map(c => ({ ...c, provider: 'LRCLIB', hasWordSync: c.hasWordSync === true }));
                         const earlyBest = selectBestCandidate(lrclibEarly, searchDurationMs);
-                        if (earlyBest && earlyBest.syncedLyrics && !isDummyLyrics(earlyBest.syncedLyrics)) {
-                            saveAndRender(earlyBest.syncedLyrics, earlyBest.plainLyrics, 'LRCLIB', earlyBest.writer || '');
+                        const earlyScore = earlyBest ? scoreLyricsCandidate(earlyBest, matchTarget, searchDurationMs) : -1;
+                        if (earlyBest && earlyScore >= 550 && earlyBest.syncedLyrics && !isDummyLyrics(earlyBest.syncedLyrics)) {
+                            saveAndRender(earlyBest.syncedLyrics, earlyBest.plainLyrics, 'LRCLIB', earlyBest.writer || '', earlyScore);
                         }
                     }
 
@@ -33207,11 +33211,12 @@ window.setLyricsStyle = function(style) {
                     let best = selectBestCandidate(allCandidates, searchDurationMs);
 
                     if (best) {
+                        const bestScore = scoreLyricsCandidate(best, matchTarget, searchDurationMs);
                         const bestSynced = (best.syncedLyrics && !isDummyLyrics(best.syncedLyrics)) ? best.syncedLyrics : null;
                         if (bestSynced) {
-                            if (saveAndRender(bestSynced, best.plainLyrics, best.provider || 'LRCLIB', best.writer || '')) return;
+                            if (saveAndRender(bestSynced, best.plainLyrics, best.provider || 'LRCLIB', best.writer || '', bestScore)) return;
                         } else if (best.plainLyrics && !isDummyLyrics(best.plainLyrics)) {
-                            if (saveAndRender(null, best.plainLyrics, best.provider || 'LRCLIB', best.writer || '')) return;
+                            if (saveAndRender(null, best.plainLyrics, best.provider || 'LRCLIB', best.writer || '', bestScore)) return;
                         }
                     }
 
