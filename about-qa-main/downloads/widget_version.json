@@ -1,6 +1,6 @@
 {
-  "versionCode": 13,
-  "versionName": "2.2.3",
+  "versionCode": 14,
+  "versionName": "2.2.4",
   "apkUrl": "https://gamingpig.github.io/about-qa/downloads/GamingpigWidget.apk",
-  "notes": "Spotify-Widget-Layout: Logo sauber allein oben rechts, Aktualisieren & Settings dezent unten rechts im Track-Bereich."
+  "notes": "Logo-Größe & exakte Top-Right-Positionierung im Spotify-Widget-Stil (30dp/34dp) über FrameLayout."
 }
