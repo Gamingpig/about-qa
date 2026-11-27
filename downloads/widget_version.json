@@ -1,6 +1,6 @@
 {
-  "versionCode": 12,
-  "versionName": "2.2.2",
+  "versionCode": 13,
+  "versionName": "2.2.3",
   "apkUrl": "https://gamingpig.github.io/about-qa/downloads/GamingpigWidget.apk",
-  "notes": "Widget & App-Button öffnen ab sofort direkt die Live-Website (About-Gamingpig)."
+  "notes": "Spotify-Widget-Layout: Logo sauber allein oben rechts, Aktualisieren & Settings dezent unten rechts im Track-Bereich."
 }

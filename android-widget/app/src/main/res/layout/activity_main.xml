@@ -222,19 +222,10 @@
                         android:textSize="9.5sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/preview_brand"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="GAMINGPIG"
-                        android:textColor="#94A3B8"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-
                     <ImageView
                         android:id="@+id/preview_app_logo"
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_marginStart="8dp"
                         android:src="@drawable/ic_gamingpig_app" />
                 </LinearLayout>
@@ -283,6 +274,17 @@
                             android:textColor="#CBD5E1"
                             android:textSize="12sp" />
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/preview_brand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginStart="8dp"
+                        android:text="GAMINGPIG"
+                        android:textColor="#94A3B8"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <TextView
