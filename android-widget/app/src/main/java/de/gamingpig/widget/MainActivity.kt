@@ -291,7 +291,7 @@ class MainActivity : Activity() {
         }
 
         findViewById<Button>(R.id.btn_open_web).setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://gamingpig.github.io/about-qa/")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://gamingpig.github.io/About-Gamingpig/")))
         }
 
         findViewById<Button>(R.id.btn_check_updates).setOnClickListener {

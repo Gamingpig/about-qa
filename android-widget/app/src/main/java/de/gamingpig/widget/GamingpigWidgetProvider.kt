@@ -581,15 +581,15 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                 if (showProgress && !hideProgressForTiny) View.VISIBLE else View.GONE
             )
 
-            // Click on App Logo -> always open Gamingpig Portfolio Website
-            val logoIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://gamingpig.github.io/about-qa/"))
+            // Click on App Logo -> always open Gamingpig Live Portfolio Website
+            val logoIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://gamingpig.github.io/About-Gamingpig/"))
             val logoPending = PendingIntent.getActivity(
                 context, 100, logoIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             views.setOnClickPendingIntent(R.id.widget_app_logo, logoPending)
 
-            // Click on content -> open MainActivity if background data blocked, else Spotify or Portfolio
+            // Click on content -> open MainActivity if background data blocked, else Spotify or Live Portfolio
             val contentPending = if (bgDataBlocked) {
                 val fixIntent = Intent(context, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -602,7 +602,7 @@ class GamingpigWidgetProvider : AppWidgetProvider() {
                 val targetUrl = if (tapOpensSpotify && !snapshot?.spotifyUrl.isNullOrBlank()) {
                     snapshot!!.spotifyUrl!!
                 } else {
-                    "https://gamingpig.github.io/about-qa/"
+                    "https://gamingpig.github.io/About-Gamingpig/"
                 }
                 val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl))
                 PendingIntent.getActivity(

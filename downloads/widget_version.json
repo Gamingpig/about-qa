@@ -1,6 +1,6 @@
 {
-  "versionCode": 11,
-  "versionName": "2.2.1",
+  "versionCode": 12,
+  "versionName": "2.2.2",
   "apkUrl": "https://gamingpig.github.io/about-qa/downloads/GamingpigWidget.apk",
-  "notes": "Logo größer oben rechts, anpassbarer Widget-Eckenradius, JobScheduler-Sync & 1-Klick-Einstellungen für Hintergrunddaten/Akku."
+  "notes": "Widget & App-Button öffnen ab sofort direkt die Live-Website (About-Gamingpig)."
 }
