@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Gamingpig QA – Update-Installation &amp; Boot Vorschau</title>
+<link rel="icon" href="icon-192.png" type="image/png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%;
+    min-height: 100dvh;
+    background: radial-gradient(circle at top center, #0f172a 0%, #030712 72%);
+    color: #f8fafc;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    overflow-x: hidden;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(16px, 4vw, 32px);
+  }
+
+  .card {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(26px);
+    -webkit-backdrop-filter: blur(26px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 28px;
+    padding: clamp(26px, 5vw, 36px) clamp(20px, 5vw, 28px);
+    text-align: center;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.06) 50%, transparent 60%);
+    transform: translateX(-100%);
+    animation: glassSheen 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes glassSheen {
+    0%, 55% { transform: translateX(-100%); }
+    100% { transform: translateX(120%); }
+  }
+
+  /* Gamingpig App Logo + Gears */
+  .logo-stage {
+    width: 112px;
+    height: 92px;
+    margin: 0 auto 18px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo-wrap {
+    width: 74px;
+    height: 74px;
+    border-radius: 22px;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 0 32px rgba(56, 189, 248, 0.24);
+    animation: logoFloat 3.8s ease-in-out infinite;
+  }
+  @keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  .logo-wrap img {
+    width: 50px;
+    height: 50px;
+    border-radius: 13px;
+  }
+  .gear {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #0f172a;
+    border: 1px solid rgba(251, 191, 36, 0.55);
+    z-index: 3;
+  }
+  .gear-main {
+    width: 30px; height: 30px; bottom: 2px; right: 10px; font-size: 16px;
+    animation: spinCW 4.5s linear infinite;
+  }
+  .gear-sub {
+    width: 24px; height: 24px; top: 2px; left: 10px; font-size: 12px;
+    border-color: rgba(56, 189, 248, 0.55);
+    animation: spinCCW 3.5s linear infinite;
+  }
+  @keyframes spinCW { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes spinCCW { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(56, 189, 248, 0.14);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #7dd3fc;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .pill.ready {
+    background: rgba(16, 185, 129, 0.14);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #6ee7b7;
+  }
+  .pulse-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #38bdf8; box-shadow: 0 0 10px #38bdf8;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .pill.ready .pulse-dot { background: #10b981; box-shadow: 0 0 10px #10b981; }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.45); opacity: 0.45; }
+  }
+
+  h1, h2 {
+    font-size: clamp(22px, 5vw, 27px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #ffffff 0%, #bae6fd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  p.desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #cbd5e1;
+    margin-bottom: 20px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 13px 18px;
+    border-radius: 14px;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(135deg, #0284c7, #4f46e5);
+    box-shadow: 0 10px 28px rgba(2, 132, 199, 0.35);
+    transition: transform 0.15s;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-secondary {
+    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: none;
+    color: #cbd5e1;
+    font-size: 12.5px;
+    padding: 10px 14px;
+  }
+
+  /* Update Progress UI */
+  .delay-note {
+    font-size: 12.5px;
+    color: #fcd34d;
+    background: rgba(251, 191, 36, 0.12);
+    border: 1px solid rgba(251, 191, 36, 0.32);
+    border-radius: 12px;
+    padding: 9px 12px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .delay-note.visible { display: block; }
+
+  .progress-wrap {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #38bdf8, #818cf8, #34d399);
+    transition: width 0.5s ease;
+  }
+  .pct-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: #94a3b8;
+    font-family: monospace;
+    margin-bottom: 14px;
+  }
+
+  .scan-box {
+    text-align: left;
+    background: rgba(2, 6, 23, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 12px;
+    font-size: 11.5px;
+    color: #94a3b8;
+    font-family: monospace;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .hidden { display: none !important; }
+
+  /* BOOT SCREEN */
+  .boot-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: #000000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+  .boot-screen.active { display: flex; opacity: 1; }
+  .boot-logo {
+    width: 92px;
+    height: 92px;
+    border-radius: 26px;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 26px;
+    box-shadow: 0 0 42px rgba(56, 189, 248, 0.35);
+    animation: bootPulse 1.5s ease-in-out infinite;
+  }
+  .boot-logo img { width: 60px; height: 60px; border-radius: 16px; }
+  @keyframes bootPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 28px rgba(56, 189, 248, 0.25); }
+    50% { transform: scale(1.06); box-shadow: 0 0 52px rgba(56, 189, 248, 0.55); }
+  }
+  .boot-bar-track {
+    width: min(230px, 70vw);
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .boot-bar-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: 999px;
+    background: #ffffff;
+    transition: width 2.1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .boot-text {
+    font-size: 13px;
+    color: #94a3b8;
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+
+  <!-- STAGE 1: Wartungsarbeiten -> Update verfügbar Button -->
+  <section id="stageMaint" class="card">
+    <div class="logo-stage">
+      <div class="gear gear-sub" aria-hidden="true">⚙️</div>
+      <div class="logo-wrap"><img src="icon-192.png" alt="Gamingpig"></div>
+      <div class="gear gear-main" aria-hidden="true">⚙️</div>
+    </div>
+    <div class="pill ready"><span class="pulse-dot"></span><span>Update verfügbar</span></div>
+    <h1>Neues Update bereit</h1>
+    <p class="desc">
+      Die Wartungsarbeiten sind abgeschlossen und Version <strong>v24.245.104</strong> steht für dein Gerät bereit.
+      Tippe auf den Button, um dein Gerät zu prüfen und das Update anzuwenden.
+    </p>
+    <button class="btn" id="btnStartUpdate">⬇️ Update jetzt installieren &amp; optimieren</button>
+  </section>
+
+  <!-- STAGE 2: Real Device Scan & Deep Optimization (~1-2 Min, mit Test-Vorspulen) -->
+  <section id="stageInstall" class="card hidden">
+    <div class="logo-stage">
+      <div class="gear gear-sub" aria-hidden="true">⚙️</div>
+      <div class="logo-wrap"><img src="icon-192.png" alt="Gamingpig"></div>
+      <div class="gear gear-main" aria-hidden="true">⚙️</div>
+    </div>
+    <div class="pill" id="installBadge"><span class="pulse-dot"></span><span>Update wird installiert</span></div>
+    <h2 id="installTitle">Vorbereitung läuft…</h2>
+    <p class="desc" id="statusMsg">Wir bereiten gerade alles für dich vor. Bitte hab noch einen Augenblick Geduld…</p>
+
+    <div class="delay-note" id="delayNote">
+      ⏳ Es dauert etwas länger als erwartet. Bitte hab weiterhin Geduld.
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="pct-row">
+      <span id="stepLabel">Initialisiere…</span>
+      <span id="pctLabel">0%</span>
+    </div>
+
+    <div class="scan-box" id="scanBox">Warte auf Gerätescan…</div>
+
+    <button class="btn btn-secondary" id="btnFastForward">⚡ Test-Vorschau: Ablauf beschleunigen</button>
+  </section>
+
+  <!-- STAGE 3: Restart & Boot Animation -->
+  <div id="bootScreen" class="boot-screen">
+    <div class="boot-logo"><img src="icon-192.png" alt="Gamingpig"></div>
+    <div class="boot-bar-track">
+      <div class="boot-bar-fill" id="bootBarFill"></div>
+    </div>
+    <div class="boot-text" id="bootText">App wird neu gestartet…</div>
+  </div>
+
+  <!-- STAGE 4: Gamingpig App Bereit -->
+  <section id="stageReady" class="card hidden">
+    <div class="logo-stage">
+      <div class="logo-wrap"><img src="icon-192.png" alt="Gamingpig"></div>
+    </div>
+    <div class="pill ready"><span class="pulse-dot"></span><span>System bereit</span></div>
+    <h1>Gamingpig App bereit!</h1>
+    <p class="desc">
+      Das Update wurde installiert, dein Gerät gescannt und folgende Einstellungen wurden automatisch in deinem Browser gespeichert:
+    </p>
+    <div class="scan-box" id="appliedSettingsBox"></div>
+    <button class="btn" id="btnReplay">🔄 Update-Ablauf erneut testen</button>
+    <button class="btn btn-secondary" onclick="location.href='index.html'">🏠 Zur QA-Startseite</button>
+  </section>
+
+  <script>
+    const stageMaint = document.getElementById('stageMaint');
+    const stageInstall = document.getElementById('stageInstall');
+    const stageReady = document.getElementById('stageReady');
+    const bootScreen = document.getElementById('bootScreen');
+    const bootBarFill = document.getElementById('bootBarFill');
+    const bootText = document.getElementById('bootText');
+
+    const installBadge = document.getElementById('installBadge');
+    const installTitle = document.getElementById('installTitle');
+    const statusMsg = document.getElementById('statusMsg');
+    const delayNote = document.getElementById('delayNote');
+    const progressFill = document.getElementById('progressFill');
+    const stepLabel = document.getElementById('stepLabel');
+    const pctLabel = document.getElementById('pctLabel');
+    const scanBox = document.getElementById('scanBox');
+    const appliedSettingsBox = document.getElementById('appliedSettingsBox');
+
+    let fastMode = false;
+    let activeTimers = [];
+
+    function clearTimers() {
+      activeTimers.forEach(id => clearTimeout(id));
+      activeTimers = [];
+    }
+
+    function later(fn, ms) {
+      const id = setTimeout(fn, ms);
+      activeTimers.push(id);
+    }
+
+    function scanAndApplyDeviceSettings() {
+      const cores = navigator.hardwareConcurrency || 4;
+      const ram = navigator.deviceMemory || null;
+      const net = (navigator.connection && navigator.connection.effectiveType) ? navigator.connection.effectiveType : '4g/WLAN';
+      const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const dpr = window.devicePixelRatio || 1;
+      const res = window.innerWidth + '×' + window.innerHeight + ' (@' + dpr + 'x)';
+
+      const t0 = performance.now();
+      let acc = 0;
+      for (let i = 0; i < 600000; i++) acc += Math.sqrt(i);
+      const benchMs = Math.round(performance.now() - t0);
+
+      let profile = 'high';
+      let animStyle = 'smooth';
+      let liquidGlass = 'true';
+      let canvasAuto = 'true';
+      let label = 'High-Performance (Liquid Glass + Canvas)';
+
+      if (reducedMotion || cores <= 2 || (ram !== null && ram <= 2) || net === '2g' || net === 'slow-2g') {
+        profile = 'eco';
+        animStyle = 'minimal';
+        liquidGlass = 'false';
+        canvasAuto = 'false';
+        label = 'Eco-Optimiert (Zero-Blur / Batteriesparend)';
+      } else if (cores <= 4 || net === '3g' || benchMs > 28) {
+        profile = 'balanced';
+        animStyle = 'smooth';
+        liquidGlass = 'true';
+        canvasAuto = 'false';
+        label = 'Balanced Mobile (Flüssig + Datensparend)';
+      }
+
+      // Echte App-Einstellungen in localStorage schreiben
+      try {
+        localStorage.setItem('gp_perf_profile', profile);
+        localStorage.setItem('app_animation_style', animStyle);
+        localStorage.setItem('gp_liquid_glass_enabled', liquidGlass);
+        localStorage.setItem('gp_canvas_auto_play', canvasAuto);
+        localStorage.setItem('gp_device_scan_ts', String(Date.now()));
+      } catch (e) {}
+
+      return { cores, ram: ram ? ram + ' GB' : 'k.A.', net, res, benchMs, profile, animStyle, liquidGlass, canvasAuto, label };
+    }
+
+    function setProgress(pct, step) {
+      progressFill.style.width = pct + '%';
+      pctLabel.textContent = pct + '%';
+      stepLabel.textContent = step;
+    }
+
+    function startInstallFlow() {
+      clearTimers();
+      fastMode = false;
+      stageMaint.classList.add('hidden');
+      stageReady.classList.add('hidden');
+      stageInstall.classList.remove('hidden');
+      delayNote.classList.remove('visible');
+
+      // Echter Gerätescan + echte Einstellungsanpassung
+      const dev = scanAndApplyDeviceSettings();
+      // Realistisch 1–1.5 Minuten (68s normal, ~95s bei langsamerem Gerät); im Test per Button abkürzbar
+      const isSlowDevice = dev.profile !== 'high';
+      const totalMs = isSlowDevice ? 90000 : 68000;
+
+      runPhases(dev, totalMs, isSlowDevice);
+    }
+
+    function runPhases(dev, totalMs, isSlowDevice) {
+      const f = (ratio) => Math.round(totalMs * ratio);
+
+      installBadge.innerHTML = '<span class="pulse-dot"></span><span>Vorbereitung</span>';
+      installTitle.textContent = 'Update wird vorbereitet';
+      statusMsg.textContent = 'Wir bereiten gerade alles für dich vor. Bitte hab noch einen Augenblick Geduld…';
+      scanBox.textContent = 'Starte System- & Hardware-Analyse…';
+      setProgress(6, 'Vorbereitung');
+
+      later(() => {
+        installBadge.innerHTML = '<span class="pulse-dot"></span><span>Gerätescan</span>';
+        installTitle.textContent = 'Gerät wird gescannt';
+        statusMsg.textContent = 'Hardware, Display und Verbindung werden geprüft, um die App perfekt anzupassen…';
+        scanBox.innerHTML =
+          'CPU-Kerne: ' + dev.cores + ' | RAM: ' + dev.ram + '<br>' +
+          'Display: ' + dev.res + ' | Netz: ' + dev.net + '<br>' +
+          'Benchmark: ' + dev.benchMs + ' ms → Profil: ' + dev.label;
+        setProgress(26, 'Hardware gescannt');
+      }, f(0.14));
+
+      later(() => {
+        installBadge.innerHTML = '<span class="pulse-dot"></span><span>Optimierung</span>';
+        installTitle.textContent = 'App wird optimiert';
+        statusMsg.textContent = 'Die App wird optimiert für das beste Erlebnis auf deinem Gerät…';
+        setProgress(52, 'Einstellungen werden angepasst');
+      }, f(0.36));
+
+      later(() => {
+        setProgress(74, 'Cache & Lyrics-Engine');
+        if (isSlowDevice || totalMs >= 60000) {
+          delayNote.classList.add('visible');
+        }
+      }, f(0.58));
+
+      later(() => {
+        statusMsg.textContent = 'Letzte Optimierungen werden abgeschlossen…';
+        setProgress(92, 'Finalisierung');
+      }, f(0.82));
+
+      later(() => {
+        setProgress(100, 'Abgeschlossen');
+        statusMsg.textContent = 'Update installiert! App wird neu gestartet…';
+      }, f(0.96));
+
+      // Neustart & Boot-Sequenz
+      later(() => {
+        stageInstall.classList.add('hidden');
+        bootBarFill.style.width = '0%';
+        bootScreen.classList.add('active');
+        bootText.textContent = 'App wird neu gestartet…';
+        later(() => {
+          bootText.textContent = 'Gamingpig wird gebootet…';
+          bootBarFill.style.width = '100%';
+        }, 450);
+        later(() => {
+          bootScreen.classList.remove('active');
+          appliedSettingsBox.innerHTML =
+            '<strong>Übernommene Geräte-Einstellungen:</strong><br>' +
+            '• Profil: ' + dev.label + '<br>' +
+            '• app_animation_style = ' + dev.animStyle + '<br>' +
+            '• gp_liquid_glass_enabled = ' + dev.liquidGlass + '<br>' +
+            '• gp_canvas_auto_play = ' + dev.canvasAuto;
+          stageReady.classList.remove('hidden');
+        }, 2800);
+      }, totalMs + 600);
+    }
+
+    document.getElementById('btnStartUpdate').addEventListener('click', startInstallFlow);
+    document.getElementById('btnFastForward').addEventListener('click', () => {
+      if (fastMode) return;
+      fastMode = true;
+      clearTimers();
+      const dev = scanAndApplyDeviceSettings();
+      runPhases(dev, 7000, true);
+    });
+    document.getElementById('btnReplay').addEventListener('click', () => {
+      stageReady.classList.add('hidden');
+      stageMaint.classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
